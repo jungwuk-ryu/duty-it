@@ -32,6 +32,7 @@ class MainView extends GetView<MainController> {
           ],
         ),
       ),
+      endDrawer: EndDrawer()
     );
   }
 }
