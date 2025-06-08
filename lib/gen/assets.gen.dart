@@ -12,12 +12,19 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/back-filled.png
+  AssetGenImage get backFilled =>
+      const AssetGenImage('assets/icons/back-filled.png');
+
+  /// File path: assets/icons/close.png
+  AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
+
   /// File path: assets/icons/iconamoon_search.png
   AssetGenImage get iconamoonSearch =>
       const AssetGenImage('assets/icons/iconamoon_search.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [iconamoonSearch];
+  List<AssetGenImage> get values => [backFilled, close, iconamoonSearch];
 }
 
 class Assets {

@@ -1,6 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MainController extends GetxController {
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  get scaffoldKey => _scaffoldKey;
+
+  void openEndDrawer() {
+    _scaffoldKey.currentState!.openEndDrawer();
+  }
+
+  void closeEndDrawer() {
+    _scaffoldKey.currentState!.closeEndDrawer();
+  }
+
   RxInt currentIndex = 0.obs;
 
   @override
@@ -21,5 +33,4 @@ class MainController extends GetxController {
   void changeTab(int index) {
     currentIndex.value = index;
   }
-
 }
