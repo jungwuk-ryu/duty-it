@@ -12,7 +12,8 @@ void main() {
       designSize: Size(360, 760),
       child: GetMaterialApp(
         theme: ThemeData(
-          fontFamily: FontFamily.pretendard
+          fontFamily: FontFamily.pretendard,
+          colorScheme: ColorScheme.light(surface: Colors.white),
         ),
         debugShowCheckedModeBanner: false,
         title: "Application",
