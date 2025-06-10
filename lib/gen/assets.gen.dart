@@ -23,8 +23,17 @@ class $AssetsIconsGen {
   AssetGenImage get iconamoonSearch =>
       const AssetGenImage('assets/icons/iconamoon_search.png');
 
+  /// File path: assets/icons/quill_hamburger.png
+  AssetGenImage get quillHamburger =>
+      const AssetGenImage('assets/icons/quill_hamburger.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [backFilled, close, iconamoonSearch];
+  List<AssetGenImage> get values => [
+    backFilled,
+    close,
+    iconamoonSearch,
+    quillHamburger,
+  ];
 }
 
 class Assets {
