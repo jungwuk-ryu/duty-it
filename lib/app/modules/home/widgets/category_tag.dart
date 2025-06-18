@@ -4,13 +4,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
 
 class CategoryTag extends StatelessWidget {
-  final String category;
+  final String? imageAsset;
+  final String name;
   final bool isSelected;
 
   const CategoryTag({
     super.key,
     required this.isSelected,
-    required this.category,
+    required this.name,
+    this.imageAsset,
   });
 
   @override
@@ -27,16 +29,28 @@ class CategoryTag extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsetsGeometry.symmetric(horizontal: 16.w, vertical: 6.h),
-        child: Center(
-          child: Text(
-            category,
-            style: TextStyle(
-              color: isSelected ? AppColors.white : AppColors.g05,
-              fontWeight: FontWeight.w300,
-              height: 1.60,
-              fontSize: 13,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Visibility(
+              visible: imageAsset != null,
+              child: Row(
+                children: [
+                  Image.asset(imageAsset ?? "", width: 16.r, height: 16.r),
+                  SizedBox(width: 4.w),
+                ],
+              ),
             ),
-          ),
+            Text(
+              name,
+              style: TextStyle(
+                color: isSelected ? AppColors.white : AppColors.g05,
+                fontWeight: FontWeight.w300,
+                height: 1.60,
+                fontSize: 13,
+              ),
+            ),
+          ],
         ),
       ),
     );
