@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myapp/app/core/constants/app_colors.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
 class HomeSearchBar extends StatelessWidget {
@@ -13,7 +14,7 @@ class HomeSearchBar extends StatelessWidget {
       width: 360.w,
       height: 40.h,
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEEEF),
+        color: AppColors.g02,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Center(
@@ -35,7 +36,7 @@ class HomeSearchBar extends StatelessWidget {
                   isCollapsed: true,
                   hintText: '찾으시는 행사가 있나요?',
                   hintStyle: TextStyle(
-                    color: Color(0xffAAAAAA),
+                    color: AppColors.g05,
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
                   ),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myapp/app/core/constants/app_colors.dart';
 
 class EventCard extends StatelessWidget {
+  const EventCard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -61,7 +64,7 @@ class EventMetaItem extends StatelessWidget {
             text: name,
             style: TextStyle(
               fontWeight: FontWeight.w400,
-              color: Color(0xff949494),
+              color: AppColors.g05,
             ),
           ),
           WidgetSpan(child: SizedBox(width: 8.w)),
@@ -69,7 +72,7 @@ class EventMetaItem extends StatelessWidget {
             text: value,
             style: TextStyle(
               fontWeight: FontWeight.w300,
-              color: Color(0xff333333),
+              color: AppColors.black,
               overflow: TextOverflow.fade,
             ),
           ),

@@ -1,13 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:myapp/app/core/constants/app_colors.dart';
 
 class CategoryTag extends StatelessWidget {
-  static const int selectedBackColor = 0xFF333333;
-  static const int selectedtextColor = 0xFFFFFFFF;
-  static const int unselectedBackColor = 0x00000000;
-  static const int unselectedTextColor = 0xFF8D8D8D;
-
   final String category;
   final bool isSelected;
 
@@ -22,11 +18,11 @@ class CategoryTag extends StatelessWidget {
     return Container(
       height: 32.h,
       decoration: BoxDecoration(
-        color: Color(isSelected ? selectedBackColor : unselectedBackColor),
+        color: isSelected ? AppColors.main : AppColors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: BoxBorder.all(
           width: 1,
-          color: isSelected ? Colors.transparent : const Color(0xFFBBBBBB),
+          color: isSelected ? AppColors.transparent : AppColors.g04,
         ),
       ),
       child: Padding(
@@ -35,9 +31,7 @@ class CategoryTag extends StatelessWidget {
           child: Text(
             category,
             style: TextStyle(
-              color: Color(
-                isSelected ? selectedtextColor : unselectedTextColor,
-              ),
+              color: isSelected ? AppColors.white : AppColors.g05,
               fontWeight: FontWeight.w300,
               height: 1.60,
               fontSize: 13,
