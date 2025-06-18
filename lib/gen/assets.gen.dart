@@ -23,6 +23,10 @@ class $AssetsIconsGen {
   AssetGenImage get iconamoonSearch =>
       const AssetGenImage('assets/icons/iconamoon_search.png');
 
+  /// File path: assets/icons/mage_filter.png
+  AssetGenImage get mageFilter =>
+      const AssetGenImage('assets/icons/mage_filter.png');
+
   /// File path: assets/icons/quill_hamburger.png
   AssetGenImage get quillHamburger =>
       const AssetGenImage('assets/icons/quill_hamburger.png');
@@ -32,6 +36,7 @@ class $AssetsIconsGen {
     backFilled,
     close,
     iconamoonSearch,
+    mageFilter,
     quillHamburger,
   ];
 }
