@@ -30,11 +30,13 @@ class CategoryTag extends StatelessWidget {
       child: Padding(
         padding: EdgeInsetsGeometry.symmetric(horizontal: 16.w, vertical: 6.h),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Visibility(
               visible: imageAsset != null,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(imageAsset ?? "", width: 16.r, height: 16.r),
                   SizedBox(width: 4.w),
