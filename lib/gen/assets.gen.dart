@@ -16,6 +16,10 @@ class $AssetsIconsGen {
   AssetGenImage get backFilled =>
       const AssetGenImage('assets/icons/back-filled.png');
 
+  /// File path: assets/icons/bookmark-sharp.png
+  AssetGenImage get bookmarkSharp =>
+      const AssetGenImage('assets/icons/bookmark-sharp.png');
+
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
@@ -34,6 +38,7 @@ class $AssetsIconsGen {
   /// List of all assets
   List<AssetGenImage> get values => [
     backFilled,
+    bookmarkSharp,
     close,
     iconamoonSearch,
     mageFilter,
