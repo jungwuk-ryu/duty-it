@@ -6,7 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:myapp/app/modules/home/widgets/category_tag.dart';
 import 'package:myapp/app/modules/home/widgets/event_card.dart';
 import 'package:myapp/app/modules/home/widgets/home_header.dart';
-import 'package:myapp/app/modules/home/widgets/menu_text_button.dart';
+import 'package:myapp/app/modules/home/widgets/home_tab_button.dart';
 import 'package:myapp/app/modules/home/widgets/search_bar.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
@@ -56,7 +56,7 @@ class HomeView extends GetView<HomeController> {
             ),
           ],
         ),
-        
+
         SizedBox(height: 4.h),
 
         Expanded(
