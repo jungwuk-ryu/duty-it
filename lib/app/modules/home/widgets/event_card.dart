@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
 import 'package:myapp/app/modules/home/widgets/event_bookmark_button.dart';
-import 'package:myapp/gen/assets.gen.dart';
 
 class EventCard extends StatelessWidget {
   const EventCard({super.key});
