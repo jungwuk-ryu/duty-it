@@ -1,12 +1,24 @@
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:myapp/app/modules/home/widgets/event_card.dart';
+
+enum HomeTab { event, bookmark }
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
+  late final PagingController _pagingController;
+  get pagingController => _pagingController;
 
-  final count = 0.obs;
+  final Rx<HomeTab> _selectedTab = HomeTab.event.obs;
+  set selectedTab(HomeTab tab) => _selectedTab.value = tab;
+  HomeTab get selectedTab => _selectedTab.value;
+
   @override
   void onInit() {
     super.onInit();
+    _pagingController = PagingController<int, EventCard>(
+      getNextPageKey: (state) => ((state.keys?.last ?? 0) + 1),
+      fetchPage: (key) => List.generate(10, (index) => EventCard()),
+    );
   }
 
   @override
@@ -18,6 +30,4 @@ class HomeController extends GetxController {
   void onClose() {
     super.onClose();
   }
-
-  void increment() => count.value++;
 }
