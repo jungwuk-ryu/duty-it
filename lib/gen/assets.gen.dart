@@ -16,6 +16,10 @@ class $AssetsIconsGen {
   AssetGenImage get backFilled =>
       const AssetGenImage('assets/icons/back-filled.png');
 
+  /// File path: assets/icons/back-left.png
+  AssetGenImage get backLeft =>
+      const AssetGenImage('assets/icons/back-left.png');
+
   /// File path: assets/icons/bookmark-sharp.png
   AssetGenImage get bookmarkSharp =>
       const AssetGenImage('assets/icons/bookmark-sharp.png');
@@ -35,14 +39,20 @@ class $AssetsIconsGen {
   AssetGenImage get quillHamburger =>
       const AssetGenImage('assets/icons/quill_hamburger.png');
 
+  /// File path: assets/icons/solar_pen-bold.png
+  AssetGenImage get solarPenBold =>
+      const AssetGenImage('assets/icons/solar_pen-bold.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     backFilled,
+    backLeft,
     bookmarkSharp,
     close,
     iconamoonSearch,
     mageFilter,
     quillHamburger,
+    solarPenBold,
   ];
 }
 

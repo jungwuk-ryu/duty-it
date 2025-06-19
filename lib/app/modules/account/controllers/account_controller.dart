@@ -1,9 +1,6 @@
 import 'package:get/get.dart';
 
 class AccountController extends GetxController {
-  //TODO: Implement AccountController
-
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -19,5 +16,22 @@ class AccountController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  String getUserName() {
+    return "수줍은 복숭아";
+  }
+
+  void onUserNameEditButtonClicked() {
+    
+  }
+
+  Future<bool> setUserName(String newName) async {
+    return true;
+  }
+
+  String getAccountId() {
+    return "abcd1234@naver.com";
+  }
+
+
+
 }
