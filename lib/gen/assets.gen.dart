@@ -27,6 +27,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
+  /// File path: assets/icons/icon_textdelete.png
+  AssetGenImage get iconTextdelete =>
+      const AssetGenImage('assets/icons/icon_textdelete.png');
+
   /// File path: assets/icons/iconamoon_search.png
   AssetGenImage get iconamoonSearch =>
       const AssetGenImage('assets/icons/iconamoon_search.png');
@@ -49,6 +53,7 @@ class $AssetsIconsGen {
     backLeft,
     bookmarkSharp,
     close,
+    iconTextdelete,
     iconamoonSearch,
     mageFilter,
     quillHamburger,
