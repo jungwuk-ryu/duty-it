@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myapp/app/routes/app_pages.dart';
 
 class MainController extends GetxController {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -32,5 +33,9 @@ class MainController extends GetxController {
 
   void changeTab(int index) {
     currentIndex.value = index;
+  }
+
+  void onAccountSettingButtonClicked() {
+    Get.toNamed(Routes.ACCOUNT);
   }
 }
