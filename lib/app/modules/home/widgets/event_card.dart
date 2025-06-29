@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
 import 'package:myapp/app/modules/home/widgets/event_bookmark_button.dart';
+import 'package:myapp/gen/assets.gen.dart';
 
 class EventCard extends StatelessWidget {
-  const EventCard({super.key});
+  final String? imageUri;
+
+  const EventCard({super.key, this.imageUri});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +23,12 @@ class EventCard extends StatelessWidget {
                 color: Color(0xffD9D9D9),
                 borderRadius: BorderRadius.circular(8.r),
               ),
+              child:
+                  imageUri != null
+                      ? Image.network(imageUri!, fit: BoxFit.fitWidth)
+                      : Center(child: Image.asset(Assets.icons.nurseCap.path)),
             ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: EventBookmarkButton()
-            ),
+            Positioned(top: 0, right: 0, child: EventBookmarkButton(isBookmarked: false)),
           ],
         ),
         SizedBox(height: 16.h),

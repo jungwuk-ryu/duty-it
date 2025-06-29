@@ -75,10 +75,10 @@ class AccountView extends GetView<AccountController> {
                       AccountViewItemText(controller.getAccountId()),
 
                       SizedBox(height: 32.h),
-                      AccountViewItemText("로그아웃"),
+                      AccountViewItemText("로그아웃", color: AppColors.g05),
 
                       SizedBox(height: 16.h),
-                      AccountViewItemText("회원탈퇴", color: AppColors.main),
+                      AccountViewItemText("회원 탈퇴", color: AppColors.g05),
                     ],
                   ),
                 ),

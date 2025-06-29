@@ -11,7 +11,7 @@ class DrawerCategorySection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "카테고리 1",
+          "설정",
           style: TextStyle(
             color: AppColors.g05,
             fontSize: 14,
@@ -20,26 +20,35 @@ class DrawerCategorySection extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16.h),
-        Text(
-          "필요 페이지",
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            height: 1.60,
-          ),
-        ),
+        _PageItemButton(title: "앱 설정", onTap: () {}),
         SizedBox(height: 16.h),
-        Text(
-          "필요 페이지",
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            height: 1.60,
-          ),
-        ),
+        _PageItemButton(title: "필요 페이지", onTap: () {}),
+        SizedBox(height: 16.h),
+        _PageItemButton(title: "필요 페이지", onTap: () {}),
       ],
+    );
+  }
+}
+
+class _PageItemButton extends StatelessWidget {
+  final String title;
+  final VoidCallback onTap;
+
+  const _PageItemButton({required this.title, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Text(
+        title,
+        style: TextStyle(
+          color: AppColors.black,
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          height: 1.60,
+        ),
+      ),
     );
   }
 }

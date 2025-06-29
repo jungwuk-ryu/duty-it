@@ -20,6 +20,10 @@ class $AssetsIconsGen {
   AssetGenImage get backLeft =>
       const AssetGenImage('assets/icons/back-left.png');
 
+  /// File path: assets/icons/bookmark-sharp-red.png
+  AssetGenImage get bookmarkSharpRed =>
+      const AssetGenImage('assets/icons/bookmark-sharp-red.png');
+
   /// File path: assets/icons/bookmark-sharp.png
   AssetGenImage get bookmarkSharp =>
       const AssetGenImage('assets/icons/bookmark-sharp.png');
@@ -39,6 +43,10 @@ class $AssetsIconsGen {
   AssetGenImage get mageFilter =>
       const AssetGenImage('assets/icons/mage_filter.png');
 
+  /// File path: assets/icons/nurse_cap.png
+  AssetGenImage get nurseCap =>
+      const AssetGenImage('assets/icons/nurse_cap.png');
+
   /// File path: assets/icons/quill_hamburger.png
   AssetGenImage get quillHamburger =>
       const AssetGenImage('assets/icons/quill_hamburger.png');
@@ -51,11 +59,13 @@ class $AssetsIconsGen {
   List<AssetGenImage> get values => [
     backFilled,
     backLeft,
+    bookmarkSharpRed,
     bookmarkSharp,
     close,
     iconTextdelete,
     iconamoonSearch,
     mageFilter,
+    nurseCap,
     quillHamburger,
     solarPenBold,
   ];
