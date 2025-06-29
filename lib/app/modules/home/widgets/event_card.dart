@@ -28,7 +28,7 @@ class EventCard extends StatelessWidget {
                       ? Image.network(imageUri!, fit: BoxFit.fitWidth)
                       : Center(child: Image.asset(Assets.icons.nurseCap.path)),
             ),
-            Positioned(top: 0, right: 0, child: EventBookmarkButton()),
+            Positioned(top: 0, right: 0, child: EventBookmarkButton(isBookmarked: false)),
           ],
         ),
         SizedBox(height: 16.h),

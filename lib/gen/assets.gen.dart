@@ -20,6 +20,10 @@ class $AssetsIconsGen {
   AssetGenImage get backLeft =>
       const AssetGenImage('assets/icons/back-left.png');
 
+  /// File path: assets/icons/bookmark-sharp-red.png
+  AssetGenImage get bookmarkSharpRed =>
+      const AssetGenImage('assets/icons/bookmark-sharp-red.png');
+
   /// File path: assets/icons/bookmark-sharp.png
   AssetGenImage get bookmarkSharp =>
       const AssetGenImage('assets/icons/bookmark-sharp.png');
@@ -55,6 +59,7 @@ class $AssetsIconsGen {
   List<AssetGenImage> get values => [
     backFilled,
     backLeft,
+    bookmarkSharpRed,
     bookmarkSharp,
     close,
     iconTextdelete,

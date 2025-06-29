@@ -3,12 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
 class EventBookmarkButton extends StatelessWidget {
-  const EventBookmarkButton({super.key});
+  final bool isBookmarked;
+
+  const EventBookmarkButton({super.key, required this.isBookmarked});
 
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      Assets.icons.bookmarkSharp.path,
+      isBookmarked ? Assets.icons.bookmarkSharpRed.path : Assets.icons.bookmarkSharp.path,
       width: 40.r,
       height: 40.r,
     );
