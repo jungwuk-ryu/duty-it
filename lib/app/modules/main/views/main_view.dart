@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:myapp/app/core/constants/app_colors.dart';
 import 'package:myapp/app/modules/calendar/views/calendar_view.dart';
 import 'package:myapp/app/modules/home/views/home_view.dart';
 import 'package:myapp/app/modules/main/widgets/drawer/end_drawer.dart';
+import 'package:myapp/gen/assets.gen.dart';
 
 import '../controllers/main_controller.dart';
 
@@ -29,18 +32,42 @@ class MainView extends GetView<MainController> {
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
-        currentIndex: controller.currentIndex.value,
-        onTap: controller.changeTab,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.file_copy), label: '행사'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: '캘린더',
-          ),
-        ],
-                ),
+          elevation: 50,
+          currentIndex: controller.currentIndex.value,
+          onTap: controller.changeTab,
+          selectedFontSize: 10,
+          selectedItemColor: AppColors.black,
+          unselectedFontSize: 10,
+          unselectedItemColor: AppColors.g04,
+          items: [
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                Assets.icons.paper.path,
+                width: 20.r,
+                height: 20.r,
+                color:
+                    controller.currentIndex.value == 0
+                        ? AppColors.black
+                        : AppColors.g04,
+              ),
+              label: '행사',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                Assets.icons.calendarClearSharp.path,
+                width: 20.r,
+                height: 20.r,
+                color:
+                    controller.currentIndex.value == 1
+                        ? AppColors.black
+                        : AppColors.g04,
+              ),
+              label: '캘린더',
+            ),
+          ],
+        ),
       ),
-      endDrawer: EndDrawer()
+      endDrawer: EndDrawer(),
     );
   }
 }

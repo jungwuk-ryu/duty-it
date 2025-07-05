@@ -28,6 +28,10 @@ class $AssetsIconsGen {
   AssetGenImage get bookmarkSharp =>
       const AssetGenImage('assets/icons/bookmark-sharp.png');
 
+  /// File path: assets/icons/calendar-clear-sharp.png
+  AssetGenImage get calendarClearSharp =>
+      const AssetGenImage('assets/icons/calendar-clear-sharp.png');
+
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
@@ -47,6 +51,9 @@ class $AssetsIconsGen {
   AssetGenImage get nurseCap =>
       const AssetGenImage('assets/icons/nurse_cap.png');
 
+  /// File path: assets/icons/paper.png
+  AssetGenImage get paper => const AssetGenImage('assets/icons/paper.png');
+
   /// File path: assets/icons/quill_hamburger.png
   AssetGenImage get quillHamburger =>
       const AssetGenImage('assets/icons/quill_hamburger.png');
@@ -61,11 +68,13 @@ class $AssetsIconsGen {
     backLeft,
     bookmarkSharpRed,
     bookmarkSharp,
+    calendarClearSharp,
     close,
     iconTextdelete,
     iconamoonSearch,
     mageFilter,
     nurseCap,
+    paper,
     quillHamburger,
     solarPenBold,
   ];
