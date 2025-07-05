@@ -16,64 +16,67 @@ class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        HomeHeader(),
-        HomeSearchBar(controller: TextEditingController()),
-        SizedBox(height: 18.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Obx(() {
-              HomeTab tab = HomeTab.event;
-              return HomeTabButton(
-                isSelected: controller.selectedTab == tab,
-                onTap: () => controller.selectedTab = tab,
-                title: "행사 리스트",
-              );
-            }),
-            Obx(() {
-              HomeTab tab = HomeTab.bookmark;
-              return HomeTabButton(
-                isSelected: controller.selectedTab == tab,
-                onTap: () => controller.selectedTab = tab,
-                title: "북마크",
-              );
-            }),
-          ],
-        ),
-
-        SizedBox(height: 16.h),
-
-        Row(
-          children: [
-            CategoryTag(name: "전체", isSelected: true),
-            SizedBox(width: 8.w),
-            CategoryTag(
-              name: "필터",
-              isSelected: false,
-              imageAsset: Assets.icons.mageFilter.path,
-            ),
-          ],
-        ),
-
-        SizedBox(height: 4.h),
-
-        Expanded(
-          child: PagingListener<int, EventCard>(
-            controller: controller.pagingController,
-            builder:
-                (context, state, fetchNextPage) =>
-                    PagedListView<int, EventCard>(
-                      state: state,
-                      fetchNextPage: fetchNextPage,
-                      builderDelegate: PagedChildBuilderDelegate(
-                        itemBuilder: (context, item, index) => item,
-                      ),
-                    ),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        children: [
+          HomeHeader(),
+          HomeSearchBar(controller: TextEditingController()),
+          SizedBox(height: 18.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Obx(() {
+                HomeTab tab = HomeTab.event;
+                return HomeTabButton(
+                  isSelected: controller.selectedTab == tab,
+                  onTap: () => controller.selectedTab = tab,
+                  title: "행사 리스트",
+                );
+              }),
+              Obx(() {
+                HomeTab tab = HomeTab.bookmark;
+                return HomeTabButton(
+                  isSelected: controller.selectedTab == tab,
+                  onTap: () => controller.selectedTab = tab,
+                  title: "북마크",
+                );
+              }),
+            ],
           ),
-        ),
-      ],
+
+          SizedBox(height: 16.h),
+
+          Row(
+            children: [
+              CategoryTag(name: "전체", isSelected: true),
+              SizedBox(width: 8.w),
+              CategoryTag(
+                name: "필터",
+                isSelected: false,
+                imageAsset: Assets.icons.mageFilter.path,
+              ),
+            ],
+          ),
+
+          SizedBox(height: 4.h),
+
+          Expanded(
+            child: PagingListener<int, EventCard>(
+              controller: controller.pagingController,
+              builder:
+                  (context, state, fetchNextPage) =>
+                      PagedListView<int, EventCard>(
+                        state: state,
+                        fetchNextPage: fetchNextPage,
+                        builderDelegate: PagedChildBuilderDelegate(
+                          itemBuilder: (context, item, index) => item,
+                        ),
+                      ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

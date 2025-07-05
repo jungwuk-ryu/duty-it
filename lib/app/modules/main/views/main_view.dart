@@ -21,14 +21,11 @@ class MainView extends GetView<MainController> {
       key: controller.scaffoldKey,
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14),
-          child: Obx(
+        child: Obx(
             () => Column(
               children: [Expanded(child: pages[controller.currentIndex.value])],
             ),
           ),
-        ),
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
