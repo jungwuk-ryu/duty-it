@@ -29,4 +29,23 @@ class AppUtils {
       ),
     );
   }
+
+  static String weekDay2Text(int weekDay) {
+    final List<String> texts = ['월', '화', '수', '목', '금', '토', '일'];
+    return texts[weekDay % 7];
+  }
+
+  static bool isSameDay(DateTime dt1, DateTime dt2) {
+    return dt1.year == dt2.year && dt1.month == dt2.month && dt1.day == dt2.day;
+  }
+
+  static DateTime dateTime2Date(DateTime dt) {
+    return dt.copyWith(
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
+  }
 }

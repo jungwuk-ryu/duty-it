@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
 
 class CalendarController extends GetxController {
-  //TODO: Implement CalendarController
+  final Rx<DateTime> _currentDateTime = DateTime.now().obs;
+  get currentDateTime => _currentDateTime.value;
+  set currentDateTime(value) => _currentDateTime.value = value;
+
 
   final count = 0.obs;
   @override
