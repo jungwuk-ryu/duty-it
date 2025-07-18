@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:myapp/app/modules/main/controllers/main_controller.dart';
+import 'package:myapp/app/modules/main/controllers/main_view_controller.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
 class DrawerAccountButton extends StatelessWidget {
@@ -20,6 +20,6 @@ class DrawerAccountButton extends StatelessWidget {
   }
 
   void _onClick() {
-    Get.find<MainController>().onAccountSettingButtonClicked();
+    Get.find<MainViewController>().onAccountSettingButtonClicked();
   }
 }

@@ -10,9 +10,9 @@ import 'package:myapp/app/modules/home/widgets/home_tab_button.dart';
 import 'package:myapp/app/modules/home/widgets/search_bar.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
-import '../controllers/home_controller.dart';
+import '../controllers/home_view_controller.dart';
 
-class HomeView extends GetView<HomeController> {
+class HomeView extends GetView<HomeViewController> {
   const HomeView({super.key});
   @override
   Widget build(BuildContext context) {
@@ -64,15 +64,14 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             child: PagingListener<int, EventCard>(
               controller: controller.pagingController,
-              builder:
-                  (context, state, fetchNextPage) =>
-                      PagedListView<int, EventCard>(
-                        state: state,
-                        fetchNextPage: fetchNextPage,
-                        builderDelegate: PagedChildBuilderDelegate(
-                          itemBuilder: (context, item, index) => item,
-                        ),
-                      ),
+              builder: (context, state, fetchNextPage) =>
+                  PagedListView<int, EventCard>(
+                    state: state,
+                    fetchNextPage: fetchNextPage,
+                    builderDelegate: PagedChildBuilderDelegate(
+                      itemBuilder: (context, item, index) => item,
+                    ),
+                  ),
             ),
           ),
         ],

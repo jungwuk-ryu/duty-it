@@ -4,7 +4,7 @@ import 'package:myapp/app/modules/home/widgets/event_card.dart';
 
 enum HomeTab { event, bookmark }
 
-class HomeController extends GetxController {
+class HomeViewController extends GetxController {
   late final PagingController _pagingController;
   get pagingController => _pagingController;
 

@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:myapp/app/modules/calendar/widgets/calendar_title_text.dart';
 import 'package:myapp/app/modules/calendar/widgets/custom_calendar.dart';
 
-import '../controllers/calendar_controller.dart';
+import '../controllers/calendar_view_controller.dart';
 
-class CalendarView extends GetView<CalendarController> {
+class CalendarView extends GetView<CalendarViewController> {
   const CalendarView({super.key});
   @override
   Widget build(BuildContext context) {
@@ -32,10 +32,14 @@ class CalendarView extends GetView<CalendarController> {
             controller: PageController(initialPage: 2000),
             scrollDirection: Axis.horizontal,
             onPageChanged: (i) {
-              controller.currentDateTime = now.copyWith(month: now.month + i - 2000);
+              controller.currentDateTime = now.copyWith(
+                month: now.month + i - 2000,
+              );
             },
             itemBuilder: (_, i) {
-              return CustomCalendar(date: now.copyWith(month: now.month + i - 2000));
+              return CustomCalendar(
+                date: now.copyWith(month: now.month + i - 2000),
+              );
             },
           ),
         ),

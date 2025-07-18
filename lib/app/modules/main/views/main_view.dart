@@ -8,9 +8,9 @@ import 'package:myapp/app/modules/home/views/home_view.dart';
 import 'package:myapp/app/modules/main/widgets/drawer/end_drawer.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
-import '../controllers/main_controller.dart';
+import '../controllers/main_view_controller.dart';
 
-class MainView extends GetView<MainController> {
+class MainView extends GetView<MainViewController> {
   MainView({super.key});
 
   final pages = [HomeView(), CalendarView()];
@@ -22,10 +22,10 @@ class MainView extends GetView<MainController> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Obx(
-            () => Column(
-              children: [Expanded(child: pages[controller.currentIndex.value])],
-            ),
+          () => Column(
+            children: [Expanded(child: pages[controller.currentIndex.value])],
           ),
+        ),
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
@@ -42,10 +42,9 @@ class MainView extends GetView<MainController> {
                 Assets.icons.paper.path,
                 width: 20.r,
                 height: 20.r,
-                color:
-                    controller.currentIndex.value == 0
-                        ? AppColors.black
-                        : AppColors.g04,
+                color: controller.currentIndex.value == 0
+                    ? AppColors.black
+                    : AppColors.g04,
               ),
               label: '행사',
             ),
@@ -54,10 +53,9 @@ class MainView extends GetView<MainController> {
                 Assets.icons.calendarClearSharp.path,
                 width: 20.r,
                 height: 20.r,
-                color:
-                    controller.currentIndex.value == 1
-                        ? AppColors.black
-                        : AppColors.g04,
+                color: controller.currentIndex.value == 1
+                    ? AppColors.black
+                    : AppColors.g04,
               ),
               label: '캘린더',
             ),
