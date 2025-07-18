@@ -1,45 +1,92 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/widgets/category_tag.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/home_header.dart';
 import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/gen/assets.gen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:persistent_header_adaptive/persistent_header_adaptive.dart';
 
 import '../controllers/home_view_controller.dart';
 
 class HomeView extends GetView<HomeViewController> {
   const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            elevation: 0,
+            floating: true,
+            snap: true,
+            automaticallyImplyLeading: false,
+            actions: <Widget>[Container()],
+            leading: SizedBox.shrink(),
+            flexibleSpace: FlexibleSpaceBar(background: HomeHeader()),
+          ),
+
+          AdaptiveHeightSliverPersistentHeader(
+            pinned: true,
+            child: _Header(controller: controller),
+          ),
+
+          Obx(() {
+            return PagedSliverList<int, EventCard>(
+              state: controller.pagingState,
+              fetchNextPage: controller.fetchNextPage,
+              builderDelegate: PagedChildBuilderDelegate<EventCard>(
+                itemBuilder: (context, item, index) => item,
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  final HomeViewController controller;
+
+  const _Header({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: AppColors.white,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HomeHeader(),
+          SizedBox(height: 20.h),
           HomeSearchBar(controller: TextEditingController()),
           SizedBox(height: 18.h),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Obx(() {
-                HomeTab tab = HomeTab.event;
+                const HomeTab tab = HomeTab.event;
                 return HomeTabButton(
                   isSelected: controller.selectedTab == tab,
                   onTap: () => controller.selectedTab = tab,
-                  title: "행사 리스트",
+                  title: '행사 리스트',
                 );
               }),
               Obx(() {
-                HomeTab tab = HomeTab.bookmark;
+                const HomeTab tab = HomeTab.bookmark;
                 return HomeTabButton(
                   isSelected: controller.selectedTab == tab,
                   onTap: () => controller.selectedTab = tab,
-                  title: "북마크",
+                  title: '북마크',
                 );
               }),
             ],
@@ -49,31 +96,17 @@ class HomeView extends GetView<HomeViewController> {
 
           Row(
             children: [
-              CategoryTag(name: "전체", isSelected: true),
+              const CategoryTag(name: '전체', isSelected: true),
               SizedBox(width: 8.w),
               CategoryTag(
-                name: "필터",
+                name: '필터',
                 isSelected: false,
                 imageAsset: Assets.icons.mageFilter.path,
               ),
             ],
           ),
 
-          SizedBox(height: 4.h),
-
-          Expanded(
-            child: PagingListener<int, EventCard>(
-              controller: controller.pagingController,
-              builder: (context, state, fetchNextPage) =>
-                  PagedListView<int, EventCard>(
-                    state: state,
-                    fetchNextPage: fetchNextPage,
-                    builderDelegate: PagedChildBuilderDelegate(
-                      itemBuilder: (context, item, index) => item,
-                    ),
-                  ),
-            ),
-          ),
+          SizedBox(height: 16.h),
         ],
       ),
     );
