@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
 
 class CustomCalendarHeaderSection extends StatelessWidget {
@@ -10,7 +9,10 @@ class CustomCalendarHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: List.generate(weekTexts.length, (i) => _HeaderText(weekTexts[i])),
+      children: List.generate(
+        weekTexts.length,
+        (i) => _HeaderText(weekTexts[i]),
+      ),
     );
   }
 }
@@ -23,17 +25,14 @@ class _HeaderText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: SizedBox(
-        height: 16.h,
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: AppColors.g07,
-              fontSize: 10,
-              fontWeight: FontWeight.w400,
-              height: 1.60,
-            ),
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+            color: AppColors.g07,
+            fontSize: 10,
+            fontWeight: FontWeight.w400,
+            height: 1.60,
           ),
         ),
       ),
