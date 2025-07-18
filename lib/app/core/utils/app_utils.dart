@@ -49,9 +49,20 @@ class AppUtils {
     );
   }
 
-  static bool isDateWithin (DateTime target, DateTime start, DateTime end) {
-    return (start.isBefore(target) ||
-                    AppUtils.isSameDay(start, target)) &&
-                !end.isBefore(target);
+  static bool isDateWithin(DateTime target, DateTime start, DateTime end) {
+    if (hasTime(target)) target = dateTime2Date(target);
+    if (hasTime(start)) start = dateTime2Date(start);
+    if (hasTime(end)) end = dateTime2Date(end);
+
+    return (start.isBefore(target) || AppUtils.isSameDay(start, target)) &&
+        !end.isBefore(target);
+  }
+
+  static bool hasTime(DateTime dt) {
+    return dt.microsecond != 0 ||
+        dt.millisecond != 0 ||
+        dt.second != 0 ||
+        dt.minute != 0 ||
+        dt.hour != 0;
   }
 }

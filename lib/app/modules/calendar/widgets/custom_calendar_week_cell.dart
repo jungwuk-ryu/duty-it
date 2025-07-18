@@ -22,7 +22,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
 
   DateTime getStartOfWeekSunday(DateTime date) {
     int offset = date.weekday % 7;
-    return date.subtract(Duration(days: offset));
+    return AppUtils.dateTime2Date(date.subtract(Duration(days: offset)));
   }
 
   @override
@@ -156,6 +156,7 @@ class _WeekEventRow extends StatelessWidget {
           bool foundEvent = false;
           while (eventIdx < events.length) {
             var event = events[eventIdx];
+
             if (AppUtils.isDateWithin(
               currentDate,
               event.startDate,
