@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:get/get.dart';
+import 'package:myapp/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:myapp/app/modules/calendar/widgets/calendar_title_text.dart';
 import 'package:myapp/app/modules/calendar/widgets/custom_calendar.dart';
 
@@ -19,7 +19,7 @@ class CalendarView extends GetView<CalendarViewController> {
         SizedBox(height: 15.h),
         Padding(
           padding: EdgeInsetsGeometry.only(left: 16.w),
-          child: Obx(() => CalendarTitleText(dt: controller.currentDateTime)),
+          child: Obx(() => CalendarTitleText(dt: controller.currentDate)),
         ),
         Container(
           width: double.infinity,
@@ -32,13 +32,21 @@ class CalendarView extends GetView<CalendarViewController> {
             controller: PageController(initialPage: 2000),
             scrollDirection: Axis.horizontal,
             onPageChanged: (i) {
-              controller.currentDateTime = now.copyWith(
+              controller.currentDate = now.copyWith(
                 month: now.month + i - 2000,
               );
             },
             itemBuilder: (_, i) {
+              DateTime month = now.copyWith(month: now.month + i - 2000);
+              var calendarController = CustomCalendarController();
+
+              controller.getCalendarEvents(month).then((v) {
+                calendarController.events = v;
+              });
+
               return CustomCalendar(
-                date: now.copyWith(month: now.month + i - 2000),
+                date: month,
+                controller: calendarController,
               );
             },
           ),
