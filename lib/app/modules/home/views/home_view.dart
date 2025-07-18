@@ -1,7 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/widgets/category_tag.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
-import 'package:duty_it/app/modules/home/widgets/home_header.dart';
+import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -31,7 +31,7 @@ class HomeView extends GetView<HomeViewController> {
             automaticallyImplyLeading: false,
             actions: <Widget>[Container()],
             leading: SizedBox.shrink(),
-            flexibleSpace: FlexibleSpaceBar(background: HomeHeader()),
+            flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
           ),
 
           AdaptiveHeightSliverPersistentHeader(
