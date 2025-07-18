@@ -15,7 +15,7 @@ class CustomCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime correctedDate = date.copyWith(day: 1);
-
+    DateTime startOfWeek = DateTime(2025, 07, 18);
     return ListView(
       //crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -24,7 +24,42 @@ class CustomCalendar extends StatelessWidget {
         ...List.generate(5, (i) {
           final DateTime cDt = correctedDate.add(Duration(days: 7 * i));
           if (cDt.month != date.month) return SizedBox.shrink();
-          return CustomCalendarWeekCell(date: cDt);
+          return CustomCalendarWeekCell(date: cDt, events: [CalendarEvent(
+                  title: "어떤 세미나",
+                  startDate: startOfWeek,
+                  endDate: startOfWeek.add(Duration(days: 2)),
+                  color: AppColors.cal2,
+                ),
+                CalendarEvent(
+                  title: "어떤 세미나2",
+                  startDate: startOfWeek,
+                  endDate: startOfWeek.add(Duration(days: 1)),
+                  color: AppColors.cal1,
+                ),
+                CalendarEvent(
+                  title: "어떤 세미나3",
+                  startDate: startOfWeek,
+                  endDate: startOfWeek.add(Duration(days: 2)),
+                  color: AppColors.cal1,
+                ),
+                CalendarEvent(
+                  title: "어떤 세미나4",
+                  startDate: startOfWeek,
+                  endDate: startOfWeek.add(Duration(days: 3)),
+                  color: AppColors.cal1,
+                ),
+                CalendarEvent(
+                  title: "어떤 세미나3",
+                  startDate: startOfWeek.add(Duration(days: 3)),
+                  endDate: startOfWeek.add(Duration(days: 5)),
+                  color: AppColors.cal2,
+                ),
+                CalendarEvent(
+                  title: "어떤 세미나4",
+                  startDate: startOfWeek.add(Duration(days: 7)),
+                  endDate: startOfWeek.add(Duration(days: 10)),
+                  color: AppColors.cal3,
+                ),],);
         }),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -38,6 +73,7 @@ class CustomCalendar extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(height: 4.h),
         CustomCalendartEventCard(),
         CustomCalendartEventCard(),
         CustomCalendartEventCard(),

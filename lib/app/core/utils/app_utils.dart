@@ -36,7 +36,7 @@ class AppUtils {
   }
 
   static bool isSameDay(DateTime dt1, DateTime dt2) {
-    return dt1.year == dt2.year && dt1.month == dt2.month && dt1.day == dt2.day;
+    return dt1.day == dt2.day && dt1.month == dt2.month && dt1.year == dt2.year;
   }
 
   static DateTime dateTime2Date(DateTime dt) {
@@ -47,5 +47,11 @@ class AppUtils {
       millisecond: 0,
       microsecond: 0,
     );
+  }
+
+  static bool isDateWithin (DateTime target, DateTime start, DateTime end) {
+    return (start.isBefore(target) ||
+                    AppUtils.isSameDay(start, target)) &&
+                !end.isBefore(target);
   }
 }

@@ -9,8 +9,13 @@ import 'package:myapp/app/modules/calendar/widgets/custom_calendar_day_header.da
 
 class CustomCalendarWeekCell extends StatelessWidget {
   final DateTime date;
+  final List<CalendarEvent> events;
 
-  const CustomCalendarWeekCell({super.key, required this.date});
+  const CustomCalendarWeekCell({
+    super.key,
+    required this.date,
+    required this.events,
+  });
 
   DateTime getStartOfWeekSunday(DateTime date) {
     int offset = date.weekday % 7;
@@ -20,182 +25,238 @@ class CustomCalendarWeekCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime startOfWeek = getStartOfWeekSunday(date);
+    final DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
 
-    return SizedBox(
-      height: 72.h,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Row(
-              children: List.generate(7, (i) {
-                final currentDate = startOfWeek.add(Duration(days: i));
-                return Expanded(
-                  child: DayHeader(
-                    date: currentDate,
-                    calendarMonth: date.month,
-                  ),
-                );
-              }),
-            ),
-          ),
-          Expanded(
-            child: DayEventRow(
-              date: startOfWeek,
-              events: [
-                CalendarEvent(
-                  title: "어떤 세미나",
-                  startDate: startOfWeek,
-                  endDate: startOfWeek.add(Duration(days: 1)),
-                  color: AppColors.cal2,
-                ),
-                CalendarEvent(
-                  title: "어떤 세미나2",
-                  startDate: startOfWeek,
-                  endDate: startOfWeek.add(Duration(days: 1)),
-                  color: AppColors.cal2,
-                ),
-                CalendarEvent(
-                  title: "어떤 세미나3",
-                  startDate: startOfWeek.add(Duration(days: 2)),
-                  endDate: startOfWeek.add(Duration(days: 4)),
-                  color: AppColors.cal2,
-                ),
-                CalendarEvent(
-                  title: "어떤 세미나4",
-                  startDate: startOfWeek.add(Duration(days: 6)),
-                  endDate: startOfWeek.add(Duration(days: 9)),
-                  color: AppColors.cal2,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    final maxLines = 2;
+
+    final (rows, usedEvents) = _distributeEvents(
+      events,
+      maxLines,
+      startOfWeek,
+      endOfWeek,
     );
-  }
-}
-
-class DayEventRow extends StatelessWidget {
-  final List<CalendarEvent> events;
-  final DateTime date;
-
-  const DayEventRow({super.key, required this.events, required this.date});
-
-  DateTime getStartOfWeekSunday(DateTime date) {
-    int offset = date.weekday % 7;
-    return AppUtils.dateTime2Date(date
-        .subtract(Duration(days: offset)));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final DateTime startOfWeek = getStartOfWeekSunday(date);
-    List<Widget> children = [];
-    double width = MediaQuery.of(context).size.width / 7;
-
-    int eventIdx = 0;
-    for (int i = 0; i < 7; i++) {
-      final currentDate = startOfWeek.add(Duration(days: i));
-
-      bool foundEvent = false;
-      while (eventIdx < events.length) {
-        var event = events[eventIdx];
-        if (event.startDate.isBefore(currentDate)) {
-          eventIdx++;
-          continue;
-        }
-        if (AppUtils.isSameDay(event.startDate, currentDate)) {
-          foundEvent = true;
-          break;
-        }
-        break;
-      }
-      if (!foundEvent) {
-        children.add(SizedBox(width: width));
-        continue;
-      }
-      if (eventIdx >= events.length) break;
-
-      var event = events[eventIdx++];
-      bool isStart = AppUtils.isSameDay(event.startDate, currentDate);
-      int diffDays = min(
-        event.endDate.difference(currentDate).inDays,
-        startOfWeek.add(Duration(days: 6)).difference(currentDate).inDays,
-      );
-      i += diffDays;
-      double widgetWidth = width * (diffDays + 1);
-      bool isEnd = !startOfWeek.add(Duration(days: 6)).isBefore(event.endDate);
-
-      children.add(
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 4.w),
-          width: widgetWidth,
-          decoration: BoxDecoration(
-            color: event.color,
-            borderRadius: BorderRadius.horizontal(
-              left: Radius.circular(isStart ? 4.r : 0),
-              right: Radius.circular(isEnd ? 4.r : 0),
-            ),
-          ),
-          child: Text(
-            event.title,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              color: AppColors.black,
-              fontSize: 8,
-              fontWeight: FontWeight.w500,
-              height: 1.60,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Row(children: children, spacing: 4.w);
-  }
-}
-
-class DayHeader extends StatelessWidget {
-  final int calendarMonth;
-  final DateTime date;
-
-  const DayHeader({super.key, required this.date, required this.calendarMonth});
-
-  @override
-  Widget build(BuildContext context) {
-    final DateTime now = DateTime.now();
+    final notUsedEvents = events.where((e) => !usedEvents.contains(e)).toList();
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 2.h,
       children: [
-        Container(
-          height: 16.r,
-          decoration: BoxDecoration(
-            color: AppUtils.isSameDay(date, now)
-                    ? AppColors.g03
-                    : AppColors.transparent,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(
-              date.day.toString(),
-              style: TextStyle(
-                color: date.month == calendarMonth
-                    ? AppColors.g07
-                    : AppColors.g03,
-                fontSize: 10,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-                height: 1.60,
-              ),
-            ),
+        Row(
+          children: List.generate(7, (i) {
+            final currentDate = startOfWeek.add(Duration(days: i));
+            return Expanded(
+              child: DayHeader(date: currentDate, calendarMonth: date.month),
+            );
+          }),
+        ),
+        SizedBox(
+          height: 16.h,
+          child: WeekEventRow(
+            startOfWeek: startOfWeek,
+            endOfWeek: endOfWeek,
+            events: rows[0],
           ),
         ),
-        SizedBox(height: 3.h),
+        SizedBox(
+          height: 16.h,
+          child: WeekEventRow(
+            startOfWeek: startOfWeek,
+            endOfWeek: endOfWeek,
+            events: rows[1],
+          ),
+        ),
+        SizedBox(
+          height: 16.h,
+          child: WeekEventLastRow(
+            startOfWeek: startOfWeek,
+            endOfWeek: endOfWeek,
+            events: notUsedEvents,
+          ),
+        ),
       ],
     );
   }
+
+  (List<List<CalendarEvent>>, Set<CalendarEvent>) _distributeEvents(
+    List<CalendarEvent> events,
+    int maxLines,
+    DateTime startOfWeek,
+    DateTime endOfWeek,
+  ) {
+    final rows = List.generate(maxLines, (_) => <CalendarEvent>[]);
+    final used = <CalendarEvent>{};
+
+    for (final event in events) {
+      for (int i = 0; i < maxLines; i++) {
+        final row = rows[i];
+        final hasOverlap = row.any(
+          (e) =>
+              !(event.endDate.isBefore(e.startDate) ||
+                  event.startDate.isAfter(e.endDate)),
+        );
+
+        if (!hasOverlap) {
+          row.add(event);
+          used.add(event);
+          break;
+        }
+      }
+    }
+
+    return (rows, used);
+  }
 }
 
+class WeekEventRow extends StatelessWidget {
+  final List<CalendarEvent> events;
+  final DateTime startOfWeek;
+  final DateTime endOfWeek;
+
+  const WeekEventRow({
+    super.key,
+    required this.events,
+    required this.startOfWeek,
+    required this.endOfWeek,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final double width = constraints.maxWidth / 7;
+
+        List<Widget> children = [];
+
+        int i = 0;
+        while (i < 7) {
+          final currentDate = startOfWeek.add(Duration(days: i));
+
+          int eventIdx = 0;
+          bool foundEvent = false;
+          while (eventIdx < events.length) {
+            var event = events[eventIdx];
+            if (AppUtils.isDateWithin(currentDate, event.startDate, event.endDate)) {
+              foundEvent = true;
+              break;
+            }
+
+            eventIdx++;
+          }
+
+          if (!foundEvent) {
+            children.add(SizedBox(width: width));
+            i++;
+            continue;
+          }
+
+          var event = events[eventIdx++];
+          int diffDays = min(
+            event.endDate.difference(currentDate).inDays,
+            endOfWeek.difference(currentDate).inDays,
+          );
+
+          bool isStart = AppUtils.isSameDay(event.startDate, currentDate);
+          bool isEnd = !endOfWeek.isBefore(event.endDate);
+
+          double widgetWidth = width * (diffDays + 1);
+          if (isStart) widgetWidth -= 2.w;
+          if (isEnd) widgetWidth -= 2.w;
+
+          children.add(
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              margin: EdgeInsets.only(
+                left: isStart ? 2.w : 0,
+                right: isEnd ? 2.w : 0,
+              ),
+              width: widgetWidth,
+              decoration: BoxDecoration(
+                color: event.color,
+                borderRadius: BorderRadius.horizontal(
+                  left: Radius.circular(isStart ? 4.r : 0),
+                  right: Radius.circular(isEnd ? 4.r : 0),
+                ),
+              ),
+              child: Text(
+                event.title,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w500,
+                  height: 1.60,
+                ),
+              ),
+            ),
+          );
+
+          i += diffDays + 1;
+        }
+
+        return Row(children: children);
+      },
+    );
+  }
+}
+
+class WeekEventLastRow extends StatelessWidget {
+  final List<CalendarEvent> events;
+  final DateTime startOfWeek;
+  final DateTime endOfWeek;
+
+  const WeekEventLastRow({
+    super.key,
+    required this.events,
+    required this.startOfWeek,
+    required this.endOfWeek,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final double width = constraints.maxWidth / 7;
+
+        List<Widget> children = [];
+
+        for (int i = 0; i < 7; i++) {
+          final currentDate = startOfWeek.add(Duration(days: i));
+
+          int eventCount = 0;
+          for (int eventIdx = 0; eventIdx < events.length; eventIdx++) {
+            var event = events[eventIdx];
+            if (AppUtils.isDateWithin(currentDate, event.startDate, event.endDate)) {
+              eventCount++;
+            }
+          }
+
+          if (eventCount < 1) {
+            children.add(SizedBox(width: width));
+          } else {
+
+          children.add(
+            SizedBox(
+              width: width,
+              child: Center(
+                child: Text(
+                  "+ $eventCount개",
+                  style: TextStyle(
+                    color: const Color(0xFF6F6F6F),
+                    fontSize: 8,
+                    fontWeight: FontWeight.w500,
+                    height: 1.60,
+                  ),
+                ),
+              ),
+            ),
+          );
+          }
+        }
+
+        return Row(children: children);
+      },
+    );
+  }
+}
