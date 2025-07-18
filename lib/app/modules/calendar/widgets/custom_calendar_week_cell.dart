@@ -72,7 +72,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
           ),
           SizedBox(
             height: 16.h,
-            child: WeekEventRow(
+            child: _WeekEventRow(
               startOfWeek: startOfWeek,
               endOfWeek: endOfWeek,
               events: rows[0],
@@ -80,7 +80,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
           ),
           SizedBox(
             height: 16.h,
-            child: WeekEventRow(
+            child: _WeekEventRow(
               startOfWeek: startOfWeek,
               endOfWeek: endOfWeek,
               events: rows[1],
@@ -88,7 +88,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
           ),
           SizedBox(
             height: 16.h,
-            child: WeekEventLastRow(
+            child: _WeekEventLastRow(
               startOfWeek: startOfWeek,
               endOfWeek: endOfWeek,
               events: notUsedEvents,
@@ -129,13 +129,12 @@ class CustomCalendarWeekCell extends StatelessWidget {
   }
 }
 
-class WeekEventRow extends StatelessWidget {
+class _WeekEventRow extends StatelessWidget {
   final List<CalendarEvent> events;
   final DateTime startOfWeek;
   final DateTime endOfWeek;
 
-  const WeekEventRow({
-    super.key,
+  const _WeekEventRow({
     required this.events,
     required this.startOfWeek,
     required this.endOfWeek,
@@ -226,13 +225,12 @@ class WeekEventRow extends StatelessWidget {
   }
 }
 
-class WeekEventLastRow extends StatelessWidget {
+class _WeekEventLastRow extends StatelessWidget {
   final List<CalendarEvent> events;
   final DateTime startOfWeek;
   final DateTime endOfWeek;
 
-  const WeekEventLastRow({
-    super.key,
+  const _WeekEventLastRow({
     required this.events,
     required this.startOfWeek,
     required this.endOfWeek,
