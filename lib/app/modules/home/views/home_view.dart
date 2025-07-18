@@ -1,79 +1,48 @@
+import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
+import 'package:duty_it/app/modules/home/widgets/event_card.dart';
+import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
+import 'package:duty_it/app/modules/home/widgets/home_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:duty_it/app/modules/home/widgets/category_tag.dart';
-import 'package:duty_it/app/modules/home/widgets/event_card.dart';
-import 'package:duty_it/app/modules/home/widgets/home_header.dart';
-import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
-import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
-import 'package:duty_it/gen/assets.gen.dart';
-
-import '../controllers/home_view_controller.dart';
+import 'package:persistent_header_adaptive/persistent_header_adaptive.dart';
 
 class HomeView extends GetView<HomeViewController> {
   const HomeView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        children: [
-          HomeHeader(),
-          HomeSearchBar(controller: TextEditingController()),
-          SizedBox(height: 18.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Obx(() {
-                HomeTab tab = HomeTab.event;
-                return HomeTabButton(
-                  isSelected: controller.selectedTab == tab,
-                  onTap: () => controller.selectedTab = tab,
-                  title: "행사 리스트",
-                );
-              }),
-              Obx(() {
-                HomeTab tab = HomeTab.bookmark;
-                return HomeTabButton(
-                  isSelected: controller.selectedTab == tab,
-                  onTap: () => controller.selectedTab = tab,
-                  title: "북마크",
-                );
-              }),
-            ],
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            elevation: 0,
+            floating: true,
+            snap: true,
+            automaticallyImplyLeading: false,
+            actions: <Widget>[Container()],
+            leading: SizedBox.shrink(),
+            flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
           ),
 
-          SizedBox(height: 16.h),
+          AdaptiveHeightSliverPersistentHeader(
+            pinned: true,
+            child: HomeHeader(controller: controller),
+          ),
 
-          Row(
-            children: [
-              CategoryTag(name: "전체", isSelected: true),
-              SizedBox(width: 8.w),
-              CategoryTag(
-                name: "필터",
-                isSelected: false,
-                imageAsset: Assets.icons.mageFilter.path,
+          Obx(() {
+            return PagedSliverList<int, EventCard>(
+              state: controller.pagingState,
+              fetchNextPage: controller.fetchNextPage,
+              builderDelegate: PagedChildBuilderDelegate<EventCard>(
+                itemBuilder: (context, item, index) => item,
               ),
-            ],
-          ),
-
-          SizedBox(height: 4.h),
-
-          Expanded(
-            child: PagingListener<int, EventCard>(
-              controller: controller.pagingController,
-              builder: (context, state, fetchNextPage) =>
-                  PagedListView<int, EventCard>(
-                    state: state,
-                    fetchNextPage: fetchNextPage,
-                    builderDelegate: PagedChildBuilderDelegate(
-                      itemBuilder: (context, item, index) => item,
-                    ),
-                  ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
