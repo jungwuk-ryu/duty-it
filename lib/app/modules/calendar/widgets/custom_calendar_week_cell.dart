@@ -171,11 +171,9 @@ class DayHeader extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 16.r,
           height: 16.r,
           decoration: BoxDecoration(
-            color:
-                AppUtils.isSameDay(date, now)
+            color: AppUtils.isSameDay(date, now)
                     ? AppColors.g03
                     : AppColors.transparent,
             shape: BoxShape.circle,
@@ -184,8 +182,9 @@ class DayHeader extends StatelessWidget {
             child: Text(
               date.day.toString(),
               style: TextStyle(
-                color:
-                    date.month == calendarMonth ? AppColors.g07 : AppColors.g03,
+                color: date.month == calendarMonth
+                    ? AppColors.g07
+                    : AppColors.g03,
                 fontSize: 10,
                 fontFamily: 'Pretendard',
                 fontWeight: FontWeight.w400,
