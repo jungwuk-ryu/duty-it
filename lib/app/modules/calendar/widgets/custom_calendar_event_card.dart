@@ -4,10 +4,10 @@ import 'package:myapp/app/core/constants/app_colors.dart';
 import 'package:myapp/app/core/utils/app_utils.dart';
 import 'package:myapp/app/modules/calendar/models/calendar_event.dart';
 
-class CustomCalendartEventCard extends StatelessWidget {
+class CustomCalendarEventCard extends StatelessWidget {
   final CalendarEvent? event;
 
-  const CustomCalendartEventCard(this.event, {super.key});
+  const CustomCalendarEventCard(this.event, {super.key});
 
   @override
   Widget build(BuildContext context) {
