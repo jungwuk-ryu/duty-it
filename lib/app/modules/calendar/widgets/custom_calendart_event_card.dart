@@ -13,18 +13,20 @@ class CustomCalendartEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsGeometry.only(bottom: 7.h, left: 16.w, right: 16.w),
-      child: Container(
-        width: double.infinity,
-        height: 48.h,
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 7.h),
-        decoration: BoxDecoration(
-          color: event?.color ?? AppColors.g01,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Visibility(
-          visible: event != null,
-          replacement: _NoEventText(),
-          child: _EventMetadataColumn(event!),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: 48.h),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 7.h),
+          decoration: BoxDecoration(
+            color: event?.color ?? AppColors.g01,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Visibility(
+            visible: event != null,
+            replacement: _NoEventText(),
+            child: _EventMetadataColumn(event!),
+          ),
         ),
       ),
     );
