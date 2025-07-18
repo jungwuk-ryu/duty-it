@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
 import 'package:myapp/app/core/utils/app_utils.dart';
 import 'package:myapp/app/modules/calendar/models/calendar_event.dart';
-import 'package:myapp/app/modules/calendar/widgets/custom_calendart_event_card.dart';
+import 'package:myapp/app/modules/calendar/widgets/custom_calendar_day_header.dart';
 
 class CustomCalendarWeekCell extends StatelessWidget {
   final DateTime date;
@@ -198,3 +198,4 @@ class DayHeader extends StatelessWidget {
     );
   }
 }
+
