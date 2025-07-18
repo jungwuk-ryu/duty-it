@@ -60,6 +60,9 @@ class CustomCalendar extends StatelessWidget {
         ),
         Obx(() {
           var events = controller.getEventsByDay(controller.currentDateTime);
+          if (events.isEmpty) {
+            return SliverToBoxAdapter(child: CustomCalendarEventCard(null));
+          }
 
           return SliverList(
             delegate: SliverChildListDelegate(
