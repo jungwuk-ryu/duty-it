@@ -4,10 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
 import 'package:myapp/app/core/utils/app_utils.dart';
+import 'package:myapp/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:myapp/app/modules/calendar/models/calendar_event.dart';
 import 'package:myapp/app/modules/calendar/widgets/custom_calendar_day_header.dart';
 
 class CustomCalendarWeekCell extends StatelessWidget {
+  final CustomCalendarController controller;
   final DateTime date;
   final List<CalendarEvent> events;
 
@@ -15,6 +17,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
     super.key,
     required this.date,
     required this.events,
+    required this.controller,
   });
 
   DateTime getStartOfWeekSunday(DateTime date) {
@@ -36,45 +39,63 @@ class CustomCalendarWeekCell extends StatelessWidget {
       endOfWeek,
     );
     final notUsedEvents = events.where((e) => !usedEvents.contains(e)).toList();
+    final GlobalKey key = GlobalKey();
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 2.h,
-      children: [
-        Row(
-          children: List.generate(7, (i) {
-            final currentDate = startOfWeek.add(Duration(days: i));
-            return Expanded(
-              child: DayHeader(date: currentDate, calendarMonth: date.month),
-            );
-          }),
-        ),
-        SizedBox(
-          height: 16.h,
-          child: WeekEventRow(
-            startOfWeek: startOfWeek,
-            endOfWeek: endOfWeek,
-            events: rows[0],
+    return GestureDetector(
+      key: key,
+      behavior: HitTestBehavior.translucent,
+      onTapDown: (details) {
+        final RenderBox box =
+            key.currentContext!.findRenderObject() as RenderBox;
+        final Size size = box.size;
+
+        controller.currentDateTime = startOfWeek.add(
+          Duration(days: (details.localPosition.dx / (size.width / 7)).toInt()),
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 2.h,
+        children: [
+          Row(
+            children: List.generate(7, (i) {
+              final currentDate = startOfWeek.add(Duration(days: i));
+              return Expanded(
+                child: DayHeader(
+                  date: currentDate,
+                  calendarMonth: date.month,
+                  controller: controller,
+                ),
+              );
+            }),
           ),
-        ),
-        SizedBox(
-          height: 16.h,
-          child: WeekEventRow(
-            startOfWeek: startOfWeek,
-            endOfWeek: endOfWeek,
-            events: rows[1],
+          SizedBox(
+            height: 16.h,
+            child: WeekEventRow(
+              startOfWeek: startOfWeek,
+              endOfWeek: endOfWeek,
+              events: rows[0],
+            ),
           ),
-        ),
-        SizedBox(
-          height: 16.h,
-          child: WeekEventLastRow(
-            startOfWeek: startOfWeek,
-            endOfWeek: endOfWeek,
-            events: notUsedEvents,
+          SizedBox(
+            height: 16.h,
+            child: WeekEventRow(
+              startOfWeek: startOfWeek,
+              endOfWeek: endOfWeek,
+              events: rows[1],
+            ),
           ),
-        ),
-      ],
+          SizedBox(
+            height: 16.h,
+            child: WeekEventLastRow(
+              startOfWeek: startOfWeek,
+              endOfWeek: endOfWeek,
+              events: notUsedEvents,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -136,7 +157,11 @@ class WeekEventRow extends StatelessWidget {
           bool foundEvent = false;
           while (eventIdx < events.length) {
             var event = events[eventIdx];
-            if (AppUtils.isDateWithin(currentDate, event.startDate, event.endDate)) {
+            if (AppUtils.isDateWithin(
+              currentDate,
+              event.startDate,
+              event.endDate,
+            )) {
               foundEvent = true;
               break;
             }
@@ -227,7 +252,11 @@ class WeekEventLastRow extends StatelessWidget {
           int eventCount = 0;
           for (int eventIdx = 0; eventIdx < events.length; eventIdx++) {
             var event = events[eventIdx];
-            if (AppUtils.isDateWithin(currentDate, event.startDate, event.endDate)) {
+            if (AppUtils.isDateWithin(
+              currentDate,
+              event.startDate,
+              event.endDate,
+            )) {
               eventCount++;
             }
           }
@@ -235,23 +264,22 @@ class WeekEventLastRow extends StatelessWidget {
           if (eventCount < 1) {
             children.add(SizedBox(width: width));
           } else {
-
-          children.add(
-            SizedBox(
-              width: width,
-              child: Center(
-                child: Text(
-                  "+ $eventCount개",
-                  style: TextStyle(
-                    color: const Color(0xFF6F6F6F),
-                    fontSize: 8,
-                    fontWeight: FontWeight.w500,
-                    height: 1.60,
+            children.add(
+              SizedBox(
+                width: width,
+                child: Center(
+                  child: Text(
+                    "+ $eventCount개",
+                    style: TextStyle(
+                      color: const Color(0xFF6F6F6F),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      height: 1.60,
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
+            );
           }
         }
 
