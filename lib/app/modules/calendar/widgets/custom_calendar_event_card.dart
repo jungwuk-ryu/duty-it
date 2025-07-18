@@ -22,11 +22,7 @@ class CustomCalendarEventCard extends StatelessWidget {
             color: event?.color ?? AppColors.g01,
             borderRadius: BorderRadius.circular(4),
           ),
-          child: Visibility(
-            visible: event != null,
-            replacement: _NoEventText(),
-            child: _EventMetadataColumn(event!),
-          ),
+          child: event != null ? _EventMetadataColumn(event!) : _NoEventText(),
         ),
       ),
     );
@@ -36,13 +32,16 @@ class CustomCalendarEventCard extends StatelessWidget {
 class _NoEventText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Text(
-      '일정 없음',
-      style: TextStyle(
-        color: AppColors.black,
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        height: 1.60,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        '일정 없음',
+        style: TextStyle(
+          color: AppColors.black,
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          height: 1.60,
+        ),
       ),
     );
   }
