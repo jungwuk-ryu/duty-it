@@ -3,20 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
 
 class CustomCalendarHeaderSection extends StatelessWidget {
+  static const List<String> weekTexts = ['일', '월', '화', '수', '목', '금', '토'];
+
   const CustomCalendarHeaderSection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
-        _HeaderText('일'),
-        _HeaderText('월'),
-        _HeaderText('화'),
-        _HeaderText('수'),
-        _HeaderText('목'),
-        _HeaderText('금'),
-        _HeaderText('토'),
-      ],
+      children: List.generate(weekTexts.length, (i) => _HeaderText(weekTexts[i])),
     );
   }
 }
