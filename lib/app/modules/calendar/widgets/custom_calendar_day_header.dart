@@ -8,37 +8,53 @@ import 'package:myapp/app/modules/calendar/controllers/custom_calendar_controlle
 class DayHeader extends StatelessWidget {
   final CustomCalendarController controller;
   final int calendarMonth;
+  final DateTime today;
   final DateTime date;
 
-  const DayHeader({super.key, required this.date, required this.calendarMonth, required this.controller});
+  const DayHeader({
+    super.key,
+    required this.date,
+    required this.calendarMonth,
+    required this.controller,
+    required this.today,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Obx(() => Container(
-          height: 16.r,
-          decoration: BoxDecoration(
-            color: AppUtils.isSameDay(date, controller.currentDateTime)
-                ? AppColors.g03
-                : AppColors.transparent,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(
-              date.day.toString(),
-              style: TextStyle(
-                color: date.month == calendarMonth
-                    ? AppColors.g07
-                    : AppColors.g03,
-                fontSize: 10,
-                fontFamily: 'Pretendard',
-                fontWeight: FontWeight.w400,
-                height: 1.60,
+        Obx(() {
+          bool isSelected = AppUtils.isSameDay(
+            date,
+            controller.currentDateTime,
+          );
+          bool isToday = AppUtils.isSameDay(date, today);
+          return Container(
+            height: 16.r,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppColors.black
+                  : (isToday ? AppColors.g03 : AppColors.transparent),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                date.day.toString(),
+                style: TextStyle(
+                  color: isSelected
+                      ? AppColors.white
+                      : (date.month == calendarMonth
+                            ? AppColors.g07
+                            : AppColors.g03),
+                  fontSize: 10,
+                  fontFamily: 'Pretendard',
+                  fontWeight: FontWeight.w400,
+                  height: 1.60,
+                ),
               ),
             ),
-          ),
-        )),
+          );
+        }),
         SizedBox(height: 3.h),
       ],
     );

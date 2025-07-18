@@ -27,6 +27,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime now = DateTime.now();
     final DateTime startOfWeek = getStartOfWeekSunday(date);
     final DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
 
@@ -63,6 +64,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
               final currentDate = startOfWeek.add(Duration(days: i));
               return Expanded(
                 child: DayHeader(
+                  today: now,
                   date: currentDate,
                   calendarMonth: date.month,
                   controller: controller,
