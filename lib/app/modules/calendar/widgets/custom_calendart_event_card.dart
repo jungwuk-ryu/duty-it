@@ -17,9 +17,10 @@ class CustomCalendartEventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.only(top: 4.h, left: 16.w, right: 16.w),
+      padding: EdgeInsetsGeometry.only(bottom: 7.h, left: 16.w, right: 16.w),
       child: Container(
         width: double.infinity,
+        height: 48.h,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 7.h),
         decoration: BoxDecoration(
           color: backgroundColor ?? AppColors.g01,
