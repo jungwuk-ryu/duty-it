@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
-import 'package:myapp/app/modules/main/widgets/drawer/drawer_account_button.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/main/widgets/drawer/drawer_account_button.dart';
 
 class DrawerAccoutSection extends StatelessWidget {
   const DrawerAccoutSection({super.key});

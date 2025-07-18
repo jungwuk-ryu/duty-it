@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:myapp/app/modules/main/controllers/main_view_controller.dart';
-import 'package:myapp/gen/assets.gen.dart';
+import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
+import 'package:duty_it/gen/assets.gen.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -14,7 +14,7 @@ class HomeHeader extends StatelessWidget {
       child: Center(
         child: Row(
           children: [
-            Text("App Name"),
+            Text("듀잇 - Duty It!"),
             Expanded(child: SizedBox()),
             GestureDetector(
               onTap: () {

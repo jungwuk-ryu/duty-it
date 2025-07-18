@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
-import 'package:myapp/app/modules/calendar/models/calendar_event.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 
 class CalendarViewController extends GetxController {
   final Rx<DateTime> _currentDate = DateTime.now().obs;

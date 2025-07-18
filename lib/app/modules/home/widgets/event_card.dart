@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
-import 'package:myapp/app/modules/home/widgets/event_bookmark_button.dart';
-import 'package:myapp/gen/assets.gen.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
+import 'package:duty_it/gen/assets.gen.dart';
 
 class EventCard extends StatelessWidget {
   final String? imageUri;
@@ -23,12 +23,15 @@ class EventCard extends StatelessWidget {
                 color: Color(0xffD9D9D9),
                 borderRadius: BorderRadius.circular(8.r),
               ),
-              child:
-                  imageUri != null
-                      ? Image.network(imageUri!, fit: BoxFit.fitWidth)
-                      : Center(child: Image.asset(Assets.icons.nurseCap.path)),
+              child: imageUri != null
+                  ? Image.network(imageUri!, fit: BoxFit.fitWidth)
+                  : Center(child: Image.asset(Assets.icons.nurseCap.path)),
             ),
-            Positioned(top: 0, right: 0, child: EventBookmarkButton(isBookmarked: false)),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: EventBookmarkButton(isBookmarked: false),
+            ),
           ],
         ),
         SizedBox(height: 16.h),
@@ -47,7 +50,9 @@ class EventCard extends StatelessWidget {
         ],),
         Row(
           children: [
-            Expanded(child: EventMetaItem(name: "카테고리", value: "컨퍼런스 / 학술대회")),
+            Expanded(
+              child: EventMetaItem(name: "카테고리", value: "컨퍼런스 / 학술대회"),
+            ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(left: 8.w),

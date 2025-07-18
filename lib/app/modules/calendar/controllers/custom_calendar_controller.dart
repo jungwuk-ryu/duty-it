@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:myapp/app/core/utils/app_utils.dart';
-import 'package:myapp/app/modules/calendar/models/calendar_event.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 
 class CustomCalendarController {
   final Rx<DateTime> _currentDateTime = DateTime.now().obs;

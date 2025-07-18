@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 
 class HomeTabButton extends StatelessWidget {
   final bool isSelected;
@@ -26,10 +26,7 @@ class HomeTabButton extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                color:
-                    isSelected
-                        ? AppColors.black
-                        : AppColors.g04,
+                color: isSelected ? AppColors.black : AppColors.g04,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 height: 1.20,

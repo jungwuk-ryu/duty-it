@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
-import 'package:myapp/app/modules/account/controllers/account_view_controller.dart';
-import 'package:myapp/gen/assets.gen.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/account/controllers/account_view_controller.dart';
+import 'package:duty_it/gen/assets.gen.dart';
 
 class AccountBottomModal extends StatefulWidget {
   const AccountBottomModal({super.key});

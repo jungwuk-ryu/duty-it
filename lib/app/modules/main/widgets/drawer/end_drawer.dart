@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myapp/app/modules/main/widgets/drawer/drawer_accout_section.dart';
-import 'package:myapp/app/modules/main/widgets/drawer/drawer_category_section.dart';
-import 'package:myapp/app/modules/main/widgets/drawer/drawer_close_button.dart';
-import 'package:myapp/app/modules/main/widgets/drawer/drawer_divider.dart';
+import 'package:duty_it/app/modules/main/widgets/drawer/drawer_accout_section.dart';
+import 'package:duty_it/app/modules/main/widgets/drawer/drawer_category_section.dart';
+import 'package:duty_it/app/modules/main/widgets/drawer/drawer_close_button.dart';
+import 'package:duty_it/app/modules/main/widgets/drawer/drawer_divider.dart';
 
 class EndDrawer extends StatelessWidget {
   const EndDrawer({super.key});
@@ -24,12 +24,12 @@ class EndDrawer extends StatelessWidget {
             SizedBox(height: 49.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: DrawerCloseButton()
+              child: DrawerCloseButton(),
             ),
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: DrawerAccoutSection()
+              child: DrawerAccoutSection(),
             ),
 
             SizedBox(height: 38.h),

@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
-import 'package:myapp/app/core/utils/app_utils.dart';
-import 'package:myapp/app/modules/calendar/controllers/custom_calendar_controller.dart';
-import 'package:myapp/app/modules/calendar/widgets/custom_calendar_event_card.dart';
-import 'package:myapp/app/modules/calendar/widgets/custom_calendar_header_section.dart';
-import 'package:myapp/app/modules/calendar/widgets/custom_calendar_week_cell.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
+import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_event_card.dart';
+import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_header_section.dart';
+import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_week_cell.dart';
 
 class CustomCalendar extends StatelessWidget {
   final DateTime date;

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 
 class CustomCalendarHeaderSection extends StatelessWidget {
   static const List<String> weekTexts = ['일', '월', '화', '수', '목', '금', '토'];

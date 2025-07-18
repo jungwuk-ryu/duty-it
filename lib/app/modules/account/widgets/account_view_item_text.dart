@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 
 class AccountViewItemText extends StatelessWidget {
   final String text;

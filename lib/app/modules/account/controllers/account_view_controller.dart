@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:myapp/app/modules/account/widgets/account_bottom_modal.dart';
+import 'package:duty_it/app/modules/account/widgets/account_bottom_modal.dart';
 
 class AccountViewController extends GetxController {
   String _userName = "수줍은 복숭아";

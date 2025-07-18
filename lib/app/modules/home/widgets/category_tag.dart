@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 
 class CategoryTag extends StatelessWidget {
   final String? imageAsset;

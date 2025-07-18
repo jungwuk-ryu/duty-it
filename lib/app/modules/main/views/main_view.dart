@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
-import 'package:myapp/app/core/constants/app_colors.dart';
-import 'package:myapp/app/modules/calendar/views/calendar_view.dart';
-import 'package:myapp/app/modules/home/views/home_view.dart';
-import 'package:myapp/app/modules/main/widgets/drawer/end_drawer.dart';
-import 'package:myapp/gen/assets.gen.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/calendar/views/calendar_view.dart';
+import 'package:duty_it/app/modules/home/views/home_view.dart';
+import 'package:duty_it/app/modules/main/widgets/drawer/end_drawer.dart';
+import 'package:duty_it/gen/assets.gen.dart';
 
 import '../controllers/main_view_controller.dart';
 
