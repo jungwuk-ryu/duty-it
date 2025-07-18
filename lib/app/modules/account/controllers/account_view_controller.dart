@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:myapp/app/modules/account/widgets/account_bottom_modal.dart';
 
-class AccountController extends GetxController {
+class AccountViewController extends GetxController {
   String _userName = "수줍은 복숭아";
 
   @override
@@ -32,8 +32,7 @@ class AccountController extends GetxController {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
-      builder:
-          (_) => AccountBottomModal(),
+      builder: (_) => AccountBottomModal(),
     );
   }
 

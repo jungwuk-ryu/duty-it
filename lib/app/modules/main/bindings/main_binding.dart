@@ -1,20 +1,14 @@
 import 'package:get/get.dart';
-import 'package:myapp/app/modules/calendar/controllers/calendar_controller.dart';
-import 'package:myapp/app/modules/home/controllers/home_controller.dart';
+import 'package:myapp/app/modules/calendar/controllers/calendar_view_controller.dart';
+import 'package:myapp/app/modules/home/controllers/home_view_controller.dart';
 
-import '../controllers/main_controller.dart';
+import '../controllers/main_view_controller.dart';
 
 class MainBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<MainController>(
-      () => MainController(),
-    );
-    Get.lazyPut<HomeController>(
-      () => HomeController(),
-    );
-    Get.lazyPut<CalendarController>(
-      () => CalendarController(),
-    );
+    Get.lazyPut<MainViewController>(() => MainViewController());
+    Get.lazyPut<HomeViewController>(() => HomeViewController());
+    Get.lazyPut<CalendarViewController>(() => CalendarViewController());
   }
 }

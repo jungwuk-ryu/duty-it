@@ -8,9 +8,9 @@ import 'package:myapp/app/modules/account/widgets/account_view_item_text.dart';
 import 'package:myapp/app/modules/account/widgets/account_view_item_title.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
-import '../controllers/account_controller.dart';
+import '../controllers/account_view_controller.dart';
 
-class AccountView extends GetView<AccountController> {
+class AccountView extends GetView<AccountViewController> {
   const AccountView({super.key});
   @override
   Widget build(BuildContext context) {
@@ -47,41 +47,40 @@ class AccountView extends GetView<AccountController> {
               AccountViewDivider(),
               SizedBox(height: 16.h),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AccountViewItemTitle("닉네임"),
-                      SizedBox(height: 8.h),
-                      Row(
-                        children: [
-                          AccountViewItemText(controller.getUserName()),
-                          GestureDetector(
-                            onTap:
-                                () => controller.onUserNameEditButtonClicked(),
-                            child: Image.asset(
-                              Assets.icons.solarPenBold.path,
-                              width: 24.w,
-                              height: 24.h,
-                            ),
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AccountViewItemTitle("닉네임"),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        AccountViewItemText(controller.getUserName()),
+                        GestureDetector(
+                          onTap: () => controller.onUserNameEditButtonClicked(),
+                          child: Image.asset(
+                            Assets.icons.solarPenBold.path,
+                            width: 24.w,
+                            height: 24.h,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
 
-                      SizedBox(height: 42.h),
+                    SizedBox(height: 42.h),
 
-                      AccountViewItemTitle("연결된 카카오 계정"),
-                      SizedBox(height: 8.h),
-                      AccountViewItemText(controller.getAccountId()),
+                    AccountViewItemTitle("연결된 카카오 계정"),
+                    SizedBox(height: 8.h),
+                    AccountViewItemText(controller.getAccountId()),
 
-                      SizedBox(height: 32.h),
-                      AccountViewItemText("로그아웃", color: AppColors.g05),
+                    SizedBox(height: 32.h),
+                    AccountViewItemText("로그아웃", color: AppColors.g05),
 
-                      SizedBox(height: 16.h),
-                      AccountViewItemText("회원 탈퇴", color: AppColors.g05),
-                    ],
-                  ),
+                    SizedBox(height: 16.h),
+                    AccountViewItemText("회원 탈퇴", color: AppColors.g05),
+                  ],
                 ),
+              ),
             ],
           ),
         ),

@@ -29,4 +29,40 @@ class AppUtils {
       ),
     );
   }
+
+  static String weekDay2Text(int weekDay) {
+    final List<String> texts = ['월', '화', '수', '목', '금', '토', '일'];
+    return texts[weekDay % 7];
+  }
+
+  static bool isSameDay(DateTime dt1, DateTime dt2) {
+    return dt1.day == dt2.day && dt1.month == dt2.month && dt1.year == dt2.year;
+  }
+
+  static DateTime dateTime2Date(DateTime dt) {
+    return dt.copyWith(
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
+  }
+
+  static bool isDateWithin(DateTime target, DateTime start, DateTime end) {
+    if (hasTime(target)) target = dateTime2Date(target);
+    if (hasTime(start)) start = dateTime2Date(start);
+    if (hasTime(end)) end = dateTime2Date(end);
+
+    return (start.isBefore(target) || AppUtils.isSameDay(start, target)) &&
+        !end.isBefore(target);
+  }
+
+  static bool hasTime(DateTime dt) {
+    return dt.microsecond != 0 ||
+        dt.millisecond != 0 ||
+        dt.second != 0 ||
+        dt.minute != 0 ||
+        dt.hour != 0;
+  }
 }

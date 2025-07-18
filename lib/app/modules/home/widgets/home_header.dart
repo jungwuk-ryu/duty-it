@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:myapp/app/modules/main/controllers/main_controller.dart';
+import 'package:myapp/app/modules/main/controllers/main_view_controller.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -18,7 +18,7 @@ class HomeHeader extends StatelessWidget {
             Expanded(child: SizedBox()),
             GestureDetector(
               onTap: () {
-                var con = Get.find<MainController>();
+                var con = Get.find<MainViewController>();
                 con.openEndDrawer();
               },
               child: Image.asset(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:myapp/app/core/constants/app_colors.dart';
-import 'package:myapp/app/modules/account/controllers/account_controller.dart';
+import 'package:myapp/app/modules/account/controllers/account_view_controller.dart';
 import 'package:myapp/gen/assets.gen.dart';
 
 class AccountBottomModal extends StatefulWidget {
@@ -22,7 +22,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   void initState() {
     super.initState();
 
-    String username = Get.find<AccountController>().getUserName();
+    String username = Get.find<AccountViewController>().getUserName();
     editingController = TextEditingController(text: username);
     editingController.addListener(() => _onTextChanged());
     _txtLen = username.length;
@@ -62,12 +62,13 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   maxLength: _maxLen,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => onSubmitted(),
-                  decoration: InputDecoration.collapsed(
-                    hintText: "닉네임 입력",
-                    hintStyle: TextStyle(color: AppColors.g05),
-                  ).copyWith(
-                    counterText: '', // 이 줄이 카운터를 숨깁니다
-                  ),
+                  decoration:
+                      InputDecoration.collapsed(
+                        hintText: "닉네임 입력",
+                        hintStyle: TextStyle(color: AppColors.g05),
+                      ).copyWith(
+                        counterText: '', // 이 줄이 카운터를 숨깁니다
+                      ),
                 ),
               ),
               SizedBox(width: 5.w),
@@ -127,7 +128,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   }
 
   Future<void> onSubmitted() async {
-    bool result = await Get.find<AccountController>().setUserName(
+    bool result = await Get.find<AccountViewController>().setUserName(
       editingController.text.trim(),
     );
 
