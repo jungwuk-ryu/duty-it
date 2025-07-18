@@ -38,7 +38,7 @@ class CalendarView extends GetView<CalendarViewController> {
             },
             itemBuilder: (_, i) {
               DateTime month = now.copyWith(month: now.month + i - 2000);
-              var calendarController = CustomCalendarController();
+              var calendarController = CustomCalendarController(month);
 
               controller.getCalendarEvents(month).then((v) {
                 calendarController.events = v;

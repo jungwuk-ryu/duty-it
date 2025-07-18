@@ -12,6 +12,12 @@ class CustomCalendarController {
   List<CalendarEvent> get events => _events.value;
   set events(List<CalendarEvent> events) => _events.value = events;
 
+  CustomCalendarController(DateTime calendarDate) {
+    if (currentDateTime.month != calendarDate.month) {
+      currentDateTime = AppUtils.dateTime2Date(calendarDate).copyWith(day: 1);
+    }
+  }
+
   List<CalendarEvent> getEventsByDay(DateTime date) {
     return events
         .where((e) => AppUtils.isDateWithin(date, e.startDate, e.endDate))
