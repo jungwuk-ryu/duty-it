@@ -36,7 +36,7 @@ class SearchFilterHostSection extends StatelessWidget {
             behavior: HitTestBehavior.translucent,
             onTap: () => controller.showHostSelectionBottomModal(),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Obx(() {
                   String? host = controller.selectedHost;
