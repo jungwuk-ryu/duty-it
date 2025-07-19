@@ -7,17 +7,22 @@ class CategoryTag extends StatelessWidget {
   final String? imageAsset;
   final String name;
   final bool isSelected;
+  final GestureTapCallback? onTap;
 
   const CategoryTag({
     super.key,
     required this.isSelected,
     required this.name,
     this.imageAsset,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: onTap,
+      child: ConstrainedBox(
       constraints: BoxConstraints(minHeight: 32.h),
       child: Container(
         decoration: BoxDecoration(
@@ -60,6 +65,7 @@ class CategoryTag extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
