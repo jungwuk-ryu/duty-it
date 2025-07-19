@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../controllers/auth_view_controller.dart';
+import '../controllers/login_view_controller.dart';
 
-class AuthView extends GetView<AuthViewController> {
-  const AuthView({super.key});
+class LoginView extends GetView<LoginViewController> {
+  const LoginView({super.key});
   @override
   Widget build(BuildContext context) {
     return Stack(

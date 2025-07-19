@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class AuthViewController extends GetxController {
+class LoginViewController extends GetxController {
   final RxBool _isLogining = RxBool(false);
   bool get isLogining => _isLogining.value;
   set isLogining(v) => _isLogining.value = v;

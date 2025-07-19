@@ -2,8 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/account/bindings/account_binding.dart';
 import '../modules/account/views/account_view.dart';
-import '../modules/auth/bindings/auth_binding.dart';
-import '../modules/auth/views/auth_view.dart';
+import '../modules/login/bindings/auth_binding.dart';
+import '../modules/login/views/login_view.dart';
 import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
 
@@ -30,8 +30,8 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.AUTH,
-      page: () => const AuthView(),
-      binding: AuthBinding(),
+      page: () => const LoginView(),
+      binding: LoginBinding(),
     ),
     GetPage(
       name: _Paths.ACCOUNT,
