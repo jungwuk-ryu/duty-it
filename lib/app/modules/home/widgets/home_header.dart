@@ -3,10 +3,11 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/category_tag.dart';
 import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 
 class HomeHeader extends StatelessWidget {
   final HomeViewController controller;
@@ -56,6 +57,9 @@ class HomeHeader extends StatelessWidget {
                 name: '필터',
                 isSelected: false,
                 imageAsset: Assets.icons.mageFilter.path,
+                onTap: () {
+                  Get.toNamed(Routes.SEARCH_FILTER);
+                },
               ),
             ],
           ),
