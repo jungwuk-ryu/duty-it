@@ -45,6 +45,10 @@ class $AssetsIconsGen {
   AssetGenImage get iconTextdelete =>
       const AssetGenImage('assets/icons/icon_textdelete.png');
 
+  /// File path: assets/icons/icon_textdelete16.png
+  AssetGenImage get iconTextdelete16 =>
+      const AssetGenImage('assets/icons/icon_textdelete16.png');
+
   /// File path: assets/icons/iconamoon_search.png
   AssetGenImage get iconamoonSearch =>
       const AssetGenImage('assets/icons/iconamoon_search.png');
@@ -86,6 +90,7 @@ class $AssetsIconsGen {
     close,
     iconGoG05,
     iconTextdelete,
+    iconTextdelete16,
     iconamoonSearch,
     kakaoLoginLargeWide,
     loadingIndicator,
