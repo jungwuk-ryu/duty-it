@@ -1,6 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
-import 'package:duty_it/app/modules/home/widgets/category_tag.dart';
+import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
