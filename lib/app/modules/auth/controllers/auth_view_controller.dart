@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
 
 class AuthViewController extends GetxController {
-  //TODO: Implement AuthController
+  final RxBool _isLogining = RxBool(false);
+  bool get isLogining => _isLogining.value;
+  set isLogining(v) => _isLogining.value = v;
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -19,5 +20,7 @@ class AuthViewController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  Future<void> onLoginButtonTap() async {
+    isLogining = true;
+  }
 }
