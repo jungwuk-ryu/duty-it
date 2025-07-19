@@ -21,7 +21,7 @@ class SearchFilterHeader extends StatelessWidget {
           ),
         ),
         Text(
-          "계정 설정",
+          "검색 필터",
           style: TextStyle(
             color: AppColors.black,
             fontSize: 20,
