@@ -4,6 +4,10 @@ class SearchFilterViewController extends GetxController {
   final String categoryAll = '전체';
   final RxSet<String> _selectedCategories = RxSet<String>();
 
+  final RxBool _showingEndedEvent = RxBool(false);
+  bool get showingEndedEvent => _showingEndedEvent.value;
+  set showingEndedEvent(v) => _showingEndedEvent.value = v;
+
   @override
   void onInit() {
     super.onInit();
