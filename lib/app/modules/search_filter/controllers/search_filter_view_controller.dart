@@ -11,7 +11,7 @@ class SearchFilterViewController extends GetxController {
   String? get selectedHost => _selectedHost.value;
   set selectedHost(v) => _selectedHost.value = v;
 
-  final RxBool _showingEndedEvent = RxBool(false);
+  final RxBool _showingEndedEvent = RxBool(true);
   bool get showingEndedEvent => _showingEndedEvent.value;
   set showingEndedEvent(v) => _showingEndedEvent.value = v;
 
