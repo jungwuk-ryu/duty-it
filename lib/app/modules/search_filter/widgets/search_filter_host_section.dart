@@ -38,12 +38,12 @@ class SearchFilterHostSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Obx(() {
-                  String? host = controller.selectedHost;
+                Expanded(
+                  child: Obx(() {
+                    String? host = controller.selectedHost;
 
-                  if (host == null) {
-                    return Expanded(
-                      child: Text(
+                    if (host == null) {
+                      return Text(
                         '선택',
                         style: TextStyle(
                           color: AppColors.g05,
@@ -51,20 +51,20 @@ class SearchFilterHostSection extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                           height: 1.20,
                         ),
+                      );
+                    }
+
+                    return Text(
+                      host,
+                      style: TextStyle(
+                        color: AppColors.main,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        height: 1.20,
                       ),
                     );
-                  }
-
-                  return Text(
-                    host,
-                    style: TextStyle(
-                      color: AppColors.main,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      height: 1.20,
-                    ),
-                  );
-                }),
+                  }),
+                ),
                 Image.asset(
                   Assets.icons.iconGoG05.path,
                   width: 12.r,
