@@ -174,6 +174,7 @@ class _HostItem extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 15.h, left: 1, top: 1),
       child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: () => controller.onHostSelect(hostName),
         child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
