@@ -1,3 +1,6 @@
+import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class SearchFilterViewController extends GetxController {
@@ -16,11 +19,6 @@ class SearchFilterViewController extends GetxController {
   void onInit() {
     super.onInit();
     _selectedCategories.add(categoryAll);
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
   }
 
   @override
@@ -43,7 +41,6 @@ class SearchFilterViewController extends GetxController {
       return;
     }
 
-    
     if (_selectedCategories.contains(category)) {
       _selectedCategories.remove(category);
       if (_selectedCategories.isEmpty) _selectedCategories.add(categoryAll);
@@ -51,5 +48,16 @@ class SearchFilterViewController extends GetxController {
       _selectedCategories.add(category);
       _selectedCategories.remove(categoryAll);
     }
+  }
+
+  void showHostSelectionBottomModal() {
+    showModalBottomSheet(
+      context: Get.context!,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (_) => HostSelectionBottomModal(),
+    );
   }
 }
