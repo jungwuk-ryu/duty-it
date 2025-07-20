@@ -1,14 +1,11 @@
-import 'package:duty_it/app/modules/search_filter/controllers/search_filter_view_controller.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/search_filter_section_title.dart';
+import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_section.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class SearchFilterEndedEventSection extends StatelessWidget {
-  SearchFilterViewController get controller =>
-      Get.find<SearchFilterViewController>();
-
+class SearchFilterEndedEventSection extends SearchFilterSection {
   const SearchFilterEndedEventSection({super.key});
 
   @override
