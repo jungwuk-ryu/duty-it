@@ -25,21 +25,31 @@ class SearchFilterCategorySection extends SearchFilterSection {
         Wrap(
           spacing: 8.w,
           runSpacing: 8.h,
-          children: List.generate(
-            controller.getCategories().length,
-            (i) => Obx(() {
-              String category = controller.getCategories()[i];
-              return IntrinsicWidth(
+          children: [
+            Obx(
+              () => IntrinsicWidth(
                 child: CategoryTag(
-                  isSelected: controller.isCategorySelected(category),
-                  name: category,
-                  onTap: () {
-                    controller.toggleCategorySelection(category);
-                  },
+                  name: '전체',
+                  isSelected: !controller.hasSelectedCategories(),
+                  onTap: () => controller.clearSelectedCategories(),
                 ),
-              );
-            }),
-          ),
+              ),
+            ),
+
+            ...List.generate(
+              controller.getCategories().length,
+              (i) => Obx(() {
+                String category = controller.getCategories()[i];
+                return IntrinsicWidth(
+                  child: CategoryTag(
+                    name: category,
+                    isSelected: controller.isCategorySelected(category),
+                    onTap: () => controller.toggleCategorySelection(category),
+                  ),
+                );
+              }),
+            ),
+          ],
         ),
       ],
     );
