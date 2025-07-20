@@ -10,7 +10,8 @@ class SearchFilterViewController extends GetxController {
   String? get selectedHost => _selectedHost.value;
   set selectedHost(v) => _selectedHost.value = v;
 
-  final RxBool _showingEndedEvent = RxBool(true);
+  static const bool _showingEndedEventDefaultValue = true;
+  final RxBool _showingEndedEvent = RxBool(_showingEndedEventDefaultValue);
   bool get showingEndedEvent => _showingEndedEvent.value;
   set showingEndedEvent(v) => _showingEndedEvent.value = v;
 
@@ -22,6 +23,12 @@ class SearchFilterViewController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void resetSettings() {
+    clearSelectedCategories();
+    selectedHost = null;
+    showingEndedEvent = _showingEndedEventDefaultValue;
   }
 
   List<String> getCategories() {
