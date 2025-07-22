@@ -38,6 +38,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   infinite_scroll_pagination: ^5.0.0
   persistent_header_adaptive: ^2.1.3
+  get_storage: ^2.1.1
 
 dev_dependencies:
   flutter_test:
