@@ -36,7 +36,7 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: controller.onApplyButtonClicked,
               child: Container(
                 margin: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
                 width: double.infinity,

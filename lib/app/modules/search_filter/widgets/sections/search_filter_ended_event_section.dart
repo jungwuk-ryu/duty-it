@@ -15,23 +15,23 @@ class SearchFilterEndedEventSection extends SearchFilterSection {
       children: [
         SearchFilterSectionTitle("종료된 행사"),
         Obx(() {
-          bool showingEndedEvent = controller.showingEndedEvent;
+          bool showEnded = controller.showEnded;
 
           return Row(
             spacing: 8.w,
             children: [
               CategoryTag(
                 name: "안 보기",
-                isSelected: !showingEndedEvent,
+                isSelected: !showEnded,
                 onTap: () {
-                  controller.showingEndedEvent = false;
+                  controller.showEnded = false;
                 },
               ),
               CategoryTag(
                 name: "보기",
-                isSelected: showingEndedEvent,
+                isSelected: showEnded,
                 onTap: () {
-                  controller.showingEndedEvent = true;
+                  controller.showEnded = true;
                 },
               ),
             ],

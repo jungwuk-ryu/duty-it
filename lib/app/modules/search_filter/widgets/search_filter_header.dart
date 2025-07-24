@@ -35,7 +35,7 @@ class SearchFilterHeader extends StatelessWidget {
         ),
         Expanded(child: SizedBox()),
         GestureDetector(
-          onTap: () => controller.resetSettings(),
+          onTap: controller.onResetSettingsButtonClicked,
           child: Text(
           '초기화',
           textAlign: TextAlign.center,
