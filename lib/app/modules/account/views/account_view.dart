@@ -1,9 +1,9 @@
+import 'package:duty_it/app/widgets/custom_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/modules/account/widgets/account_view_divider.dart';
 import 'package:duty_it/app/modules/account/widgets/account_view_item_text.dart';
 import 'package:duty_it/app/modules/account/widgets/account_view_item_title.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -44,7 +44,7 @@ class AccountView extends GetView<AccountViewController> {
                 ],
               ),
               SizedBox(height: 8.h),
-              AccountViewDivider(),
+              CustomDivider(),
               SizedBox(height: 16.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),

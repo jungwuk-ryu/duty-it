@@ -37,9 +37,17 @@ class $AssetsIconsGen {
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
+  /// File path: assets/icons/icon_go_G-05.png
+  AssetGenImage get iconGoG05 =>
+      const AssetGenImage('assets/icons/icon_go_G-05.png');
+
   /// File path: assets/icons/icon_textdelete.png
   AssetGenImage get iconTextdelete =>
       const AssetGenImage('assets/icons/icon_textdelete.png');
+
+  /// File path: assets/icons/icon_textdelete16.png
+  AssetGenImage get iconTextdelete16 =>
+      const AssetGenImage('assets/icons/icon_textdelete16.png');
 
   /// File path: assets/icons/iconamoon_search.png
   AssetGenImage get iconamoonSearch =>
@@ -80,7 +88,9 @@ class $AssetsIconsGen {
     bookmarkSharp,
     calendarClearSharp,
     close,
+    iconGoG05,
     iconTextdelete,
+    iconTextdelete16,
     iconamoonSearch,
     kakaoLoginLargeWide,
     loadingIndicator,

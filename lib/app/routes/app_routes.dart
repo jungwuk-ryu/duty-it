@@ -8,6 +8,7 @@ abstract class Routes {
   static const MAIN = _Paths.MAIN;
   static const AUTH = _Paths.AUTH;
   static const ACCOUNT = _Paths.ACCOUNT;
+  static const SEARCH_FILTER = _Paths.SEARCH_FILTER;
 }
 
 abstract class _Paths {
@@ -15,4 +16,5 @@ abstract class _Paths {
   static const MAIN = '/';
   static const AUTH = '/auth';
   static const ACCOUNT = '/account';
+  static const SEARCH_FILTER = '/search-filter';
 }
