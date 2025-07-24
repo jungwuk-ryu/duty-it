@@ -27,4 +27,8 @@ class SearchFilterService extends GetxService {
   void updateFilter(SearchFilter filter) {
     _filterRx.value = filter;
   }
+
+  bool hasFilterChanges() {
+    return filter.categories.isNotEmpty || filter.host != null;
+  }
 }

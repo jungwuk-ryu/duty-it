@@ -1,9 +1,10 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
-import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
+import 'package:duty_it/app/services/search_filter_service.dart';
+import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,20 +50,26 @@ class HomeHeader extends StatelessWidget {
 
           SizedBox(height: 16.h),
 
-          Row(
-            children: [
-              const CategoryTag(name: '전체', isSelected: true),
-              SizedBox(width: 8.w),
-              CategoryTag(
-                name: '필터',
-                isSelected: false,
-                imageAsset: Assets.icons.mageFilter.path,
-                onTap: () {
-                  Get.toNamed(Routes.SEARCH_FILTER);
-                },
-              ),
-            ],
-          ),
+          Obx(() {
+            var service = Get.find<SearchFilterService>();
+            bool filterApplied = service.hasFilterChanges();
+
+            return Row(
+              children: [
+                CategoryTag(name: '전체', isSelected: !filterApplied),
+                SizedBox(width: 8.w),
+                CategoryTag(
+                  name: '필터',
+                  isSelected: filterApplied,
+                  imageAsset: Assets.icons.mageFilter.path,
+                  imageColor: filterApplied ? AppColors.white : null,
+                  onTap: () {
+                    Get.toNamed(Routes.SEARCH_FILTER);
+                  },
+                ),
+              ],
+            );
+          }),
 
           SizedBox(height: 16.h),
         ],
