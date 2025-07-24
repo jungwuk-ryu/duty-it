@@ -31,4 +31,14 @@ class SearchFilterService extends GetxService {
   bool hasFilterChanges() {
     return filter.categories.isNotEmpty || filter.host != null;
   }
+
+  void resetFilter(bool softReset) {
+    var newFilter = SearchFilter();
+
+    if (softReset) {
+      newFilter = newFilter.copyWith(showEnded: filter.showEnded);
+    }
+    
+    updateFilter(newFilter);
+  }
 }

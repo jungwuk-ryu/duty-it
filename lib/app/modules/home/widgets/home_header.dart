@@ -56,7 +56,9 @@ class HomeHeader extends StatelessWidget {
 
             return Row(
               children: [
-                CategoryTag(name: '전체', isSelected: !filterApplied),
+                CategoryTag(name: '전체', isSelected: !filterApplied, onTap: () {
+                  Get.find<SearchFilterService>().resetFilter(false);
+                },),
                 SizedBox(width: 8.w),
                 CategoryTag(
                   name: '필터',
