@@ -1,6 +1,8 @@
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:get/get.dart';
 
 class DrawerCategorySection extends StatelessWidget {
   const DrawerCategorySection({super.key});
@@ -20,7 +22,7 @@ class DrawerCategorySection extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16.h),
-        _PageItemButton(title: "앱 설정", onTap: () {}),
+        _PageItemButton(title: "앱 설정", onTap: () {Get.toNamed(Routes.SETTINGS);}),
         SizedBox(height: 16.h),
         _PageItemButton(title: "필요 페이지", onTap: () {}),
         SizedBox(height: 16.h),
