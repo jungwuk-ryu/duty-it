@@ -5,11 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class SearchFilterHeader extends StatelessWidget {
+class SearchFilterAppBar extends StatelessWidget {
   SearchFilterViewController get controller =>
       Get.find<SearchFilterViewController>();
 
-  const SearchFilterHeader({super.key});
+  const SearchFilterAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {

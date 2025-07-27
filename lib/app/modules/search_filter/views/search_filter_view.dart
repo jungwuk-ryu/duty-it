@@ -1,9 +1,8 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/search_filter/widgets/search_filter_app_bar.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_category_section.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_ended_event_section.dart';
-import 'package:duty_it/app/modules/search_filter/widgets/search_filter_header.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_host_section.dart';
-import 'package:duty_it/app/widgets/custom_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,15 +19,17 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SearchFilterHeader(),
+            SearchFilterAppBar(),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
                   spacing: 24.h,
-                  children: [SearchFilterCategorySection(),
-                  SearchFilterHostSection(),
-                  SearchFilterEndedEventSection()],
+                  children: [
+                    SearchFilterCategorySection(),
+                    SearchFilterHostSection(),
+                    SearchFilterEndedEventSection(),
+                  ],
                 ),
               ),
             ),
