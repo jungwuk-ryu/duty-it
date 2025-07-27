@@ -20,13 +20,10 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 25.h),
             SearchFilterHeader(),
-            SizedBox(height: 8.h),
-            CustomDivider(),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(top: 16.h, right: 16.w, left: 16.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
                   spacing: 24.h,
                   children: [SearchFilterCategorySection(),
