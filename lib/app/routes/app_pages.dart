@@ -8,6 +8,8 @@ import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
 import '../modules/search_filter/bindings/search_filter_binding.dart';
 import '../modules/search_filter/views/search_filter_view.dart';
+import '../modules/settings/bindings/settings_binding.dart';
+import '../modules/settings/views/settings_view.dart';
 
 part 'app_routes.dart';
 
@@ -44,6 +46,11 @@ class AppPages {
       name: _Paths.SEARCH_FILTER,
       page: () => const SearchFilterView(),
       binding: SearchFilterBinding(),
+    ),
+    GetPage(
+      name: _Paths.SETTINGS,
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
     ),
   ];
 }

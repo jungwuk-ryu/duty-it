@@ -1,4 +1,5 @@
 import 'package:duty_it/app/widgets/custom_divider.dart';
+import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -21,31 +22,7 @@ class AccountView extends GetView<AccountViewController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 25.h),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Image.asset(
-                      Assets.icons.backLeft.path,
-                      width: 40.r,
-                      height: 40.h,
-                    ),
-                  ),
-                  Text(
-                    "계정 설정",
-                    style: TextStyle(
-                      color: AppColors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      height: 1.60,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8.h),
-              CustomDivider(),
-              SizedBox(height: 16.h),
+              SimpleAppBar(title: '계정 설정'),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
