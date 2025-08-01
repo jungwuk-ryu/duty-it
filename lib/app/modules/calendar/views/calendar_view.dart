@@ -19,8 +19,12 @@ class CalendarView extends GetView<CalendarViewController> {
         SizedBox(height: 15.h),
         Padding(
           padding: EdgeInsetsGeometry.only(left: 16.w),
-          child: Obx(
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () => controller.showDateSelectionBottomModal(),
+            child: Obx(
             () => CalendarViewTitleSection(dt: controller.currentDate),
+          ),
           ),
         ),
         Container(
@@ -31,15 +35,15 @@ class CalendarView extends GetView<CalendarViewController> {
         SizedBox(height: 16.h),
         Expanded(
           child: PageView.builder(
-            controller: PageController(initialPage: 2000),
+            controller: controller.pageController,
             scrollDirection: Axis.horizontal,
             onPageChanged: (i) {
               controller.currentDate = now.copyWith(
-                month: now.month + i - 2000,
+                month: now.month + i - CalendarViewController.initPage,
               );
             },
             itemBuilder: (_, i) {
-              DateTime month = now.copyWith(month: now.month + i - 2000);
+              DateTime month = now.copyWith(month: now.month + i - CalendarViewController.initPage);
               var calendarController = CustomCalendarController(month);
 
               controller.getCalendarEvents(month).then((v) {
