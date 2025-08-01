@@ -56,9 +56,13 @@ class HomeHeader extends StatelessWidget {
 
             return Row(
               children: [
-                CategoryTag(name: '전체', isSelected: !filterApplied, onTap: () {
-                  Get.find<SearchFilterService>().resetFilter(false);
-                },),
+                CategoryTag(
+                  name: '전체',
+                  isSelected: !filterApplied,
+                  onTap: () {
+                    Get.find<SearchFilterService>().resetFilter(false);
+                  },
+                ),
                 SizedBox(width: 8.w),
                 CategoryTag(
                   name: '필터',
@@ -68,6 +72,18 @@ class HomeHeader extends StatelessWidget {
                   onTap: () {
                     Get.toNamed(Routes.SEARCH_FILTER);
                   },
+                ),
+                Expanded(child: SizedBox()),
+                Obx(
+                  () => CategoryTag(
+                    name: controller.sortingType.shortName,
+                    isSelected: filterApplied,
+                    imageAsset: Assets.icons.mageFilterSort.path,
+                    imageColor: filterApplied ? AppColors.white : null,
+                    onTap: () {
+                      controller.showSortingBottomModal();
+                    },
+                  ),
                 ),
               ],
             );
