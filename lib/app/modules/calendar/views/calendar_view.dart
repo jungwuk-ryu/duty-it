@@ -1,9 +1,9 @@
+import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
+import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
+import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
-import 'package:duty_it/app/modules/calendar/widgets/calendar_title_text.dart';
-import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
 
 import '../controllers/calendar_view_controller.dart';
 
@@ -19,7 +19,9 @@ class CalendarView extends GetView<CalendarViewController> {
         SizedBox(height: 15.h),
         Padding(
           padding: EdgeInsetsGeometry.only(left: 16.w),
-          child: Obx(() => CalendarTitleText(dt: controller.currentDate)),
+          child: Obx(
+            () => CalendarViewTitleSection(dt: controller.currentDate),
+          ),
         ),
         Container(
           width: double.infinity,
