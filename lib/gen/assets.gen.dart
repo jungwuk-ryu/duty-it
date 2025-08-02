@@ -65,6 +65,10 @@ class $AssetsIconsGen {
   AssetGenImage get mageFilter =>
       const AssetGenImage('assets/icons/mage_filter.png');
 
+  /// File path: assets/icons/mage_filter_sort.png
+  AssetGenImage get mageFilterSort =>
+      const AssetGenImage('assets/icons/mage_filter_sort.png');
+
   /// File path: assets/icons/nurse_cap.png
   AssetGenImage get nurseCap =>
       const AssetGenImage('assets/icons/nurse_cap.png');
@@ -95,6 +99,7 @@ class $AssetsIconsGen {
     kakaoLoginLargeWide,
     loadingIndicator,
     mageFilter,
+    mageFilterSort,
     nurseCap,
     paper,
     quillHamburger,

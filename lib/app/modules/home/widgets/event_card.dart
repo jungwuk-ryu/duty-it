@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EventCard extends StatelessWidget {
   final String? imageUri;
@@ -11,6 +11,9 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardBorderRadius = BorderRadius.circular(8.r);
+    double cardHeight = 164.h;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -18,14 +21,37 @@ class EventCard extends StatelessWidget {
         Stack(
           children: [
             Container(
-              height: 164.h,
+              height: cardHeight,
               decoration: BoxDecoration(
                 color: Color(0xffD9D9D9),
-                borderRadius: BorderRadius.circular(8.r),
+                borderRadius: cardBorderRadius,
               ),
               child: imageUri != null
                   ? Image.network(imageUri!, fit: BoxFit.fitWidth)
                   : Center(child: Image.asset(Assets.icons.nurseCap.path)),
+            ),
+            Visibility(
+              visible: false, //TODO: 종료 여부에 따른 값 변경
+              child: Container(
+                width: double.infinity,
+                height: cardHeight,
+                decoration: BoxDecoration(
+                  color: AppColors.bg,
+                  borderRadius: cardBorderRadius,
+                ),
+                child: Center(
+                  child: Text(
+                    '종료된 행사',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      height: 1.60,
+                    ),
+                  ),
+                ),
+              ),
             ),
             Positioned(
               top: 0,

@@ -1,25 +1,29 @@
-import 'package:get/get.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
+import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class CalendarViewController extends GetxController {
   final Rx<DateTime> _currentDate = DateTime.now().obs;
-  get currentDate => _currentDate.value;
+  DateTime get currentDate => _currentDate.value;
   set currentDate(value) => _currentDate.value = value;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  static const int initPage = 2000;
+  PageController pageController = PageController(initialPage: initPage);
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
+  void showDateSelectionBottomModal() {
+    Get.put(DateSelectionModalController());
+    showModalBottomSheet(
+      context: Get.context!,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (_) => DateSelectionBottomModal(),
+    ).whenComplete(() => Get.delete<DateSelectionModalController>());
   }
 
   Future<List<CalendarEvent>> getCalendarEvents(DateTime date) async {
