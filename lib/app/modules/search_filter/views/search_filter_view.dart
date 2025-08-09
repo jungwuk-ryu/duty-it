@@ -34,7 +34,13 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
                 ),
               ),
             ),
-            AppNormalButton(text: '필터 적용', onTap: controller.onApplyButtonClicked),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+              child: AppNormalButton(
+                text: '필터 적용',
+                onTap: controller.onApplyButtonClicked,
+              ),
+            ),
           ],
         ),
       ),
