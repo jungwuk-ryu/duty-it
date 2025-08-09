@@ -20,7 +20,7 @@ class SortingBottomModal extends StatelessWidget {
       children: [
         SizedBox(height: 16.h),
         Text(
-          "주최 선택",
+          "정렬",
           style: TextStyle(
             height: 1.60,
             fontSize: 15,
