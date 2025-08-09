@@ -10,7 +10,7 @@ class SearchFilterService extends GetxService {
   void onInit() async {
     super.onInit();
 
-    await GetStorage.init('searchFilter').then((_) {});
+    await GetStorage.init('searchFilter');
     var box = GetStorage('searchFilter');
 
     var json = box.read('filter');

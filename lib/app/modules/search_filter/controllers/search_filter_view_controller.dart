@@ -24,7 +24,7 @@ class SearchFilterViewController extends GetxController {
   }
 
   List<String> getCategories() {
-    return ['컨퍼런스 / 학술대회', '세미나', '웨비나', '워크숍', '공모전'];
+    return ['컨퍼런스 / 학술대회', '세미나', '웨비나', '워크숍', '공모전', '기타'];
   }
 
   void onResetSettingsButtonClicked() {

@@ -1,8 +1,8 @@
-import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/search_filter_app_bar.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_category_section.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_ended_event_section.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_host_section.dart';
+import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -33,26 +33,11 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
                 ),
               ),
             ),
-            GestureDetector(
-              onTap: controller.onApplyButtonClicked,
-              child: Container(
-                margin: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                decoration: BoxDecoration(
-                  color: AppColors.main,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '필터 적용',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 1.20,
-                  ),
-                ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+              child: AppNormalButton(
+                text: '필터 적용',
+                onTap: controller.onApplyButtonClicked,
               ),
             ),
           ],

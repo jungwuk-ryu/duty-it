@@ -1,5 +1,4 @@
-import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/widgets/custom_toggle_button.dart';
+import 'package:duty_it/app/modules/settings/widgets/toggle_setting_item.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,46 +25,10 @@ class SettingsView extends GetView<SettingsViewController> {
                   spacing: 24.h,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          '푸시 알림',
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            height: 1.60,
-                          ),
-                        ),
-                        Expanded(child: SizedBox()),
-                        Obx(
-                          () => CustomToggleButton(
-                            checked: controller.pushNoti,
-                            onTap: () => controller.togglePushNoti(),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          '마케팅 수신 알림',
-                          style: TextStyle(
-                            color: AppColors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            height: 1.60,
-                          ),
-                        ),
-                        Expanded(child: SizedBox()),
-                        Obx(
-                          () => CustomToggleButton(
-                            checked: controller.marketingNoti,
-                            onTap: () => controller.toggleMarketingNoti(),
-                          ),
-                        ),
-                      ],
-                    ),
+                    Obx(() => ToggleSettingItem(text: '푸시 알림', checked: controller.pushNoti, onToggleTap: () => controller.togglePushNoti(), enabled: true)),
+                    Obx(() => ToggleSettingItem(text: '마케팅 알림 수신', checked: controller.marketingNoti, onToggleTap: () => controller.toggleMarketingNoti(), enabled: controller.pushNoti)),
+                    Obx(() => ToggleSettingItem(text: '행사 알림 수신', checked: controller.eventNoti, onToggleTap: () => controller.toggleEventNoti(), enabled: controller.pushNoti)),
+                    Obx(() => ToggleSettingItem(text: '캘린더 알림 수신', checked: controller.calendarNoti, onToggleTap: () => controller.toggleCalendarNoti(), enabled: controller.pushNoti)),
                   ],
                 ),
               ),
