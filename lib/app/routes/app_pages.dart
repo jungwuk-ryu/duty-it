@@ -17,7 +17,7 @@ class AppPages {
   AppPages._();
 
   // ignore: constant_identifier_names
-  static const INITIAL = Routes.MAIN;
+  static const INITIAL = Routes.AUTH;
 
   static final routes = [
     GetPage(

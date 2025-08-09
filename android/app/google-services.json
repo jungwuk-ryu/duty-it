@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "348194173787",
+    "project_id": "duty-it",
+    "storage_bucket": "duty-it.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348194173787:android:38516997a7da1aced2e07e",
+        "android_client_info": {
+          "package_name": "com.dutyit.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0pV_fiwBaoKRy6egPmKUrXvL0yLTMCBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
