@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_auth.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'app/routes/app_pages.dart';
 
@@ -33,6 +34,7 @@ void main() async {
     KakaoSdk.init(nativeAppKey: "5b75899fba79dc8e1651fa8c98ba12f8");
   }
 
+  await GetStorage.init('appSettings').then((_) {});
   runApp(
     ScreenUtilInit(
       designSize: Size(360, 760),
