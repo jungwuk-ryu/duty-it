@@ -1,4 +1,3 @@
-import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/search_filter_app_bar.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_category_section.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_ended_event_section.dart';
