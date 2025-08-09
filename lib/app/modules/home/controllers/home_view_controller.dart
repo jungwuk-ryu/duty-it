@@ -1,7 +1,7 @@
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
-import 'package:duty_it/app/modules/home/models/sorting_type.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
+import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,6 +10,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
+  AppSettingsService get _settingsService => Get.find<AppSettingsService>();
+
   final Rx<PagingState<int, EventCard>> _pagingState =
       PagingState<int, EventCard>().obs;
   PagingState<int, EventCard> get pagingState => _pagingState.value;
@@ -19,7 +21,7 @@ class HomeViewController extends GetxController {
   set selectedTab(HomeTab tab) => _selectedTab.value = tab;
   HomeTab get selectedTab => _selectedTab.value;
 
-  SortingType get sortingType => Get.find<SortingModalController>().selectedType;
+  EventSortingType get sortingType => _settingsService.eventSortingType;
 
   void fetchNextPage() {
     pagingState = pagingState.copyWith(isLoading: true, error: null);
@@ -39,6 +41,7 @@ class HomeViewController extends GetxController {
   }
 
   void showSortingBottomModal() {
+    Get.put<SortingModalController>(SortingModalController());
     showModalBottomSheet(
       context: Get.context!,
       isScrollControlled: true,
@@ -46,6 +49,6 @@ class HomeViewController extends GetxController {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
       builder: (_) => SortingBottomModal()
-    );
+    ).whenComplete(() => Get.delete<SortingModalController>());
   }
 }

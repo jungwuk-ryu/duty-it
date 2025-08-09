@@ -1,6 +1,4 @@
-import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/settings/widgets/toggle_setting_item.dart';
-import 'package:duty_it/app/widgets/custom_toggle_button.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
