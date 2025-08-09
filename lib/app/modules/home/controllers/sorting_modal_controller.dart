@@ -10,8 +10,8 @@ class SortingModalController extends GetxController {
     return [
       SortingType("최신 등록순", "최신순"),
       SortingType("인기순", "인기순"),
-      SortingType("행사 날짜 임박순", "날짜 임박순"),
-      SortingType("모집 마감 임박순", "마감 임박순"),
+      SortingType("행사 날짜 임박순", "행사 날짜"),
+      SortingType("모집 마감 임박순", "모집 마감"),
     ];
   }
 }
