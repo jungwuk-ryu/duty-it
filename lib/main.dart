@@ -1,4 +1,5 @@
 import 'package:duty_it/firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +12,13 @@ import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   if (kIsWeb) {
     KakaoSdk.init(javaScriptAppKey: "a09a43b25e54febe3c34cee618f23b2c");
   } else {
     KakaoSdk.init(nativeAppKey: "5b75899fba79dc8e1651fa8c98ba12f8");
   }
-  
 
   runApp(
     ScreenUtilInit(
@@ -34,6 +32,9 @@ void main() async {
         title: "듀잇 - Duty It!",
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+        ],
       ),
     ),
   );
