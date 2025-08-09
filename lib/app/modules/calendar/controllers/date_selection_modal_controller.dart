@@ -14,14 +14,14 @@ class DateSelectionModalController extends GetxController {
     baseDateTime = _calViewController.currentDate;
   }
 
-  @override
-  void onClose() {
+  void closeAndApply() {
+    Get.back();
+    
     var pagingController = _calViewController.pageController;
     pagingController.jumpToPage(
       ((pagingController.page as int?) ?? CalendarViewController.initPage) +
           selectedItemIndex,
     );
-    super.onClose();
   }
 
   DateTime getSelectedDateTime() {

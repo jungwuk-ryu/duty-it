@@ -1,5 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
+import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -73,7 +74,9 @@ class DateSelectionBottomModal extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(height: 40.h),
+        SizedBox(height: 30.h),
+        AppNormalButton(text: '이동', onTap: controller.closeAndApply),
+        SizedBox(height: 24.h),
       ],
     );
   }
