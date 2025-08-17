@@ -7,11 +7,16 @@ enum SocialProvider { kakao }
 
 class AuthService extends GetxService {
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};
+
   SocialLoginStrategy? _currentStrategy;
 
   @override
   void onInit() {
     super.onInit();
+    _initStrategies();
+  }
+
+  void _initStrategies() {
     _strategies[SocialProvider.kakao] = KakaoLoginStrategy();
   }
 
