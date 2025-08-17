@@ -15,14 +15,14 @@ class SplashViewController extends GetxController {
       if (user == null) {
         Get.offAllNamed(Routes.AUTH);
       } else {
-        Get.offAllNamed(Routes.AUTH);
+        Get.offAllNamed(Routes.MAIN);
       }
     } catch (e) {
       // TODO : Crashlytics 로깅
       if (kDebugMode) {
         print(e);
       }
-      Get.offAllNamed(Routes.AUTH);
+      Get.offAllNamed(Routes.MAIN);
     }
   }
 }
