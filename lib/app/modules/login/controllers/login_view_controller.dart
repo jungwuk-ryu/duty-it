@@ -10,18 +10,10 @@ class LoginViewController extends GetxController {
   set isLogining(v) => _isLogining.value = v;
 
   @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
   void onReady() {
     super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
+    
+    if (Get.find<AuthService>().isLoggined()) Get.offAllNamed(AppPages.INITIAL);
   }
 
   Future<void> onLoginButtonTap() async {
