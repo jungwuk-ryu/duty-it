@@ -1,6 +1,8 @@
+import 'package:duty_it/app/core/events/event_bookmark_event.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
+import 'package:duty_it/app/services/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +13,7 @@ enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
+  AppEventService get _eventService => Get.find<AppEventService>();
 
   final Rx<PagingState<int, EventCard>> _pagingState =
       PagingState<int, EventCard>().obs;
@@ -27,7 +30,8 @@ class HomeViewController extends GetxController {
     pagingState = pagingState.copyWith(isLoading: true, error: null);
 
     int nextKey = 0;
-    if (!(pagingState.keys == null || pagingState.keys!.isEmpty)) nextKey = pagingState.keys!.last;
+    if (!(pagingState.keys == null || pagingState.keys!.isEmpty))
+      nextKey = pagingState.keys!.last;
     nextKey += 1;
 
     pagingState = pagingState.copyWith(
@@ -48,7 +52,11 @@ class HomeViewController extends GetxController {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
-      builder: (_) => SortingBottomModal()
+      builder: (_) => SortingBottomModal(),
     ).whenComplete(() => Get.delete<SortingModalController>());
+  }
+
+  void bookmarkTest() {
+    _eventService.fire(EventBookmarkEvent());
   }
 }
