@@ -35,7 +35,7 @@ class AppPages {
       ],
     ),
     GetPage(
-      name: _Paths.AUTH,
+      name: _Paths.LOGIN,
       page: () => const LoginView(),
       binding: LoginBinding(),
     ),
