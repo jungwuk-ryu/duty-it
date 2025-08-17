@@ -1,6 +1,6 @@
-import 'package:duty_it/app/models/search_filter.dart';
+import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
-import 'package:duty_it/app/services/search_filter_service.dart';
+import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
