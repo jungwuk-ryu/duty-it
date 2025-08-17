@@ -20,9 +20,9 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
-      return SocialLoginResult(success: true, reason: "로그인 성공");
+      return SocialLoginSuccess();
     } catch (e) {
-      return SocialLoginResult(success: false, reason: e.toString());
+      return SocialLoginFail(reason: e.toString());
     }
   }
 

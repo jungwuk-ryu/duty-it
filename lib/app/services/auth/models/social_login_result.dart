@@ -1,6 +1,9 @@
-class SocialLoginResult {
-  final bool success;
+sealed class SocialLoginResult {}
+
+class SocialLoginSuccess extends SocialLoginResult {}
+
+class SocialLoginFail extends SocialLoginResult {
   final String reason;
 
-  SocialLoginResult({required this.success, required this.reason});
+  SocialLoginFail({required this.reason});
 }

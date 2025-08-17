@@ -20,11 +20,11 @@ class AuthService extends GetxService {
 
     SocialLoginStrategy? strategy = _strategies[provider];
     if (strategy == null) {
-      return SocialLoginResult(success: false, reason: "지원하지 않는 소셜 로그인입니다.");
+      return SocialLoginFail(reason: "지원하지 않는 소셜 로그인입니다.");
     }
 
     var result = await strategy.login();
-    if (result.success) _currentStrategy = strategy;
+    if (result is SocialLoginSuccess) _currentStrategy = strategy;
 
     return result;
   }
