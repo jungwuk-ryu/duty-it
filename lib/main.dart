@@ -1,3 +1,4 @@
+import 'package:duty_it/app/bindings/initial_bindings.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,6 +47,7 @@ void main() async {
         debugShowCheckedModeBanner: false,
         title: "듀잇 - Duty It!",
         initialRoute: AppPages.INITIAL,
+        initialBinding: InitialBindings(),
         getPages: AppPages.routes,
         navigatorObservers: [
           FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
