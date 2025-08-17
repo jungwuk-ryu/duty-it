@@ -13,7 +13,7 @@ class SplashViewController extends GetxController {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        Get.offAllNamed(Routes.AUTH);
+        Get.offAllNamed(Routes.LOGIN);
       } else {
         Get.offAllNamed(Routes.MAIN);
       }
@@ -22,7 +22,7 @@ class SplashViewController extends GetxController {
       if (kDebugMode) {
         print(e);
       }
-      Get.offAllNamed(Routes.MAIN);
+      Get.offAllNamed(Routes.LOGIN);
     }
   }
 }

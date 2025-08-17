@@ -6,7 +6,7 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
   static const MAIN = _Paths.MAIN;
-  static const AUTH = _Paths.LOGIN;
+  static const LOGIN = _Paths.LOGIN;
   static const ACCOUNT = _Paths.ACCOUNT;
   static const SEARCH_FILTER = _Paths.SEARCH_FILTER;
   static const SETTINGS = _Paths.SETTINGS;
