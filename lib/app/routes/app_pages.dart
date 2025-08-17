@@ -23,41 +23,36 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: _Paths.MAIN,
-      page: () => MainView(),
-      binding: MainBinding(),
-      children: [
-        GetPage(
-          name: _Paths.MAIN,
-          page: () => MainView(),
-          binding: MainBinding(),
-        ),
-      ],
-    ),
-    GetPage(
       name: _Paths.LOGIN,
       page: () => const LoginView(),
       binding: LoginBinding(),
     ),
     GetPage(
-      name: _Paths.ACCOUNT,
-      page: () => const AccountView(),
-      binding: AccountBinding(),
-    ),
-    GetPage(
-      name: _Paths.SEARCH_FILTER,
-      page: () => const SearchFilterView(),
-      binding: SearchFilterBinding(),
-    ),
-    GetPage(
-      name: _Paths.SETTINGS,
-      page: () => const SettingsView(),
-      binding: SettingsBinding(),
-    ),
-    GetPage(
       name: _Paths.SPLASH,
       page: () => const SplashView(),
       binding: SplashBinding(),
+    ),
+    GetPage(
+      name: _Paths.MAIN,
+      page: () => MainView(),
+      binding: MainBinding(),
+      children: [
+        GetPage(
+          name: _Paths.ACCOUNT,
+          page: () => const AccountView(),
+          binding: AccountBinding(),
+        ),
+        GetPage(
+          name: _Paths.SEARCH_FILTER,
+          page: () => const SearchFilterView(),
+          binding: SearchFilterBinding(),
+        ),
+        GetPage(
+          name: _Paths.SETTINGS,
+          page: () => const SettingsView(),
+          binding: SettingsBinding(),
+        ),
+      ],
     ),
   ];
 }
