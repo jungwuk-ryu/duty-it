@@ -1,5 +1,5 @@
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/modules/login/services/auth_service.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:get/get.dart';
 

@@ -1,4 +1,4 @@
-import 'package:duty_it/app/modules/login/services/auth_service.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:get/get.dart';
 
 import '../controllers/login_view_controller.dart';
