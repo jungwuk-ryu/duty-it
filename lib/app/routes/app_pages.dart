@@ -1,3 +1,4 @@
+import 'package:duty_it/app/middlewares/auth_guard.dart';
 import 'package:get/get.dart';
 
 import '../modules/account/bindings/account_binding.dart';
@@ -36,6 +37,7 @@ class AppPages {
       name: _Paths.MAIN,
       page: () => MainView(),
       binding: MainBinding(),
+      middlewares: [AuthGuard()],
       children: [
         GetPage(
           name: _Paths.ACCOUNT,
