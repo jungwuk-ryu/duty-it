@@ -1,4 +1,4 @@
-import 'package:duty_it/app/models/search_filter_settings.dart';
+import 'package:duty_it/app/models/search_filter.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/search_filter_service.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,4 @@
-import 'package:duty_it/app/models/search_filter_settings.dart';
+import 'package:duty_it/app/models/search_filter.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
