@@ -63,7 +63,7 @@ class EventCard extends StatelessWidget {
             Positioned(
               top: 0,
               right: 0,
-              child: EventBookmarkButton(isBookmarked: false),
+              child: EventBookmarkButton(isBookmarked: false, event: event),
             ),
           ],
         ),

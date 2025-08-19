@@ -87,7 +87,14 @@ class HomeViewController extends GetxController {
     ).whenComplete(() => Get.delete<SortingModalController>());
   }
 
-  void bookmarkTest() {
+  Future<void> bookmark(Event event) async {
+    var client = Get.find<ApiClient>();
+    var result = await client.toggleBookmark(event.id);
+    if (result is RequestSuccess) {
       _eventService.fire(EventBookmarkEvent());
+    } else {
+      var reqFail = result as RequestFail;
+      AppUtils.showSnackBar(reqFail.serverFail?.message ?? '북마크를 수정하지 못했습니다.');
+    }
   }
 }
