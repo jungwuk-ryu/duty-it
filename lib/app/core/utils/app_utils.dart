@@ -65,4 +65,11 @@ class AppUtils {
         dt.minute != 0 ||
         dt.hour != 0;
   }
+
+  /// 2025년 00월 00일(일) 형태
+  static String formatDateTime(DateTime dt) {
+    final mm = dt.month.toString().padLeft(2, '0');
+    final dd = dt.day.toString().padLeft(2, '0');
+    return '${dt.year}년 $mm월 $dd일(${weekDay2Text(dt.weekday)})';
+  }
 }

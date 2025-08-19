@@ -3,7 +3,7 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:duty_it/app/services/search_filter_service.dart';
+import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/widgets.dart';

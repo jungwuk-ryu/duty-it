@@ -1,9 +1,11 @@
+import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
@@ -14,6 +16,7 @@ import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  var dotenvFuture = dotenv.load(fileName: ".env");
 
   /* Firebase init start */
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -34,7 +37,12 @@ void main() async {
     KakaoSdk.init(nativeAppKey: "5b75899fba79dc8e1651fa8c98ba12f8");
   }
 
-  await GetStorage.init('appSettings').then((_) {});
+  var getStorageFuture = GetStorage.init('appSettings').then((_) {});
+  await Future.wait([dotenvFuture, getStorageFuture]);
+
+  ApiClient apiClient = ApiClient();
+  Get.put(apiClient);
+
   runApp(
     ScreenUtilInit(
       designSize: Size(360, 760),

@@ -1,6 +1,12 @@
+import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/core/events/event_bookmark_event.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/models/event.dart';
+import 'package:duty_it/app/models/sort_direction.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
+import 'package:duty_it/app/services/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +17,7 @@ enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
+  AppEventService get _eventService => Get.find<AppEventService>();
 
   final Rx<PagingState<int, EventCard>> _pagingState =
       PagingState<int, EventCard>().obs;
@@ -23,21 +30,49 @@ class HomeViewController extends GetxController {
 
   EventSortingType get sortingType => _settingsService.eventSortingType;
 
-  void fetchNextPage() {
+  Future<void> fetchNextPage() async {
     pagingState = pagingState.copyWith(isLoading: true, error: null);
 
     int nextKey = 0;
-    if (!(pagingState.keys == null || pagingState.keys!.isEmpty)) nextKey = pagingState.keys!.last;
+    if (!(pagingState.keys == null || pagingState.keys!.isEmpty)) {
+      nextKey = pagingState.keys!.last;
+    }
     nextKey += 1;
 
-    pagingState = pagingState.copyWith(
-      isLoading: false,
-      keys: [...pagingState.keys ?? [], nextKey],
-      pages: [
-        ...pagingState.pages ?? [],
-        List<EventCard>.generate(10, (index) => EventCard()),
-      ],
-    );
+    pagingState = pagingState.copyWith(isLoading: true);
+
+    const int size = 10;
+
+    try {
+      var apiClient = Get.find<ApiClient>();
+      var reqResult = await apiClient.getEvents(
+        isApproved: true,
+        page: nextKey,
+        size: size,
+        sortDirection: SortDirection.DESC,
+        field: 'ID',
+      );
+      if (reqResult is RequestSuccess) {
+        var events = (reqResult as RequestSuccess<List<Event>>).data;
+
+        pagingState = pagingState.copyWith(
+          isLoading: false,
+          keys: [...pagingState.keys ?? [], nextKey],
+          pages: [
+            ...pagingState.pages ?? [],
+            List<EventCard>.generate(
+              events.length,
+              (i) => EventCard(event: events[i]),
+            ),
+          ],
+          hasNextPage: events.length >= size,
+        );
+      } else {
+        
+      }
+    } finally {
+      pagingState = pagingState.copyWith(isLoading: false);
+    }
   }
 
   void showSortingBottomModal() {
@@ -48,7 +83,18 @@ class HomeViewController extends GetxController {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
       ),
-      builder: (_) => SortingBottomModal()
+      builder: (_) => SortingBottomModal(),
     ).whenComplete(() => Get.delete<SortingModalController>());
+  }
+
+  Future<void> bookmark(Event event) async {
+    var client = Get.find<ApiClient>();
+    var result = await client.toggleBookmark(event.id);
+    if (result is RequestSuccess) {
+      _eventService.fire(EventBookmarkEvent());
+    } else {
+      var reqFail = result as RequestFail;
+      AppUtils.showSnackBar(reqFail.serverFail?.message ?? '북마크를 수정하지 못했습니다.');
+    }
   }
 }
