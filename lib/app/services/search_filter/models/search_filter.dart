@@ -1,17 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'search_filter_settings.freezed.dart';
-part 'search_filter_settings.g.dart';
+part 'search_filter.freezed.dart';
+part 'search_filter.g.dart';
 
 @freezed
-abstract class SearchFilter with _$SearchFilterSettings {
+abstract class SearchFilter with _$SearchFilter {
   const factory SearchFilter({
     @Default(<String>{}) Set<String> categories,
     String? host,
     @Default(true) bool showEnded,
-  }) = _SearchFilterSettings;
+  }) = _SearchFilter;
 
   factory SearchFilter.fromJson(Map<String, Object?> json) =>
-      _$SearchFilterSettingsFromJson(json);
+      _$SearchFilterFromJson(json);
 }

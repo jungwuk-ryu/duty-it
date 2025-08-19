@@ -11,6 +11,50 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsFontsGen {
+  const $AssetsFontsGen();
+
+  /// File path: assets/fonts/Pretendard-Black.ttf
+  String get pretendardBlack => 'assets/fonts/Pretendard-Black.ttf';
+
+  /// File path: assets/fonts/Pretendard-Bold.ttf
+  String get pretendardBold => 'assets/fonts/Pretendard-Bold.ttf';
+
+  /// File path: assets/fonts/Pretendard-ExtraBold.ttf
+  String get pretendardExtraBold => 'assets/fonts/Pretendard-ExtraBold.ttf';
+
+  /// File path: assets/fonts/Pretendard-ExtraLight.ttf
+  String get pretendardExtraLight => 'assets/fonts/Pretendard-ExtraLight.ttf';
+
+  /// File path: assets/fonts/Pretendard-Light.ttf
+  String get pretendardLight => 'assets/fonts/Pretendard-Light.ttf';
+
+  /// File path: assets/fonts/Pretendard-Medium.ttf
+  String get pretendardMedium => 'assets/fonts/Pretendard-Medium.ttf';
+
+  /// File path: assets/fonts/Pretendard-Regular.ttf
+  String get pretendardRegular => 'assets/fonts/Pretendard-Regular.ttf';
+
+  /// File path: assets/fonts/Pretendard-SemiBold.ttf
+  String get pretendardSemiBold => 'assets/fonts/Pretendard-SemiBold.ttf';
+
+  /// File path: assets/fonts/Pretendard-Thin.ttf
+  String get pretendardThin => 'assets/fonts/Pretendard-Thin.ttf';
+
+  /// List of all assets
+  List<String> get values => [
+    pretendardBlack,
+    pretendardBold,
+    pretendardExtraBold,
+    pretendardExtraLight,
+    pretendardLight,
+    pretendardMedium,
+    pretendardRegular,
+    pretendardSemiBold,
+    pretendardThin,
+  ];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -110,7 +154,12 @@ class $AssetsIconsGen {
 class Assets {
   const Assets._();
 
+  static const String aEnv = '.env';
+  static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+
+  /// List of all assets
+  static List<String> get values => [aEnv];
 }
 
 class AssetGenImage {
