@@ -1,3 +1,4 @@
+import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,6 +39,9 @@ void main() async {
 
   var getStorageFuture = GetStorage.init('appSettings').then((_) {});
   await Future.wait([dotenvFuture, getStorageFuture]);
+
+  ApiClient apiClient = ApiClient();
+  Get.put(apiClient);
 
   runApp(
     ScreenUtilInit(
