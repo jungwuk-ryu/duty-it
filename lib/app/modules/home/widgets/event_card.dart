@@ -1,13 +1,15 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/models/event.dart';
 import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EventCard extends StatelessWidget {
-  final String? imageUri;
+  final Event event;
 
-  const EventCard({super.key, this.imageUri});
+  const EventCard({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +28,14 @@ class EventCard extends StatelessWidget {
                 color: Color(0xffD9D9D9),
                 borderRadius: cardBorderRadius,
               ),
-              child: imageUri != null
-                  ? Image.network(imageUri!, fit: BoxFit.fitWidth)
-                  : Center(child: Image.asset(Assets.icons.nurseCap.path)),
+              child: Image.network(
+                event.thumbnail,
+                fit: BoxFit.fitWidth,
+                loadingBuilder: (_, _, _) =>
+                    Center(child: Image.asset(Assets.icons.nurseCap.path)),
+                errorBuilder: (_, _, _) =>
+                    Center(child: Image.asset(Assets.icons.nurseCap.path)),
+              ),
             ),
             Visibility(
               visible: false, //TODO: 종료 여부에 따른 값 변경
@@ -56,13 +63,13 @@ class EventCard extends StatelessWidget {
             Positioned(
               top: 0,
               right: 0,
-              child: EventBookmarkButton(isBookmarked: false),
+              child: EventBookmarkButton(isBookmarked: false, event: event),
             ),
           ],
         ),
         SizedBox(height: 16.h),
         Text(
-          "행사 제목 자리 입니다. 행사 제목 자리 입니다. 행사 제목 자리입니다.",
+          event.title,
           style: TextStyle(
             color: Colors.black,
             fontSize: 20,
@@ -71,26 +78,31 @@ class EventCard extends StatelessWidget {
           ),
         ),
         SizedBox(height: 4.h),
-        Row(children: [
-
-        ],),
         Row(
           children: [
             Expanded(
-              child: EventMetaItem(name: "카테고리", value: "컨퍼런스 / 학술대회"),
+              child: EventMetaItem(name: "카테고리", value: event.eventType.displayName),
             ),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(left: 8.w),
-                child: EventMetaItem(name: "주최", value: "상세내용 상세내용 상세내용 상세내용"),
+                child: EventMetaItem(name: "주최", value: event.host.name),
               ),
             ),
           ],
         ),
         SizedBox(height: 4.h),
-        EventMetaItem(name: "일시", value: "2025년 00월 00일(일) ~ 2025년 00월 00일(일)"),
+        EventMetaItem(
+          name: "일시",
+          value:
+              "${AppUtils.formatDateTime(event.startAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.endAt ?? DateTime.now())}",
+        ),
         SizedBox(height: 4.h),
-        EventMetaItem(name: "모집", value: "5월 12일(월) 00:00 ~ 5월 26일(월) 18:00"),
+        EventMetaItem(
+          name: "모집",
+          value:
+              "${AppUtils.formatDateTime(event.recruitmentStartAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.recruitmentEndAt ?? DateTime.now())}",
+        ),
         SizedBox(height: 12.h),
       ],
     );
