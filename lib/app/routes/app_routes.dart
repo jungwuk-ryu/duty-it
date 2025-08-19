@@ -6,17 +6,19 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
   static const MAIN = _Paths.MAIN;
-  static const AUTH = _Paths.AUTH;
+  static const LOGIN = _Paths.LOGIN;
   static const ACCOUNT = _Paths.ACCOUNT;
   static const SEARCH_FILTER = _Paths.SEARCH_FILTER;
   static const SETTINGS = _Paths.SETTINGS;
+  static const SPLASH = _Paths.SPLASH;
 }
 
 abstract class _Paths {
   _Paths._();
   static const MAIN = '/';
-  static const AUTH = '/auth';
+  static const LOGIN = '/login';
   static const ACCOUNT = '/account';
   static const SEARCH_FILTER = '/search-filter';
   static const SETTINGS = '/settings';
+  static const SPLASH = '/splash';
 }
