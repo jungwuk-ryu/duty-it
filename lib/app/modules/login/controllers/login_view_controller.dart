@@ -5,7 +5,6 @@ import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/models/login_result.dart';
-import 'package:duty_it/app/modules/login/services/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -42,6 +41,7 @@ class LoginViewController extends GetxController {
           }
         case SocialLoginFail r:
           AppUtils.showSnackBar(r.reason);
+      }
 
     } catch (e) {
       AppUtils.showSnackBar("로그인 중 오류가 발생하였습니다.");
