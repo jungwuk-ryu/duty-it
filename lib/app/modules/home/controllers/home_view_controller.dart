@@ -1,4 +1,8 @@
+import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/events/event_bookmark_event.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/models/event.dart';
+import 'package:duty_it/app/models/sort_direction.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
@@ -26,22 +30,49 @@ class HomeViewController extends GetxController {
 
   EventSortingType get sortingType => _settingsService.eventSortingType;
 
-  void fetchNextPage() {
+  Future<void> fetchNextPage() async {
     pagingState = pagingState.copyWith(isLoading: true, error: null);
 
     int nextKey = 0;
-    if (!(pagingState.keys == null || pagingState.keys!.isEmpty))
+    if (!(pagingState.keys == null || pagingState.keys!.isEmpty)) {
       nextKey = pagingState.keys!.last;
+    }
     nextKey += 1;
 
-    pagingState = pagingState.copyWith(
-      isLoading: false,
-      keys: [...pagingState.keys ?? [], nextKey],
-      pages: [
-        ...pagingState.pages ?? [],
-        List<EventCard>.generate(10, (index) => EventCard()),
-      ],
-    );
+    pagingState = pagingState.copyWith(isLoading: true);
+
+    const int size = 10;
+
+    try {
+      var apiClient = Get.find<ApiClient>();
+      var reqResult = await apiClient.getEvents(
+        isApproved: true,
+        page: nextKey,
+        size: size,
+        sortDirection: SortDirection.DESC,
+        field: 'ID',
+      );
+      if (reqResult is RequestSuccess) {
+        var events = (reqResult as RequestSuccess<List<Event>>).data;
+
+        pagingState = pagingState.copyWith(
+          isLoading: false,
+          keys: [...pagingState.keys ?? [], nextKey],
+          pages: [
+            ...pagingState.pages ?? [],
+            List<EventCard>.generate(
+              events.length,
+              (i) => EventCard(event: events[i]),
+            ),
+          ],
+          hasNextPage: events.length >= size,
+        );
+      } else {
+        
+      }
+    } finally {
+      pagingState = pagingState.copyWith(isLoading: false);
+    }
   }
 
   void showSortingBottomModal() {
@@ -57,6 +88,6 @@ class HomeViewController extends GetxController {
   }
 
   void bookmarkTest() {
-    _eventService.fire(EventBookmarkEvent());
+      _eventService.fire(EventBookmarkEvent());
   }
 }
