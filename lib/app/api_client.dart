@@ -182,6 +182,7 @@ Future<RequestResult<T>> _send<T>(
     String? field,         // 'ID' | 'NAME'
     EventType? type,          // 'CONFERENCE' | 'SEMINAR' | 'WEBINAR' | 'WORKSHOP' | 'CONTEST' | 'ETC'
     int? hostId,
+    String? searchKeyword,
   }) async {
     return _send(() async => await get(
       '/events',
@@ -193,6 +194,7 @@ Future<RequestResult<T>> _send<T>(
         'field': field,
         'type': type?.name,
         'hostId': hostId,
+        'searchKeyword': searchKeyword
       }),
     ), map: (rp) {
       List<Event> events = [];
