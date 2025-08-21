@@ -59,8 +59,8 @@ class HomeViewController extends GetxController {
 
     pagingState = pagingState.copyWith(
       isLoading: true,
-      keys: clearPage ? [] : null,
-      pages: clearPage ? [] : null,
+      keys: clearPage ? [] : const Omit(),
+      pages: clearPage ? [] : const Omit(),
     );
 
     const int size = 10;
