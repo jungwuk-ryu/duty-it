@@ -1,3 +1,4 @@
+import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/models/event.dart';
@@ -5,6 +6,8 @@ import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -24,6 +27,9 @@ class EventCard extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: () {
         launchUrlString(event.uri);
+
+        var apiClient = Get.find<ApiClient>();
+        apiClient.increaseViewCount(event.id);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
