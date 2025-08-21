@@ -258,8 +258,8 @@ Future<RequestResult<T>> _send<T>(
   // ---------- Bookmark ----------
 
   /// 북마크 토글 (/bookmarks/{eventId}) - POST (204)
-  Future<RequestResult<void>> toggleBookmark(int eventId) async {
-    return _send(() async => await post('/bookmarks/$eventId', null), map: (_) => true);
+  Future<RequestResult<bool>> toggleBookmark(int eventId) async {
+    return _send(() async => await post('/bookmarks/$eventId', null), map: (rp) => json.decode(rp.bodyString!)['isBookmarked'] as bool);
   }
 
   /// 북마크 목록 조회 (/bookmarks) - GET
