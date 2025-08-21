@@ -1,6 +1,7 @@
-import 'package:duty_it/app/bindings/initial_bindings.dart';
 import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/bindings/initial_bindings.dart';
 import 'package:duty_it/firebase_options.dart';
+import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -9,9 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:duty_it/gen/fonts.gen.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_auth.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk_auth.dart';
 
 import 'app/routes/app_pages.dart';
 
@@ -21,7 +21,7 @@ void main() async {
 
   /* Firebase init start */
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
+
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
@@ -43,6 +43,7 @@ void main() async {
 
   ApiClient apiClient = ApiClient();
   Get.put(apiClient);
+  apiClient.loginAndRefreshToken();
 
   runApp(
     ScreenUtilInit(
