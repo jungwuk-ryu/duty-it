@@ -62,13 +62,14 @@ class HomeViewController extends GetxController {
             ...pagingState.pages ?? [],
             List<EventCard>.generate(
               events.length,
-              (i) => EventCard(event: events[i]),
+              (i) => EventCard(eventRx: Rx(events[i])),
             ),
           ],
           hasNextPage: events.length >= size,
         );
       } else {
-        
+        var fail = reqResult as RequestFail;
+        AppUtils.showSnackBar('북마크 수정 실패 : ${fail.serverFail?.message ?? ""}');
       }
     } finally {
       pagingState = pagingState.copyWith(isLoading: false);
@@ -87,14 +88,20 @@ class HomeViewController extends GetxController {
     ).whenComplete(() => Get.delete<SortingModalController>());
   }
 
-  Future<void> bookmark(Event event) async {
+  Future<bool> bookmark(Event event) async {
+    bool isBookmarked = event.isBookmarked;
     var client = Get.find<ApiClient>();
     var result = await client.toggleBookmark(event.id);
     if (result is RequestSuccess) {
-      _eventService.fire(EventBookmarkEvent());
+      isBookmarked = (result as RequestSuccess<bool>).data;
+      if (isBookmarked) {
+        _eventService.fire(EventBookmarkEvent());
+      }
     } else {
       var reqFail = result as RequestFail;
       AppUtils.showSnackBar(reqFail.serverFail?.message ?? '북마크를 수정하지 못했습니다.');
     }
+
+    return isBookmarked;
   }
 }

@@ -6,25 +6,29 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class EventBookmarkButton extends StatelessWidget {
-  final Event event;
-  final bool isBookmarked;
+  final Rx<Event> eventRx;
 
+  Event get event => eventRx.value;
+  bool get isBookmarked => event.isBookmarked;
   HomeViewController get _controller => Get.find<HomeViewController>();
 
-  const EventBookmarkButton({super.key, required this.isBookmarked, required this.event});
+   const EventBookmarkButton({super.key, required this.eventRx});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () => _controller.bookmark(event),
-      child: Image.asset(
+      onTap: () async {
+        bool result = await _controller.bookmark(event);
+        eventRx.value = event.copyWith(isBookmarked: result);
+      },
+      child: Obx(() => Image.asset(
         isBookmarked
             ? Assets.icons.bookmarkSharpRed.path
             : Assets.icons.bookmarkSharp.path,
         width: 40.r,
         height: 40.r,
-      ),
+      )),
     );
   }
 }

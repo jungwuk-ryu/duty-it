@@ -5,6 +5,7 @@ import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class EventCard extends StatelessWidget {
@@ -71,7 +72,7 @@ class EventCard extends StatelessWidget {
               Positioned(
                 top: 0,
                 right: 0,
-                child: EventBookmarkButton(isBookmarked: event.isBookmarked, event: event),
+                child: EventBookmarkButton(eventRx: eventRx),
               ),
             ],
           ),
