@@ -27,6 +27,7 @@ abstract class Event with _$Event {
         required String thumbnail,
         required EventType eventType,
         required Host host,
+        @Default(false) isBookmarked,
     }) = _Event;
 
     factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);

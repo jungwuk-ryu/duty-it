@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Event {
 
- int get id; String get title; DateTime? get startAt; DateTime? get endAt; DateTime? get recruitmentStartAt; DateTime? get recruitmentEndAt; String get uri; String get thumbnail; EventType get eventType; Host get host;
+ int get id; String get title; DateTime? get startAt; DateTime? get endAt; DateTime? get recruitmentStartAt; DateTime? get recruitmentEndAt; String get uri; String get thumbnail; EventType get eventType; Host get host; dynamic get isBookmarked;
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $EventCopyWith<Event> get copyWith => _$EventCopyWithImpl<Event>(this as Event, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Event&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.startAt, startAt) || other.startAt == startAt)&&(identical(other.endAt, endAt) || other.endAt == endAt)&&(identical(other.recruitmentStartAt, recruitmentStartAt) || other.recruitmentStartAt == recruitmentStartAt)&&(identical(other.recruitmentEndAt, recruitmentEndAt) || other.recruitmentEndAt == recruitmentEndAt)&&(identical(other.uri, uri) || other.uri == uri)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.host, host) || other.host == host));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Event&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.startAt, startAt) || other.startAt == startAt)&&(identical(other.endAt, endAt) || other.endAt == endAt)&&(identical(other.recruitmentStartAt, recruitmentStartAt) || other.recruitmentStartAt == recruitmentStartAt)&&(identical(other.recruitmentEndAt, recruitmentEndAt) || other.recruitmentEndAt == recruitmentEndAt)&&(identical(other.uri, uri) || other.uri == uri)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.host, host) || other.host == host)&&const DeepCollectionEquality().equals(other.isBookmarked, isBookmarked));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,startAt,endAt,recruitmentStartAt,recruitmentEndAt,uri,thumbnail,eventType,host);
+int get hashCode => Object.hash(runtimeType,id,title,startAt,endAt,recruitmentStartAt,recruitmentEndAt,uri,thumbnail,eventType,host,const DeepCollectionEquality().hash(isBookmarked));
 
 @override
 String toString() {
-  return 'Event(id: $id, title: $title, startAt: $startAt, endAt: $endAt, recruitmentStartAt: $recruitmentStartAt, recruitmentEndAt: $recruitmentEndAt, uri: $uri, thumbnail: $thumbnail, eventType: $eventType, host: $host)';
+  return 'Event(id: $id, title: $title, startAt: $startAt, endAt: $endAt, recruitmentStartAt: $recruitmentStartAt, recruitmentEndAt: $recruitmentEndAt, uri: $uri, thumbnail: $thumbnail, eventType: $eventType, host: $host, isBookmarked: $isBookmarked)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $EventCopyWith<$Res>  {
   factory $EventCopyWith(Event value, $Res Function(Event) _then) = _$EventCopyWithImpl;
 @useResult
 $Res call({
- int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail, EventType eventType, Host host
+ int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail, EventType eventType, Host host, dynamic isBookmarked
 });
 
 
@@ -65,7 +65,7 @@ class _$EventCopyWithImpl<$Res>
 
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? startAt = freezed,Object? endAt = freezed,Object? recruitmentStartAt = freezed,Object? recruitmentEndAt = freezed,Object? uri = null,Object? thumbnail = null,Object? eventType = null,Object? host = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? startAt = freezed,Object? endAt = freezed,Object? recruitmentStartAt = freezed,Object? recruitmentEndAt = freezed,Object? uri = null,Object? thumbnail = null,Object? eventType = null,Object? host = null,Object? isBookmarked = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -77,7 +77,8 @@ as DateTime?,uri: null == uri ? _self.uri : uri // ignore: cast_nullable_to_non_
 as String,thumbnail: null == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
 as String,eventType: null == eventType ? _self.eventType : eventType // ignore: cast_nullable_to_non_nullable
 as EventType,host: null == host ? _self.host : host // ignore: cast_nullable_to_non_nullable
-as Host,
+as Host,isBookmarked: freezed == isBookmarked ? _self.isBookmarked : isBookmarked // ignore: cast_nullable_to_non_nullable
+as dynamic,
   ));
 }
 /// Create a copy of Event
@@ -171,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host,  dynamic isBookmarked)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Event() when $default != null:
-return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host);case _:
+return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
   return orElse();
 
 }
@@ -192,10 +193,10 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host,  dynamic isBookmarked)  $default,) {final _that = this;
 switch (_that) {
 case _Event():
-return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host);case _:
+return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +213,10 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host,  dynamic isBookmarked)?  $default,) {final _that = this;
 switch (_that) {
 case _Event() when $default != null:
-return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host);case _:
+return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
   return null;
 
 }
@@ -227,7 +228,7 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 @JsonSerializable()
 
 class _Event implements Event {
-  const _Event({required this.id, required this.title, this.startAt, this.endAt, this.recruitmentStartAt, this.recruitmentEndAt, required this.uri, required this.thumbnail, required this.eventType, required this.host});
+  const _Event({required this.id, required this.title, this.startAt, this.endAt, this.recruitmentStartAt, this.recruitmentEndAt, required this.uri, required this.thumbnail, required this.eventType, required this.host, this.isBookmarked = false});
   factory _Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
 @override final  int id;
@@ -240,6 +241,7 @@ class _Event implements Event {
 @override final  String thumbnail;
 @override final  EventType eventType;
 @override final  Host host;
+@override@JsonKey() final  dynamic isBookmarked;
 
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
@@ -254,16 +256,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Event&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.startAt, startAt) || other.startAt == startAt)&&(identical(other.endAt, endAt) || other.endAt == endAt)&&(identical(other.recruitmentStartAt, recruitmentStartAt) || other.recruitmentStartAt == recruitmentStartAt)&&(identical(other.recruitmentEndAt, recruitmentEndAt) || other.recruitmentEndAt == recruitmentEndAt)&&(identical(other.uri, uri) || other.uri == uri)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.host, host) || other.host == host));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Event&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.startAt, startAt) || other.startAt == startAt)&&(identical(other.endAt, endAt) || other.endAt == endAt)&&(identical(other.recruitmentStartAt, recruitmentStartAt) || other.recruitmentStartAt == recruitmentStartAt)&&(identical(other.recruitmentEndAt, recruitmentEndAt) || other.recruitmentEndAt == recruitmentEndAt)&&(identical(other.uri, uri) || other.uri == uri)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.host, host) || other.host == host)&&const DeepCollectionEquality().equals(other.isBookmarked, isBookmarked));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,startAt,endAt,recruitmentStartAt,recruitmentEndAt,uri,thumbnail,eventType,host);
+int get hashCode => Object.hash(runtimeType,id,title,startAt,endAt,recruitmentStartAt,recruitmentEndAt,uri,thumbnail,eventType,host,const DeepCollectionEquality().hash(isBookmarked));
 
 @override
 String toString() {
-  return 'Event(id: $id, title: $title, startAt: $startAt, endAt: $endAt, recruitmentStartAt: $recruitmentStartAt, recruitmentEndAt: $recruitmentEndAt, uri: $uri, thumbnail: $thumbnail, eventType: $eventType, host: $host)';
+  return 'Event(id: $id, title: $title, startAt: $startAt, endAt: $endAt, recruitmentStartAt: $recruitmentStartAt, recruitmentEndAt: $recruitmentEndAt, uri: $uri, thumbnail: $thumbnail, eventType: $eventType, host: $host, isBookmarked: $isBookmarked)';
 }
 
 
@@ -274,7 +276,7 @@ abstract mixin class _$EventCopyWith<$Res> implements $EventCopyWith<$Res> {
   factory _$EventCopyWith(_Event value, $Res Function(_Event) _then) = __$EventCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail, EventType eventType, Host host
+ int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail, EventType eventType, Host host, dynamic isBookmarked
 });
 
 
@@ -291,7 +293,7 @@ class __$EventCopyWithImpl<$Res>
 
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? startAt = freezed,Object? endAt = freezed,Object? recruitmentStartAt = freezed,Object? recruitmentEndAt = freezed,Object? uri = null,Object? thumbnail = null,Object? eventType = null,Object? host = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? startAt = freezed,Object? endAt = freezed,Object? recruitmentStartAt = freezed,Object? recruitmentEndAt = freezed,Object? uri = null,Object? thumbnail = null,Object? eventType = null,Object? host = null,Object? isBookmarked = freezed,}) {
   return _then(_Event(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -303,7 +305,8 @@ as DateTime?,uri: null == uri ? _self.uri : uri // ignore: cast_nullable_to_non_
 as String,thumbnail: null == thumbnail ? _self.thumbnail : thumbnail // ignore: cast_nullable_to_non_nullable
 as String,eventType: null == eventType ? _self.eventType : eventType // ignore: cast_nullable_to_non_nullable
 as EventType,host: null == host ? _self.host : host // ignore: cast_nullable_to_non_nullable
-as Host,
+as Host,isBookmarked: freezed == isBookmarked ? _self.isBookmarked : isBookmarked // ignore: cast_nullable_to_non_nullable
+as dynamic,
   ));
 }
 
