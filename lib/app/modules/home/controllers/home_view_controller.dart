@@ -30,15 +30,38 @@ class HomeViewController extends GetxController {
 
   EventSortingType get sortingType => _settingsService.eventSortingType;
 
-  Future<void> fetchNextPage() async {
+  final TextEditingController searchTextEditingController =
+      TextEditingController();
+  final RxString searchQuery = RxString('');
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    searchTextEditingController.addListener(
+      () => searchQuery.value = searchTextEditingController.text.trim(),
+    );
+    debounce(
+      searchQuery,
+      (v) => fetchNextPage(),
+      time: Duration(milliseconds: 500),
+    );
+  }
+
+  Future<void> fetchNextPage({bool clearPage = false}) async {
     pagingState = pagingState.copyWith(isLoading: true, error: null);
 
     int nextKey = 0;
-    if (!(pagingState.keys == null || pagingState.keys!.isEmpty)) {
+    if (!clearPage &&
+        !(pagingState.keys == null || pagingState.keys!.isEmpty)) {
       nextKey = (pagingState.keys?.last ?? -1) + 1;
     }
 
-    pagingState = pagingState.copyWith(isLoading: true);
+    pagingState = pagingState.copyWith(
+      isLoading: true,
+      keys: clearPage ? [] : null,
+      pages: clearPage ? [] : null,
+    );
 
     const int size = 10;
 
@@ -50,6 +73,7 @@ class HomeViewController extends GetxController {
         size: size,
         sortDirection: SortDirection.DESC,
         field: 'ID',
+        searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
       );
       if (reqResult is RequestSuccess) {
         var events = (reqResult as RequestSuccess<List<Event>>).data;

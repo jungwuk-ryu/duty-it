@@ -23,7 +23,7 @@ class HomeHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 20.h),
-          HomeSearchBar(controller: TextEditingController()),
+          HomeSearchBar(controller: controller.searchTextEditingController),
           SizedBox(height: 18.h),
 
           Row(
