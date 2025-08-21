@@ -35,9 +35,8 @@ class HomeViewController extends GetxController {
 
     int nextKey = 0;
     if (!(pagingState.keys == null || pagingState.keys!.isEmpty)) {
-      nextKey = pagingState.keys!.last;
+      nextKey = (pagingState.keys?.last ?? -1) + 1;
     }
-    nextKey += 1;
 
     pagingState = pagingState.copyWith(isLoading: true);
 
