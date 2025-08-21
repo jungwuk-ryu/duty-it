@@ -8,9 +8,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class EventCard extends StatelessWidget {
-  final Event event;
+  final Rx<Event> eventRx;
 
-  const EventCard({super.key, required this.event});
+  Event get event => eventRx.value;
+
+  const EventCard({super.key, required this.eventRx});
 
   @override
   Widget build(BuildContext context) {
