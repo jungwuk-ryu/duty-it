@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # Ensure repo root and Flutter env regardless of where this runs
-REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || cd ../.. && pwd)"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 export FLUTTER_ROOT="$REPO_ROOT/.flutter"
 export PATH="$FLUTTER_ROOT/bin:$PATH"
 
