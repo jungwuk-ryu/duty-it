@@ -17,7 +17,5 @@ flutter pub get
 
 # 4) CocoaPods 설치/업데이트
 cd ios
-# 저장소 메타 갱신(네트워크 느릴 경우 생략 가능)
-pod repo update
-# Pod 설치(지원 파일 및 xcfilelist 생성)
-pod install
+# 저장소 메타 갱신과 Pod 설치를 한번에 수행 (더 효율적)
+pod install --repo-update
