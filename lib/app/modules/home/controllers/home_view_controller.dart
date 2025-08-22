@@ -43,7 +43,7 @@ class HomeViewController extends GetxController {
     );
     debounce(
       searchQuery,
-      (v) => fetchNextPage(),
+      (v) => fetchNextPage(clearPage: true),
       time: Duration(milliseconds: 500),
     );
   }
@@ -92,7 +92,7 @@ class HomeViewController extends GetxController {
         );
       } else {
         var fail = reqResult as RequestFail;
-        AppUtils.showSnackBar('북마크 수정 실패 : ${fail.serverFail?.message ?? ""}');
+        AppUtils.showSnackBar('이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}');
       }
     } finally {
       pagingState = pagingState.copyWith(isLoading: false);
