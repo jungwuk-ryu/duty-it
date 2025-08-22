@@ -43,7 +43,7 @@ class HomeViewController extends GetxController {
     );
     debounce(
       searchQuery,
-      (v) => fetchNextPage(),
+      (v) => fetchNextPage(clearPage: true),
       time: Duration(milliseconds: 500),
     );
   }
