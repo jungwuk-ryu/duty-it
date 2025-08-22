@@ -296,7 +296,7 @@ class ApiClient extends GetConnect {
 
   // ---------- Bookmark ----------
 
-  /// 북마크 토글 (/bookmarks/{eventId}) - POST (204)
+  /// 북마크 토글 (/bookmarks/{eventId}) - POST (200)
   Future<RequestResult<bool>> toggleBookmark(int eventId) async {
     return _send(
       () async => await post('/bookmarks/$eventId', null),
