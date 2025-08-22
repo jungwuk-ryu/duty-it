@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # 0) Move to repo root (works even when this script is in ios/ci_scripts)
-REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || cd ../.. && pwd)"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
 # 1) Install Flutter
