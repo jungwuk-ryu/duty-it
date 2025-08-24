@@ -8,4 +8,9 @@ export PATH="$FLUTTER_ROOT/bin:$PATH"
 
 # Pre-build to generate necessary files; no code signing
 cd "$REPO_ROOT"
+
+cat > .env <<'EOF'
+server=${SERVER_ADDRESS}
+EOF
+
 flutter build ios --no-codesign --release
