@@ -8,6 +8,8 @@ export PATH="$FLUTTER_ROOT/bin:$PATH"
 
 # Pre-build to generate necessary files; no code signing
 cd "$REPO_ROOT"
+./.flutter/bin/dart pub global activate flutterfire_cli
+export PATH="$PATH:/Users/local/.pub-cache/bin"
 
 cat > .env <<'EOF'
 server=${SERVER_ADDRESS}
