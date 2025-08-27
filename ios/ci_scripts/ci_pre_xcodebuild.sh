@@ -11,7 +11,7 @@ cd "$REPO_ROOT"
 ./.flutter/bin/dart pub global activate flutterfire_cli
 export PATH="$PATH:/Users/local/.pub-cache/bin"
 
-cat > .env <<'EOF'
+cat > .env <<EOF
 server=${SERVER_ADDRESS}
 EOF
 
