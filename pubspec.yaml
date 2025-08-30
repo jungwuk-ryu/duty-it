@@ -58,6 +58,19 @@ dev_dependencies:
   flutter_gen_runner:
   flutter_lints: ^5.0.0
   json_serializable: ^6.10.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icons/app-icon.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/icons/app-icon.png"
+    background_color: "#ffffff"
+    theme_color: "#ffffff"
 
 flutter_gen:
   assets:

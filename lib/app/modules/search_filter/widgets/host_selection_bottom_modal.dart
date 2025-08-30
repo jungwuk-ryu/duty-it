@@ -37,8 +37,9 @@ class _SearchFilterHostSelectionBottomModal
   Widget build(BuildContext context) {
     return SizedBox(
       height: 420.h,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: AnimatedPadding(
+        padding: EdgeInsets.only(top: 16.w, bottom: 16.w + MediaQuery.of(context).viewInsets.bottom),
+        duration: Duration(milliseconds: 200),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -76,6 +77,7 @@ class _SearchFilterHostSelectionBottomModal
                       child: TextField(
                         controller: editingController,
                         autofocus: true,
+                        onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
                         textInputAction: TextInputAction.done,
                         textAlignVertical: TextAlignVertical.top,
                         style: const TextStyle(

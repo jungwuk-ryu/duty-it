@@ -38,7 +38,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 17.w),
+      padding: EdgeInsets.only(top: 17.w, bottom: 17.w + MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -65,7 +65,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   onSubmitted: (_) => onSubmitted(),
                   decoration:
                       InputDecoration.collapsed(
-                        hintText: "닉네임 입력",
+                        hintText: "도라지 감자도리",
                         hintStyle: TextStyle(color: AppColors.g05),
                       ).copyWith(
                         counterText: '', // 이 줄이 카운터를 숨깁니다
