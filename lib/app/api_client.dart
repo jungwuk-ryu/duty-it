@@ -49,7 +49,7 @@ class ApiClient extends GetConnect {
       if (_token == null || _token!.isEmpty) return request;
 
       request.headers['Authorization'] = 'Bearer $_token';
-      log(request.toString());
+      if (kDebugMode) log(request.toString());
       return request;
     });
 
