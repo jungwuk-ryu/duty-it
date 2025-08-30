@@ -139,7 +139,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
     }
 
     bool result = await controller.setUserName(newName);
-    if (result) if (result) Get.back();
+    if (result) Get.back();
 
     controller.fetchUser();
   }
