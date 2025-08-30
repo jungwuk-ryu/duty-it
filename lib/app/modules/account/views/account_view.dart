@@ -51,10 +51,18 @@ class AccountView extends GetView<AccountViewController> {
                     Obx(() => AccountViewItemText(controller.getAccountId())),
 
                     SizedBox(height: 32.h),
-                    AccountViewItemText("로그아웃", color: AppColors.g05),
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => controller.logout(),
+                      child: AccountViewItemText("로그아웃", color: AppColors.g05),
+                    ),
 
                     SizedBox(height: 16.h),
-                    AccountViewItemText("회원 탈퇴", color: AppColors.g05),
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => controller.withdraw(),
+                      child: AccountViewItemText("회원 탈퇴", color: AppColors.g05),
+                    ),
                   ],
                 ),
               ),

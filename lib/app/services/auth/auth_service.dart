@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/models/app_user.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/kakao_login_strategy.dart';
@@ -74,8 +76,27 @@ class AuthService extends GetxService {
 
   Future<void> logout() async {
     await _currentStrategy?.logout();
+    await FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u == null);
     appUser = null;
     _currentStrategy = null;
+  }
+
+  Future<bool> withdraw() async {
+    if (appUser == null) {
+      AppUtils.showSnackBar('회원탈퇴 중 알 수 없는 오류가 발생했어요.');
+      return false;
+    }
+
+    var reqResult = await Get.find<ApiClient>().withdrawUser(appUser!.id);
+    if (reqResult is RequestFail) {
+      AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
+      if (reqResult.serverFail != null) AppUtils.showSnackBar(reqResult.serverFail!.message);
+      return false;
+    }
+
+    await logout();
+    return true;
   }
 
   bool isLoggined() {

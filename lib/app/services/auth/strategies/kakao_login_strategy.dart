@@ -29,6 +29,5 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
   @override
   Future<void> logout() async {
     await UserApi.instance.logout();
-    await FirebaseAuth.instance.signOut();
   }
 }

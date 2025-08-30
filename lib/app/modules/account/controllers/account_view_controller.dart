@@ -1,4 +1,5 @@
 import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,5 +46,16 @@ class AccountViewController extends GetxController {
 
   String getAccountId() {
     return _authService.appUser?.email ?? '불러오지 못했어요 :(';
+  }
+
+  Future<void> logout() async {
+    await _authService.logout();
+    Get.offAndToNamed(Routes.LOGIN);
+  }
+
+  Future<void> withdraw() async {
+    if (await _authService.withdraw()) {
+      Get.offAndToNamed(Routes.LOGIN);
+    }
   }
 }
