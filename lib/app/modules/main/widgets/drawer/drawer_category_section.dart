@@ -25,8 +25,6 @@ class DrawerCategorySection extends StatelessWidget {
         _PageItemButton(title: "앱 설정", onTap: () {Get.toNamed(Routes.SETTINGS);}),
         SizedBox(height: 16.h),
         _PageItemButton(title: "행사 등록 요청", onTap: () {}), // TODO: 배포 직전 기능 구현
-        SizedBox(height: 16.h),
-        _PageItemButton(title: "필요 페이지", onTap: () {}),
       ],
     );
   }
