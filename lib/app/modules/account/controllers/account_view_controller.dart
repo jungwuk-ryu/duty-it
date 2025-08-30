@@ -9,6 +9,8 @@ class AccountViewController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    Get.find<ApiClient>().getCurrentUser();
   }
 
   @override
