@@ -1,10 +1,12 @@
+import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:duty_it/app/modules/account/widgets/account_bottom_modal.dart';
 
 class AccountViewController extends GetxController {
-  String _userName = "수줍은 복숭아";
+  AuthService get _authService => Get.find<AuthService>();
 
   @override
   void onInit() {
@@ -24,7 +26,7 @@ class AccountViewController extends GetxController {
   }
 
   String getUserName() {
-    return _userName;
+    return _authService.appUser?.nickname ?? '불러오지 못했어요 :(';
   }
 
   void onUserNameEditButtonClicked() {
@@ -39,12 +41,12 @@ class AccountViewController extends GetxController {
   }
 
   Future<bool> setUserName(String newName) async {
-    _userName = newName;
+    //_userName = newName;
 
     return true;
   }
 
   String getAccountId() {
-    return "abcd1234@naver.com";
+    return _authService.appUser?.email ?? '불러오지 못했어요 :(';
   }
 }
