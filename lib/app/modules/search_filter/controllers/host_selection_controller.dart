@@ -1,3 +1,6 @@
+import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/search_filter_view_controller.dart';
 import 'package:get/get.dart';
 
@@ -5,8 +8,8 @@ class HostSelectionController extends GetxController {
   SearchFilterViewController get sfvController =>
       Get.find<SearchFilterViewController>();
 
-  final List<String> _hosts = <String>[];
-  final RxList<String> filteredHosts = RxList<String>();
+  final List<Host> _hosts = <Host>[];
+  final RxList<Host> filteredHosts = RxList<Host>();
 
   final RxString _query = RxString("");
   String get query => _query.value;
@@ -27,17 +30,15 @@ class HostSelectionController extends GetxController {
   }
 
   Future<void> _fetchHosts() async {
-    _hosts.assignAll([
-      '가나다라',
-      '가나다라1',
-      '가나다라12',
-      '가나다라123',
-      '가나다라1234',
-      '가나다라12345',
-      '가나다라6',
-      '가나다라7',
-      '가나다라8',
-    ]);
+    RequestResult<List<Host>> reqResult = await Get.find<ApiClient>().getHosts();
+    if (reqResult is RequestFail) {
+      var fail = reqResult.serverFail;
+      AppUtils.showSnackBar('주최 목록을 불러오지 못했어요.\n${fail?.message ?? ''}');
+      return;
+    }
+
+    var success = reqResult as RequestSuccess<List<Host>>;
+    _hosts.assignAll(success.data);
     _searchHosts();
   }
 
@@ -48,7 +49,7 @@ class HostSelectionController extends GetxController {
       filteredHosts.assignAll(_hosts);
     } else {
       filteredHosts.assignAll(
-        _hosts.where((e) => e.isCaseInsensitiveContains(query)),
+        _hosts.where((e) => e.name.isCaseInsensitiveContains(query)),
       );
     }
   }

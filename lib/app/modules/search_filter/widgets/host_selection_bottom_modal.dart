@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -128,7 +129,7 @@ class _SearchFilterHostSelectionBottomModal
             SizedBox(height: 24.h),
             Expanded(
               child: Obx(() {
-                List<String> hosts = controller.filteredHosts;
+                List<Host> hosts = controller.filteredHosts;
 
                 if (hosts.isEmpty) {
                   return Center(
@@ -147,7 +148,7 @@ class _SearchFilterHostSelectionBottomModal
 
                 return ListView.builder(
                   itemCount: hosts.length,
-                  itemBuilder: (_, i) => _HostItem(hostName: hosts[i]),
+                  itemBuilder: (_, i) => _HostItem(hostName: hosts[i].name),
                 );
               }),
             ),
