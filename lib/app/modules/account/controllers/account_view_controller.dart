@@ -12,17 +12,11 @@ class AccountViewController extends GetxController {
   void onInit() {
     super.onInit();
 
-    Get.find<ApiClient>().getCurrentUser();
+    fetchUser();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
+  Future<void> fetchUser() async {
+    await Get.find<ApiClient>().getCurrentUser();
   }
 
   String getUserName() {
@@ -41,9 +35,12 @@ class AccountViewController extends GetxController {
   }
 
   Future<bool> setUserName(String newName) async {
-    //_userName = newName;
+    var result = await Get.find<ApiClient>().updateCurrentUserNickname(newName.trim());
+    return result is RequestSuccess;
+  }
 
-    return true;
+  Future<bool> isNicknameAvailable(String nickname) async {
+    return await Get.find<ApiClient>().isNicknameAvailable(nickname) is RequestSuccess;
   }
 
   String getAccountId() {

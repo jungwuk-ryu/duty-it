@@ -1,9 +1,10 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/account/controllers/account_view_controller.dart';
+import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/modules/account/controllers/account_view_controller.dart';
-import 'package:duty_it/gen/assets.gen.dart';
 
 class AccountBottomModal extends StatefulWidget {
   const AccountBottomModal({super.key});
@@ -128,10 +129,18 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   }
 
   Future<void> onSubmitted() async {
-    bool result = await Get.find<AccountViewController>().setUserName(
-      editingController.text.trim(),
-    );
+    final AccountViewController controller = Get.find<AccountViewController>();
 
-    if (result) Get.back();
+    var newName = editingController.text.trim();
+    var available = await controller.isNicknameAvailable(newName);
+    if (!available) {
+      AppUtils.showSnackBar('이 이름은 사용할 수 없어요');
+      return;
+    }
+
+    bool result = await controller.setUserName(newName);
+    if (result) if (result) Get.back();
+
+    controller.fetchUser();
   }
 }
