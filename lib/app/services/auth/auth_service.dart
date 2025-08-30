@@ -21,7 +21,7 @@ class AuthService extends GetxService {
     _strategies[SocialProvider.kakao] = KakaoLoginStrategy();
   }
 
-  Future<SocialLoginResult> login(SocialProvider provider) async {
+  Future<SocialLoginResult> socialLogin(SocialProvider provider) async {
     await logout();
 
     SocialLoginStrategy? strategy = _strategies[provider];
