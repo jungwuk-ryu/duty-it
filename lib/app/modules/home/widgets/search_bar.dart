@@ -32,6 +32,7 @@ class HomeSearchBar extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: controller,
+                onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
                 decoration: InputDecoration(
                   isCollapsed: true,
                   hintText: '찾으시는 행사가 있나요?',

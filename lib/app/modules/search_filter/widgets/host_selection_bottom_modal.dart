@@ -76,6 +76,7 @@ class _SearchFilterHostSelectionBottomModal
                       child: TextField(
                         controller: editingController,
                         autofocus: true,
+                        onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
                         textInputAction: TextInputAction.done,
                         textAlignVertical: TextAlignVertical.top,
                         style: const TextStyle(

@@ -60,12 +60,13 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                 child: TextField(
                   controller: editingController,
                   autofocus: true,
+                  onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
                   maxLength: _maxLen,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => onSubmitted(),
                   decoration:
                       InputDecoration.collapsed(
-                        hintText: "닉네임 입력",
+                        hintText: "도라지 감자도리",
                         hintStyle: TextStyle(color: AppColors.g05),
                       ).copyWith(
                         counterText: '', // 이 줄이 카운터를 숨깁니다
