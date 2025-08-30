@@ -8,6 +8,13 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>듀잇</string>
+	<key>CFBundleKeywords</key>
+	<array>
+		<string>Nurse</string>
+		<string>간호</string>
+		<string>듀티</string>
+		<string>간호사</string>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
