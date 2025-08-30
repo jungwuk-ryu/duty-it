@@ -1,10 +1,11 @@
-import 'dart:convert';
+import 'dart:developer';
 
 import 'package:duty_it/app/models/app_user.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/kakao_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -41,12 +42,16 @@ class AuthService extends GetxService {
   }
 
   void _loadCachedAppUser() {
-    String? jsonStr = _box.read(_appUserKey);
-    if (jsonStr == null) return;
+    Map<String, dynamic>? jsonObj = _box.read(_appUserKey);
+    if (jsonObj == null) return;
 
     try {
-      _appUser.value = AppUser.fromJson(json.decode(jsonStr));
-    } catch (_) {}
+      _appUser.value = AppUser.fromJson(jsonObj);
+    } catch (e, st) {
+      if (kDebugMode) {
+        log('Failed to load app user!', error: e, stackTrace: st);
+      }
+    }
   }
 
   void _initStrategies() {
