@@ -13,7 +13,9 @@ _SearchFilter _$SearchFilterFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toSet() ??
           const <String>{},
-      host: json['host'] as String?,
+      host: json['host'] == null
+          ? null
+          : Host.fromJson(json['host'] as Map<String, dynamic>),
       showEnded: json['showEnded'] as bool? ?? true,
     );
 

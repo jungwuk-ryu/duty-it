@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SearchFilter implements DiagnosticableTreeMixin {
 
- Set<String> get categories; String? get host; bool get showEnded;
+ Set<String> get categories; Host? get host; bool get showEnded;
 /// Create a copy of SearchFilter
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -54,11 +54,11 @@ abstract mixin class $SearchFilterCopyWith<$Res>  {
   factory $SearchFilterCopyWith(SearchFilter value, $Res Function(SearchFilter) _then) = _$SearchFilterCopyWithImpl;
 @useResult
 $Res call({
- Set<String> categories, String? host, bool showEnded
+ Set<String> categories, Host? host, bool showEnded
 });
 
 
-
+$HostCopyWith<$Res>? get host;
 
 }
 /// @nodoc
@@ -75,11 +75,23 @@ class _$SearchFilterCopyWithImpl<$Res>
   return _then(_self.copyWith(
 categories: null == categories ? _self.categories : categories // ignore: cast_nullable_to_non_nullable
 as Set<String>,host: freezed == host ? _self.host : host // ignore: cast_nullable_to_non_nullable
-as String?,showEnded: null == showEnded ? _self.showEnded : showEnded // ignore: cast_nullable_to_non_nullable
+as Host?,showEnded: null == showEnded ? _self.showEnded : showEnded // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
+/// Create a copy of SearchFilter
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$HostCopyWith<$Res>? get host {
+    if (_self.host == null) {
+    return null;
+  }
 
+  return $HostCopyWith<$Res>(_self.host!, (value) {
+    return _then(_self.copyWith(host: value));
+  });
+}
 }
 
 
@@ -161,7 +173,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Set<String> categories,  String? host,  bool showEnded)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Set<String> categories,  Host? host,  bool showEnded)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SearchFilter() when $default != null:
 return $default(_that.categories,_that.host,_that.showEnded);case _:
@@ -182,7 +194,7 @@ return $default(_that.categories,_that.host,_that.showEnded);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Set<String> categories,  String? host,  bool showEnded)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Set<String> categories,  Host? host,  bool showEnded)  $default,) {final _that = this;
 switch (_that) {
 case _SearchFilter():
 return $default(_that.categories,_that.host,_that.showEnded);case _:
@@ -202,7 +214,7 @@ return $default(_that.categories,_that.host,_that.showEnded);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Set<String> categories,  String? host,  bool showEnded)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Set<String> categories,  Host? host,  bool showEnded)?  $default,) {final _that = this;
 switch (_that) {
 case _SearchFilter() when $default != null:
 return $default(_that.categories,_that.host,_that.showEnded);case _:
@@ -227,7 +239,7 @@ class _SearchFilter with DiagnosticableTreeMixin implements SearchFilter {
   return EqualUnmodifiableSetView(_categories);
 }
 
-@override final  String? host;
+@override final  Host? host;
 @override@JsonKey() final  bool showEnded;
 
 /// Create a copy of SearchFilter
@@ -269,11 +281,11 @@ abstract mixin class _$SearchFilterCopyWith<$Res> implements $SearchFilterCopyWi
   factory _$SearchFilterCopyWith(_SearchFilter value, $Res Function(_SearchFilter) _then) = __$SearchFilterCopyWithImpl;
 @override @useResult
 $Res call({
- Set<String> categories, String? host, bool showEnded
+ Set<String> categories, Host? host, bool showEnded
 });
 
 
-
+@override $HostCopyWith<$Res>? get host;
 
 }
 /// @nodoc
@@ -290,12 +302,24 @@ class __$SearchFilterCopyWithImpl<$Res>
   return _then(_SearchFilter(
 categories: null == categories ? _self._categories : categories // ignore: cast_nullable_to_non_nullable
 as Set<String>,host: freezed == host ? _self.host : host // ignore: cast_nullable_to_non_nullable
-as String?,showEnded: null == showEnded ? _self.showEnded : showEnded // ignore: cast_nullable_to_non_nullable
+as Host?,showEnded: null == showEnded ? _self.showEnded : showEnded // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
 
+/// Create a copy of SearchFilter
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$HostCopyWith<$Res>? get host {
+    if (_self.host == null) {
+    return null;
+  }
 
+  return $HostCopyWith<$Res>(_self.host!, (value) {
+    return _then(_self.copyWith(host: value));
+  });
+}
 }
 
 // dart format on

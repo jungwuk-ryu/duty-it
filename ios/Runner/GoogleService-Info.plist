@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.dutyit.dutyIt</string>
+	<string>com.dutyit.app</string>
 	<key>PROJECT_ID</key>
 	<string>duty-it</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:348194173787:ios:19160bc9eb87f5a8d2e07e</string>
+	<string>1:348194173787:ios:18dfb30c0486848fd2e07e</string>
 </dict>
 </plist>

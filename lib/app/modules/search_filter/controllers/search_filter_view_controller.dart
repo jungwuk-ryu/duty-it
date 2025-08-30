@@ -1,3 +1,5 @@
+import 'package:duty_it/app/models/event_type.dart';
+import 'package:duty_it/app/models/host.dart';
 import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
@@ -11,11 +13,11 @@ class SearchFilterViewController extends GetxController {
    final Rx<SearchFilter> _filterRx = SearchFilter().obs;
   SearchFilter get _filter => _filterRx.value;
   
-  String? get selectedHost => _filter.host;
-  set selectedHost(v) => _filterRx(_filter.copyWith(host: v));
+  Host? get selectedHost => _filter.host;
+  set selectedHost(Host? v) => _filterRx(_filter.copyWith(host: v));
 
   bool get showEnded => _filter.showEnded;
-  set showEnded(v) => _filterRx(_filter.copyWith(showEnded: v));
+  set showEnded(bool v) => _filterRx(_filter.copyWith(showEnded: v));
 
   @override
   void onInit() {
@@ -24,7 +26,7 @@ class SearchFilterViewController extends GetxController {
   }
 
   List<String> getCategories() {
-    return ['컨퍼런스 / 학술대회', '세미나', '웨비나', '워크숍', '공모전', '기타'];
+    return EventType.values.map((e) => e.displayName).toList();
   }
 
   void onResetSettingsButtonClicked() {

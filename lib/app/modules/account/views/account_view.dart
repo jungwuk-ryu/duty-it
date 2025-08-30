@@ -1,12 +1,11 @@
-import 'package:duty_it/app/widgets/simple_app_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:get/get.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/account/widgets/account_view_item_text.dart';
 import 'package:duty_it/app/modules/account/widgets/account_view_item_title.dart';
+import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:duty_it/gen/assets.gen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../controllers/account_view_controller.dart';
 
@@ -31,7 +30,9 @@ class AccountView extends GetView<AccountViewController> {
                     SizedBox(height: 8.h),
                     Row(
                       children: [
-                        AccountViewItemText(controller.getUserName()),
+                        Obx(
+                          () => AccountViewItemText(controller.getUserName()),
+                        ),
                         GestureDetector(
                           onTap: () => controller.onUserNameEditButtonClicked(),
                           child: Image.asset(
@@ -47,13 +48,21 @@ class AccountView extends GetView<AccountViewController> {
 
                     AccountViewItemTitle("연결된 카카오 계정"),
                     SizedBox(height: 8.h),
-                    AccountViewItemText(controller.getAccountId()),
+                    Obx(() => AccountViewItemText(controller.getAccountId())),
 
                     SizedBox(height: 32.h),
-                    AccountViewItemText("로그아웃", color: AppColors.g05),
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => controller.logout(),
+                      child: AccountViewItemText("로그아웃", color: AppColors.g05),
+                    ),
 
                     SizedBox(height: 16.h),
-                    AccountViewItemText("회원 탈퇴", color: AppColors.g05),
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => controller.withdraw(),
+                      child: AccountViewItemText("회원 탈퇴", color: AppColors.g05),
+                    ),
                   ],
                 ),
               ),

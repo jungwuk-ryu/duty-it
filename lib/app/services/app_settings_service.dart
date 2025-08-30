@@ -22,7 +22,9 @@ enum EventSortingType {
 }
 
 class AppSettingsService extends GetxService {
-  final GetStorage _box = GetStorage('appSettings');
+  static const String storageBoxName = 'appSettings';
+
+  late final GetStorage _box = GetStorage(storageBoxName);
   late final _AppSetting<String> _eventSortingTypeName;
 
   @override
