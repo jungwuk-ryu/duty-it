@@ -1,10 +1,14 @@
+import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../../models/event.dart';
 
 class CalendarViewController extends GetxController {
   final Rx<DateTime> _currentDate = DateTime.now().obs;
@@ -27,45 +31,33 @@ class CalendarViewController extends GetxController {
   }
 
   Future<List<CalendarEvent>> getCalendarEvents(DateTime date) async {
-    date = DateTime(2025, 07, 18);
+    var apiClient = Get.find<ApiClient>();
+    RequestResult<List<Event>> reqResult = await apiClient.getEventsForCalendar(
+      year: date.year,
+      month: date.month,
+    );
+    if (reqResult is RequestFail) {
+      AppUtils.showSnackBar(
+        '${date.year}년 ${date.month}월 캘린더를 불러오지 못했어요.\n${reqResult.serverFail?.message ?? ''}',
+      );
+      return [];
+    }
 
-    return [
-      CalendarEvent(
-        title: "어떤 세미나",
-        startDate: date,
-        endDate: date.add(Duration(days: 2)),
-        color: AppColors.cal2,
-      ),
-      CalendarEvent(
-        title: "어떤 세미나2",
-        startDate: date,
-        endDate: date.add(Duration(days: 1)),
-        color: AppColors.cal1,
-      ),
-      CalendarEvent(
-        title: "어떤 세미나3",
-        startDate: date,
-        endDate: date.add(Duration(days: 2)),
-        color: AppColors.cal1,
-      ),
-      CalendarEvent(
-        title: "어떤 세미나4",
-        startDate: date,
-        endDate: date.add(Duration(days: 3)),
-        color: AppColors.cal1,
-      ),
-      CalendarEvent(
-        title: "어떤 세미나5",
-        startDate: date.add(Duration(days: 3)),
-        endDate: date.add(Duration(days: 5)),
-        color: AppColors.cal2,
-      ),
-      CalendarEvent(
-        title: "어떤 세미나6",
-        startDate: date.add(Duration(days: 7)),
-        endDate: date.add(Duration(days: 10)),
-        color: AppColors.cal3,
-      ),
-    ];
+    var reqSuccess = reqResult as RequestSuccess<List<Event>>;
+    List<Event> events = reqSuccess.data;
+    List<CalendarEvent> cEvents = [];
+
+    for (Event event in events) {
+      cEvents.add(
+        CalendarEvent(
+          title: event.title,
+          startDate: event.startAt ?? DateTime.now(),
+          endDate: event.endAt ?? DateTime.now(),
+          color: AppColors.cal1,
+        ),
+      );
+    }
+
+    return cEvents;
   }
 }

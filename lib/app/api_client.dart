@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:duty_it/app/models/app_user.dart';
@@ -27,11 +28,13 @@ class ApiClient extends GetConnect {
     httpClient.timeout = const Duration(seconds: 15);
     httpClient.defaultContentType = 'application/json';
 
-    httpClient.addRequestModifier<void>((request) {
+    httpClient.addRequestModifier<void>((request) async {
       final path = request.url.path;
       final isAuthPath = path.contains('/auth/');
+      if (isAuthPath) return request;
 
-      if (!isAuthPath && _token != null) {
+      await _loginFuture;
+      if (_token != null) {
         request.headers['Authorization'] = 'Bearer $_token';
       }
 
@@ -46,6 +49,7 @@ class ApiClient extends GetConnect {
       if (_token == null || _token!.isEmpty) return request;
 
       request.headers['Authorization'] = 'Bearer $_token';
+      log(request.toString());
       return request;
     });
 
@@ -186,11 +190,11 @@ class ApiClient extends GetConnect {
 
   /// 닉네임 중복 확인 (/users/check-nickname?nickname=) - GET
   Future<RequestResult<bool>> isNicknameAvailable(String nickname) async {
-    return _send(
-      () async =>
-          await get('/users/check-nickname', query: {'nickname': nickname}),
-      map: (_) => true,
-    );
+    return _send(() async => await get(
+      '/users/check-nickname',
+      query: {'nickname': nickname},
+    ), map: (_) => true);
+    
   }
 
   /// 현재 사용자 닉네임 수정 (/users/nickname) - PATCH
@@ -221,6 +225,7 @@ class ApiClient extends GetConnect {
     EventType?
     type, // 'CONFERENCE' | 'SEMINAR' | 'WEBINAR' | 'WORKSHOP' | 'CONTEST' | 'ETC'
     int? hostId,
+    String? searchKeyword,
   }) async {
     return _send(
       () async => await get(
@@ -233,6 +238,7 @@ class ApiClient extends GetConnect {
           'field': field,
           'type': type?.name,
           'hostId': hostId,
+          'searchKeyword': searchKeyword,
         }),
       ),
       map: (rp) {
@@ -299,11 +305,11 @@ class ApiClient extends GetConnect {
 
   // ---------- Bookmark ----------
 
-  /// 북마크 토글 (/bookmarks/{eventId}) - POST (204)
-  Future<RequestResult<void>> toggleBookmark(int eventId) async {
+  /// 북마크 토글 (/bookmarks/{eventId}) - POST (200)
+  Future<RequestResult<bool>> toggleBookmark(int eventId) async {
     return _send(
       () async => await post('/bookmarks/$eventId', null),
-      map: (_) => true,
+      map: (rp) => json.decode(rp.bodyString!)['isBookmarked'] as bool,
     );
   }
 

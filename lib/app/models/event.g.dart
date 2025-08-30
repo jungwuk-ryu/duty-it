@@ -23,6 +23,7 @@ _Event _$EventFromJson(Map<String, dynamic> json) => _Event(
   thumbnail: json['thumbnail'] as String,
   eventType: $enumDecode(_$EventTypeEnumMap, json['eventType']),
   host: Host.fromJson(json['host'] as Map<String, dynamic>),
+  isBookmarked: json['isBookmarked'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$EventToJson(_Event instance) => <String, dynamic>{
@@ -36,6 +37,7 @@ Map<String, dynamic> _$EventToJson(_Event instance) => <String, dynamic>{
   'thumbnail': instance.thumbnail,
   'eventType': _$EventTypeEnumMap[instance.eventType]!,
   'host': instance.host,
+  'isBookmarked': instance.isBookmarked,
 };
 
 const _$EventTypeEnumMap = {

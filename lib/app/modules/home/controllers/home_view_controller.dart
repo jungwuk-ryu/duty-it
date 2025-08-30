@@ -30,16 +30,38 @@ class HomeViewController extends GetxController {
 
   EventSortingType get sortingType => _settingsService.eventSortingType;
 
-  Future<void> fetchNextPage() async {
+  final TextEditingController searchTextEditingController =
+      TextEditingController();
+  final RxString searchQuery = RxString('');
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    searchTextEditingController.addListener(
+      () => searchQuery.value = searchTextEditingController.text.trim(),
+    );
+    debounce(
+      searchQuery,
+      (v) => fetchNextPage(clearPage: true),
+      time: Duration(milliseconds: 500),
+    );
+  }
+
+  Future<void> fetchNextPage({bool clearPage = false}) async {
     pagingState = pagingState.copyWith(isLoading: true, error: null);
 
     int nextKey = 0;
-    if (!(pagingState.keys == null || pagingState.keys!.isEmpty)) {
-      nextKey = pagingState.keys!.last;
+    if (!clearPage &&
+        !(pagingState.keys == null || pagingState.keys!.isEmpty)) {
+      nextKey = (pagingState.keys?.last ?? -1) + 1;
     }
-    nextKey += 1;
 
-    pagingState = pagingState.copyWith(isLoading: true);
+    pagingState = pagingState.copyWith(
+      isLoading: true,
+      keys: clearPage ? [] : const Omit(),
+      pages: clearPage ? [] : const Omit(),
+    );
 
     const int size = 10;
 
@@ -51,6 +73,7 @@ class HomeViewController extends GetxController {
         size: size,
         sortDirection: SortDirection.DESC,
         field: 'ID',
+        searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
       );
       if (reqResult is RequestSuccess) {
         var events = (reqResult as RequestSuccess<List<Event>>).data;
@@ -62,13 +85,14 @@ class HomeViewController extends GetxController {
             ...pagingState.pages ?? [],
             List<EventCard>.generate(
               events.length,
-              (i) => EventCard(event: events[i]),
+              (i) => EventCard(eventRx: Rx(events[i])),
             ),
           ],
           hasNextPage: events.length >= size,
         );
       } else {
-        
+        var fail = reqResult as RequestFail;
+        AppUtils.showSnackBar('이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}');
       }
     } finally {
       pagingState = pagingState.copyWith(isLoading: false);
@@ -87,14 +111,20 @@ class HomeViewController extends GetxController {
     ).whenComplete(() => Get.delete<SortingModalController>());
   }
 
-  Future<void> bookmark(Event event) async {
+  Future<bool> bookmark(Event event) async {
+    bool isBookmarked = event.isBookmarked;
     var client = Get.find<ApiClient>();
     var result = await client.toggleBookmark(event.id);
     if (result is RequestSuccess) {
-      _eventService.fire(EventBookmarkEvent());
+      isBookmarked = (result as RequestSuccess<bool>).data;
+      if (isBookmarked) {
+        _eventService.fire(EventBookmarkEvent());
+      }
     } else {
       var reqFail = result as RequestFail;
       AppUtils.showSnackBar(reqFail.serverFail?.message ?? '북마크를 수정하지 못했습니다.');
     }
+
+    return isBookmarked;
   }
 }
