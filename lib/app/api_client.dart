@@ -134,6 +134,8 @@ Future<RequestResult<T>> _send<T>(
           LoginResult result = LoginResult.fromJson(json.decode(rp.bodyString!));
           _token = result.accessToken;
 
+          Get.find<AuthService>().appUser = result.user;
+
           return result;
         });
     }).whenComplete(() => _loginFuture = null);
@@ -146,7 +148,16 @@ Future<RequestResult<T>> _send<T>(
 
   /// 현재 사용자 정보 조회 (/users/me) - GET
   Future<RequestResult<AppUser>> getCurrentUser() async {
-    return _send(() async => await get('/users/me'), map: (rp) => AppUser.fromJson(json.decode(rp.bodyString!)));
+    return _send(
+() async => await get('/users/me'),
+map: (rp) {
+        AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
+
+        Get.find<AuthService>().appUser = user;
+
+        return user;
+      },
+);
   }
 
   /// 닉네임 중복 확인 (/users/check-nickname?nickname=) - GET
