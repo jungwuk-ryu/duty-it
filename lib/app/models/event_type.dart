@@ -10,4 +10,10 @@ enum EventType {
    
   final String displayName;
   const EventType(this.displayName);
+
+  static EventType getByDisplayName(String displayName) {
+    var items = EventType.values.where((e) => e.displayName == displayName);
+    if (items.isEmpty) ETC;
+    return items.first;
+  }
 }

@@ -2,12 +2,14 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/events/event_bookmark_event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/models/event.dart';
+import 'package:duty_it/app/models/event_type.dart';
 import 'package:duty_it/app/models/sort_direction.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
 import 'package:duty_it/app/services/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
+import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -46,9 +48,13 @@ class HomeViewController extends GetxController {
       (v) => fetchNextPage(clearPage: true),
       time: Duration(milliseconds: 500),
     );
+
+    ever(Get.find<SearchFilterService>().filterRx, (v) => fetchNextPage(clearPage: true));
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
+    var sfService = Get.find<SearchFilterService>();
+
     pagingState = pagingState.copyWith(isLoading: true, error: null);
 
     int nextKey = 0;
@@ -64,6 +70,9 @@ class HomeViewController extends GetxController {
     );
 
     const int size = 10;
+    EventType? type;
+    var categories = sfService.filter.categories;
+    if (categories.isNotEmpty) type = EventType.getByDisplayName(categories.first);
 
     try {
       var apiClient = Get.find<ApiClient>();
@@ -74,6 +83,7 @@ class HomeViewController extends GetxController {
         sortDirection: SortDirection.DESC,
         field: 'ID',
         searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
+        type: type
       );
       if (reqResult is RequestSuccess) {
         var events = (reqResult as RequestSuccess<List<Event>>).data;

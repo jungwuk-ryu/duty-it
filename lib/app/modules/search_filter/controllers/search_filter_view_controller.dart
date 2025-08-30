@@ -1,3 +1,4 @@
+import 'package:duty_it/app/models/event_type.dart';
 import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
@@ -24,7 +25,7 @@ class SearchFilterViewController extends GetxController {
   }
 
   List<String> getCategories() {
-    return ['컨퍼런스 / 학술대회', '세미나', '웨비나', '워크숍', '공모전', '기타'];
+    return EventType.values.map((e) => e.displayName).toList();
   }
 
   void onResetSettingsButtonClicked() {
