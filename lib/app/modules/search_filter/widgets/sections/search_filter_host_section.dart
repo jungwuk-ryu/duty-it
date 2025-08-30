@@ -38,7 +38,7 @@ class SearchFilterHostSection extends SearchFilterSection {
               children: [
                 Expanded(
                   child: Obx(() {
-                    String? host = controller.selectedHost;
+                    String? host = controller.selectedHost?.name;
 
                     if (host == null) {
                       return Text(

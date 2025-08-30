@@ -1,14 +1,20 @@
 import 'package:duty_it/app/routes/app_pages.dart';
+import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class SplashViewController extends GetxController {
   @override
   void onReady() async {
     super.onReady();
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.wait([
+      GetStorage.init(AppSettingsService.storageBoxName),
+      GetStorage.init(AuthService.storageBoxName),
+      Future.delayed(Duration(seconds: 2)),
+    ]);
 
     try {
       var authService = Get.find<AuthService>();

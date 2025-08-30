@@ -1,9 +1,13 @@
+import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_account_button.dart';
+import 'package:get/get.dart';
 
 class DrawerAccoutSection extends StatelessWidget {
+  MainViewController get controller => Get.find<MainViewController>();
+
   const DrawerAccoutSection({super.key});
 
   @override
@@ -24,15 +28,15 @@ class DrawerAccoutSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "수줍은 복숭아",
+            Obx(() => Text(
+              controller.getUserName(),
               style: TextStyle(
                 color: AppColors.black,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 height: 1.60,
               ),
-            ),
+            )),
             DrawerAccountButton(),
           ],
         ),

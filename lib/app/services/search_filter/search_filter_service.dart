@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class SearchFilterService extends GetxService {
-  final Rx<SearchFilter> _filterRx = SearchFilter().obs;
-  SearchFilter get filter => _filterRx.value;
+  final Rx<SearchFilter> filterRx = SearchFilter().obs;
+  SearchFilter get filter => filterRx.value;
 
   @override
   void onInit() async {
@@ -16,16 +16,16 @@ class SearchFilterService extends GetxService {
     var json = box.read('filter');
 
     if (json != null) {
-      _filterRx.value = SearchFilter.fromJson(json);
+      filterRx.value = SearchFilter.fromJson(json);
     }
 
-    debounce(_filterRx, (_) {
+    debounce(filterRx, (_) {
       box.write('filter', filter.toJson());
     }, time: Duration(milliseconds: 300));
   }
 
   void updateFilter(SearchFilter filter) {
-    _filterRx.value = filter;
+    filterRx.value = filter;
   }
 
   bool hasFilterChanges() {

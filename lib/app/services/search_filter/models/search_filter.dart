@@ -1,3 +1,4 @@
+import 'package:duty_it/app/models/host.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -8,7 +9,7 @@ part 'search_filter.g.dart';
 abstract class SearchFilter with _$SearchFilter {
   const factory SearchFilter({
     @Default(<String>{}) Set<String> categories,
-    String? host,
+    Host? host,
     @Default(true) bool showEnded,
   }) = _SearchFilter;
 

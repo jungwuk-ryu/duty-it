@@ -1,3 +1,4 @@
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
@@ -16,26 +17,15 @@ class MainViewController extends GetxController {
 
   RxInt currentIndex = 0.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   void changeTab(int index) {
     currentIndex.value = index;
   }
 
   void onAccountSettingButtonClicked() {
     Get.toNamed(Routes.ACCOUNT);
+  }
+
+  String getUserName() {
+    return Get.find<AuthService>().appUser?.nickname ?? '';
   }
 }

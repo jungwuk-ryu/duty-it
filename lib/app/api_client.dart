@@ -10,10 +10,11 @@ import 'package:duty_it/app/models/host.dart';
 import 'package:duty_it/app/models/login_result.dart';
 import 'package:duty_it/app/models/server_fail.dart';
 import 'package:duty_it/app/models/sort_direction.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get_connect/connect.dart';
+import 'package:get/get.dart';
 
 class ApiClient extends GetConnect {
   Future<RequestResult<LoginResult>>? _loginFuture;
@@ -48,7 +49,7 @@ class ApiClient extends GetConnect {
       if (_token == null || _token!.isEmpty) return request;
 
       request.headers['Authorization'] = 'Bearer $_token';
-      log(request.toString());
+      if (kDebugMode) log(request.toString());
       return request;
     });
 
@@ -160,6 +161,8 @@ class ApiClient extends GetConnect {
           );
           _token = result.accessToken;
 
+          Get.find<AuthService>().appUser = result.user;
+
           return result;
         },
       );
@@ -175,17 +178,23 @@ class ApiClient extends GetConnect {
   Future<RequestResult<AppUser>> getCurrentUser() async {
     return _send(
       () async => await get('/users/me'),
-      map: (rp) => AppUser.fromJson(json.decode(rp.bodyString!)),
+      map: (rp) {
+        AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
+
+        Get.find<AuthService>().appUser = user;
+
+        return user;
+      },
     );
   }
 
   /// 닉네임 중복 확인 (/users/check-nickname?nickname=) - GET
   Future<RequestResult<bool>> isNicknameAvailable(String nickname) async {
-    return _send(
-      () async =>
-          await get('/users/check-nickname', query: {'nickname': nickname}),
-      map: (_) => true,
-    );
+    return _send(() async => await get(
+      '/users/check-nickname',
+      query: {'nickname': nickname},
+    ), map: (_) => true);
+    
   }
 
   /// 현재 사용자 닉네임 수정 (/users/nickname) - PATCH
@@ -357,8 +366,11 @@ class RequestFail extends RequestResult<Never> {
         serverFail = ServerFail.fromJson(json.decode(response!.bodyString!));
       } catch (ex) {
         if (kDebugMode) print(ex);
+        serverFail = null;
         // TODO : Analytics 로깅
       }
+    } else {
+      serverFail = null;
     }
   }
 }

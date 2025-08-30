@@ -28,8 +28,6 @@ class DrawerCategorySection extends StatelessWidget {
         _PageItemButton(title: "행사 등록 요청", onTap: () async {
           launchUrlString('https://docs.google.com/forms/d/e/1FAIpQLSdqCHTNlfXnDm7gYuLtnx-LGxKJhJGvPCdiZ5Ui4QkAmeEdxw/viewform');
         }),
-        SizedBox(height: 16.h),
-        _PageItemButton(title: "필요 페이지", onTap: () {}),
       ],
     );
   }

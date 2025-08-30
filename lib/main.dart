@@ -38,8 +38,7 @@ void main() async {
     KakaoSdk.init(nativeAppKey: "5b75899fba79dc8e1651fa8c98ba12f8");
   }
 
-  var getStorageFuture = GetStorage.init('appSettings').then((_) {});
-  await Future.wait([dotenvFuture, getStorageFuture]);
+  await Future.wait([dotenvFuture]);
 
   ApiClient apiClient = ApiClient();
   Get.put(apiClient);
