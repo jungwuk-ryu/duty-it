@@ -309,8 +309,11 @@ class RequestFail extends RequestResult<Never> {
         serverFail = ServerFail.fromJson(json.decode(response!.bodyString!));
       } catch (ex) {
         if (kDebugMode) print(ex);
+serverFail = null;
         // TODO : Analytics 로깅
       }
+} else {
+      serverFail = null;
     }
   }
 }
