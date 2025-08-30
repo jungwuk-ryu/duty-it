@@ -13,7 +13,7 @@ enum EventType {
 
   static EventType getByDisplayName(String displayName) {
     var items = EventType.values.where((e) => e.displayName == displayName);
-    if (items.isEmpty) ETC;
+    if (items.isEmpty) return ETC;
     return items.first;
   }
 }
