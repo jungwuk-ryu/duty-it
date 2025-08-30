@@ -148,7 +148,7 @@ class _SearchFilterHostSelectionBottomModal
 
                 return ListView.builder(
                   itemCount: hosts.length,
-                  itemBuilder: (_, i) => _HostItem(hostName: hosts[i].name),
+                  itemBuilder: (_, i) => _HostItem(host: hosts[i]),
                 );
               }),
             ),
@@ -166,9 +166,9 @@ class _SearchFilterHostSelectionBottomModal
 
 class _HostItem extends StatelessWidget {
   HostSelectionController get controller => Get.find<HostSelectionController>();
-  final String hostName;
+  final Host host;
 
-  const _HostItem({required this.hostName});
+  const _HostItem({required this.host});
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +176,7 @@ class _HostItem extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 15.h, left: 1, top: 1),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: () => controller.onHostSelect(hostName),
+        onTap: () => controller.onHostSelect(host),
         child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -196,7 +196,7 @@ class _HostItem extends StatelessWidget {
           ),
           SizedBox(width: 16.w),
           Text(
-            hostName,
+            host.name,
             style: TextStyle(
               color: AppColors.black,
               fontSize: 15,

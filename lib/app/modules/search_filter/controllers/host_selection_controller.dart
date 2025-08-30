@@ -54,7 +54,7 @@ class HostSelectionController extends GetxController {
     }
   }
 
-  void onHostSelect(String host) {
+  void onHostSelect(Host host) {
     sfvController.selectedHost = host;
     Get.back();
   }

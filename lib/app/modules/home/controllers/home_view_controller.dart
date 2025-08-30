@@ -74,6 +74,9 @@ class HomeViewController extends GetxController {
     var categories = sfService.filter.categories;
     if (categories.isNotEmpty) type = EventType.getByDisplayName(categories.first);
 
+    int? hostId;
+    hostId = sfService.filter.host?.id;
+
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
@@ -83,6 +86,7 @@ class HomeViewController extends GetxController {
         sortDirection: SortDirection.DESC,
         field: 'ID',
         searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
+        hostId: hostId,
         type: type
       );
       if (reqResult is RequestSuccess) {
