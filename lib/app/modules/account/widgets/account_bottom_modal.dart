@@ -60,7 +60,6 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                 child: TextField(
                   controller: editingController,
                   autofocus: true,
-                  onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
                   maxLength: _maxLen,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => onSubmitted(),
