@@ -13,6 +13,8 @@ class HomeAppBar extends StatelessWidget {
       padding: EdgeInsets.only(top: 20.h),
       child: Row(
         children: [
+          Image.asset(Assets.icons.logo.path, width: 16, height: 16),
+          SizedBox(width: 8),
           Text("듀잇 - Duty It!"),
           Expanded(child: SizedBox()),
           GestureDetector(
