@@ -16,7 +16,7 @@ class LoginView extends GetView<LoginViewController> {
         children: [
           Align(
             alignment: Alignment.center,
-            child: Hero(tag: SplashView.heroKey, child: Text('LOGO')),
+            child: Hero(tag: SplashView.heroKey, child: Image.asset(Assets.icons.logo.path, width: 84, height: 80)),
           ),
           Positioned(
             left: 0,
