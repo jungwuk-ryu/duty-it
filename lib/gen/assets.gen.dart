@@ -104,10 +104,6 @@ class $AssetsIconsGen {
   AssetGenImage get kakaoLoginLargeWide =>
       const AssetGenImage('assets/icons/kakao_login_large_wide.png');
 
-  /// File path: assets/icons/loading-indicator.png
-  AssetGenImage get loadingIndicator =>
-      const AssetGenImage('assets/icons/loading-indicator.png');
-
   /// File path: assets/icons/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/icons/logo.png');
 
@@ -148,7 +144,6 @@ class $AssetsIconsGen {
     iconTextdelete16,
     iconamoonSearch,
     kakaoLoginLargeWide,
-    loadingIndicator,
     logo,
     mageFilter,
     mageFilterSort,
@@ -159,12 +154,23 @@ class $AssetsIconsGen {
   ];
 }
 
+class $AssetsLottieGen {
+  const $AssetsLottieGen();
+
+  /// File path: assets/lottie/loading-dots.json
+  String get loadingDots => 'assets/lottie/loading-dots.json';
+
+  /// List of all assets
+  List<String> get values => [loadingDots];
+}
+
 class Assets {
   const Assets._();
 
   static const String aEnv = '.env';
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsLottieGen lottie = $AssetsLottieGen();
 
   /// List of all assets
   static List<String> get values => [aEnv];

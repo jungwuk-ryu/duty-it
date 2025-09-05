@@ -3,6 +3,7 @@ import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 import '../controllers/login_view_controller.dart';
 
@@ -16,7 +17,10 @@ class LoginView extends GetView<LoginViewController> {
         children: [
           Align(
             alignment: Alignment.center,
-            child: Hero(tag: SplashView.heroKey, child: Image.asset(Assets.icons.logo.path, width: 84, height: 80)),
+            child: Hero(
+              tag: SplashView.heroKey,
+              child: Image.asset(Assets.icons.logo.path, width: 84, height: 80),
+            ),
           ),
           Positioned(
             left: 0,
@@ -31,18 +35,19 @@ class LoginView extends GetView<LoginViewController> {
               ),
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: -12.h,
+          Align(
+            alignment: Alignment.center,
             child: Obx(
               () => Visibility(
                 visible: controller.isLogining,
-                child: Image.asset(
-                  Assets.icons.loadingIndicator.path,
-                  width: 58.w,
-                  height: 7.h,
+                child: SizedBox(
+                  width: 130.w,
+                  height: 130.h,
+                  child: Lottie.asset(
+                    Assets.lottie.loadingDots,
+                    fit: BoxFit.fitWidth,
+                    repeat: true,
+                  ),
                 ),
               ),
             ),
