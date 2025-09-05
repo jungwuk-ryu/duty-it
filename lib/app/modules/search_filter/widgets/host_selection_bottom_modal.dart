@@ -38,12 +38,11 @@ class _SearchFilterHostSelectionBottomModal
     return SizedBox(
       height: 420.h,
       child: AnimatedPadding(
-        padding: EdgeInsets.only(top: 16.w, bottom: 16.w + MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w, bottom: MediaQuery.of(context).viewInsets.bottom),
         duration: Duration(milliseconds: 200),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 16.h),
             Text(
               "주최 선택",
               style: TextStyle(
