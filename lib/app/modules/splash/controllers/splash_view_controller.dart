@@ -13,7 +13,7 @@ class SplashViewController extends GetxController {
     await Future.wait([
       GetStorage.init(AppSettingsService.storageBoxName),
       GetStorage.init(AuthService.storageBoxName),
-      Future.delayed(Duration(seconds: 2)),
+      Future.delayed(Duration(seconds: 1)),
     ]);
 
     try {

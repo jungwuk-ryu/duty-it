@@ -58,6 +58,9 @@ class $AssetsFontsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/app-icon.png
+  AssetGenImage get appIcon => const AssetGenImage('assets/icons/app-icon.png');
+
   /// File path: assets/icons/back-filled.png
   AssetGenImage get backFilled =>
       const AssetGenImage('assets/icons/back-filled.png');
@@ -105,6 +108,9 @@ class $AssetsIconsGen {
   AssetGenImage get loadingIndicator =>
       const AssetGenImage('assets/icons/loading-indicator.png');
 
+  /// File path: assets/icons/logo.png
+  AssetGenImage get logo => const AssetGenImage('assets/icons/logo.png');
+
   /// File path: assets/icons/mage_filter.png
   AssetGenImage get mageFilter =>
       const AssetGenImage('assets/icons/mage_filter.png');
@@ -130,6 +136,7 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    appIcon,
     backFilled,
     backLeft,
     bookmarkSharpRed,
@@ -142,6 +149,7 @@ class $AssetsIconsGen {
     iconamoonSearch,
     kakaoLoginLargeWide,
     loadingIndicator,
+    logo,
     mageFilter,
     mageFilterSort,
     nurseCap,

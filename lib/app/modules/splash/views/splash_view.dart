@@ -1,3 +1,4 @@
+import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -12,8 +13,8 @@ class SplashView extends GetView<SplashViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Center(
-        child: Hero(tag: heroKey, child: Text('LOGO')),
+      body: Center(
+        child: Hero(tag: heroKey, child: Image.asset(Assets.icons.logo.path, width: 84, height: 80)),
       ),
     );
   }
