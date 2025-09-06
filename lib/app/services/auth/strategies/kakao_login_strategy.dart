@@ -8,7 +8,6 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
   @override
   Future<SocialLoginResult> login() async {
     try {
-
       bool installed = await isKakaoTalkInstalled();
       OAuthToken authToken = await (installed
           ? UserApi.instance.loginWithKakaoTalk()

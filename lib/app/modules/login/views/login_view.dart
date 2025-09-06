@@ -1,4 +1,5 @@
 import 'package:duty_it/app/modules/splash/views/splash_view.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,13 +27,27 @@ class LoginView extends GetView<LoginViewController> {
             left: 0,
             right: 0,
             bottom: 88.h,
-            child: GestureDetector(
-              onTap: controller.onLoginButtonTap,
-              child: Image.asset(
-                Assets.icons.kakaoLoginLargeWide.path,
-                width: 328.w,
-                height: 50.h,
-              ),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () =>
+                      controller.onLoginButtonTap(SocialProvider.kakao),
+                  child: Image.asset(
+                    Assets.icons.kakaoLoginLargeWide.path,
+                    width: 328.w,
+                    height: 50.h,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () =>
+                      controller.onLoginButtonTap(SocialProvider.google),
+                  child: Image.asset(
+                    Assets.icons.googleLoginButton.path,
+                    width: 328.w,
+                    height: 50.h,
+                  ),
+                ),
+              ],
             ),
           ),
           Align(

@@ -84,6 +84,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
+  /// File path: assets/icons/google_login_button.png
+  AssetGenImage get googleLoginButton =>
+      const AssetGenImage('assets/icons/google_login_button.png');
+
   /// File path: assets/icons/icon_go_G-05.png
   AssetGenImage get iconGoG05 =>
       const AssetGenImage('assets/icons/icon_go_G-05.png');
@@ -139,6 +143,7 @@ class $AssetsIconsGen {
     bookmarkSharp,
     calendarClearSharp,
     close,
+    googleLoginButton,
     iconGoG05,
     iconTextdelete,
     iconTextdelete16,
