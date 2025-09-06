@@ -42,7 +42,6 @@ void main() async {
 
   ApiClient apiClient = ApiClient();
   Get.put(apiClient);
-  apiClient.loginAndRefreshToken();
 
   runApp(
     ScreenUtilInit(
@@ -51,7 +50,8 @@ void main() async {
         theme: ThemeData(
           fontFamily: FontFamily.pretendard,
           colorScheme: ColorScheme.light(surface: Colors.white),
-          primaryColor: AppColors.main
+          primaryColor: AppColors.main,
+          colorSchemeSeed: AppColors.main
         ),
         debugShowCheckedModeBanner: false,
         title: "듀잇 - Duty It!",
