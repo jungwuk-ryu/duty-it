@@ -218,6 +218,7 @@ class ApiClient extends GetConnect {
   /// 행사 목록 조회 (/events) - GET
   Future<RequestResult<List<Event>>> getEvents({
     bool? isApproved,
+    bool isBookmarked = false,
     int page = 0,
     int size = 10,
     SortDirection? sortDirection, // 'ASC' | 'DESC'
@@ -226,12 +227,14 @@ class ApiClient extends GetConnect {
     type, // 'CONFERENCE' | 'SEMINAR' | 'WEBINAR' | 'WORKSHOP' | 'CONTEST' | 'ETC'
     int? hostId,
     String? searchKeyword,
+
   }) async {
     return _send(
       () async => await get(
         '/events',
         query: _cleanQuery({
           'isApproved': isApproved,
+          'isBookmarked': isBookmarked,
           'page': page,
           'size': size,
           'sortDirection': sortDirection?.name,
@@ -310,33 +313,6 @@ class ApiClient extends GetConnect {
     return _send(
       () async => await post('/bookmarks/$eventId', null),
       map: (rp) => json.decode(rp.bodyString!)['isBookmarked'] as bool,
-    );
-  }
-
-  /// 북마크 목록 조회 (/bookmarks) - GET
-  Future<RequestResult<List<Event>>> getBookmarks({
-    int page = 0,
-    int size = 10,
-    SortDirection? sortDirection, // 'ASC' | 'DESC'
-    String? field, // 'ID' | 'NAME'
-  }) async {
-    return _send(
-      () async => await get(
-        '/bookmarks',
-        query: _cleanQuery({
-          'page': page,
-          'size': size,
-          'sortDirection': sortDirection?.name,
-          'field': field,
-        }),
-      ),
-      map: (rp) {
-        List<Event> events = [];
-        for (Map ele in List.from(json.decode(rp.bodyString!)['content'])) {
-          events.add(Event.fromJson(Map.from(ele)));
-        }
-        return events;
-      },
     );
   }
 

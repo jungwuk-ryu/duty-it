@@ -43,11 +43,16 @@ class HomeViewController extends GetxController {
     searchTextEditingController.addListener(
       () => searchQuery.value = searchTextEditingController.text.trim(),
     );
+    
     debounce(
       searchQuery,
-      (v) => fetchNextPage(clearPage: true),
+      (v) async => await fetchNextPage(clearPage: true),
       time: Duration(milliseconds: 500),
     );
+
+    ever(_selectedTab, (_) async {
+      await fetchNextPage(clearPage: true);
+    });
 
     ever(Get.find<SearchFilterService>().filterRx, (v) => fetchNextPage(clearPage: true));
   }
@@ -81,6 +86,7 @@ class HomeViewController extends GetxController {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
         isApproved: true,
+        isBookmarked: selectedTab == HomeTab.bookmark,
         page: nextKey,
         size: size,
         sortDirection: SortDirection.DESC,
