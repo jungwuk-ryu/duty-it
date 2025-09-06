@@ -1,6 +1,7 @@
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,6 +14,7 @@ class SplashViewController extends GetxController {
     await Future.wait([
       GetStorage.init(AppSettingsService.storageBoxName),
       GetStorage.init(AuthService.storageBoxName),
+      GetStorage.init(SearchFilterService.storageBoxName),
       Future.delayed(Duration(seconds: 1)),
     ]);
 
