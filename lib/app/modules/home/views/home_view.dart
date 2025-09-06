@@ -2,6 +2,8 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:duty_it/app/modules/home/widgets/home_header.dart';
+import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.dart';
+import 'package:duty_it/app/modules/home/widgets/no_search_item_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -40,6 +42,14 @@ class HomeView extends GetView<HomeViewController> {
               fetchNextPage: controller.fetchNextPage,
               builderDelegate: PagedChildBuilderDelegate<EventCard>(
                 itemBuilder: (context, item, index) => item,
+                noItemsFoundIndicatorBuilder: (_) {
+                  HomeTab tab = controller.selectedTab;
+                  if (tab == HomeTab.bookmark) {
+                    return NoBookmarkedItemIndicator();
+                  }
+
+                  return NoSearchItemIndicator();
+                }
               ),
             );
           }),

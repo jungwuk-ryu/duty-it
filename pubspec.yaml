@@ -50,6 +50,10 @@ dependencies:
   freezed_annotation: ^3.1.0
   in_app_review: ^2.0.10
   url_launcher: ^6.3.2
+  lottie: ^3.3.1
+  google_sign_in: ^7.1.1
+  sign_in_with_apple: ^7.0.1
+  package_info_plus: ^8.3.1
 
 dev_dependencies:
   flutter_test:
@@ -99,6 +103,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/fonts/
+    - assets/lottie/
     - .env
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

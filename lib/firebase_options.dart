@@ -70,6 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '348194173787',
     projectId: 'duty-it',
     storageBucket: 'duty-it.firebasestorage.app',
+    androidClientId: '348194173787-4ch7mumucns5o34k2ujj3e4q6p9er0hc.apps.googleusercontent.com',
+    iosClientId: '348194173787-lbm02t1gmn4krroo8ehjl0c0a7hh1f0m.apps.googleusercontent.com',
     iosBundleId: 'com.dutyit.app',
   );
 

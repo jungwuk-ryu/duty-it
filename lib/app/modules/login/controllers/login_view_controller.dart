@@ -19,11 +19,11 @@ class LoginViewController extends GetxController {
     if (Get.find<AuthService>().isLoggined()) Get.offAllNamed(AppPages.INITIAL);
   }
 
-  Future<void> onLoginButtonTap() async {
+  Future<void> onLoginButtonTap(SocialProvider provider) async {
     isLogining = true;
     try {
       var service = Get.find<AuthService>();
-      var result = await service.socialLogin(SocialProvider.kakao);
+      var result = await service.socialLogin(provider);
 
       switch (result) {
         case SocialLoginSuccess():

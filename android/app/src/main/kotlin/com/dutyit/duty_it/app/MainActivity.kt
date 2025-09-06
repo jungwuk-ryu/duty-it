@@ -1,4 +1,4 @@
-package com.dutyit.duty_it
+package com.dutyit.app
 
 import io.flutter.embedding.android.FlutterActivity
 

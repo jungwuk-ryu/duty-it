@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class SearchFilterHostSection extends SearchFilterSection {
-
   const SearchFilterHostSection({super.key});
 
   @override
@@ -32,30 +31,26 @@ class SearchFilterHostSection extends SearchFilterSection {
           ),
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
-            onTap: () => controller.showHostSelectionBottomModal(),
+            onTap: () {
+              if (controller.selectedHost == null) {
+                controller.showHostSelectionBottomModal();
+                return;
+              }
+              controller.clearSelectedHost();
+            },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Obx(() {
                     String? host = controller.selectedHost?.name;
-
-                    if (host == null) {
-                      return Text(
-                        '선택',
-                        style: TextStyle(
-                          color: AppColors.g05,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          height: 1.20,
-                        ),
-                      );
-                    }
+                    String text = host ?? '선택';
+                    Color color = host == null ? AppColors.g05 : AppColors.main;
 
                     return Text(
-                      host,
+                      text,
                       style: TextStyle(
-                        color: AppColors.main,
+                        color: color,
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
                         height: 1.20,
@@ -63,11 +58,15 @@ class SearchFilterHostSection extends SearchFilterSection {
                     );
                   }),
                 ),
-                Image.asset(
-                  Assets.icons.iconGoG05.path,
-                  width: 12.r,
-                  height: 12.r,
-                ),
+
+                Obx(() {
+                  String? host = controller.selectedHost?.name;
+                  String imgPath = host == null
+                      ? Assets.icons.iconGoG05.path
+                      : Assets.icons.iconTextdelete16.path;
+
+                  return Image.asset(imgPath, width: 12.r, height: 12.r);
+                }),
               ],
             ),
           ),

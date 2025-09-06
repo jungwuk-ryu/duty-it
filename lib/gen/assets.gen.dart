@@ -58,6 +58,13 @@ class $AssetsFontsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/app-icon.png
+  AssetGenImage get appIcon => const AssetGenImage('assets/icons/app-icon.png');
+
+  /// File path: assets/icons/apple_login_button.png
+  AssetGenImage get appleLoginButton =>
+      const AssetGenImage('assets/icons/apple_login_button.png');
+
   /// File path: assets/icons/back-filled.png
   AssetGenImage get backFilled =>
       const AssetGenImage('assets/icons/back-filled.png');
@@ -81,6 +88,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
+  /// File path: assets/icons/google_login_button.png
+  AssetGenImage get googleLoginButton =>
+      const AssetGenImage('assets/icons/google_login_button.png');
+
   /// File path: assets/icons/icon_go_G-05.png
   AssetGenImage get iconGoG05 =>
       const AssetGenImage('assets/icons/icon_go_G-05.png');
@@ -101,9 +112,8 @@ class $AssetsIconsGen {
   AssetGenImage get kakaoLoginLargeWide =>
       const AssetGenImage('assets/icons/kakao_login_large_wide.png');
 
-  /// File path: assets/icons/loading-indicator.png
-  AssetGenImage get loadingIndicator =>
-      const AssetGenImage('assets/icons/loading-indicator.png');
+  /// File path: assets/icons/logo.png
+  AssetGenImage get logo => const AssetGenImage('assets/icons/logo.png');
 
   /// File path: assets/icons/mage_filter.png
   AssetGenImage get mageFilter =>
@@ -130,18 +140,21 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    appIcon,
+    appleLoginButton,
     backFilled,
     backLeft,
     bookmarkSharpRed,
     bookmarkSharp,
     calendarClearSharp,
     close,
+    googleLoginButton,
     iconGoG05,
     iconTextdelete,
     iconTextdelete16,
     iconamoonSearch,
     kakaoLoginLargeWide,
-    loadingIndicator,
+    logo,
     mageFilter,
     mageFilterSort,
     nurseCap,
@@ -151,12 +164,23 @@ class $AssetsIconsGen {
   ];
 }
 
+class $AssetsLottieGen {
+  const $AssetsLottieGen();
+
+  /// File path: assets/lottie/loading-dots.json
+  String get loadingDots => 'assets/lottie/loading-dots.json';
+
+  /// List of all assets
+  List<String> get values => [loadingDots];
+}
+
 class Assets {
   const Assets._();
 
   static const String aEnv = '.env';
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
+  static const $AssetsLottieGen lottie = $AssetsLottieGen();
 
   /// List of all assets
   static List<String> get values => [aEnv];
