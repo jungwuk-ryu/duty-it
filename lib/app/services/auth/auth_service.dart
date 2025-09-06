@@ -4,6 +4,7 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/models/app_user.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
+import 'package:duty_it/app/services/auth/strategies/apple_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/google_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/kakao_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
@@ -12,7 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-enum SocialProvider { kakao, google }
+enum SocialProvider { kakao, google, apple }
 
 class AuthService extends GetxService {
   static const String storageBoxName = "authService";
@@ -60,6 +61,7 @@ class AuthService extends GetxService {
   void _initStrategies() {
     _strategies[SocialProvider.kakao] = KakaoLoginStrategy();
     _strategies[SocialProvider.google] = GoogleLoginStrategy();
+    _strategies[SocialProvider.apple] = AppleLoginStrategy();
   }
 
   Future<SocialLoginResult> socialLogin(SocialProvider provider) async {

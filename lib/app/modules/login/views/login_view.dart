@@ -34,6 +34,7 @@ class LoginView extends GetView<LoginViewController> {
                       controller.onLoginButtonTap(SocialProvider.kakao),
                   child: Image.asset(
                     Assets.icons.kakaoLoginLargeWide.path,
+                    fit: BoxFit.contain,
                     width: 328.w,
                     height: 50.h,
                   ),
@@ -43,6 +44,17 @@ class LoginView extends GetView<LoginViewController> {
                       controller.onLoginButtonTap(SocialProvider.google),
                   child: Image.asset(
                     Assets.icons.googleLoginButton.path,
+                    fit: BoxFit.contain,
+                    width: 328.w,
+                    height: 50.h,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () =>
+                      controller.onLoginButtonTap(SocialProvider.apple),
+                  child: Image.asset(
+                    Assets.icons.appleLoginButton.path,
+                    fit: BoxFit.contain,
                     width: 328.w,
                     height: 50.h,
                   ),
