@@ -30,7 +30,9 @@ export PATH="$GEM_HOME/bin:$PATH"
 # Install gems locally without needing sudo
 gem install rexml -v '>= 3.3.6'
 gem install xcodeproj
-gem pristine ffi --version 1.17.0
+
+# Ensure ffi gem is installed with correct version
+gem install ffi -v '1.17.0'
 
 # 5) CocoaPods install from the correct ios directory
 cd "$REPO_ROOT/ios"
