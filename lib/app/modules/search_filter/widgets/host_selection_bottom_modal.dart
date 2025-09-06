@@ -43,7 +43,7 @@ class _SearchFilterHostSelectionBottomModal
       child: SizedBox(
         height: 420.h,
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w).copyWith(bottom: 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
