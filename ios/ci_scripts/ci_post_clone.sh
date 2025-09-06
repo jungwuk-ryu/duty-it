@@ -25,15 +25,13 @@ flutter pub get
 
 # 4) Install necessary Ruby gems locally (set GEM_HOME to avoid permission issues)
 export GEM_HOME="$HOME/.gem"
+export GEM_PATH="$GEM_HOME:$GEM_PATH"
 export PATH="$GEM_HOME/bin:$PATH"
+gem install --no-document rexml -v 3.3.6
+gem install --no-document xcodeproj -v 1.24.0
 
-# Install gems locally without needing sudo
-gem install rexml -v '>= 3.3.6'
-gem install xcodeproj
-
-# Ensure ffi gem is installed with correct version
-gem install ffi -v '1.17.0'
-
-# 5) CocoaPods install from the correct ios directory
+# 5) CocoaPods
 cd "$REPO_ROOT/ios"
+rm -f Podfile.lock            
+pod repo update
 pod install --repo-update
