@@ -8,6 +8,7 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
   @override
   Future<SocialLoginResult> login() async {
     try {
+
       bool installed = await isKakaoTalkInstalled();
       OAuthToken authToken = await (installed
           ? UserApi.instance.loginWithKakaoTalk()
@@ -22,7 +23,7 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
       await FirebaseAuth.instance.signInWithCredential(credential);
       return SocialLoginSuccess();
     } catch (e) {
-      return SocialLoginFail(reason: e.toString());
+      return SocialLoginFail(reason: kDebugMode ? e.toString() : '로그인 실패');
     }
   }
 
