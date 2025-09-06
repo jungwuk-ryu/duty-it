@@ -237,7 +237,7 @@ class ApiClient extends GetConnect {
       query += "&hostId=$hostId";
     }
     if (searchKeyword != null) {
-      query += "&searchKeyword=$searchKeyword";
+      query += "&searchKeyword=${Uri.encodeQueryComponent(searchKeyword)}";
     }
 
     return _send(
