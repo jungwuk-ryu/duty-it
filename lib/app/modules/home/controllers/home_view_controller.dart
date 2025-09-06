@@ -43,7 +43,7 @@ class HomeViewController extends GetxController {
     searchTextEditingController.addListener(
       () => searchQuery.value = searchTextEditingController.text.trim(),
     );
-    
+
     debounce(
       searchQuery,
       (v) async => await fetchNextPage(clearPage: true),
@@ -54,38 +54,48 @@ class HomeViewController extends GetxController {
       await fetchNextPage(clearPage: true);
     });
 
-    ever(Get.find<SearchFilterService>().filterRx, (v) => fetchNextPage(clearPage: true));
+    ever(
+      Get.find<SearchFilterService>().filterRx,
+      (v) => fetchNextPage(clearPage: true),
+    );
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
-    var sfService = Get.find<SearchFilterService>();
+    SearchFilterService sfService = Get.find<SearchFilterService>();
 
-    pagingState = pagingState.copyWith(isLoading: true, error: null);
+    // Update paging state
+    pagingState = pagingState.copyWith(
+      isLoading: true,
+      error: null,
+      keys: clearPage ? [] : const Omit(),
+      pages: clearPage ? [] : const Omit(),
+    );
 
+    // find next key
     int nextKey = 0;
     if (!clearPage &&
         !(pagingState.keys == null || pagingState.keys!.isEmpty)) {
       nextKey = (pagingState.keys?.last ?? -1) + 1;
     }
 
-    pagingState = pagingState.copyWith(
-      isLoading: true,
-      keys: clearPage ? [] : const Omit(),
-      pages: clearPage ? [] : const Omit(),
-    );
-
+    // set params
     const int size = 10;
     EventType? type;
     var categories = sfService.filter.categories;
-    if (categories.isNotEmpty) type = EventType.getByDisplayName(categories.first);
+    if (categories.isNotEmpty) {
+      type = EventType.getByDisplayName(categories.first);
+    }
 
-    int? hostId;
-    hostId = sfService.filter.host?.id;
+    int? hostId = sfService.filter.host?.id;
+    bool includeFinished = sfService.filter.showEnded;
+
+    // request
 
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
         isApproved: true,
+        includeFinished: includeFinished,
         isBookmarked: selectedTab == HomeTab.bookmark,
         page: nextKey,
         size: size,
@@ -93,7 +103,7 @@ class HomeViewController extends GetxController {
         field: 'ID',
         searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
         hostId: hostId,
-        type: type
+        type: type,
       );
       if (reqResult is RequestSuccess) {
         var events = (reqResult as RequestSuccess<List<Event>>).data;
@@ -112,7 +122,9 @@ class HomeViewController extends GetxController {
         );
       } else {
         var fail = reqResult as RequestFail;
-        AppUtils.showSnackBar('이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}');
+        AppUtils.showSnackBar(
+          '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
+        );
       }
     } finally {
       pagingState = pagingState.copyWith(isLoading: false);

@@ -217,7 +217,8 @@ class ApiClient extends GetConnect {
 
   /// 행사 목록 조회 (/events) - GET
   Future<RequestResult<List<Event>>> getEvents({
-    bool? isApproved,
+    bool isApproved = true,
+    bool includeFinished = false,
     bool isBookmarked = false,
     int page = 0,
     int size = 10,
@@ -234,6 +235,7 @@ class ApiClient extends GetConnect {
         '/events',
         query: _cleanQuery({
           'isApproved': isApproved,
+          'includeFinished': includeFinished,
           'isBookmarked': isBookmarked,
           'page': page,
           'size': size,
