@@ -1,5 +1,6 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/bindings/initial_bindings.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -50,6 +51,7 @@ void main() async {
         theme: ThemeData(
           fontFamily: FontFamily.pretendard,
           colorScheme: ColorScheme.light(surface: Colors.white),
+          primaryColor: AppColors.main
         ),
         debugShowCheckedModeBanner: false,
         title: "듀잇 - Duty It!",
