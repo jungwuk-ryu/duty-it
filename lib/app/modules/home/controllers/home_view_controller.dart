@@ -80,10 +80,11 @@ class HomeViewController extends GetxController {
 
     // set params
     const int size = 10;
-    EventType? type;
-    var categories = sfService.filter.categories;
-    if (categories.isNotEmpty) {
-      type = EventType.getByDisplayName(categories.first);
+    List<String> categories = sfService.filter.categories.toList();
+    List<EventType> types = [];
+
+    for (var category in categories) {
+      types.add(EventType.getByDisplayName(category));
     }
 
     int? hostId = sfService.filter.host?.id;
@@ -103,7 +104,7 @@ class HomeViewController extends GetxController {
         field: 'ID',
         searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
         hostId: hostId,
-        type: type,
+        types: types,
       );
       if (reqResult is RequestSuccess) {
         var events = (reqResult as RequestSuccess<List<Event>>).data;
