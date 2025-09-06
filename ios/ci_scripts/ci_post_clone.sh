@@ -23,6 +23,13 @@ flutter precache --ios
 # 3) Fetch Dart/Flutter dependencies
 flutter pub get
 
-# 4) CocoaPods install from the correct ios directory
+# 4) Install necessary Ruby gems for CocoaPods
+gem install rexml -v '>= 3.3.6'
+gem install xcodeproj
+gem pristine ffi --version 1.17.0
+
+# 5) CocoaPods install from the correct ios directory
 cd "$REPO_ROOT/ios"
 pod install --repo-update
+# Optional: Update GTMSessionFetcher/Core if needed
+pod update GTMSessionFetcher/Core
