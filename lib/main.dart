@@ -49,8 +49,14 @@ void main() async {
       child: GetMaterialApp(
         theme: ThemeData(
           fontFamily: FontFamily.pretendard,
-          colorSchemeSeed: AppColors.main,
-          scaffoldBackgroundColor: AppColors.white,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.main,
+            brightness: Brightness.light,
+            background: AppColors.main,
+          ).copyWith(surface: Colors.white, background: Colors.white),
+          primaryColor: AppColors.main,
+          bottomSheetTheme: BottomSheetThemeData(backgroundColor: AppColors.white),
+          drawerTheme: DrawerThemeData(backgroundColor: AppColors.white)
         ),
         debugShowCheckedModeBanner: false,
         title: "듀잇 - Duty It!",
