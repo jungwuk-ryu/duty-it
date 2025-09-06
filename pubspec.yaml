@@ -53,6 +53,7 @@ dependencies:
   lottie: ^3.3.1
   google_sign_in: ^7.1.1
   sign_in_with_apple: ^7.0.1
+  package_info_plus: ^8.3.1
 
 dev_dependencies:
   flutter_test:
