@@ -15,7 +15,11 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
         await FirebaseAuth.instance.signInWithPopup(provider);
         return SocialLoginSuccess();
       }
-      
+
+      GoogleSignIn googleSignIn = GoogleSignIn.instance;
+      await googleSignIn.initialize(
+        clientId: Platform.isAndroid ? "AIzaSyC0pV_fiwBaoKRy6egPmKUrXvL0yLTMCBE" : "AIzaSyC0pV_fiwBaoKRy6egPmKUrXvL0yLTMCBE",
+      );
 
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
