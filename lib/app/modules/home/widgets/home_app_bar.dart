@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,15 @@ class HomeAppBar extends StatelessWidget {
         children: [
           Image.asset(Assets.icons.logo.path, width: 16, height: 16),
           SizedBox(width: 8),
-          Text("듀잇 - Duty It!"),
+          Text(
+            "듀잇 - Duty It!",
+            style: TextStyle(
+              color: AppColors.black,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              height: 1.60,
+            ),
+          ),
           Expanded(child: SizedBox()),
           GestureDetector(
             onTap: () {
