@@ -16,6 +16,7 @@ export PATH="$FLUTTER_ROOT/bin:$PATH"
 # 2) Prepare Flutter
 flutter --version
 flutter config --no-analytics
+flutter precache --ios
 
 # 3) Fetch Dart/Flutter dependencies
 flutter pub get
