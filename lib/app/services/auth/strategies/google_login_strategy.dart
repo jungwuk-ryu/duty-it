@@ -32,5 +32,7 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
   }
 
   @override
-  Future<void> logout() async {}
+  Future<void> logout() async {
+    await GoogleSignIn.instance.signOut();
+  }
 }
