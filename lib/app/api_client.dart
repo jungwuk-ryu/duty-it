@@ -190,11 +190,11 @@ class ApiClient extends GetConnect {
 
   /// 닉네임 중복 확인 (/users/check-nickname?nickname=) - GET
   Future<RequestResult<bool>> isNicknameAvailable(String nickname) async {
-    return _send(() async => await get(
-      '/users/check-nickname',
-      query: {'nickname': nickname},
-    ), map: (_) => true);
-    
+    return _send(
+      () async =>
+          await get('/users/check-nickname', query: {'nickname': nickname}),
+      map: (_) => true,
+    );
   }
 
   /// 현재 사용자 닉네임 수정 (/users/nickname) - PATCH
@@ -217,29 +217,32 @@ class ApiClient extends GetConnect {
 
   /// 행사 목록 조회 (/events) - GET
   Future<RequestResult<List<Event>>> getEvents({
-    bool? isApproved,
+    bool isApproved = true,
+    bool includeFinished = false,
+    bool isBookmarked = false,
     int page = 0,
     int size = 10,
-    SortDirection? sortDirection, // 'ASC' | 'DESC'
-    String? field, // 'ID' | 'NAME'
-    EventType?
-    type, // 'CONFERENCE' | 'SEMINAR' | 'WEBINAR' | 'WORKSHOP' | 'CONTEST' | 'ETC'
+    SortDirection sortDirection = SortDirection.DESC, // 'ASC' | 'DESC'
+    String field = 'ID', // 'ID' | 'NAME'
+    required List<EventType>
+    types, // 'CONFERENCE' | 'SEMINAR' | 'WEBINAR' | 'WORKSHOP' | 'CONTEST' | 'ETC'
     int? hostId,
     String? searchKeyword,
   }) async {
+    String query = "isApproved=$isApproved&includeFinished=$includeFinished&isBookmarked=$isBookmarked&page=$page&size=$size&sortDirection=${sortDirection.name}&field=$field";
+    for (var type in types) {
+      query += "&type=${type.name}";
+    }
+    if (hostId != null) {
+      query += "&hostId=$hostId";
+    }
+    if (searchKeyword != null) {
+      query += "&searchKeyword=${Uri.encodeQueryComponent(searchKeyword)}";
+    }
+
     return _send(
       () async => await get(
-        '/events',
-        query: _cleanQuery({
-          'isApproved': isApproved,
-          'page': page,
-          'size': size,
-          'sortDirection': sortDirection?.name,
-          'field': field,
-          'type': type?.name,
-          'hostId': hostId,
-          'searchKeyword': searchKeyword,
-        }),
+        '/events?$query'
       ),
       map: (rp) {
         List<Event> events = [];
@@ -310,33 +313,6 @@ class ApiClient extends GetConnect {
     return _send(
       () async => await post('/bookmarks/$eventId', null),
       map: (rp) => json.decode(rp.bodyString!)['isBookmarked'] as bool,
-    );
-  }
-
-  /// 북마크 목록 조회 (/bookmarks) - GET
-  Future<RequestResult<List<Event>>> getBookmarks({
-    int page = 0,
-    int size = 10,
-    SortDirection? sortDirection, // 'ASC' | 'DESC'
-    String? field, // 'ID' | 'NAME'
-  }) async {
-    return _send(
-      () async => await get(
-        '/bookmarks',
-        query: _cleanQuery({
-          'page': page,
-          'size': size,
-          'sortDirection': sortDirection?.name,
-          'field': field,
-        }),
-      ),
-      map: (rp) {
-        List<Event> events = [];
-        for (Map ele in List.from(json.decode(rp.bodyString!)['content'])) {
-          events.add(Event.fromJson(Map.from(ele)));
-        }
-        return events;
-      },
     );
   }
 

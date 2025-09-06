@@ -72,4 +72,8 @@ class SearchFilterViewController extends GetxController {
       builder: (_) => HostSelectionBottomModal(),
     );
   }
+
+  void clearSelectedHost() {
+    selectedHost = null;
+  }
 }

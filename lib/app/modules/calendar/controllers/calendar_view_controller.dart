@@ -1,6 +1,7 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/models/event_type.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
@@ -46,14 +47,26 @@ class CalendarViewController extends GetxController {
     var reqSuccess = reqResult as RequestSuccess<List<Event>>;
     List<Event> events = reqSuccess.data;
     List<CalendarEvent> cEvents = [];
+    List<Color> colors = [AppColors.cal3, AppColors.cal2, AppColors.cal1];
+    Map<EventType, Color> colorMap = {};
+    var types = EventType.values;
+    for (int i = 0; i < types.length; i++) {
+      EventType type = types[i];
+      colorMap[type] = colors[i % colors.length];
+    }
+    
 
-    for (Event event in events) {
+    
+    for (int i = 0; i < events.length; i++) {
+      Event event = events[i];
+      Color color = colorMap[event.eventType] ?? colors[0]; 
+
       cEvents.add(
         CalendarEvent(
           title: event.title,
           startDate: event.startAt ?? DateTime.now(),
           endDate: event.endAt ?? DateTime.now(),
-          color: AppColors.cal1,
+          color: color,
         ),
       );
     }

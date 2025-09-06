@@ -3,16 +3,15 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class SearchFilterService extends GetxService {
+  static final String storageBoxName = 'searchFilter';
+
   final Rx<SearchFilter> filterRx = SearchFilter().obs;
   SearchFilter get filter => filterRx.value;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-
-    await GetStorage.init('searchFilter');
-    var box = GetStorage('searchFilter');
-
+    var box = GetStorage(storageBoxName);
     var json = box.read('filter');
 
     if (json != null) {

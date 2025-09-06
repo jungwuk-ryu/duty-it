@@ -38,7 +38,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 17.w, bottom: 17.w + MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(top: 17.h, left: 17.w, right: 17.w, bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

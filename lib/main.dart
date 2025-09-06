@@ -1,5 +1,6 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/bindings/initial_bindings.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -41,7 +42,6 @@ void main() async {
 
   ApiClient apiClient = ApiClient();
   Get.put(apiClient);
-  apiClient.loginAndRefreshToken();
 
   runApp(
     ScreenUtilInit(
@@ -49,7 +49,14 @@ void main() async {
       child: GetMaterialApp(
         theme: ThemeData(
           fontFamily: FontFamily.pretendard,
-          colorScheme: ColorScheme.light(surface: Colors.white),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.main,
+            brightness: Brightness.light,
+            background: AppColors.main,
+          ).copyWith(surface: Colors.white, background: Colors.white),
+          primaryColor: AppColors.main,
+          bottomSheetTheme: BottomSheetThemeData(backgroundColor: AppColors.white),
+          drawerTheme: DrawerThemeData(backgroundColor: AppColors.white)
         ),
         debugShowCheckedModeBanner: false,
         title: "듀잇 - Duty It!",
