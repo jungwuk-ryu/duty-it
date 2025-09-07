@@ -43,14 +43,15 @@ class LoginViewController extends GetxController {
       }
     } catch (e, s) {
       AppUtils.showSnackBar("로그인 중 오류가 발생하였습니다.");
-      if (kDebugMode) AppUtils.showSnackBar("$e");
+      //if (kDebugMode) AppUtils.showSnackBar("$e");
+      AppUtils.showSnackBar("$e");
+      AppUtils.showSnackBar("$s");
       FirebaseCrashlytics.instance.recordError(
         e,
         s,
         fatal: false,
         information: ['provider: ${provider.name}'],
       );
-      rethrow;
     } finally {
       isLogining = false;
     }

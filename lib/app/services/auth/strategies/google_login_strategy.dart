@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,7 +34,9 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
       await FirebaseAuth.instance.signInWithCredential(credential);
       return SocialLoginSuccess();
     } catch (e, st) {
-      if (kDebugMode) rethrow;
+      //if (kDebugMode) rethrow;
+      AppUtils.showSnackBar("$e");
+      AppUtils.showSnackBar("$st");
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       return SocialLoginFail(reason: kDebugMode ? "$e\n$st" : '로그인 실패');
     }

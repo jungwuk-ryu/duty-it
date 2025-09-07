@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,6 +25,8 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
       return SocialLoginSuccess();
     } catch (e, s) {
       FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
+      AppUtils.showSnackBar("$e");
+      AppUtils.showSnackBar("$s");
       return SocialLoginFail(reason: kDebugMode ? e.toString() : '로그인 실패');
     }
   }
