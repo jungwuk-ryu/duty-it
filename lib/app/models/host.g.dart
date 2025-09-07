@@ -9,7 +9,7 @@ part of 'host.dart';
 _Host _$HostFromJson(Map<String, dynamic> json) => _Host(
   id: (json['id'] as num).toInt(),
   name: json['name'] as String,
-  thumbnail: json['thumbnail'] as String,
+  thumbnail: json['thumbnail'] as String? ?? "",
 );
 
 Map<String, dynamic> _$HostToJson(_Host instance) => <String, dynamic>{
