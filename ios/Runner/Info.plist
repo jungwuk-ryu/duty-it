@@ -57,6 +57,8 @@
 		<string>google</string>
 		<string>com.google</string>
 	</array>
+	<key>GIDClientID</key>
+	<string>348194173787-lbm02t1gmn4krroo8ehjl0c0a7hh1f0m.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 	<dict>
