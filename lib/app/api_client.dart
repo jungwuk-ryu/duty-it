@@ -55,6 +55,8 @@ class ApiClient extends GetConnect {
     });
 
     httpClient.maxAuthRetries = 1;
+
+    loginAndRefreshToken();
   }
 
   Map<String, String> _cleanQuery(Map<String, dynamic> raw) {
