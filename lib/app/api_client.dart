@@ -12,6 +12,7 @@ import 'package:duty_it/app/models/server_fail.dart';
 import 'package:duty_it/app/models/sort_direction.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,8 @@ class ApiClient extends GetConnect {
     });
 
     httpClient.maxAuthRetries = 1;
+
+    loginAndRefreshToken();
   }
 
   Map<String, String> _cleanQuery(Map<String, dynamic> raw) {
@@ -72,8 +75,11 @@ class ApiClient extends GetConnect {
         }
 
         return RequestSuccess<T>(map!(rp));
-      } catch (e, st) {
+      } catch (e, s) {
         if (kDebugMode) rethrow;
+
+        FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
+
         return RequestFail(
           Response(
             statusCode: 500,
@@ -127,8 +133,9 @@ class ApiClient extends GetConnect {
           ),
         ),
       );
-    } catch (e) {
+    } catch (e, s) {
       if (kDebugMode) rethrow;
+      FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
       return RequestFail(
         Response(
           statusCode: -1,
@@ -340,10 +347,10 @@ class RequestFail extends RequestResult<Never> {
     if (response != null && response!.bodyString != null) {
       try {
         serverFail = ServerFail.fromJson(json.decode(response!.bodyString!));
-      } catch (ex) {
-        if (kDebugMode) print(ex);
+      } catch (e, s) {
+        if (kDebugMode) print(e);
         serverFail = null;
-        // TODO : Analytics 로깅
+        FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
       }
     } else {
       serverFail = null;

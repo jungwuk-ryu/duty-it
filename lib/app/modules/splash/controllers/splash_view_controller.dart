@@ -2,6 +2,7 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -34,11 +35,11 @@ class SplashViewController extends GetxController {
       } else {
         Get.offAllNamed(Routes.LOGIN);
       }
-    } catch (e) {
-      // TODO : Crashlytics 로깅
+    } catch (e, s) {
       if (kDebugMode) {
         print(e);
       }
+      FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
 
       Get.offAllNamed(Routes.LOGIN);
     }

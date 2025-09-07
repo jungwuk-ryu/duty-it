@@ -1,6 +1,7 @@
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 
 class AppleLoginStrategy extends SocialLoginStrategy {
@@ -14,6 +15,7 @@ class AppleLoginStrategy extends SocialLoginStrategy {
       await FirebaseAuth.instance.signInWithProvider(appleProvider);
       return SocialLoginSuccess();
     } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       return SocialLoginFail(reason: kDebugMode ? "$e\n$st" : '로그인 실패');
     }
   }

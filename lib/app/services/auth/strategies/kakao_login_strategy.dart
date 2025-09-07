@@ -1,6 +1,7 @@
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_user.dart';
 
@@ -21,7 +22,8 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       return SocialLoginSuccess();
-    } catch (e) {
+    } catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
       return SocialLoginFail(reason: kDebugMode ? e.toString() : '로그인 실패');
     }
   }

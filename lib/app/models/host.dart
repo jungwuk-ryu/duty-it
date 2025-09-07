@@ -17,7 +17,7 @@ abstract class Host with _$Host {
     const factory Host({
         required int id,
         required String name,
-        required String thumbnail,
+        @Default("") String thumbnail,
     }) = _Host;
 
     factory Host.fromJson(Map<String, dynamic> json) => _$HostFromJson(json);
