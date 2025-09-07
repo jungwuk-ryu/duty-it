@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -33,6 +34,7 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
       return SocialLoginSuccess();
     } catch (e, st) {
       if (kDebugMode) rethrow;
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       return SocialLoginFail(reason: kDebugMode ? "$e\n$st" : '로그인 실패');
     }
   }

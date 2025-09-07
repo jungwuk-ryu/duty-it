@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/events/app_event.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:get/get.dart';
 
 typedef L = void Function(AppEvent);
@@ -12,8 +13,8 @@ class AppEventService extends GetxService {
     for (L fn in listeners) {
       try {
         fn(e);
-      } catch (_){
-        // TODO : 로깅
+      } catch (e, s){
+        FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
       }
     }
   }
