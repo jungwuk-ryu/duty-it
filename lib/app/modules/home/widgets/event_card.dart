@@ -53,7 +53,7 @@ class EventCard extends StatelessWidget {
                 ),
               ),
               Visibility(
-                visible: DateUtils.dateOnly(event.endAt ?? DateTime.now()).isBefore(DateTime.now()),
+                visible: DateUtils.dateOnly(event.endAt ?? DateTime.now()).isBefore(DateUtils.dateOnly(DateTime.now())),
                 child: Container(
                   width: double.infinity,
                   height: cardHeight,
