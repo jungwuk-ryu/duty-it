@@ -20,7 +20,7 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
 
       GoogleSignIn googleSignIn = GoogleSignIn.instance;
       await googleSignIn.initialize(
-        clientId: Platform.isAndroid ? "AIzaSyC0pV_fiwBaoKRy6egPmKUrXvL0yLTMCBE" : "AIzaSyC0pV_fiwBaoKRy6egPmKUrXvL0yLTMCBE",
+        clientId: Platform.isAndroid ? "AIzaSyC0pV_fiwBaoKRy6egPmKUrXvL0yLTMCBE" : null,
       );
 
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
