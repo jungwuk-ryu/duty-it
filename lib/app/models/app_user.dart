@@ -14,8 +14,8 @@ abstract class AppUser with _$AppUser {
         required int id,
         required String email,
         required String nickname,
-        required bool allowPushAlarm,
-        required bool allowMarketingAlarm,
+        //required bool allowPushAlarm,
+        //required bool allowMarketingAlarm,
         //required DateTime createdAt,
         //required DateTime updatedAt,
     }) = _AppUser;
