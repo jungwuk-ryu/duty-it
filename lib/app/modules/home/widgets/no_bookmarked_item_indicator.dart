@@ -8,10 +8,11 @@ class NoBookmarkedItemIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.symmetric(vertical: 70.h, horizontal: 70.w),
+      padding: EdgeInsetsGeometry.symmetric(vertical: 70.h, horizontal: 30.w),
       child: Text(
         '북마크된 행사가 없습니다.\n행사 리스트에서 북마크를 추가해보세요.',
         textAlign: TextAlign.center,
+        maxLines: 2,
         style: TextStyle(
           color: AppColors.g06,
           fontSize: 14,
