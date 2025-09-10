@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUser {
 
- int get id; String get email; String get nickname; bool get allowPushAlarm; bool get allowMarketingAlarm;
+ int get id; String get email; String get nickname;
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AppUserCopyWith<AppUser> get copyWith => _$AppUserCopyWithImpl<AppUser>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.allowPushAlarm, allowPushAlarm) || other.allowPushAlarm == allowPushAlarm)&&(identical(other.allowMarketingAlarm, allowMarketingAlarm) || other.allowMarketingAlarm == allowMarketingAlarm));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,nickname,allowPushAlarm,allowMarketingAlarm);
+int get hashCode => Object.hash(runtimeType,id,email,nickname);
 
 @override
 String toString() {
-  return 'AppUser(id: $id, email: $email, nickname: $nickname, allowPushAlarm: $allowPushAlarm, allowMarketingAlarm: $allowMarketingAlarm)';
+  return 'AppUser(id: $id, email: $email, nickname: $nickname)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AppUserCopyWith<$Res>  {
   factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) _then) = _$AppUserCopyWithImpl;
 @useResult
 $Res call({
- int id, String email, String nickname, bool allowPushAlarm, bool allowMarketingAlarm
+ int id, String email, String nickname
 });
 
 
@@ -65,14 +65,12 @@ class _$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? nickname = null,Object? allowPushAlarm = null,Object? allowMarketingAlarm = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? nickname = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String,allowPushAlarm: null == allowPushAlarm ? _self.allowPushAlarm : allowPushAlarm // ignore: cast_nullable_to_non_nullable
-as bool,allowMarketingAlarm: null == allowMarketingAlarm ? _self.allowMarketingAlarm : allowMarketingAlarm // ignore: cast_nullable_to_non_nullable
-as bool,
+as String,
   ));
 }
 
@@ -157,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String email,  String nickname,  bool allowPushAlarm,  bool allowMarketingAlarm)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String email,  String nickname)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.id,_that.email,_that.nickname,_that.allowPushAlarm,_that.allowMarketingAlarm);case _:
+return $default(_that.id,_that.email,_that.nickname);case _:
   return orElse();
 
 }
@@ -178,10 +176,10 @@ return $default(_that.id,_that.email,_that.nickname,_that.allowPushAlarm,_that.a
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String email,  String nickname,  bool allowPushAlarm,  bool allowMarketingAlarm)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String email,  String nickname)  $default,) {final _that = this;
 switch (_that) {
 case _AppUser():
-return $default(_that.id,_that.email,_that.nickname,_that.allowPushAlarm,_that.allowMarketingAlarm);case _:
+return $default(_that.id,_that.email,_that.nickname);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +196,10 @@ return $default(_that.id,_that.email,_that.nickname,_that.allowPushAlarm,_that.a
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String email,  String nickname,  bool allowPushAlarm,  bool allowMarketingAlarm)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String email,  String nickname)?  $default,) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.id,_that.email,_that.nickname,_that.allowPushAlarm,_that.allowMarketingAlarm);case _:
+return $default(_that.id,_that.email,_that.nickname);case _:
   return null;
 
 }
@@ -213,14 +211,12 @@ return $default(_that.id,_that.email,_that.nickname,_that.allowPushAlarm,_that.a
 @JsonSerializable()
 
 class _AppUser implements AppUser {
-  const _AppUser({required this.id, required this.email, required this.nickname, required this.allowPushAlarm, required this.allowMarketingAlarm});
+  const _AppUser({required this.id, required this.email, required this.nickname});
   factory _AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
 
 @override final  int id;
 @override final  String email;
 @override final  String nickname;
-@override final  bool allowPushAlarm;
-@override final  bool allowMarketingAlarm;
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +231,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.allowPushAlarm, allowPushAlarm) || other.allowPushAlarm == allowPushAlarm)&&(identical(other.allowMarketingAlarm, allowMarketingAlarm) || other.allowMarketingAlarm == allowMarketingAlarm));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,nickname,allowPushAlarm,allowMarketingAlarm);
+int get hashCode => Object.hash(runtimeType,id,email,nickname);
 
 @override
 String toString() {
-  return 'AppUser(id: $id, email: $email, nickname: $nickname, allowPushAlarm: $allowPushAlarm, allowMarketingAlarm: $allowMarketingAlarm)';
+  return 'AppUser(id: $id, email: $email, nickname: $nickname)';
 }
 
 
@@ -255,7 +251,7 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   factory _$AppUserCopyWith(_AppUser value, $Res Function(_AppUser) _then) = __$AppUserCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String email, String nickname, bool allowPushAlarm, bool allowMarketingAlarm
+ int id, String email, String nickname
 });
 
 
@@ -272,14 +268,12 @@ class __$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? nickname = null,Object? allowPushAlarm = null,Object? allowMarketingAlarm = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? nickname = null,}) {
   return _then(_AppUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String,allowPushAlarm: null == allowPushAlarm ? _self.allowPushAlarm : allowPushAlarm // ignore: cast_nullable_to_non_nullable
-as bool,allowMarketingAlarm: null == allowMarketingAlarm ? _self.allowMarketingAlarm : allowMarketingAlarm // ignore: cast_nullable_to_non_nullable
-as bool,
+as String,
   ));
 }
 
