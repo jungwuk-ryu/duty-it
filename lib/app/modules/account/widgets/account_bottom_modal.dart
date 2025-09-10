@@ -106,7 +106,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
 
           SizedBox(height: 16.h),
           Text(
-            "닉네임 주의사항 자리",
+            "닉네임은 2~10자의 한글·영문·숫자만 가능하며, 변경 시 되돌릴 수 없습니다",
             style: TextStyle(
               color: AppColors.g06,
               fontSize: 13,
