@@ -77,9 +77,8 @@ class HomeHeader extends StatelessWidget {
                 Obx(
                   () => CategoryTag(
                     name: controller.sortingType.shortName,
-                    isSelected: filterApplied,
+                    isSelected: false,
                     imageAsset: Assets.icons.mageFilterSort.path,
-                    imageColor: filterApplied ? AppColors.white : null,
                     onTap: () {
                       controller.showSortingBottomModal();
                     },

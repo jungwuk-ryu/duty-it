@@ -63,7 +63,7 @@ class CategoryTag extends StatelessWidget {
                   name,
                   style: TextStyle(
                     color: isSelected ? AppColors.white : AppColors.g05,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w300,
                     height: 1.60,
                     fontSize: 13,
                   ),

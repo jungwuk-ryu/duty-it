@@ -58,6 +58,8 @@ class HomeViewController extends GetxController {
       Get.find<SearchFilterService>().filterRx,
       (v) => fetchNextPage(clearPage: true),
     );
+
+    ever(_settingsService.eventSortingTypeSetting.rxValue, (v) => fetchNextPage(clearPage: true));
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
@@ -80,7 +82,8 @@ class HomeViewController extends GetxController {
 
     // set params
     const int size = 10;
-    List<String> categories = sfService.filter.categories.toList();
+    var filter = sfService.filter;
+    List<String> categories = filter.categories.toList();
     List<EventType> types = [];
 
     for (var category in categories) {
@@ -100,8 +103,8 @@ class HomeViewController extends GetxController {
         isBookmarked: selectedTab == HomeTab.bookmark,
         page: nextKey,
         size: size,
-        sortDirection: SortDirection.DESC,
-        field: 'ID',
+        sortDirection: sortingType.sortDirection,
+        field: sortingType.field,
         searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
         hostId: hostId,
         types: types,
