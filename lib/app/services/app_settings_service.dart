@@ -1,16 +1,20 @@
+import 'package:duty_it/app/models/sort_direction.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 enum EventSortingType {
-  latest('최신 등록순', '최신순'),
-  eventStartSoon('행사 날짜 임박순', '행사 날짜'),
-  closingSoon('모집 마감 임박순', '모집 마감'),
-  popular('인기순', '인기순');
+  //ID, NAME, START_DATE, RECRUITMENT_DEADLINE, VIEW_COUNT, CREATED_AT
+  latest('최신 등록순', '최신순', 'ID', SortDirection.DESC),
+  eventStartSoon('행사 날짜 임박순', '행사 날짜', 'START_DATE', SortDirection.ASC),
+  closingSoon('모집 마감 임박순', '모집 마감', 'RECRUITMENT_DEADLINE', SortDirection.ASC),
+  popular('인기순', '인기순', 'VIEW_COUNT', SortDirection.DESC);
 
   final String displayName;
   final String shortName; 
+  final String field;
+  final SortDirection sortDirection;
 
-  const EventSortingType(this.displayName, this.shortName);
+  const EventSortingType(this.displayName, this.shortName, this.field, this.sortDirection);
 
   static EventSortingType fromName(String name) {
     try {
@@ -25,39 +29,39 @@ class AppSettingsService extends GetxService {
   static const String storageBoxName = 'appSettings';
 
   late final GetStorage _box = GetStorage(storageBoxName);
-  late final _AppSetting<String> _eventSortingTypeName;
+  late final AppSetting<String> eventSortingTypeSetting;
 
   @override
   void onInit() async {
     super.onInit();
 
-    _eventSortingTypeName = _AppSetting(key: 'event_sorting_type', box: _box, defaultValue: EventSortingType.latest.name);
+    eventSortingTypeSetting = AppSetting(key: 'event_sorting_type', box: _box, defaultValue: EventSortingType.latest.name);
   }
 
-  EventSortingType get eventSortingType => EventSortingType.fromName(_eventSortingTypeName.value);
-  set eventSortingType(EventSortingType t) => _eventSortingTypeName.value = t.name;
+  EventSortingType get eventSortingType => EventSortingType.fromName(eventSortingTypeSetting.value);
+  set eventSortingType(EventSortingType t) => eventSortingTypeSetting.value = t.name;
 
 }
 
-class _AppSetting<T> {
+class AppSetting<T> {
   final String key;
   final GetStorage box;
   final T defaultValue;
-  late final Rx<T> _value;
+  late final Rx<T> rxValue;
 
-  _AppSetting({required this.key, required this.box, required this.defaultValue}) {
-    _value = defaultValue.obs;
+  AppSetting({required this.key, required this.box, required this.defaultValue}) {
+    rxValue = defaultValue.obs;
 
     var tempValue = box.read(key);
     if (tempValue != null) value = tempValue;
 
-    debounce(_value, (v) {
+    debounce(rxValue, (v) {
       box.write(key, v);
     }, time: Duration(milliseconds: 100));
   }
   
-  T get value => _value.value;
-  set value(T v) => _value(v);
+  T get value => rxValue.value;
+  set value(T v) => rxValue(v);
 
   
 }
