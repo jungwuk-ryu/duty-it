@@ -1,29 +1,24 @@
+import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/models/alarm_settings.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:get/get.dart';
 
 class SettingsViewController extends GetxController {
-  /* START OF NOTIFICATION SETTINGS */
+  ApiClient get api => Get.find<ApiClient>();
+  AuthService get authService => Get.find<AuthService>();
+  AlarmSettings? get settings => authService.appUser?.alarmSettings;
 
   // 푸시 알림
-  final RxBool _pushNoti = RxBool(true);
-  bool get pushNoti => _pushNoti.value;
-  set pushNoti(v) => _pushNoti(v);
+  bool get pushNoti => settings?.push ?? false;
 
   // 마케팅 알림
-  final RxBool _marketingNoti = RxBool(false);
-  bool get marketingNoti => _marketingNoti.value;
-  set marketingNoti(v) => _marketingNoti(v);
+  bool get marketingNoti => settings?.marketing ?? false;
 
-  // 행사 알림
-  final RxBool _eventNoti = RxBool(true);
-  bool get eventNoti => _eventNoti.value;
-  set eventNoti(v) => _eventNoti(v);
+  // 북마크 알림
+  bool get bookmarkNoti => settings?.bookmark ?? false;
 
   // 캘린더 알림
-  final RxBool _calendarNoti = RxBool(true);
-  bool get calendarNoti => _calendarNoti.value;
-  set calendarNoti(v) => _calendarNoti(v);
-  /* END OF NOTIFICATION SETTINGS */
-
+  bool get calendarNoti => settings?.calendar ?? false;
 
   @override
   void onInit() {
@@ -41,19 +36,30 @@ class SettingsViewController extends GetxController {
   }
 
   void togglePushNoti() {
-    pushNoti = !pushNoti;
-    if (!pushNoti) marketingNoti = false;
+    api.updateUserSettings(
+      authService.appUser?.autoAddBookmarkToCalendar ?? false,
+      settings!.copyWith(push: !pushNoti),
+    );
   }
 
   void toggleMarketingNoti() {
-    marketingNoti = !marketingNoti;
+    api.updateUserSettings(
+      authService.appUser?.autoAddBookmarkToCalendar ?? false,
+      settings!.copyWith(push: !marketingNoti),
+    );
   }
 
-  void toggleEventNoti() {
-    eventNoti = !eventNoti;
+  void toggleBookmarkNoti() {
+    api.updateUserSettings(
+      authService.appUser?.autoAddBookmarkToCalendar ?? false,
+      settings!.copyWith(push: !bookmarkNoti),
+    );
   }
 
   void toggleCalendarNoti() {
-    calendarNoti = !calendarNoti;
+    api.updateUserSettings(
+      authService.appUser?.autoAddBookmarkToCalendar ?? false,
+      settings!.copyWith(push: !calendarNoti),
+    );
   }
 }

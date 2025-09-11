@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUser {
 
- int get id; String get email; String get nickname;
+ int get id; String get email; String get nickname; bool get autoAddBookmarkToCalendar; AlarmSettings get alarmSettings;
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AppUserCopyWith<AppUser> get copyWith => _$AppUserCopyWithImpl<AppUser>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.autoAddBookmarkToCalendar, autoAddBookmarkToCalendar) || other.autoAddBookmarkToCalendar == autoAddBookmarkToCalendar)&&(identical(other.alarmSettings, alarmSettings) || other.alarmSettings == alarmSettings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,nickname);
+int get hashCode => Object.hash(runtimeType,id,email,nickname,autoAddBookmarkToCalendar,alarmSettings);
 
 @override
 String toString() {
-  return 'AppUser(id: $id, email: $email, nickname: $nickname)';
+  return 'AppUser(id: $id, email: $email, nickname: $nickname, autoAddBookmarkToCalendar: $autoAddBookmarkToCalendar, alarmSettings: $alarmSettings)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $AppUserCopyWith<$Res>  {
   factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) _then) = _$AppUserCopyWithImpl;
 @useResult
 $Res call({
- int id, String email, String nickname
+ int id, String email, String nickname, bool autoAddBookmarkToCalendar, AlarmSettings alarmSettings
 });
 
 
-
+$AlarmSettingsCopyWith<$Res> get alarmSettings;
 
 }
 /// @nodoc
@@ -65,15 +65,26 @@ class _$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? nickname = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? nickname = null,Object? autoAddBookmarkToCalendar = null,Object? alarmSettings = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String,
+as String,autoAddBookmarkToCalendar: null == autoAddBookmarkToCalendar ? _self.autoAddBookmarkToCalendar : autoAddBookmarkToCalendar // ignore: cast_nullable_to_non_nullable
+as bool,alarmSettings: null == alarmSettings ? _self.alarmSettings : alarmSettings // ignore: cast_nullable_to_non_nullable
+as AlarmSettings,
   ));
 }
-
+/// Create a copy of AppUser
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AlarmSettingsCopyWith<$Res> get alarmSettings {
+  
+  return $AlarmSettingsCopyWith<$Res>(_self.alarmSettings, (value) {
+    return _then(_self.copyWith(alarmSettings: value));
+  });
+}
 }
 
 
@@ -155,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String email,  String nickname)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String email,  String nickname,  bool autoAddBookmarkToCalendar,  AlarmSettings alarmSettings)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.id,_that.email,_that.nickname);case _:
+return $default(_that.id,_that.email,_that.nickname,_that.autoAddBookmarkToCalendar,_that.alarmSettings);case _:
   return orElse();
 
 }
@@ -176,10 +187,10 @@ return $default(_that.id,_that.email,_that.nickname);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String email,  String nickname)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String email,  String nickname,  bool autoAddBookmarkToCalendar,  AlarmSettings alarmSettings)  $default,) {final _that = this;
 switch (_that) {
 case _AppUser():
-return $default(_that.id,_that.email,_that.nickname);case _:
+return $default(_that.id,_that.email,_that.nickname,_that.autoAddBookmarkToCalendar,_that.alarmSettings);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +207,10 @@ return $default(_that.id,_that.email,_that.nickname);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String email,  String nickname)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String email,  String nickname,  bool autoAddBookmarkToCalendar,  AlarmSettings alarmSettings)?  $default,) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.id,_that.email,_that.nickname);case _:
+return $default(_that.id,_that.email,_that.nickname,_that.autoAddBookmarkToCalendar,_that.alarmSettings);case _:
   return null;
 
 }
@@ -211,12 +222,14 @@ return $default(_that.id,_that.email,_that.nickname);case _:
 @JsonSerializable()
 
 class _AppUser implements AppUser {
-  const _AppUser({required this.id, required this.email, required this.nickname});
+  const _AppUser({required this.id, required this.email, required this.nickname, this.autoAddBookmarkToCalendar = false, required this.alarmSettings});
   factory _AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
 
 @override final  int id;
 @override final  String email;
 @override final  String nickname;
+@override@JsonKey() final  bool autoAddBookmarkToCalendar;
+@override final  AlarmSettings alarmSettings;
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +244,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.nickname, nickname) || other.nickname == nickname)&&(identical(other.autoAddBookmarkToCalendar, autoAddBookmarkToCalendar) || other.autoAddBookmarkToCalendar == autoAddBookmarkToCalendar)&&(identical(other.alarmSettings, alarmSettings) || other.alarmSettings == alarmSettings));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,nickname);
+int get hashCode => Object.hash(runtimeType,id,email,nickname,autoAddBookmarkToCalendar,alarmSettings);
 
 @override
 String toString() {
-  return 'AppUser(id: $id, email: $email, nickname: $nickname)';
+  return 'AppUser(id: $id, email: $email, nickname: $nickname, autoAddBookmarkToCalendar: $autoAddBookmarkToCalendar, alarmSettings: $alarmSettings)';
 }
 
 
@@ -251,11 +264,11 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   factory _$AppUserCopyWith(_AppUser value, $Res Function(_AppUser) _then) = __$AppUserCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String email, String nickname
+ int id, String email, String nickname, bool autoAddBookmarkToCalendar, AlarmSettings alarmSettings
 });
 
 
-
+@override $AlarmSettingsCopyWith<$Res> get alarmSettings;
 
 }
 /// @nodoc
@@ -268,16 +281,27 @@ class __$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? nickname = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? nickname = null,Object? autoAddBookmarkToCalendar = null,Object? alarmSettings = null,}) {
   return _then(_AppUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,nickname: null == nickname ? _self.nickname : nickname // ignore: cast_nullable_to_non_nullable
-as String,
+as String,autoAddBookmarkToCalendar: null == autoAddBookmarkToCalendar ? _self.autoAddBookmarkToCalendar : autoAddBookmarkToCalendar // ignore: cast_nullable_to_non_nullable
+as bool,alarmSettings: null == alarmSettings ? _self.alarmSettings : alarmSettings // ignore: cast_nullable_to_non_nullable
+as AlarmSettings,
   ));
 }
 
-
+/// Create a copy of AppUser
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AlarmSettingsCopyWith<$Res> get alarmSettings {
+  
+  return $AlarmSettingsCopyWith<$Res>(_self.alarmSettings, (value) {
+    return _then(_self.copyWith(alarmSettings: value));
+  });
+}
 }
 
 // dart format on

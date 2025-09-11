@@ -1,3 +1,4 @@
+import 'package:duty_it/app/models/alarm_settings.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 
@@ -14,8 +15,8 @@ abstract class AppUser with _$AppUser {
         required int id,
         required String email,
         required String nickname,
-        //required bool allowPushAlarm,
-        //required bool allowMarketingAlarm,
+        @Default(false) bool autoAddBookmarkToCalendar,
+        required AlarmSettings alarmSettings,
         //required DateTime createdAt,
         //required DateTime updatedAt,
     }) = _AppUser;
