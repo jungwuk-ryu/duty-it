@@ -33,14 +33,14 @@ class SettingsView extends GetView<SettingsViewController> {
                         enabled: true,
                       ),
                     ),
-                    Obx(
-                      () => ToggleSettingItem(
-                        text: '마케팅 알림 수신',
-                        checked: controller.marketingNoti,
-                        onToggleTap: () => controller.toggleMarketingNoti(),
-                        enabled: controller.pushNoti,
-                      ),
-                    ),
+                    // Obx(
+                    //   () => ToggleSettingItem(
+                    //     text: '마케팅 알림 수신',
+                    //     checked: controller.marketingNoti,
+                    //     onToggleTap: () => controller.toggleMarketingNoti(),
+                    //     enabled: controller.pushNoti,
+                    //   ),
+                    // ),
                     Obx(
                       () => ToggleSettingItem(
                         text: '행사 알림 수신',
