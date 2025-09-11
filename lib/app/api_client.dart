@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:duty_it/app/models/alarm_settings.dart';
 import 'package:duty_it/app/models/app_user.dart';
 import 'package:duty_it/app/models/event.dart';
 import 'package:duty_it/app/models/event_type.dart';
@@ -195,6 +196,28 @@ class ApiClient extends GetConnect {
     );
   }
 
+  Future<RequestResult<AppUser>> updateUserSettings(
+    bool autoAddBookmarkToCalendar,
+    AlarmSettings alarmSettings,
+  ) {
+    return _send(
+      () async => await patch(
+        '/users/settings',
+        _cleanQuery({
+          'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
+          'alarmSettings': alarmSettings,
+        }),
+      ),
+      map: (rp) {
+        AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
+
+        Get.find<AuthService>().appUser = user;
+
+        return user;
+      },
+    );
+  }
+
   /// 닉네임 중복 확인 (/users/check-nickname?nickname=) - GET
   Future<RequestResult<bool>> isNicknameAvailable(String nickname) async {
     return _send(
@@ -236,7 +259,8 @@ class ApiClient extends GetConnect {
     int? hostId,
     String? searchKeyword,
   }) async {
-    String query = "isApproved=$isApproved&includeFinished=$includeFinished&isBookmarked=$isBookmarked&page=$page&size=$size&sortDirection=${sortDirection.name}&field=$field";
+    String query =
+        "isApproved=$isApproved&includeFinished=$includeFinished&isBookmarked=$isBookmarked&page=$page&size=$size&sortDirection=${sortDirection.name}&field=$field";
     for (var type in types) {
       query += "&type=${type.name}";
     }
@@ -248,9 +272,7 @@ class ApiClient extends GetConnect {
     }
 
     return _send(
-      () async => await get(
-        '/events?$query'
-      ),
+      () async => await get('/events?$query'),
       map: (rp) {
         List<Event> events = [];
         for (Map ele in List.from(json.decode(rp.bodyString!)['content'])) {
