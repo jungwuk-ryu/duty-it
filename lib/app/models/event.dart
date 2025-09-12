@@ -25,7 +25,7 @@ abstract class Event with _$Event {
     DateTime? recruitmentStartAt,
     DateTime? recruitmentEndAt,
     required String uri,
-    required String thumbnail,
+    @Default("") String thumbnail,
     required EventType eventType,
     required Host host,
     @Default(false) bool isBookmarked,

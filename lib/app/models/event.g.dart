@@ -20,7 +20,7 @@ _Event _$EventFromJson(Map<String, dynamic> json) => _Event(
       ? null
       : DateTime.parse(json['recruitmentEndAt'] as String),
   uri: json['uri'] as String,
-  thumbnail: json['thumbnail'] as String,
+  thumbnail: json['thumbnail'] as String? ?? "",
   eventType: $enumDecode(_$EventTypeEnumMap, json['eventType']),
   host: Host.fromJson(json['host'] as Map<String, dynamic>),
   isBookmarked: json['isBookmarked'] as bool? ?? false,
