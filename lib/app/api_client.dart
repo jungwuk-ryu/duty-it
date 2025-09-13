@@ -205,7 +205,7 @@ class ApiClient extends GetConnect {
         '/users/settings',
         _cleanQuery({
           'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
-          'alarmSettings': alarmSettings,
+          'alarmSettings': json.encode(alarmSettings.toJson()),
         }),
       ),
       map: (rp) {

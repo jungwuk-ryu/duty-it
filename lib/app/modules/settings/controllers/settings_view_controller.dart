@@ -45,21 +45,21 @@ class SettingsViewController extends GetxController {
   void toggleMarketingNoti() {
     api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(push: !marketingNoti),
+      settings!.copyWith(marketing: !marketingNoti),
     );
   }
 
   void toggleBookmarkNoti() {
     api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(push: !bookmarkNoti),
+      settings!.copyWith(bookmark: !bookmarkNoti),
     );
   }
 
   void toggleCalendarNoti() {
     api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(push: !calendarNoti),
+      settings!.copyWith(calendar: !calendarNoti),
     );
   }
 }
