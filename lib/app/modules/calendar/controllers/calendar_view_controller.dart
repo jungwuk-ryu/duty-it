@@ -5,6 +5,7 @@ import 'package:duty_it/app/models/event_type.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -38,9 +39,11 @@ class CalendarViewController extends GetxController {
       month: date.month,
     );
     if (reqResult is RequestFail) {
-      AppUtils.showSnackBar(
+      if (kDebugMode) {
+        AppUtils.showSnackBar(
         '${date.year}년 ${date.month}월 캘린더를 불러오지 못했어요.\n${reqResult.serverFail?.message ?? ''}',
       );
+      }
       return [];
     }
 

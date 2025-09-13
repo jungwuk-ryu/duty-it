@@ -9,6 +9,7 @@ import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart
 import 'package:duty_it/app/services/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -125,9 +126,11 @@ class HomeViewController extends GetxController {
         );
       } else {
         var fail = reqResult as RequestFail;
-        AppUtils.showSnackBar(
+        if (kDebugMode) {
+          AppUtils.showSnackBar(
           '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
         );
+        }
       }
     } finally {
       pagingState = pagingState.copyWith(isLoading: false);
