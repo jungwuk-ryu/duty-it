@@ -37,8 +37,6 @@ class _LoginButtonState extends State<LoginButton> {
 
         try {
           await widget.onTap();
-        } catch (ex, st) {
-          FirebaseCrashlytics.instance.recordError(ex, st);
         } finally {
           isLogining.value = false;
         }
