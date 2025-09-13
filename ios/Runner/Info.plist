@@ -59,6 +59,10 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>348194173787-lbm02t1gmn4krroo8ehjl0c0a7hh1f0m.apps.googleusercontent.com</string>
+	<key>UIBackgroundModes</key>
+	<array>
+	<string>remote-notification</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 	<dict>
@@ -66,7 +70,7 @@
 		<string>Editor</string>
 		<key>CFBundleURLSchemes</key>
 		<array>
-		<string>com.googleusercontent.apps.348194173787-lbm02t1gmn4krroo8ehjl0c0a7hh1f0m</string>
+			<string>com.googleusercontent.apps.348194173787-lbm02t1gmn4krroo8ehjl0c0a7hh1f0m</string>
 		</array>
 	</dict>
 	</array>

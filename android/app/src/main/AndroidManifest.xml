@@ -1,9 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:label="듀잇"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
+             android:resource="@drawable/ic_notify" />
 
         <!-- 카카오 로그인 커스텀 URL 스킴 설정 -->
         <activity 
