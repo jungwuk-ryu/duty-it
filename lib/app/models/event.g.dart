@@ -36,7 +36,7 @@ Map<String, dynamic> _$EventToJson(_Event instance) => <String, dynamic>{
   'uri': instance.uri,
   'thumbnail': instance.thumbnail,
   'eventType': _$EventTypeEnumMap[instance.eventType]!,
-  'host': instance.host,
+  'host': instance.host.toJson(),
   'isBookmarked': instance.isBookmarked,
 };
 

@@ -17,6 +17,6 @@ Map<String, dynamic> _$LoginResultToJson(_LoginResult instance) =>
     <String, dynamic>{
       'accessToken': instance.accessToken,
       'tokenType': instance.tokenType,
-      'user': instance.user,
+      'user': instance.user.toJson(),
       'isNewUser': instance.isNewUser,
     };

@@ -22,5 +22,5 @@ Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{
   'email': instance.email,
   'nickname': instance.nickname,
   'autoAddBookmarkToCalendar': instance.autoAddBookmarkToCalendar,
-  'alarmSettings': instance.alarmSettings,
+  'alarmSettings': instance.alarmSettings.toJson(),
 };

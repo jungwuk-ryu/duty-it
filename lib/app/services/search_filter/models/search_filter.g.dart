@@ -22,6 +22,6 @@ _SearchFilter _$SearchFilterFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SearchFilterToJson(_SearchFilter instance) =>
     <String, dynamic>{
       'categories': instance.categories.toList(),
-      'host': instance.host,
+      'host': instance.host?.toJson(),
       'showEnded': instance.showEnded,
     };

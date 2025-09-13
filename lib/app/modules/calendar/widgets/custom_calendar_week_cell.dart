@@ -1,12 +1,13 @@
 import 'dart:math';
 
-import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_day_header.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class CustomCalendarWeekCell extends StatelessWidget {
   final CustomCalendarController controller;
@@ -27,78 +28,84 @@ class CustomCalendarWeekCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime now = DateTime.now();
-    final DateTime startOfWeek = getStartOfWeekSunday(date);
-    final DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
+    return Obx(() {
+      final DateTime now = DateTime.now();
+      final DateTime startOfWeek = getStartOfWeekSunday(date);
+      final DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
 
-    final maxLines = 2;
+      final maxLines = 2;
 
-    final (rows, usedEvents) = _distributeEvents(
-      events,
-      maxLines,
-      startOfWeek,
-      endOfWeek,
-    );
-    final notUsedEvents = events.where((e) => !usedEvents.contains(e)).toList();
-    final GlobalKey key = GlobalKey();
+      final (rows, usedEvents) = _distributeEvents(
+        events,
+        maxLines,
+        startOfWeek,
+        endOfWeek,
+      );
+      final notUsedEvents = events
+          .where((e) => !usedEvents.contains(e))
+          .toList();
+      final GlobalKey key = GlobalKey();
 
-    return GestureDetector(
-      key: key,
-      behavior: HitTestBehavior.translucent,
-      onTapDown: (details) {
-        final RenderBox box =
-            key.currentContext!.findRenderObject() as RenderBox;
-        final Size size = box.size;
+      return GestureDetector(
+        key: key,
+        behavior: HitTestBehavior.translucent,
+        onTapDown: (details) {
+          final RenderBox box =
+              key.currentContext!.findRenderObject() as RenderBox;
+          final Size size = box.size;
 
-        controller.currentDateTime = startOfWeek.add(
-          Duration(days: (details.localPosition.dx / (size.width / 7)).toInt()),
-        );
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 2.h,
-        children: [
-          Row(
-            children: List.generate(7, (i) {
-              final currentDate = startOfWeek.add(Duration(days: i));
-              return Expanded(
-                child: DayHeader(
-                  today: now,
-                  date: currentDate,
-                  calendarMonth: date.month,
-                  controller: controller,
-                ),
-              );
-            }),
-          ),
-          SizedBox(
-            height: 16.h,
-            child: _WeekEventRow(
-              startOfWeek: startOfWeek,
-              endOfWeek: endOfWeek,
-              events: rows[0],
+          controller.currentDateTime = startOfWeek.add(
+            Duration(
+              days: (details.localPosition.dx / (size.width / 7)).toInt(),
             ),
-          ),
-          SizedBox(
-            height: 16.h,
-            child: _WeekEventRow(
-              startOfWeek: startOfWeek,
-              endOfWeek: endOfWeek,
-              events: rows[1],
+          );
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 2.h,
+          children: [
+            Row(
+              children: List.generate(7, (i) {
+                final currentDate = startOfWeek.add(Duration(days: i));
+                return Expanded(
+                  child: DayHeader(
+                    today: now,
+                    date: currentDate,
+                    calendarMonth: date.month,
+                    controller: controller,
+                  ),
+                );
+              }),
             ),
-          ),
-          SizedBox(
-            height: 16.h,
-            child: _WeekEventLastRow(
-              startOfWeek: startOfWeek,
-              endOfWeek: endOfWeek,
-              events: notUsedEvents,
+            SizedBox(
+              height: 16.h,
+              child: _WeekEventRow(
+                startOfWeek: startOfWeek,
+                endOfWeek: endOfWeek,
+                events: rows[0],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+            SizedBox(
+              height: 16.h,
+              child: _WeekEventRow(
+                startOfWeek: startOfWeek,
+                endOfWeek: endOfWeek,
+                events: rows[1],
+              ),
+            ),
+            SizedBox(
+              height: 16.h,
+              child: _WeekEventLastRow(
+                startOfWeek: startOfWeek,
+                endOfWeek: endOfWeek,
+                events: notUsedEvents,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   (List<List<CalendarEvent>>, Set<CalendarEvent>) _distributeEvents(

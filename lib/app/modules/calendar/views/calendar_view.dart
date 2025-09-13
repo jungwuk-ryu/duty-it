@@ -1,6 +1,7 @@
 import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -46,9 +47,7 @@ class CalendarView extends GetView<CalendarViewController> {
               DateTime month = now.copyWith(month: now.month + i - CalendarViewController.initPage);
               var calendarController = CustomCalendarController(month);
 
-              controller.getCalendarEvents(month).then((v) {
-                calendarController.events = v;
-              });
+              _loadCalendarEvents(month, calendarController);
 
               return CustomCalendar(
                 date: month,
@@ -59,5 +58,11 @@ class CalendarView extends GetView<CalendarViewController> {
         ),
       ],
     );
+  }
+
+  Future _loadCalendarEvents(DateTime date, CustomCalendarController calController) async {
+    await for (var events in controller.getCalendarEvents(date)) {
+      calController.events = events;
+    }
   }
 }
