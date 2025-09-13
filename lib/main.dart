@@ -38,13 +38,12 @@ void main() async {
   };
 
   // 권한 요청
-  await FirebaseMessaging.instance.requestPermission(
+  FirebaseMessaging.instance.requestPermission(
     alert: true, badge: true, sound: true,
-  );
-
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+  ).then((v) => 
+  FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true, badge: true, sound: true,
-  );
+  ));
 
   /* Firebase init end */
 

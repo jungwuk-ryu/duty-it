@@ -20,6 +20,7 @@ class LoginViewController extends GetxController {
   }
 
   Future<void> onLoginButtonTap(SocialProvider provider) async {
+    if (isLogining) return;
     isLogining = true;
     try {
       var service = Get.find<AuthService>();

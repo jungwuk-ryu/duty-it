@@ -61,9 +61,8 @@ class $AssetsIconsGen {
   /// File path: assets/icons/app-icon.png
   AssetGenImage get appIcon => const AssetGenImage('assets/icons/app-icon.png');
 
-  /// File path: assets/icons/apple_login_button.png
-  AssetGenImage get appleLoginButton =>
-      const AssetGenImage('assets/icons/apple_login_button.png');
+  /// File path: assets/icons/apple.png
+  AssetGenImage get apple => const AssetGenImage('assets/icons/apple.png');
 
   /// File path: assets/icons/back-filled.png
   AssetGenImage get backFilled =>
@@ -88,9 +87,8 @@ class $AssetsIconsGen {
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
-  /// File path: assets/icons/google_login_button.png
-  AssetGenImage get googleLoginButton =>
-      const AssetGenImage('assets/icons/google_login_button.png');
+  /// File path: assets/icons/google.png
+  AssetGenImage get google => const AssetGenImage('assets/icons/google.png');
 
   /// File path: assets/icons/icon_go_G-05.png
   AssetGenImage get iconGoG05 =>
@@ -108,9 +106,8 @@ class $AssetsIconsGen {
   AssetGenImage get iconamoonSearch =>
       const AssetGenImage('assets/icons/iconamoon_search.png');
 
-  /// File path: assets/icons/kakao_login_large_wide.png
-  AssetGenImage get kakaoLoginLargeWide =>
-      const AssetGenImage('assets/icons/kakao_login_large_wide.png');
+  /// File path: assets/icons/kakao.png
+  AssetGenImage get kakao => const AssetGenImage('assets/icons/kakao.png');
 
   /// File path: assets/icons/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/icons/logo.png');
@@ -141,19 +138,19 @@ class $AssetsIconsGen {
   /// List of all assets
   List<AssetGenImage> get values => [
     appIcon,
-    appleLoginButton,
+    apple,
     backFilled,
     backLeft,
     bookmarkSharpRed,
     bookmarkSharp,
     calendarClearSharp,
     close,
-    googleLoginButton,
+    google,
     iconGoG05,
     iconTextdelete,
     iconTextdelete16,
     iconamoonSearch,
-    kakaoLoginLargeWide,
+    kakao,
     logo,
     mageFilter,
     mageFilterSort,
