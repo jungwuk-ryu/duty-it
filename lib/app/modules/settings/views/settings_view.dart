@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/settings/widgets/toggle_setting_item.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,19 @@ class SettingsView extends GetView<SettingsViewController> {
                         checked: controller.calendarNoti,
                         onToggleTap: () => controller.toggleCalendarNoti(),
                         enabled: controller.pushNoti,
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    GestureDetector(
+                      onTap: () => Get.to(LicensePage(applicationName: "듀잇")),
+                      child: Text(
+                        "오픈소스 라이선스",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          height: 1.60,
+                          color: AppColors.g05,
+                        ),
                       ),
                     ),
                   ],

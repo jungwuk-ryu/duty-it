@@ -14,6 +14,7 @@ import 'package:duty_it/app/models/sort_direction.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -205,7 +206,7 @@ class ApiClient extends GetConnect {
         '/users/settings',
         _cleanQuery({
           'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
-          'alarmSettings': alarmSettings,
+          'alarmSettings': json.encode(alarmSettings.toJson()),
         }),
       ),
       map: (rp) {
@@ -241,6 +242,12 @@ class ApiClient extends GetConnect {
   /// 회원탈퇴 (/users/{userId}) - DELETE
   Future<RequestResult<void>> withdrawUser(int userId) async {
     return _send(() async => await delete('/users/$userId'), map: (_) => true);
+  }
+
+  /// 알림 - 사용자 기기 등록 (/users/device/{token}) - PATCH
+  Future<RequestResult<void>> registerDevice() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    return _send(() async => await patch('/users/device/$token', {}), map: (_) => true);
   }
 
   // ---------- Event ----------

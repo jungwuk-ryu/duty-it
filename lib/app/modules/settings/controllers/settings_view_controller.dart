@@ -2,14 +2,16 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/models/alarm_settings.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingsViewController extends GetxController {
   ApiClient get api => Get.find<ApiClient>();
   AuthService get authService => Get.find<AuthService>();
   AlarmSettings? get settings => authService.appUser?.alarmSettings;
+  RxBool hasPermission = RxBool(false);
 
   // 푸시 알림
-  bool get pushNoti => settings?.push ?? false;
+  bool get pushNoti => hasPermission.value ? (settings?.push ?? false) : false;
 
   // 마케팅 알림
   bool get marketingNoti => settings?.marketing ?? false;
@@ -21,45 +23,53 @@ class SettingsViewController extends GetxController {
   bool get calendarNoti => settings?.calendar ?? false;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
+    _checkPermission();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  Future _checkPermission() async {
+    hasPermission.value = !(await Permission.notification.isDenied);
+    if (!hasPermission.value) {
+      await Permission.notification.request();
+      hasPermission.value = !(await Permission.notification.isDenied);
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+  Future togglePushNoti() async{
+    if (!hasPermission.value) {
+      await Permission.notification.request();
+      hasPermission.value = !(await Permission.notification.isDenied);
+      
+      if (settings?.push ?? true) return;
+    }
 
-  void togglePushNoti() {
-    api.updateUserSettings(
+    if (!hasPermission.value) return;
+
+    await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(push: !pushNoti),
     );
   }
 
-  void toggleMarketingNoti() {
-    api.updateUserSettings(
+  Future toggleMarketingNoti() async{
+    await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(push: !marketingNoti),
+      settings!.copyWith(marketing: !marketingNoti),
     );
   }
 
-  void toggleBookmarkNoti() {
-    api.updateUserSettings(
+  Future toggleBookmarkNoti() async{
+    await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(push: !bookmarkNoti),
+      settings!.copyWith(bookmark: !bookmarkNoti),
     );
   }
 
-  void toggleCalendarNoti() {
-    api.updateUserSettings(
+  Future toggleCalendarNoti() async{
+    await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(push: !calendarNoti),
+      settings!.copyWith(calendar: !calendarNoti),
     );
   }
 }
