@@ -247,6 +247,10 @@ class ApiClient extends GetConnect {
   /// 알림 - 사용자 기기 등록 (/users/device/{token}) - PATCH
   Future<RequestResult<void>> registerDevice() async {
     String? token = await FirebaseMessaging.instance.getToken();
+    if (token == null) {
+      return RequestFail(null);
+    }
+    
     return _send(() async => await patch('/users/device/$token', {}), map: (_) => true);
   }
 
