@@ -25,8 +25,8 @@ class KakaoLoginStrategy extends SocialLoginStrategy {
       return SocialLoginSuccess();
     } catch (e, s) {
       FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
-      AppUtils.showSnackBar("$e");
-      AppUtils.showSnackBar("$s");
+      if (kDebugMode) AppUtils.showSnackBar("$e");
+      if (kDebugMode) AppUtils.showSnackBar("$s");
       return SocialLoginFail(reason: kDebugMode ? e.toString() : '로그인 실패');
     }
   }

@@ -6,6 +6,7 @@ import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
@@ -48,8 +49,8 @@ class LoginViewController extends GetxController {
     } catch (e, s) {
       AppUtils.showSnackBar("로그인 중 오류가 발생하였습니다.");
       //if (kDebugMode) AppUtils.showSnackBar("$e");
-      AppUtils.showSnackBar("$e");
-      AppUtils.showSnackBar("$s");
+      if (kDebugMode) AppUtils.showSnackBar("$e");
+      if (kDebugMode) AppUtils.showSnackBar("$s");
       FirebaseCrashlytics.instance.recordError(
         e,
         s,
