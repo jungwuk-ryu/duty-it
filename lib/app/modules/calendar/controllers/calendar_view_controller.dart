@@ -50,7 +50,7 @@ class CalendarViewController extends GetxController {
   }
 
   String _dateTimeToCacheKey(DateTime dt) {
-    return DateUtils.dateOnly(dt).toString();
+    return "${dt.year}-${dt.month}";
   }
 
   Stream<List<CalendarEvent>> getCalendarEvents(DateTime date) async* {
