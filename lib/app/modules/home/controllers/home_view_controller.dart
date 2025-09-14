@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:synchronized/synchronized.dart';
 
 enum HomeTab { event, bookmark }
 
@@ -36,6 +37,8 @@ class HomeViewController extends GetxController {
   final TextEditingController searchTextEditingController =
       TextEditingController();
   final RxString searchQuery = RxString('');
+
+  final Lock _fetchPageLock = Lock();
 
   @override
   void onInit() {
@@ -61,82 +64,87 @@ class HomeViewController extends GetxController {
       (v) => fetchNextPage(clearPage: true),
     );
 
-    ever(_settingsService.eventSortingTypeSetting.rxValue, (v) => fetchNextPage(clearPage: true));
+    ever(
+      _settingsService.eventSortingTypeSetting.rxValue,
+      (v) => fetchNextPage(clearPage: true),
+    );
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
-    SearchFilterService sfService = Get.find<SearchFilterService>();
+    await _fetchPageLock.synchronized(() async {
+      SearchFilterService sfService = Get.find<SearchFilterService>();
 
-    // Update paging state
-    pagingState = pagingState.copyWith(
-      isLoading: true,
-      error: null,
-      keys: clearPage ? [] : const Omit(),
-      pages: clearPage ? [] : const Omit(),
-    );
-
-    // find next key
-    int nextKey = 0;
-    if (!clearPage &&
-        !(pagingState.keys == null || pagingState.keys!.isEmpty)) {
-      nextKey = (pagingState.keys?.last ?? -1) + 1;
-    }
-
-    // set params
-    const int size = 10;
-    var filter = sfService.filter;
-    List<String> categories = filter.categories.toList();
-    List<EventType> types = [];
-
-    for (var category in categories) {
-      types.add(EventType.getByDisplayName(category));
-    }
-
-    int? hostId = sfService.filter.host?.id;
-    bool includeFinished = sfService.filter.showEnded;
-
-    // request
-
-    try {
-      var apiClient = Get.find<ApiClient>();
-      var reqResult = await apiClient.getEvents(
-        isApproved: true,
-        includeFinished: includeFinished,
-        isBookmarked: selectedTab == HomeTab.bookmark,
-        page: nextKey,
-        size: size,
-        sortDirection: sortingType.sortDirection,
-        field: sortingType.field,
-        searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
-        hostId: hostId,
-        types: types,
+      // Update paging state
+      pagingState = pagingState.copyWith(
+        isLoading: true,
+        error: null,
+        keys: clearPage ? [] : const Omit(),
+        pages: clearPage ? [] : const Omit(),
       );
-      if (reqResult is RequestSuccess) {
-        var events = (reqResult as RequestSuccess<List<Event>>).data;
 
-        pagingState = pagingState.copyWith(
-          isLoading: false,
-          keys: [...pagingState.keys ?? [], nextKey],
-          pages: [
-            ...pagingState.pages ?? [],
-            List<EventCard>.generate(
-              events.length,
-              (i) => EventCard(eventRx: Rx(events[i])),
-            ),
-          ],
-          hasNextPage: events.length >= size,
-        );
-      } else {
-        var fail = reqResult as RequestFail;
-        if (kDebugMode) {
-          AppUtils.showSnackBar(
-          '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
-        );
-        }
+      // find next key
+      int nextKey = 0;
+      if (!clearPage &&
+          !(pagingState.keys == null || pagingState.keys!.isEmpty)) {
+        nextKey = pagingState.keys!.last + 1;
       }
-    } finally {
-      pagingState = pagingState.copyWith(isLoading: false);
-    }
+
+      // set params
+      const int size = 10;
+      var filter = sfService.filter;
+      List<String> categories = filter.categories.toList();
+      List<EventType> types = [];
+
+      for (var category in categories) {
+        types.add(EventType.getByDisplayName(category));
+      }
+
+      int? hostId = sfService.filter.host?.id;
+      bool includeFinished = sfService.filter.showEnded;
+
+      // request
+
+      try {
+        var apiClient = Get.find<ApiClient>();
+        var reqResult = await apiClient.getEvents(
+          isApproved: true,
+          includeFinished: includeFinished,
+          isBookmarked: selectedTab == HomeTab.bookmark,
+          page: nextKey,
+          size: size,
+          sortDirection: sortingType.sortDirection,
+          field: sortingType.field,
+          searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
+          hostId: hostId,
+          types: types,
+        );
+        if (reqResult is RequestSuccess) {
+          var events = (reqResult as RequestSuccess<List<Event>>).data;
+
+          pagingState = pagingState.copyWith(
+            isLoading: false,
+            keys: [...pagingState.keys ?? [], nextKey],
+            pages: [
+              ...pagingState.pages ?? [],
+              List<EventCard>.generate(
+                events.length,
+                (i) => EventCard(eventRx: Rx(events[i])),
+              ),
+            ],
+            hasNextPage: events.length >= size,
+          );
+        } else {
+          var fail = reqResult as RequestFail;
+          if (kDebugMode) {
+            AppUtils.showSnackBar(
+              '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
+            );
+          }
+        }
+      } finally {
+        pagingState = pagingState.copyWith(isLoading: false);
+      }
+    });
   }
 
   void showSortingBottomModal() {
