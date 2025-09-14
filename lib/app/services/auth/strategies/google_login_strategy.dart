@@ -35,8 +35,8 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
       return SocialLoginSuccess();
     } catch (e, st) {
       //if (kDebugMode) rethrow;
-      AppUtils.showSnackBar("$e");
-      AppUtils.showSnackBar("$st");
+      if (kDebugMode) AppUtils.showSnackBar("$e");
+      if (kDebugMode) AppUtils.showSnackBar("$st");
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       return SocialLoginFail(reason: kDebugMode ? "$e\n$st" : '로그인 실패');
     }

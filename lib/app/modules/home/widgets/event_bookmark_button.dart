@@ -2,6 +2,7 @@ import 'package:duty_it/app/models/event.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -19,6 +20,7 @@ class EventBookmarkButton extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () async {
+        HapticFeedback.mediumImpact();
         bool result = await _controller.bookmark(event);
         eventRx.value = event.copyWith(isBookmarked: result);
       },

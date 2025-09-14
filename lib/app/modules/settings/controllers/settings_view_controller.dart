@@ -1,6 +1,7 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/models/alarm_settings.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -25,22 +26,25 @@ class SettingsViewController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    _checkPermission();
+    _updatePermissionStatus();
   }
 
-  Future _checkPermission() async {
-    hasPermission.value = !(await Permission.notification.isDenied);
-    if (!hasPermission.value) {
-      await Permission.notification.request();
-      hasPermission.value = !(await Permission.notification.isDenied);
-    }
+  Future _updatePermissionStatus() async {
+    final status = await Permission.notification.status;
+    hasPermission.value = status.isGranted || status.isProvisional;
   }
 
-  Future togglePushNoti() async{
+  Future togglePushNoti() async {
+    HapticFeedback.mediumImpact();
+
     if (!hasPermission.value) {
-      await Permission.notification.request();
-      hasPermission.value = !(await Permission.notification.isDenied);
-      
+      var status = await Permission.notification.request();
+      await _updatePermissionStatus();
+
+      if (status.isPermanentlyDenied || status.isRestricted) {
+        await openAppSettings();
+      }
+
       if (settings?.push ?? true) return;
     }
 
@@ -52,21 +56,27 @@ class SettingsViewController extends GetxController {
     );
   }
 
-  Future toggleMarketingNoti() async{
+  Future toggleMarketingNoti() async {
+    HapticFeedback.mediumImpact();
+
     await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(marketing: !marketingNoti),
     );
   }
 
-  Future toggleBookmarkNoti() async{
+  Future toggleBookmarkNoti() async {
+    HapticFeedback.mediumImpact();
+
     await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(bookmark: !bookmarkNoti),
     );
   }
 
-  Future toggleCalendarNoti() async{
+  Future toggleCalendarNoti() async {
+    HapticFeedback.mediumImpact();
+
     await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(calendar: !calendarNoti),

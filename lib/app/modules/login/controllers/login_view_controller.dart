@@ -4,8 +4,11 @@ import 'package:duty_it/app/models/login_result.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
+import 'package:duty_it/gen/assets.gen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginViewController extends GetxController {
   final RxBool _isLogining = RxBool(false);
@@ -17,6 +20,8 @@ class LoginViewController extends GetxController {
     super.onReady();
 
     if (Get.find<AuthService>().isLoggined()) Get.offAllNamed(AppPages.INITIAL);
+
+    AssetLottie(Assets.lottie.loadingDots).load();
   }
 
   Future<void> onLoginButtonTap(SocialProvider provider) async {
@@ -44,8 +49,8 @@ class LoginViewController extends GetxController {
     } catch (e, s) {
       AppUtils.showSnackBar("로그인 중 오류가 발생하였습니다.");
       //if (kDebugMode) AppUtils.showSnackBar("$e");
-      AppUtils.showSnackBar("$e");
-      AppUtils.showSnackBar("$s");
+      if (kDebugMode) AppUtils.showSnackBar("$e");
+      if (kDebugMode) AppUtils.showSnackBar("$s");
       FirebaseCrashlytics.instance.recordError(
         e,
         s,

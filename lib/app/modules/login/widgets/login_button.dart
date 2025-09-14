@@ -1,7 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/gen/assets.gen.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -34,11 +34,10 @@ class _LoginButtonState extends State<LoginButton> {
       onTap: () async {
         if (isLogining.value) return;
         isLogining.value = true;
+        HapticFeedback.lightImpact();
 
         try {
           await widget.onTap();
-        } catch (ex, st) {
-          FirebaseCrashlytics.instance.recordError(ex, st);
         } finally {
           isLogining.value = false;
         }
@@ -70,11 +69,11 @@ class _LoginButtonState extends State<LoginButton> {
                     visible: isLogining.value,
                     replacement: Text(
                       "${widget.providerName}로 계속하기",
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                      style: TextStyle(fontWeight: FontWeight.w700, color: (widget.buttonColor?.computeLuminance() ?? 1) > 0.5 ? AppColors.black : AppColors.white),
                     ),
                     child: Lottie.asset(
                       Assets.lottie.loadingDots,
-                      fit: BoxFit.fitHeight,
+                      fit: BoxFit.contain,
                       repeat: true,
                     ),
                   ),

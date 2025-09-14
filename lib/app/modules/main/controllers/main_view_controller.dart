@@ -1,5 +1,6 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
@@ -13,7 +14,12 @@ class MainViewController extends GetxController {
     super.onInit();
 
     var api = Get.find<ApiClient>();
-    api.registerDevice();
+    
+    try {
+      api.registerDevice();
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st);
+    }
   }
 
   void openEndDrawer() {

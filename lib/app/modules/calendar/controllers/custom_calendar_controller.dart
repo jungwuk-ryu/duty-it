@@ -9,7 +9,7 @@ class CustomCalendarController {
 
   final RxList<CalendarEvent> _events = RxList();
 
-  List<CalendarEvent> get events => _events.value;
+  RxList<CalendarEvent> get events => _events;
   set events(List<CalendarEvent> events) => _events.value = events;
 
   CustomCalendarController(DateTime calendarDate) {

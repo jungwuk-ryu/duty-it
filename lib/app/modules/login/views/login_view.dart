@@ -28,7 +28,7 @@ class LoginView extends GetView<LoginViewController> {
             right: 0,
             bottom: 88.h,
             child: Column(
-              spacing: 10.h,
+              spacing: 10,
               children: [
                 LoginButton(
                   iconPath: Assets.icons.kakao.path,
@@ -38,13 +38,15 @@ class LoginView extends GetView<LoginViewController> {
                       controller.onLoginButtonTap(SocialProvider.kakao),
                 ),
                 LoginButton(
-                  iconPath: Assets.icons.apple.path,
+                  iconPath: Assets.icons.appleWhite.path,
+                  buttonColor: Color(0xFF000000),
                   providerName: "Apple",
                   onTap: () async =>
                       controller.onLoginButtonTap(SocialProvider.apple),
                 ),
                 LoginButton(
                   iconPath: Assets.icons.google.path,
+                  buttonColor: Color(0xFFF2F2F2),
                   providerName: "Google",
                   onTap: () async =>
                       controller.onLoginButtonTap(SocialProvider.google),

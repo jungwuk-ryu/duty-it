@@ -10,13 +10,13 @@ _LoginResult _$LoginResultFromJson(Map<String, dynamic> json) => _LoginResult(
   accessToken: json['accessToken'] as String,
   tokenType: json['tokenType'] as String? ?? "Bearer",
   user: AppUser.fromJson(json['user'] as Map<String, dynamic>),
-  isNewUser: json['isNewUser'] as bool,
+  isNewUser: json['isNewUser'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$LoginResultToJson(_LoginResult instance) =>
     <String, dynamic>{
       'accessToken': instance.accessToken,
       'tokenType': instance.tokenType,
-      'user': instance.user,
+      'user': instance.user.toJson(),
       'isNewUser': instance.isNewUser,
     };

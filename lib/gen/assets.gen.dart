@@ -64,6 +64,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/apple.png
   AssetGenImage get apple => const AssetGenImage('assets/icons/apple.png');
 
+  /// File path: assets/icons/apple_white.png
+  AssetGenImage get appleWhite =>
+      const AssetGenImage('assets/icons/apple_white.png');
+
   /// File path: assets/icons/back-filled.png
   AssetGenImage get backFilled =>
       const AssetGenImage('assets/icons/back-filled.png');
@@ -139,6 +143,7 @@ class $AssetsIconsGen {
   List<AssetGenImage> get values => [
     appIcon,
     apple,
+    appleWhite,
     backFilled,
     backLeft,
     bookmarkSharpRed,

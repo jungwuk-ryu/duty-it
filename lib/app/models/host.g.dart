@@ -8,7 +8,7 @@ part of 'host.dart';
 
 _Host _$HostFromJson(Map<String, dynamic> json) => _Host(
   id: (json['id'] as num).toInt(),
-  name: json['name'] as String,
+  name: json['name'] as String? ?? "?",
   thumbnail: json['thumbnail'] as String? ?? "",
 );
 

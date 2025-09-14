@@ -16,7 +16,7 @@ String hostToJson(Host data) => json.encode(data.toJson());
 abstract class Host with _$Host {
     const factory Host({
         required int id,
-        required String name,
+        @Default("?") String name,
         @Default("") String thumbnail,
     }) = _Host;
 

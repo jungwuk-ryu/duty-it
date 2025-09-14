@@ -17,8 +17,8 @@ class AppleLoginStrategy extends SocialLoginStrategy {
       return SocialLoginSuccess();
     } catch (e, st) {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-      AppUtils.showSnackBar("$e");
-      AppUtils.showSnackBar("$st");
+      if (kDebugMode) AppUtils.showSnackBar("$e");
+      if (kDebugMode) AppUtils.showSnackBar("$st");
       return SocialLoginFail(reason: kDebugMode ? "$e\n$st" : '로그인 실패');
     }
   }

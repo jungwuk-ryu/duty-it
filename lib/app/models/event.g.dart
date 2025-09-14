@@ -8,7 +8,7 @@ part of 'event.dart';
 
 _Event _$EventFromJson(Map<String, dynamic> json) => _Event(
   id: (json['id'] as num).toInt(),
-  title: json['title'] as String,
+  title: json['title'] as String? ?? "?",
   startAt: json['startAt'] == null
       ? null
       : DateTime.parse(json['startAt'] as String),
@@ -19,10 +19,14 @@ _Event _$EventFromJson(Map<String, dynamic> json) => _Event(
   recruitmentEndAt: json['recruitmentEndAt'] == null
       ? null
       : DateTime.parse(json['recruitmentEndAt'] as String),
-  uri: json['uri'] as String,
+  uri: json['uri'] as String? ?? "",
   thumbnail: json['thumbnail'] as String? ?? "",
-  eventType: $enumDecode(_$EventTypeEnumMap, json['eventType']),
-  host: Host.fromJson(json['host'] as Map<String, dynamic>),
+  eventType:
+      $enumDecodeNullable(_$EventTypeEnumMap, json['eventType']) ??
+      EventType.ETC,
+  host: json['host'] == null
+      ? const Host(id: 0)
+      : Host.fromJson(json['host'] as Map<String, dynamic>),
   isBookmarked: json['isBookmarked'] as bool? ?? false,
 );
 
@@ -36,7 +40,7 @@ Map<String, dynamic> _$EventToJson(_Event instance) => <String, dynamic>{
   'uri': instance.uri,
   'thumbnail': instance.thumbnail,
   'eventType': _$EventTypeEnumMap[instance.eventType]!,
-  'host': instance.host,
+  'host': instance.host.toJson(),
   'isBookmarked': instance.isBookmarked,
 };
 

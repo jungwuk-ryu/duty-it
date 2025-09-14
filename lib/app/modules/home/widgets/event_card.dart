@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
@@ -7,8 +8,6 @@ import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class EventCard extends StatelessWidget {
@@ -38,22 +37,37 @@ class EventCard extends StatelessWidget {
           Stack(
             children: [
               Container(
+                width: double.infinity,
                 height: cardHeight,
                 decoration: BoxDecoration(
                   color: Color(0xffD9D9D9),
                   borderRadius: cardBorderRadius,
                 ),
-                child: Image.network(
-                  event.thumbnail,
-                  fit: BoxFit.fitWidth,
-                  loadingBuilder: (_, _, _) =>
+                child: CachedNetworkImage(
+                  imageUrl: event.thumbnail,
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: double.infinity,
+                    height: cardHeight,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffD9D9D9),
+                      borderRadius: cardBorderRadius,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                      ),
+                    ),
+                  ),
+                  progressIndicatorBuilder: (_, __, ___) =>
                       Center(child: Image.asset(Assets.icons.nurseCap.path)),
-                  errorBuilder: (_, _, _) =>
+                  errorWidget: (_, __, ___) =>
                       Center(child: Image.asset(Assets.icons.nurseCap.path)),
                 ),
               ),
               Visibility(
-                visible: DateUtils.dateOnly(event.endAt ?? DateTime.now()).isBefore(DateUtils.dateOnly(DateTime.now())),
+                visible: DateUtils.dateOnly(
+                  event.endAt ?? DateTime.now(),
+                ).isBefore(DateUtils.dateOnly(DateTime.now())),
                 child: Container(
                   width: double.infinity,
                   height: cardHeight,
@@ -96,7 +110,10 @@ class EventCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: EventMetaItem(name: "카테고리", value: event.eventType.displayName),
+                child: EventMetaItem(
+                  name: "카테고리",
+                  value: event.eventType.displayName,
+                ),
               ),
               Expanded(
                 child: Padding(
@@ -110,13 +127,13 @@ class EventCard extends StatelessWidget {
           EventMetaItem(
             name: "일시",
             value:
-            "${AppUtils.formatDateTime(event.startAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.endAt ?? DateTime.now())}",
+                "${AppUtils.formatDateTime(event.startAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.endAt ?? DateTime.now())}",
           ),
           SizedBox(height: 4.h),
           EventMetaItem(
             name: "모집",
             value:
-            "${AppUtils.formatDateTime(event.recruitmentStartAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.recruitmentEndAt ?? DateTime.now())}",
+                "${AppUtils.formatDateTime(event.recruitmentStartAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.recruitmentEndAt ?? DateTime.now())}",
           ),
           SizedBox(height: 12.h),
         ],
