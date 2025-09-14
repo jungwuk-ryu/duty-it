@@ -228,19 +228,19 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 @JsonSerializable()
 
 class _Event implements Event {
-  const _Event({required this.id, required this.title, this.startAt, this.endAt, this.recruitmentStartAt, this.recruitmentEndAt, required this.uri, this.thumbnail = "", required this.eventType, required this.host, this.isBookmarked = false});
+  const _Event({required this.id, this.title = "?", this.startAt, this.endAt, this.recruitmentStartAt, this.recruitmentEndAt, this.uri = "", this.thumbnail = "", this.eventType = EventType.ETC, this.host = const Host(id: 0), this.isBookmarked = false});
   factory _Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
 @override final  int id;
-@override final  String title;
+@override@JsonKey() final  String title;
 @override final  DateTime? startAt;
 @override final  DateTime? endAt;
 @override final  DateTime? recruitmentStartAt;
 @override final  DateTime? recruitmentEndAt;
-@override final  String uri;
+@override@JsonKey() final  String uri;
 @override@JsonKey() final  String thumbnail;
-@override final  EventType eventType;
-@override final  Host host;
+@override@JsonKey() final  EventType eventType;
+@override@JsonKey() final  Host host;
 @override@JsonKey() final  bool isBookmarked;
 
 /// Create a copy of Event

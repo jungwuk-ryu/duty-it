@@ -8,13 +8,13 @@ part of 'app_user.dart';
 
 _AppUser _$AppUserFromJson(Map<String, dynamic> json) => _AppUser(
   id: (json['id'] as num).toInt(),
-  email: json['email'] as String,
-  nickname: json['nickname'] as String,
+  email: json['email'] as String? ?? "?",
+  nickname: json['nickname'] as String? ?? "?",
   autoAddBookmarkToCalendar:
       json['autoAddBookmarkToCalendar'] as bool? ?? false,
-  alarmSettings: AlarmSettings.fromJson(
-    json['alarmSettings'] as Map<String, dynamic>,
-  ),
+  alarmSettings: json['alarmSettings'] == null
+      ? const AlarmSettings()
+      : AlarmSettings.fromJson(json['alarmSettings'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$AppUserToJson(_AppUser instance) => <String, dynamic>{

@@ -15,7 +15,7 @@ abstract class LoginResult with _$LoginResult {
         required String accessToken,
         @Default("Bearer") String tokenType,
         required AppUser user,
-        required bool isNewUser,
+        @Default(false) bool isNewUser,
     }) = _LoginResult;
 
     factory LoginResult.fromJson(Map<String, dynamic> json) => _$LoginResultFromJson(json);

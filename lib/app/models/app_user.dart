@@ -13,10 +13,10 @@ String appUserToJson(AppUser data) => json.encode(data.toJson());
 abstract class AppUser with _$AppUser {
     const factory AppUser({
         required int id,
-        required String email,
-        required String nickname,
+        @Default("?") String email,
+        @Default("?") String nickname,
         @Default(false) bool autoAddBookmarkToCalendar,
-        required AlarmSettings alarmSettings,
+        @Default(AlarmSettings()) AlarmSettings alarmSettings,
         //required DateTime createdAt,
         //required DateTime updatedAt,
     }) = _AppUser;

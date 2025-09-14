@@ -221,13 +221,13 @@ return $default(_that.accessToken,_that.tokenType,_that.user,_that.isNewUser);ca
 @JsonSerializable()
 
 class _LoginResult implements LoginResult {
-  const _LoginResult({required this.accessToken, this.tokenType = "Bearer", required this.user, required this.isNewUser});
+  const _LoginResult({required this.accessToken, this.tokenType = "Bearer", required this.user, this.isNewUser = false});
   factory _LoginResult.fromJson(Map<String, dynamic> json) => _$LoginResultFromJson(json);
 
 @override final  String accessToken;
 @override@JsonKey() final  String tokenType;
 @override final  AppUser user;
-@override final  bool isNewUser;
+@override@JsonKey() final  bool isNewUser;
 
 /// Create a copy of LoginResult
 /// with the given fields replaced by the non-null parameter values.

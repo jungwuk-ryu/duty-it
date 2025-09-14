@@ -211,11 +211,11 @@ return $default(_that.id,_that.name,_that.thumbnail);case _:
 @JsonSerializable()
 
 class _Host implements Host {
-  const _Host({required this.id, required this.name, this.thumbnail = ""});
+  const _Host({required this.id, this.name = "?", this.thumbnail = ""});
   factory _Host.fromJson(Map<String, dynamic> json) => _$HostFromJson(json);
 
 @override final  int id;
-@override final  String name;
+@override@JsonKey() final  String name;
 @override@JsonKey() final  String thumbnail;
 
 /// Create a copy of Host

@@ -222,14 +222,14 @@ return $default(_that.id,_that.email,_that.nickname,_that.autoAddBookmarkToCalen
 @JsonSerializable()
 
 class _AppUser implements AppUser {
-  const _AppUser({required this.id, required this.email, required this.nickname, this.autoAddBookmarkToCalendar = false, required this.alarmSettings});
+  const _AppUser({required this.id, this.email = "?", this.nickname = "?", this.autoAddBookmarkToCalendar = false, this.alarmSettings = const AlarmSettings()});
   factory _AppUser.fromJson(Map<String, dynamic> json) => _$AppUserFromJson(json);
 
 @override final  int id;
-@override final  String email;
-@override final  String nickname;
+@override@JsonKey() final  String email;
+@override@JsonKey() final  String nickname;
 @override@JsonKey() final  bool autoAddBookmarkToCalendar;
-@override final  AlarmSettings alarmSettings;
+@override@JsonKey() final  AlarmSettings alarmSettings;
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.

@@ -19,15 +19,15 @@ String eventToJson(Event data) => json.encode(data.toJson());
 abstract class Event with _$Event {
   const factory Event({
     required int id,
-    required String title,
+    @Default("?") String title,
     DateTime? startAt,
     DateTime? endAt,
     DateTime? recruitmentStartAt,
     DateTime? recruitmentEndAt,
-    required String uri,
+    @Default("") String uri,
     @Default("") String thumbnail,
-    required EventType eventType,
-    required Host host,
+    @Default(EventType.ETC) EventType eventType,
+    @Default(Host(id: 0)) Host host,
     @Default(false) bool isBookmarked,
   }) = _Event;
 
