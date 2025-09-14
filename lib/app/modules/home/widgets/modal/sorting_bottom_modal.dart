@@ -4,6 +4,7 @@ import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/app/widgets/custom_radio_buttom.dart';
 import 'package:duty_it/gen/assets.gen.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -76,7 +77,10 @@ class SortingBottomModal extends StatelessWidget {
                     var selectedType = controller.selectedType;
                     return CustomRadioButtom(
                       checked: selectedType == type,
-                      onTap: () => controller.selectedType = type,
+                      onTap: () {
+                        controller.selectedType = type;
+                        HapticFeedback.selectionClick();
+                      },
                     );
                   }),
                 ],

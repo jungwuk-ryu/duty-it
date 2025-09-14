@@ -1,6 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -33,6 +34,7 @@ class _LoginButtonState extends State<LoginButton> {
       onTap: () async {
         if (isLogining.value) return;
         isLogining.value = true;
+        HapticFeedback.lightImpact();
 
         try {
           await widget.onTap();

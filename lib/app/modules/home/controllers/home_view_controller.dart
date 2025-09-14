@@ -11,6 +11,7 @@ import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -51,6 +52,7 @@ class HomeViewController extends GetxController {
     );
 
     ever(_selectedTab, (_) async {
+      HapticFeedback.lightImpact();
       await fetchNextPage(clearPage: true);
     });
 
