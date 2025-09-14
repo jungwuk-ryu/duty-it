@@ -46,7 +46,7 @@ class AccountView extends GetView<AccountViewController> {
 
                     SizedBox(height: 42.h),
 
-                    AccountViewItemTitle("연결된 카카오 계정"),
+                    AccountViewItemTitle("연결된 ${controller.providerName} 계정"),
                     SizedBox(height: 8.h),
                     Obx(() => AccountViewItemText(controller.getAccountId())),
 

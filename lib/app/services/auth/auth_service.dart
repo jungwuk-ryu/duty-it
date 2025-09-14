@@ -9,15 +9,25 @@ import 'package:duty_it/app/services/auth/strategies/google_login_strategy.dart'
 import 'package:duty_it/app/services/auth/strategies/kakao_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-enum SocialProvider { kakao, google, apple }
+enum SocialProvider {
+  kakao('카카오'),
+  google('Google'),
+  apple('Apple');
+
+  final String displayName;
+
+  const SocialProvider(this.displayName);
+}
 
 class AuthService extends GetxService {
   static const String storageBoxName = "authService";
   static const String _appUserKey = 'app_user';
+  static const String _lastUsedProviderKey = 'last_used_provider';
 
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};
   final Rxn<AppUser> _appUser = Rxn();
@@ -64,6 +74,18 @@ class AuthService extends GetxService {
     _strategies[SocialProvider.apple] = AppleLoginStrategy();
   }
 
+  SocialProvider getLastUsedProvider() {
+    SocialProvider? prov;
+    try {
+      prov = _box.read(_lastUsedProviderKey);
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st);
+    }
+
+    prov ??= SocialProvider.google;
+    return prov;
+  }
+
   Future<SocialLoginResult> socialLogin(SocialProvider provider) async {
     await logout();
 
@@ -74,6 +96,7 @@ class AuthService extends GetxService {
 
     var result = await strategy.login();
     if (result is SocialLoginSuccess) _currentStrategy = strategy;
+    _box.write(_lastUsedProviderKey, provider);
 
     return result;
   }
