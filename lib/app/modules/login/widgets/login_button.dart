@@ -1,6 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/gen/assets.gen.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -72,7 +71,7 @@ class _LoginButtonState extends State<LoginButton> {
                     ),
                     child: Lottie.asset(
                       Assets.lottie.loadingDots,
-                      fit: BoxFit.fitHeight,
+                      fit: BoxFit.contain,
                       repeat: true,
                     ),
                   ),

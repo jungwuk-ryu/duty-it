@@ -1,7 +1,6 @@
 import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
