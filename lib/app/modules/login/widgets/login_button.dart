@@ -67,7 +67,7 @@ class _LoginButtonState extends State<LoginButton> {
                     visible: isLogining.value,
                     replacement: Text(
                       "${widget.providerName}로 계속하기",
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                      style: TextStyle(fontWeight: FontWeight.w700, color: (widget.buttonColor?.computeLuminance() ?? 1) > 0.5 ? AppColors.black : AppColors.white),
                     ),
                     child: Lottie.asset(
                       Assets.lottie.loadingDots,
