@@ -16,7 +16,7 @@ class MainViewController extends GetxController {
     var api = Get.find<ApiClient>();
 
     api.registerDevice().catchError((e, st) {
-      FirebaseCrashlytics.instance.recordError(e, st);
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
 
       return RequestFail(null);
     });

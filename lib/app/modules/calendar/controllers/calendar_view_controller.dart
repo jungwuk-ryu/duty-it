@@ -66,7 +66,7 @@ class CalendarViewController extends GetxController {
 
       yield events2CalendarEvents(events);
     } catch (e, st) {
-      FirebaseCrashlytics.instance.recordError(e, st);
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
 
     var apiClient = Get.find<ApiClient>();
