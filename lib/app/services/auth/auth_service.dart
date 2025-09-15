@@ -117,9 +117,11 @@ class AuthService extends GetxService {
     appUser = null;
     _currentStrategy = null;
 
-    Get.find<CalendarViewController>().clearCache().catchError((e, st) {
-      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-    });
+    if (Get.isRegistered<CalendarViewController>()) {
+      Get.find<CalendarViewController>().clearCache().catchError((e, st) {
+        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      });
+    }
   }
 
   Future<bool> withdraw() async {
@@ -131,7 +133,8 @@ class AuthService extends GetxService {
     var reqResult = await Get.find<ApiClient>().withdrawUser(appUser!.id);
     if (reqResult is RequestFail) {
       AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
-      if (reqResult.serverFail != null) AppUtils.showSnackBar(reqResult.serverFail!.message);
+      if (reqResult.serverFail != null)
+        AppUtils.showSnackBar(reqResult.serverFail!.message);
       return false;
     }
 
