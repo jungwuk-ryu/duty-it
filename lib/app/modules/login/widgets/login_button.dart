@@ -43,11 +43,18 @@ class _LoginButtonState extends State<LoginButton> {
         }
       },
       child: Container(
-        width: 328.w,
-        height: 40.h,
+        width: double.infinity,
+        height: 45.h,
         decoration: BoxDecoration(
           //border: Border.all(color: AppColors.g07, width: 3),
-          boxShadow: [BoxShadow(color: AppColors.g04, blurRadius: 4, spreadRadius: 0, offset: Offset(0, 0))],
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.g04,
+              blurRadius: 4,
+              spreadRadius: 0,
+              offset: Offset(0, 0),
+            ),
+          ],
           borderRadius: BorderRadius.circular(12),
           color: widget.buttonColor ?? AppColors.white,
         ),
@@ -69,7 +76,13 @@ class _LoginButtonState extends State<LoginButton> {
                     visible: isLogining.value,
                     replacement: Text(
                       "${widget.providerName}로 계속하기",
-                      style: TextStyle(fontWeight: FontWeight.w700, color: (widget.buttonColor?.computeLuminance() ?? 1) > 0.5 ? AppColors.black : AppColors.white),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color:
+                            (widget.buttonColor?.computeLuminance() ?? 1) > 0.5
+                            ? AppColors.black
+                            : AppColors.white,
+                      ),
                     ),
                     child: Lottie.asset(
                       Assets.lottie.loadingDots,
