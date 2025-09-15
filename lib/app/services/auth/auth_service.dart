@@ -28,6 +28,8 @@ enum SocialProvider {
     for (var provider in SocialProvider.values) {
       if (provider.name == name) return provider;
     }
+
+    return null;
   }
 }
 
