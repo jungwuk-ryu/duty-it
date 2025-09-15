@@ -7,7 +7,7 @@
         android:icon="@mipmap/launcher_icon">
 
         <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
-             android:resource="@drawable/ic_notify" />
+             android:resource="@mipmap/ic_notify" />
 
         <!-- 카카오 로그인 커스텀 URL 스킴 설정 -->
         <activity 

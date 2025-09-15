@@ -14,12 +14,12 @@ class MainViewController extends GetxController {
     super.onInit();
 
     var api = Get.find<ApiClient>();
-    
-    try {
-      api.registerDevice();
-    } catch (e, st) {
-      FirebaseCrashlytics.instance.recordError(e, st);
-    }
+
+    api.registerDevice().catchError((e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+
+      return RequestFail(null);
+    });
   }
 
   void openEndDrawer() {

@@ -37,6 +37,11 @@ class CalendarViewController extends GetxController {
     return GetStorage(_cacheStorageName);
   }
 
+  Future<void> clearCache() async {
+    var box = await _cacheStorageFuture;
+    await box.erase();
+  }
+
   void showDateSelectionBottomModal() {
     Get.put(DateSelectionModalController());
     showModalBottomSheet(
@@ -61,7 +66,7 @@ class CalendarViewController extends GetxController {
 
       yield events2CalendarEvents(events);
     } catch (e, st) {
-      FirebaseCrashlytics.instance.recordError(e, st);
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
 
     var apiClient = Get.find<ApiClient>();
@@ -107,6 +112,7 @@ class CalendarViewController extends GetxController {
           startDate: event.startAt ?? DateTime.now(),
           endDate: event.endAt ?? DateTime.now(),
           color: color,
+          url: event.uri,
         ),
       );
     }
