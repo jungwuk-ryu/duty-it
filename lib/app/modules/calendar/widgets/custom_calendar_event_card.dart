@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class CustomCalendarEventCard extends StatelessWidget {
   final CalendarEvent? event;
@@ -13,7 +14,13 @@ class CustomCalendarEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsGeometry.only(bottom: 7.h, left: 16.w, right: 16.w),
-      child: ConstrainedBox(
+      child: InkWell(
+        onTap: () {
+          if (event != null) {
+            launchUrlString(event!.url);
+          }
+        },
+        child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: 48.h),
         child: Container(
           width: double.infinity,
@@ -24,6 +31,7 @@ class CustomCalendarEventCard extends StatelessWidget {
           ),
           child: event != null ? _EventMetadataColumn(event!) : _NoEventText(),
         ),
+      ),
       ),
     );
   }
