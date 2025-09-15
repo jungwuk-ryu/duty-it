@@ -107,6 +107,7 @@ class CalendarViewController extends GetxController {
           startDate: event.startAt ?? DateTime.now(),
           endDate: event.endAt ?? DateTime.now(),
           color: color,
+          url: event.uri,
         ),
       );
     }
