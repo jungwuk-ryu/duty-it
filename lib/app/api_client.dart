@@ -204,10 +204,10 @@ class ApiClient extends GetConnect {
     return _send(
       () async => await patch(
         '/users/settings',
-        _cleanQuery({
+        {
           'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
-          'alarmSettings': json.encode(alarmSettings.toJson()),
-        }),
+          'alarmSettings': alarmSettings.toJson(),
+        },
       ),
       map: (rp) {
         AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
