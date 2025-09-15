@@ -22,6 +22,12 @@ enum SocialProvider {
   final String displayName;
 
   const SocialProvider(this.displayName);
+
+  static SocialProvider? getByName(String name) {
+    for (var provider in SocialProvider.values) {
+      if (provider.name == name) return provider;
+    }
+  }
 }
 
 class AuthService extends GetxService {
@@ -77,9 +83,9 @@ class AuthService extends GetxService {
   SocialProvider getLastUsedProvider() {
     SocialProvider? prov;
     try {
-      prov = _box.read(_lastUsedProviderKey);
+      prov = SocialProvider.getByName(_box.read(_lastUsedProviderKey));
     } catch (e, st) {
-      FirebaseCrashlytics.instance.recordError(e, st);
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
 
     prov ??= SocialProvider.google;
@@ -96,7 +102,7 @@ class AuthService extends GetxService {
 
     var result = await strategy.login();
     if (result is SocialLoginSuccess) _currentStrategy = strategy;
-    _box.write(_lastUsedProviderKey, provider);
+    _box.write(_lastUsedProviderKey, provider.name);
 
     return result;
   }
