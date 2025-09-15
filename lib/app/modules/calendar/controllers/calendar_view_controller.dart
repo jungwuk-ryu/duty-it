@@ -37,6 +37,11 @@ class CalendarViewController extends GetxController {
     return GetStorage(_cacheStorageName);
   }
 
+  Future<void> clearCache() async {
+    var box = await _cacheStorageFuture;
+    await box.erase();
+  }
+
   void showDateSelectionBottomModal() {
     Get.put(DateSelectionModalController());
     showModalBottomSheet(
