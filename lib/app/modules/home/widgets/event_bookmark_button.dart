@@ -26,8 +26,8 @@ class EventBookmarkButton extends StatelessWidget {
       },
       child: Obx(() => Image.asset(
         isBookmarked
-            ? Assets.icons.bookmarkSharpRed.path
-            : Assets.icons.bookmarkSharp.path,
+            ? Assets.icons.bookmarkRed.path
+            : Assets.icons.bookmark.path,
         width: 40.r,
         height: 40.r,
       )),

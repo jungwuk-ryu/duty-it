@@ -50,7 +50,7 @@ class MainView extends GetView<MainViewController> {
             ),
             BottomNavigationBarItem(
               icon: Image.asset(
-                Assets.icons.calendarClearSharp.path,
+                Assets.icons.calendar.path,
                 width: 20.r,
                 height: 20.r,
                 color: controller.currentIndex.value == 1

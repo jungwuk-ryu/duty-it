@@ -81,6 +81,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   height: 1.20,
                 ),
               ),
+              SizedBox(width: 12),
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
@@ -91,9 +92,9 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   print("works");
                 },
                 child: Image.asset(
-                  Assets.icons.iconTextdelete.path,
-                  width: 40.r,
-                  height: 40.r,
+                  Assets.icons.textdelete.path,
+                  width: 16.r,
+                  height: 16.r,
                 ),
               ),
             ],

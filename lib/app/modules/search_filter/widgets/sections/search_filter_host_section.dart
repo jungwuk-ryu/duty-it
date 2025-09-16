@@ -62,8 +62,8 @@ class SearchFilterHostSection extends SearchFilterSection {
                 Obx(() {
                   String? host = controller.selectedHost?.name;
                   String imgPath = host == null
-                      ? Assets.icons.iconGoG05.path
-                      : Assets.icons.iconTextdelete16.path;
+                      ? Assets.icons.go.path
+                      : Assets.icons.textdelete.path;
 
                   return Image.asset(imgPath, width: 12.r, height: 12.r);
                 }),

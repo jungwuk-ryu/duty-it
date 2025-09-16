@@ -36,7 +36,7 @@ class AccountView extends GetView<AccountViewController> {
                         GestureDetector(
                           onTap: () => controller.onUserNameEditButtonClicked(),
                           child: Image.asset(
-                            Assets.icons.solarPenBold.path,
+                            Assets.icons.pen.path,
                             width: 24.w,
                             height: 24.h,
                           ),

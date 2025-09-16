@@ -23,7 +23,7 @@ class HomeSearchBar extends StatelessWidget {
           children: [
             SizedBox(width: 16),
             Image.asset(
-              Assets.icons.iconamoonSearch.path,
+              Assets.icons.search.path,
               height: 16.r,
               width: 16.r,
               color: Color(0xff878898),

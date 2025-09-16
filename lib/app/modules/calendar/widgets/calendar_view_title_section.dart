@@ -40,7 +40,7 @@ class CalendarViewTitleSection extends StatelessWidget {
                 ),
                 SizedBox(width: 4),
                 Image.asset(
-                  Assets.icons.iconGoG05.path,
+                  Assets.icons.go.path,
                   width: 16.r,
                   height: 16.r,
                 ),

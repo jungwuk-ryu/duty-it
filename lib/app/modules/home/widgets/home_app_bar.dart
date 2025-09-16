@@ -32,7 +32,7 @@ class HomeAppBar extends StatelessWidget {
               con.openEndDrawer();
             },
             child: Image.asset(
-              Assets.icons.quillHamburger.path,
+              Assets.icons.hamburger.path,
               width: 40.r,
               height: 40.r,
             ),
