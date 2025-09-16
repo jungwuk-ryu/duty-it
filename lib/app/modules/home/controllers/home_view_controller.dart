@@ -40,6 +40,9 @@ class HomeViewController extends GetxController {
 
   final Lock _fetchPageLock = Lock();
 
+  final RxBool _hasNewNotification = RxBool(false);
+  bool get hasNewNotification => _hasNewNotification.value;
+
   @override
   void onInit() {
     super.onInit();
@@ -174,5 +177,9 @@ class HomeViewController extends GetxController {
     }
 
     return isBookmarked;
+  }
+
+  void openNotificationPage() {
+    
   }
 }
