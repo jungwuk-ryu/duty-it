@@ -28,23 +28,15 @@ class SettingsView extends GetView<SettingsViewController> {
                   children: [
                     Obx(
                       () => ToggleSettingItem(
-                        text: '푸시 알림',
+                        title: '푸시 알림',
                         checked: controller.pushNoti,
                         onToggleTap: () => controller.togglePushNoti(),
-                        enabled: true,
                       ),
                     ),
-                    // Obx(
-                    //   () => ToggleSettingItem(
-                    //     text: '마케팅 알림 수신',
-                    //     checked: controller.marketingNoti,
-                    //     onToggleTap: () => controller.toggleMarketingNoti(),
-                    //     enabled: controller.pushNoti,
-                    //   ),
-                    // ),
                     Obx(
                       () => ToggleSettingItem(
-                        text: '행사 알림 수신',
+                        title: '행사 알림 수신',
+                        subtitle: "북마크 해놓은 행사 시작일을 알려드려요.",
                         checked: controller.bookmarkNoti,
                         onToggleTap: () => controller.toggleBookmarkNoti(),
                         enabled: controller.pushNoti,
@@ -52,13 +44,22 @@ class SettingsView extends GetView<SettingsViewController> {
                     ),
                     Obx(
                       () => ToggleSettingItem(
-                        text: '캘린더 알림 수신',
+                        title: '캘린더 알림 수신',
                         checked: controller.calendarNoti,
+                        subtitle: "캘린더에 등록해놓은 알림만 발송드려요.",
                         onToggleTap: () => controller.toggleCalendarNoti(),
                         enabled: controller.pushNoti,
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                                        // Obx(
+                    //   () => ToggleSettingItem(
+                    //     text: '마케팅 알림 수신',
+                    //     checked: controller.marketingNoti,
+                    //     onToggleTap: () => controller.toggleMarketingNoti(),
+                    //     enabled: controller.pushNoti,
+                    //   ),
+                    // ),
+                    SizedBox(height: 40),
                     GestureDetector(
                       onTap: () => Get.to(LicensePage(applicationName: "듀잇")),
                       child: Text(
