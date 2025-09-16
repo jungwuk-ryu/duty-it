@@ -179,7 +179,5 @@ class HomeViewController extends GetxController {
     return isBookmarked;
   }
 
-  void openNotificationPage() {
-    
-  }
+  void openNotificationsPage() {}
 }

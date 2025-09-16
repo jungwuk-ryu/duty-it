@@ -31,7 +31,7 @@ class HomeAppBar extends StatelessWidget {
           Expanded(child: SizedBox()),
           GestureDetector(
             onTap: () {
-              controller.openNotificationPage();
+              controller.openNotificationsPage();
             },
             child: SizedBox(
               width: 18.r,
