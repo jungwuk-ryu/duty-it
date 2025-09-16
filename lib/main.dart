@@ -74,7 +74,7 @@ void main() async {
           drawerTheme: DrawerThemeData(backgroundColor: AppColors.white)
         ),
         debugShowCheckedModeBanner: false,
-        title: "듀잇 - Duty It!",
+        title: "듀잇 - Du it!",
         initialRoute: AppPages.INITIAL,
         initialBinding: InitialBindings(),
         getPages: AppPages.routes,

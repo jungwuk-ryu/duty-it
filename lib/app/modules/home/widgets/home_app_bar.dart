@@ -17,7 +17,7 @@ class HomeAppBar extends StatelessWidget {
           Image.asset(Assets.icons.logo.path, width: 16, height: 16),
           SizedBox(width: 8),
           Text(
-            "듀잇 - Duty It!",
+            "듀잇 - Du it!",
             style: TextStyle(
               color: AppColors.black,
               fontSize: 15,
