@@ -6,7 +6,7 @@ class ToggleSettingItem extends StatelessWidget {
   final String title;
   final String? subtitle;
   final bool checked;
-  final VoidCallback onToggleTap;
+  final Function() onToggleTap;
   final bool enabled;
 
   const ToggleSettingItem({
@@ -53,8 +53,8 @@ class ToggleSettingItem extends StatelessWidget {
         CustomToggleButton(
           checked: checked,
           enabled: enabled,
-          onTap: () {
-            if (enabled) onToggleTap();
+          onTap: () async {
+            if (enabled) await onToggleTap();
           },
         ),
       ],
