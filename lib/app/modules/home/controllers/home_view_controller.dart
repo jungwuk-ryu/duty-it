@@ -6,6 +6,7 @@ import 'package:duty_it/app/models/event_type.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
@@ -179,5 +180,7 @@ class HomeViewController extends GetxController {
     return isBookmarked;
   }
 
-  void openNotificationsPage() {}
+  void openNotificationsPage() {
+    Get.toNamed(Routes.NOTIFICATIONS);
+  }
 }

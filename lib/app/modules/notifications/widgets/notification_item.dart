@@ -1,7 +1,10 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/notifications/controllers/notifications_view_controller.dart';
 import 'package:duty_it/app/modules/notifications/models/fcm_notification.dart';
+import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NotificationItem extends StatelessWidget {
   final FcmNotification noti;
@@ -29,17 +32,22 @@ class NotificationItem extends StatelessWidget {
           ],
         ),
       ),
-      key: key,
+      key: Key(noti.id),
+      onDismissed: (_) {
+        NotificationsViewController con = Get.find<NotificationsViewController>();
+        con.removeNotification(noti.id);
+      },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: noti.read ? AppColors.cal2 : AppColors.white,
+          color: !noti.read ? AppColors.cal2 : AppColors.white,
         ),
         child: Row(
           children: [
             Container(
               width: 40,
               height: 40,
+              padding: EdgeInsets.all(15),
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: OvalBorder(
@@ -56,7 +64,7 @@ class NotificationItem extends StatelessWidget {
             ),
             SizedBox(width: 15),
             Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   noti.title,
