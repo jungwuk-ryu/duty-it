@@ -1,12 +1,14 @@
-import 'package:duty_it/app/middlewares/auth_guard.dart';
 import 'package:get/get.dart';
 
+import '../middlewares/auth_guard.dart';
 import '../modules/account/bindings/account_binding.dart';
 import '../modules/account/views/account_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
+import '../modules/notifications/bindings/notifications_binding.dart';
+import '../modules/notifications/views/notifications_view.dart';
 import '../modules/search_filter/bindings/search_filter_binding.dart';
 import '../modules/search_filter/views/search_filter_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
@@ -55,6 +57,11 @@ class AppPages {
           binding: SettingsBinding(),
         ),
       ],
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATIONS,
+      page: () => const NotificationsView(),
+      binding: NotificationsBinding(),
     ),
   ];
 }

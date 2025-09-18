@@ -133,8 +133,9 @@ class AuthService extends GetxService {
     var reqResult = await Get.find<ApiClient>().withdrawUser(appUser!.id);
     if (reqResult is RequestFail) {
       AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
-      if (reqResult.serverFail != null)
+      if (reqResult.serverFail != null) {
         AppUtils.showSnackBar(reqResult.serverFail!.message);
+      }
       return false;
     }
 

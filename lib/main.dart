@@ -1,6 +1,7 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/bindings/initial_bindings.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -45,6 +46,8 @@ void main() async {
     alert: true, badge: true, sound: true,
   ));
 
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   /* Firebase init end */
 
   if (kIsWeb) {
@@ -84,4 +87,10 @@ void main() async {
       ),
     ),
   );
+}
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  final repo = NotificationRepository();
+  await repo.addNotification(message);
 }

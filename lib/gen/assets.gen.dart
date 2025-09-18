@@ -76,6 +76,12 @@ class $AssetsIconsGen {
   AssetGenImage get backRight =>
       const AssetGenImage('assets/icons/back_right.png');
 
+  /// File path: assets/icons/bell.png
+  AssetGenImage get bell => const AssetGenImage('assets/icons/bell.png');
+
+  /// File path: assets/icons/bell_new.png
+  AssetGenImage get bellNew => const AssetGenImage('assets/icons/bell_new.png');
+
   /// File path: assets/icons/bookmark.png
   AssetGenImage get bookmark =>
       const AssetGenImage('assets/icons/bookmark.png');
@@ -138,6 +144,8 @@ class $AssetsIconsGen {
     appleWhite,
     backLeft,
     backRight,
+    bell,
+    bellNew,
     bookmark,
     bookmarkRed,
     calendar,
