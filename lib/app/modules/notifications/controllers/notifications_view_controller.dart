@@ -3,7 +3,8 @@ import 'package:duty_it/app/modules/notifications/repositories/notification_repo
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class NotificationsViewController extends GetxController  with WidgetsBindingObserver {
+class NotificationsViewController extends GetxController
+    with WidgetsBindingObserver {
   NotificationRepository get repo => Get.find<NotificationRepository>();
   RxList notificationList = RxList();
 
@@ -12,6 +13,12 @@ class NotificationsViewController extends GetxController  with WidgetsBindingObs
     super.onInit();
      WidgetsBinding.instance.addObserver(this);
     loadNotificationList();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
