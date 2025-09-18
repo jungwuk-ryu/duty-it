@@ -17,11 +17,18 @@ class NotificationsView extends GetView<NotificationsViewController> {
           Expanded(
             child: RefreshIndicator.adaptive(
               child: Obx(
-                () => ListView.builder(
-                  itemCount: controller.notificationList.length,
+                () { 
+                  var list = controller.notificationList;
+                  if (list.isEmpty) {
+                    return Center(child: Text("알림 목록이 비어 있습니다", style: TextStyle(fontWeight: FontWeight.w800)));
+                  }
+                  
+                  return ListView.builder(
+                  itemCount: list.length,
                   itemBuilder: (_, i) =>
-                      NotificationItem(controller.notificationList[i]),
-                ),
+                      NotificationItem(list[i]),
+                );
+                }
               ),
               onRefresh: () async => await controller.loadNotificationList(),
             ),
