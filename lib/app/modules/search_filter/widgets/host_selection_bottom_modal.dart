@@ -68,7 +68,7 @@ class _SearchFilterHostSelectionBottomModal
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
-                      Assets.icons.iconamoonSearch.path,
+                      Assets.icons.search.path,
                       width: 12.r,
                       height: 12.r,
                     ),
@@ -111,7 +111,7 @@ class _SearchFilterHostSelectionBottomModal
                           });
                         },
                         child: Image.asset(
-                          Assets.icons.iconTextdelete16.path,
+                          Assets.icons.textdelete.path,
                           width: 16.r,
                           height: 16.r,
                         ),

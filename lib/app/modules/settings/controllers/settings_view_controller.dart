@@ -23,6 +23,9 @@ class SettingsViewController extends GetxController {
   // 캘린더 알림
   bool get calendarNoti => settings?.calendar ?? false;
 
+  // 캘린더 행사 자동 추가
+  bool get calendarAutoAdd => authService.appUser?.autoAddBookmarkToCalendar ?? true;
+
   @override
   void onInit() async {
     super.onInit();
@@ -80,6 +83,15 @@ class SettingsViewController extends GetxController {
     await api.updateUserSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(calendar: !calendarNoti),
+    );
+  }
+
+  Future toggleAutoAdd() async {
+    HapticFeedback.mediumImpact();
+
+    await api.updateUserSettings(
+      !(calendarAutoAdd),
+      settings!,
     );
   }
 }

@@ -12,7 +12,7 @@ class DrawerAccountButton extends StatelessWidget {
     return GestureDetector(
       onTap: _onClick,
       child: Image.asset(
-        Assets.icons.backFilled.path,
+        Assets.icons.backRight.path,
         width: 40.r,
         height: 40.r,
       ),

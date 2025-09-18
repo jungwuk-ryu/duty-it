@@ -58,8 +58,8 @@ class $AssetsFontsGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
-  /// File path: assets/icons/app-icon.png
-  AssetGenImage get appIcon => const AssetGenImage('assets/icons/app-icon.png');
+  /// File path: assets/icons/app_icon.png
+  AssetGenImage get appIcon => const AssetGenImage('assets/icons/app_icon.png');
 
   /// File path: assets/icons/apple.png
   AssetGenImage get apple => const AssetGenImage('assets/icons/apple.png');
@@ -68,61 +68,57 @@ class $AssetsIconsGen {
   AssetGenImage get appleWhite =>
       const AssetGenImage('assets/icons/apple_white.png');
 
-  /// File path: assets/icons/back-filled.png
-  AssetGenImage get backFilled =>
-      const AssetGenImage('assets/icons/back-filled.png');
-
-  /// File path: assets/icons/back-left.png
+  /// File path: assets/icons/back_left.png
   AssetGenImage get backLeft =>
-      const AssetGenImage('assets/icons/back-left.png');
+      const AssetGenImage('assets/icons/back_left.png');
 
-  /// File path: assets/icons/bookmark-sharp-red.png
-  AssetGenImage get bookmarkSharpRed =>
-      const AssetGenImage('assets/icons/bookmark-sharp-red.png');
+  /// File path: assets/icons/back_right.png
+  AssetGenImage get backRight =>
+      const AssetGenImage('assets/icons/back_right.png');
 
-  /// File path: assets/icons/bookmark-sharp.png
-  AssetGenImage get bookmarkSharp =>
-      const AssetGenImage('assets/icons/bookmark-sharp.png');
+  /// File path: assets/icons/bell.png
+  AssetGenImage get bell => const AssetGenImage('assets/icons/bell.png');
 
-  /// File path: assets/icons/calendar-clear-sharp.png
-  AssetGenImage get calendarClearSharp =>
-      const AssetGenImage('assets/icons/calendar-clear-sharp.png');
+  /// File path: assets/icons/bell_new.png
+  AssetGenImage get bellNew => const AssetGenImage('assets/icons/bell_new.png');
+
+  /// File path: assets/icons/bookmark.png
+  AssetGenImage get bookmark =>
+      const AssetGenImage('assets/icons/bookmark.png');
+
+  /// File path: assets/icons/bookmark_red.png
+  AssetGenImage get bookmarkRed =>
+      const AssetGenImage('assets/icons/bookmark_red.png');
+
+  /// File path: assets/icons/calendar.png
+  AssetGenImage get calendar =>
+      const AssetGenImage('assets/icons/calendar.png');
 
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
+  /// File path: assets/icons/filter.png
+  AssetGenImage get filter => const AssetGenImage('assets/icons/filter.png');
+
+  /// File path: assets/icons/filter_sort.png
+  AssetGenImage get filterSort =>
+      const AssetGenImage('assets/icons/filter_sort.png');
+
+  /// File path: assets/icons/go.png
+  AssetGenImage get go => const AssetGenImage('assets/icons/go.png');
+
   /// File path: assets/icons/google.png
   AssetGenImage get google => const AssetGenImage('assets/icons/google.png');
 
-  /// File path: assets/icons/icon_go_G-05.png
-  AssetGenImage get iconGoG05 =>
-      const AssetGenImage('assets/icons/icon_go_G-05.png');
-
-  /// File path: assets/icons/icon_textdelete.png
-  AssetGenImage get iconTextdelete =>
-      const AssetGenImage('assets/icons/icon_textdelete.png');
-
-  /// File path: assets/icons/icon_textdelete16.png
-  AssetGenImage get iconTextdelete16 =>
-      const AssetGenImage('assets/icons/icon_textdelete16.png');
-
-  /// File path: assets/icons/iconamoon_search.png
-  AssetGenImage get iconamoonSearch =>
-      const AssetGenImage('assets/icons/iconamoon_search.png');
+  /// File path: assets/icons/hamburger.png
+  AssetGenImage get hamburger =>
+      const AssetGenImage('assets/icons/hamburger.png');
 
   /// File path: assets/icons/kakao.png
   AssetGenImage get kakao => const AssetGenImage('assets/icons/kakao.png');
 
   /// File path: assets/icons/logo.png
   AssetGenImage get logo => const AssetGenImage('assets/icons/logo.png');
-
-  /// File path: assets/icons/mage_filter.png
-  AssetGenImage get mageFilter =>
-      const AssetGenImage('assets/icons/mage_filter.png');
-
-  /// File path: assets/icons/mage_filter_sort.png
-  AssetGenImage get mageFilterSort =>
-      const AssetGenImage('assets/icons/mage_filter_sort.png');
 
   /// File path: assets/icons/nurse_cap.png
   AssetGenImage get nurseCap =>
@@ -131,38 +127,41 @@ class $AssetsIconsGen {
   /// File path: assets/icons/paper.png
   AssetGenImage get paper => const AssetGenImage('assets/icons/paper.png');
 
-  /// File path: assets/icons/quill_hamburger.png
-  AssetGenImage get quillHamburger =>
-      const AssetGenImage('assets/icons/quill_hamburger.png');
+  /// File path: assets/icons/pen.png
+  AssetGenImage get pen => const AssetGenImage('assets/icons/pen.png');
 
-  /// File path: assets/icons/solar_pen-bold.png
-  AssetGenImage get solarPenBold =>
-      const AssetGenImage('assets/icons/solar_pen-bold.png');
+  /// File path: assets/icons/search.png
+  AssetGenImage get search => const AssetGenImage('assets/icons/search.png');
+
+  /// File path: assets/icons/textdelete.png
+  AssetGenImage get textdelete =>
+      const AssetGenImage('assets/icons/textdelete.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [
     appIcon,
     apple,
     appleWhite,
-    backFilled,
     backLeft,
-    bookmarkSharpRed,
-    bookmarkSharp,
-    calendarClearSharp,
+    backRight,
+    bell,
+    bellNew,
+    bookmark,
+    bookmarkRed,
+    calendar,
     close,
+    filter,
+    filterSort,
+    go,
     google,
-    iconGoG05,
-    iconTextdelete,
-    iconTextdelete16,
-    iconamoonSearch,
+    hamburger,
     kakao,
     logo,
-    mageFilter,
-    mageFilterSort,
     nurseCap,
     paper,
-    quillHamburger,
-    solarPenBold,
+    pen,
+    search,
+    textdelete,
   ];
 }
 

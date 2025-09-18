@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class HomeAppBar extends StatelessWidget {
+  HomeViewController get controller => Get.find<HomeViewController>();
+
   const HomeAppBar({super.key});
 
   @override
@@ -17,7 +20,7 @@ class HomeAppBar extends StatelessWidget {
           Image.asset(Assets.icons.logo.path, width: 16, height: 16),
           SizedBox(width: 8),
           Text(
-            "듀잇 - Duty It!",
+            "듀잇 - Du it!",
             style: TextStyle(
               color: AppColors.black,
               fontSize: 15,
@@ -28,11 +31,28 @@ class HomeAppBar extends StatelessWidget {
           Expanded(child: SizedBox()),
           GestureDetector(
             onTap: () {
-              var con = Get.find<MainViewController>();
-              con.openEndDrawer();
+              controller.openNotificationsPage();
+            },
+            child: SizedBox(
+              width: 18.r,
+              height: 18.r,
+              child: Obx(
+                () => Image.asset(
+                  controller.hasNewNotification
+                      ? Assets.icons.bellNew.path
+                      : Assets.icons.bell.path,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 13),
+          GestureDetector(
+            onTap: () {
+              Get.find<MainViewController>().openEndDrawer();
             },
             child: Image.asset(
-              Assets.icons.quillHamburger.path,
+              Assets.icons.hamburger.path,
               width: 40.r,
               height: 40.r,
             ),

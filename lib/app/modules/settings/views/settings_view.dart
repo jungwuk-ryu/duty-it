@@ -28,10 +28,27 @@ class SettingsView extends GetView<SettingsViewController> {
                   children: [
                     Obx(
                       () => ToggleSettingItem(
-                        text: '푸시 알림',
+                        title: '푸시 알림',
                         checked: controller.pushNoti,
-                        onToggleTap: () => controller.togglePushNoti(),
-                        enabled: true,
+                        onToggleTap: () async => await controller.togglePushNoti(),
+                      ),
+                    ),
+                    Obx(
+                      () => ToggleSettingItem(
+                        title: '행사 알림 수신',
+                        subtitle: "북마크 해놓은 행사 시작일을 알려드려요.",
+                        checked: controller.bookmarkNoti,
+                        onToggleTap: () async => await controller.toggleBookmarkNoti(),
+                        enabled: controller.pushNoti,
+                      ),
+                    ),
+                    Obx(
+                      () => ToggleSettingItem(
+                        title: '캘린더 알림 수신',
+                        checked: controller.calendarNoti,
+                        subtitle: "캘린더에 등록해놓은 알림만 발송드려요.",
+                        onToggleTap: () async => await controller.toggleCalendarNoti(),
+                        enabled: controller.pushNoti,
                       ),
                     ),
                     // Obx(
@@ -42,23 +59,16 @@ class SettingsView extends GetView<SettingsViewController> {
                     //     enabled: controller.pushNoti,
                     //   ),
                     // ),
+                    SizedBox(height: 40),
                     Obx(
                       () => ToggleSettingItem(
-                        text: '행사 알림 수신',
-                        checked: controller.bookmarkNoti,
-                        onToggleTap: () => controller.toggleBookmarkNoti(),
-                        enabled: controller.pushNoti,
+                        title: '북마크 - 캘린더 자동 연동',
+                        checked: controller.calendarAutoAdd,
+                        subtitle: "북마크 설정시, 모집과 행사 일정을 캘린더에 자동으로 등록합니다. ",
+                        onToggleTap: () async => await controller.toggleAutoAdd(),
                       ),
                     ),
-                    Obx(
-                      () => ToggleSettingItem(
-                        text: '캘린더 알림 수신',
-                        checked: controller.calendarNoti,
-                        onToggleTap: () => controller.toggleCalendarNoti(),
-                        enabled: controller.pushNoti,
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 40),
                     GestureDetector(
                       onTap: () => Get.to(LicensePage(applicationName: "듀잇")),
                       child: Text(

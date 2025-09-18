@@ -67,7 +67,7 @@ class HomeHeader extends StatelessWidget {
                 CategoryTag(
                   name: '필터',
                   isSelected: filterApplied,
-                  imageAsset: Assets.icons.mageFilter.path,
+                  imageAsset: Assets.icons.filter.path,
                   imageColor: filterApplied ? AppColors.white : null,
                   onTap: () {
                     Get.toNamed(Routes.SEARCH_FILTER);
@@ -78,7 +78,7 @@ class HomeHeader extends StatelessWidget {
                   () => CategoryTag(
                     name: controller.sortingType.shortName,
                     isSelected: false,
-                    imageAsset: Assets.icons.mageFilterSort.path,
+                    imageAsset: Assets.icons.filterSort.path,
                     onTap: () {
                       controller.showSortingBottomModal();
                     },
