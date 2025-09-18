@@ -11,7 +11,12 @@ class NotificationsViewController extends GetxController
   @override
   void onInit() {
     super.onInit();
-     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
+    _initList();
+  }
+
+  Future<void> _initList() async {
+    await repo.loadFromDisk();
     loadNotificationList();
   }
 
@@ -44,5 +49,4 @@ class NotificationsViewController extends GetxController
     notificationList.removeWhere((e) => e.id == id);
     await repo.removeNotification(id);
   }
-
 }
