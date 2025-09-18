@@ -46,3 +46,6 @@ app.*.map.json
 
 # 듀잇
 .env
+
+#vscode
+.vscode
