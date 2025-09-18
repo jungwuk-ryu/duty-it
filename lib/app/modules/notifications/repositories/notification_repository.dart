@@ -75,25 +75,36 @@ class NotificationRepository {
 
   Future<List<FcmNotification>> getNotificationList() async {
     var idList = await _idList;
-    var storage = await _storage;
-
     List<FcmNotification> notiList = [];
 
     for (var id in idList) {
-      String key = _getItemKey(id);
-      if (storage.hasData(key)) {
-        try {
-          FcmNotification noti = FcmNotification.fromJson(
-            Map<String, dynamic>.from(storage.read(key)!),
-          );
-          notiList.add(noti);
-        } catch (e, st) {
-          FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-        }
-      }
+      FcmNotification? noti = await getNotificationById(id);
+      if (noti != null) notiList.add(noti);
     }
 
     return notiList;
+  }
+
+  Future<List<String>> getIdList() async {
+    return List<String>.from(await _idList);
+  }
+
+  Future<FcmNotification?> getNotificationById(String id) async {
+    var storage = await _storage;
+    String key = _getItemKey(id);
+    
+    if (storage.hasData(key)) {
+      try {
+        FcmNotification noti = FcmNotification.fromJson(
+          Map<String, dynamic>.from(storage.read(key)!),
+        );
+        return noti;
+      } catch (e, st) {
+        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      }
+    }
+
+    return null;
   }
 
   Future<void> clearList() async {

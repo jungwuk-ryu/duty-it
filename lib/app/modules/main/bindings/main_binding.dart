@@ -12,6 +12,7 @@ import '../controllers/main_view_controller.dart';
 class MainBinding extends Bindings {
   @override
   void dependencies() {
+    Get.put<NotificationRepository>(NotificationRepository());
     Get.put<AppEventService>(AppEventService());
     Get.put<InAppReviewService>(InAppReviewService());
     Get.put<SearchFilterService>(SearchFilterService());
@@ -19,6 +20,5 @@ class MainBinding extends Bindings {
     Get.lazyPut<AppSettingsService>(() => AppSettingsService());
     Get.lazyPut<HomeViewController>(() => HomeViewController());
     Get.lazyPut<CalendarViewController>(() => CalendarViewController());
-    Get.put<NotificationRepository>(NotificationRepository());
   }
 }
