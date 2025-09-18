@@ -1,7 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/notifications/controllers/notifications_view_controller.dart';
 import 'package:duty_it/app/modules/notifications/models/fcm_notification.dart';
-import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

@@ -1,5 +1,4 @@
 import 'package:duty_it/app/modules/notifications/widgets/notification_item.dart';
-import 'package:duty_it/app/widgets/custom_divider.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

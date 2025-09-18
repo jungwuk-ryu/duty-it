@@ -88,8 +88,6 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   setState(() {
                     editingController.clear();
                   });
-
-                  print("works");
                 },
                 child: Image.asset(
                   Assets.icons.textdelete.path,
