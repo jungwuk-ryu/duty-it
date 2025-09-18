@@ -10,12 +10,16 @@ class NotificationRepository {
   static const String _itemKeyPrefix = "noti_";
   static const int itemCountLimit = 100;
 
-  late final Future<GetStorage> _storage;
-  late final Future<List<String>> _idList;
+  late Future<GetStorage> _storage;
+  late Future<List<String>> _idList;
 
   final Lock _storageLock = Lock();
 
   NotificationRepository() {
+    loadFromDisk();
+  }
+
+  Future<void> loadFromDisk() async {
     _storage = _initStorage();
     _idList = _intiIdList();
   }
@@ -92,7 +96,7 @@ class NotificationRepository {
   Future<FcmNotification?> getNotificationById(String id) async {
     var storage = await _storage;
     String key = _getItemKey(id);
-    
+
     if (storage.hasData(key)) {
       try {
         FcmNotification noti = FcmNotification.fromJson(
@@ -110,6 +114,7 @@ class NotificationRepository {
   Future<void> clearList() async {
     var storage = await _storage;
     await storage.erase();
+    (await _idList).clear();
   }
 
   String _getItemKey(String id) {
