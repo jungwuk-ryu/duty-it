@@ -19,5 +19,6 @@ class MainBinding extends Bindings {
     Get.lazyPut<AppSettingsService>(() => AppSettingsService());
     Get.lazyPut<HomeViewController>(() => HomeViewController());
     Get.lazyPut<CalendarViewController>(() => CalendarViewController());
+    Get.put<NotificationRepository>(NotificationRepository());
   }
 }

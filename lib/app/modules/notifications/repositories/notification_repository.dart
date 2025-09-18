@@ -37,7 +37,10 @@ class NotificationRepository {
     FcmNotification noti = FcmNotification.fromRemoteMessage(rm);
 
     var storage = await _storage;
-    await storage.write(_getItemKey(noti.id), Map<String, dynamic>.from(noti.toJson()));
+    await storage.write(
+      _getItemKey(noti.id),
+      Map<String, dynamic>.from(noti.toJson()),
+    );
 
     idList.insert(0, noti.id);
     await _saveIdList();
@@ -62,10 +65,44 @@ class NotificationRepository {
     String key = _getItemKey(id);
     if (!storage.hasData(key)) return;
 
-    FcmNotification noti = FcmNotification.fromJson(Map<String, dynamic>.from(storage.read(key)));
+    FcmNotification noti = FcmNotification.fromJson(
+      Map<String, dynamic>.from(storage.read(key)),
+    );
     noti = noti.copyWith(read: true);
 
     await storage.write(key, Map<String, dynamic>.from(noti.toJson()));
+  }
+
+  Future<List<FcmNotification>> getNotificationList() async {
+    var idList = await _idList;
+    var storage = await _storage;
+
+    List<FcmNotification> notiList = [];
+
+    for (var id in idList) {
+      String key = _getItemKey(id);
+      if (storage.hasData(key)) {
+        try {
+          FcmNotification noti = FcmNotification.fromJson(
+            Map<String, dynamic>.from(storage.read(key)!),
+          );
+          notiList.add(noti);
+        } catch (e, st) {
+          FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+        }
+      }
+    }
+
+    return notiList;
+  }
+
+  Future<void> clearList() async {
+    var storage = await _storage;
+    await storage.erase();
+  }
+
+  String _getItemKey(String id) {
+    return "$_itemKeyPrefix$id";
   }
 
   Future<void> _saveIdList() async {
@@ -73,31 +110,5 @@ class NotificationRepository {
       var storage = await _storage;
       await storage.write(_idListKey, await _idList);
     });
-  }
-
-  Future<List<FcmNotification>> getNotificationList() async {
-      var idList = await _idList;
-      var storage = await _storage;
-      
-      List<FcmNotification> notiList = [];
-
-      for (var id in idList) {
-        String key = _getItemKey(id);
-        if (storage.hasData(key)) {
-          try {
-            FcmNotification noti = FcmNotification.fromJson(Map<String, dynamic>.from(storage.read(key)!));
-            notiList.add(noti);
-          } catch (e, st) {
-            FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-          }
-        }
-      }
-
-      return notiList;
-  }
-
-  
-  String _getItemKey(String id) {
-    return "$_itemKeyPrefix$id";
   }
 }

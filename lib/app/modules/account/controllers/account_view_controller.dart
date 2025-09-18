@@ -1,6 +1,7 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/modules/account/widgets/account_bottom_modal.dart';
 import 'package:duty_it/app/modules/account/widgets/account_dialog.dart';
+import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,9 @@ class AccountViewController extends GetxController {
         action: () async {
           Get.back();
           await _authService.logout();
+          if (Get.isRegistered<NotificationRepository>()) {
+            Get.find<NotificationRepository>().clearList();
+          }
           Get.offAndToNamed(Routes.LOGIN);
         },
       ),
@@ -76,6 +80,9 @@ class AccountViewController extends GetxController {
         actionText: '탈퇴',
         action: () async {
           if (await _authService.withdraw()) {
+            if (Get.isRegistered<NotificationRepository>()) {
+              Get.find<NotificationRepository>().clearList();
+            }
             Get.offAndToNamed(Routes.LOGIN);
           }
         },
