@@ -34,8 +34,8 @@ class HomeAppBar extends StatelessWidget {
               controller.openNotificationsPage();
             },
             child: SizedBox(
-              width: 18.r,
-              height: 18.r,
+              width: 14,
+              height: 18,
               child: Obx(
                 () => Image.asset(
                   controller.hasNewNotification
@@ -53,8 +53,8 @@ class HomeAppBar extends StatelessWidget {
             },
             child: Image.asset(
               Assets.icons.hamburger.path,
-              width: 40.r,
-              height: 40.r,
+              width: 18,
+              height: 14,
             ),
           ),
         ],
