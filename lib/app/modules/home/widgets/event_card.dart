@@ -42,6 +42,10 @@ class EventCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Color(0xffD9D9D9),
                   borderRadius: cardBorderRadius,
+                  border: BoxBorder.all(
+                    width: 1,
+                    color: const Color(0xFFF5F5F5),
+                  ),
                 ),
                 child: CachedNetworkImage(
                   imageUrl: event.thumbnail,
@@ -51,6 +55,10 @@ class EventCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: const Color(0xffD9D9D9),
                       borderRadius: cardBorderRadius,
+                      border: BoxBorder.all(
+                        width: 1,
+                        color: const Color(0xFFD0D0D0),
+                      ),
                       image: DecorationImage(
                         image: imageProvider,
                         fit: BoxFit.cover,
