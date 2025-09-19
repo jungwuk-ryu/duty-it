@@ -11,10 +11,6 @@ class NotificationsViewController extends GetxController {
   void onInit() {
     super.onInit();
     loadNotificationList();
-
-    repo.addNotification(RemoteMessage(sentTime: DateTime.now(), notification: RemoteNotification(title: 'test', body: 'test')));
-    repo.addNotification(RemoteMessage(sentTime: DateTime.now(), notification: RemoteNotification(title: 'test2', body: 'test2')));
-    repo.addNotification(RemoteMessage(sentTime: DateTime.now(), notification: RemoteNotification(title: 'test3', body: 'test3')));
   }
 
   Future<void> loadNotificationList({bool markAsRead = true}) async {
