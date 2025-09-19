@@ -23,7 +23,10 @@ class NotificationsView extends GetView<NotificationsViewController> {
                     return Center(
                       child: Text(
                         "알림 목록이 비어 있습니다",
-                        style: TextStyle(fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF6F6F6F),
+                        ),
                       ),
                     );
                   }
