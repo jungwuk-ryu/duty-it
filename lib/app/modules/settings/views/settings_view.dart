@@ -42,15 +42,15 @@ class SettingsView extends GetView<SettingsViewController> {
                         enabled: controller.pushNoti,
                       ),
                     ),
-                    Obx(
-                      () => ToggleSettingItem(
-                        title: '캘린더 알림 수신',
-                        checked: controller.calendarNoti,
-                        subtitle: "캘린더에 등록해놓은 알림만 발송드려요.",
-                        onToggleTap: () async => await controller.toggleCalendarNoti(),
-                        enabled: controller.pushNoti,
-                      ),
-                    ),
+                    // Obx(
+                    //   () => ToggleSettingItem(
+                    //     title: '캘린더 알림 수신',
+                    //     checked: controller.calendarNoti,
+                    //     subtitle: "캘린더에 등록해놓은 알림만 발송드려요.",
+                    //     onToggleTap: () async => await controller.toggleCalendarNoti(),
+                    //     enabled: controller.pushNoti,
+                    //   ),
+                    // ),
                     // Obx(
                     //   () => ToggleSettingItem(
                     //     text: '마케팅 알림 수신',
