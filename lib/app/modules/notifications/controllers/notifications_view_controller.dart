@@ -1,6 +1,5 @@
 import 'package:duty_it/app/modules/notifications/models/fcm_notification.dart';
 import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 
 class NotificationsViewController extends GetxController {
