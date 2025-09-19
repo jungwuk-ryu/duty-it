@@ -14,43 +14,52 @@ class LoginView extends GetView<LoginViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(padding: EdgeInsets.symmetric(vertical: 50.h, horizontal: 16.w),
-      child: Column(
-        children: [
-          Spacer(),
-          Hero(
-            tag: SplashView.heroKey,
-            child: Image.asset(Assets.icons.logo.path, width: 84, height: 80),
-          ),
-          Spacer(),
-          Column(
-            spacing: 16.h,
+      body: Padding(
+        padding: EdgeInsets.symmetric(vertical: 50.h, horizontal: 16.w),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
             children: [
-              LoginButton(
-                iconPath: Assets.icons.kakao.path,
-                providerName: "Kakao",
-                buttonColor: Color(0xFFFEE500),
-                onTap: () async =>
-                    controller.onLoginButtonTap(SocialProvider.kakao),
+              Spacer(),
+              Hero(
+                tag: SplashView.heroKey,
+                child: Image.asset(
+                  Assets.icons.logo.path,
+                  width: 84,
+                  height: 80,
+                ),
               ),
-              LoginButton(
-                iconPath: Assets.icons.appleWhite.path,
-                buttonColor: Color(0xFF000000),
-                providerName: "Apple",
-                onTap: () async =>
-                    controller.onLoginButtonTap(SocialProvider.apple),
-              ),
-              LoginButton(
-                iconPath: Assets.icons.google.path,
-                buttonColor: Color(0xFFF2F2F2),
-                providerName: "Google",
-                onTap: () async =>
-                    controller.onLoginButtonTap(SocialProvider.google),
+              Spacer(),
+              Column(
+                spacing: 16.h,
+                children: [
+                  LoginButton(
+                    iconPath: Assets.icons.kakao.path,
+                    providerName: "Kakao",
+                    buttonColor: Color(0xFFFEE500),
+                    onTap: () async =>
+                        controller.onLoginButtonTap(SocialProvider.kakao),
+                  ),
+                  LoginButton(
+                    iconPath: Assets.icons.appleWhite.path,
+                    buttonColor: Color(0xFF000000),
+                    providerName: "Apple",
+                    onTap: () async =>
+                        controller.onLoginButtonTap(SocialProvider.apple),
+                  ),
+                  LoginButton(
+                    iconPath: Assets.icons.google.path,
+                    buttonColor: Color(0xFFF2F2F2),
+                    providerName: "Google",
+                    onTap: () async =>
+                        controller.onLoginButtonTap(SocialProvider.google),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),),
+        ),
+      ),
     );
   }
 }
