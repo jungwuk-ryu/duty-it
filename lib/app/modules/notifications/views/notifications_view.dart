@@ -13,7 +13,7 @@ class NotificationsView extends GetView<NotificationsViewController> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SimpleAppBar(title: '알림'),
+          SimpleAppBar(title: '알림', bottomMargin: 0),
           Expanded(
             child: RefreshIndicator.adaptive(
               child: Obx(

@@ -8,8 +8,9 @@ import 'package:get/get.dart';
 class SimpleAppBar extends StatelessWidget {
   final String title;
   final List<Widget>? endChildren;
+  final double bottomMargin;
 
-  const SimpleAppBar({super.key, required this.title, this.endChildren});
+  const SimpleAppBar({super.key, required this.title, this.endChildren, this.bottomMargin = 16});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class SimpleAppBar extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         CustomDivider(),
-        SizedBox(height: 16.h),
+        SizedBox(height: bottomMargin.h),
       ],
     );
   }
