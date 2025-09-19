@@ -47,6 +47,7 @@ void main() async {
   ));
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  handleFirebaseForegroundMessages(FirebaseMessaging.onMessage);
 
   /* Firebase init end */
 
@@ -93,4 +94,11 @@ void main() async {
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   final repo = NotificationRepository();
   await repo.addNotification(message);
+}
+
+Future<void> handleFirebaseForegroundMessages(Stream<RemoteMessage> stream) async {
+  await for (var message in stream) {
+    if (!Get.isRegistered<NotificationRepository>()) return;
+    await Get.find<NotificationRepository>().addNotification(message);
+  }
 }
