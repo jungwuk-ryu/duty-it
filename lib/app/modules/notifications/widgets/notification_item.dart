@@ -46,7 +46,7 @@ class NotificationItem extends StatelessWidget {
             Container(
               width: 40,
               height: 40,
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.only(top: 11, right: 10, bottom: 11, left: 12),
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: OvalBorder(
