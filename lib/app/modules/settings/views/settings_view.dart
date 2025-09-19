@@ -36,7 +36,7 @@ class SettingsView extends GetView<SettingsViewController> {
                     Obx(
                       () => ToggleSettingItem(
                         title: '행사 알림 수신',
-                        subtitle: "북마크 해놓은 행사 시작일을 알려드려요.",
+                        subtitle: "북마크 해놓은 행사의 모집일정과 행사 시작일을 알려드려요.",
                         checked: controller.bookmarkNoti,
                         onToggleTap: () async => await controller.toggleBookmarkNoti(),
                         enabled: controller.pushNoti,
