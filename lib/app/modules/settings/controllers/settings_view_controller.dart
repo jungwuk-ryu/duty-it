@@ -41,15 +41,6 @@ class SettingsViewController extends GetxController {
     hasPermission.value = status.isGranted || status.isProvisional;
   }
 
-  Future<void> updateSettings(
-    bool autoAddBookmark,
-    AlarmSettings settings,
-  ) async {
-    await _settingUpdateLock.synchronized(() async {
-      await api.updateUserSettings(autoAddBookmark, settings);
-    });
-  }
-
   Future togglePushNoti() async {
     HapticFeedback.mediumImpact();
 
@@ -66,42 +57,52 @@ class SettingsViewController extends GetxController {
 
     if (!hasPermission.value) return;
 
-    await updateSettings(
-      authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(push: !pushNoti),
-    );
+    await _settingUpdateLock.synchronized(() async {
+      await api.updateUserSettings(
+        authService.appUser?.autoAddBookmarkToCalendar ?? false,
+        settings!.copyWith(push: !pushNoti),
+      );
+    });
   }
 
   Future toggleMarketingNoti() async {
     HapticFeedback.mediumImpact();
 
-    await updateSettings(
-      authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(marketing: !marketingNoti),
-    );
+    await _settingUpdateLock.synchronized(() async {
+      await api.updateUserSettings(
+        authService.appUser?.autoAddBookmarkToCalendar ?? false,
+        settings!.copyWith(marketing: !marketingNoti),
+      );
+    });
   }
 
   Future toggleBookmarkNoti() async {
     HapticFeedback.mediumImpact();
 
-    await updateSettings(
-      authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(bookmark: !bookmarkNoti),
-    );
+    await _settingUpdateLock.synchronized(() async {
+      await api.updateUserSettings(
+        authService.appUser?.autoAddBookmarkToCalendar ?? false,
+        settings!.copyWith(bookmark: !bookmarkNoti),
+      );
+    });
   }
 
   Future toggleCalendarNoti() async {
     HapticFeedback.mediumImpact();
 
-    await updateSettings(
-      authService.appUser?.autoAddBookmarkToCalendar ?? false,
-      settings!.copyWith(calendar: !calendarNoti),
-    );
+    await _settingUpdateLock.synchronized(() async {
+      await api.updateUserSettings(
+        authService.appUser?.autoAddBookmarkToCalendar ?? false,
+        settings!.copyWith(calendar: !calendarNoti),
+      );
+    });
   }
 
   Future toggleAutoAdd() async {
     HapticFeedback.mediumImpact();
 
-    await updateSettings(!(calendarAutoAdd), settings!);
+    await _settingUpdateLock.synchronized(() async {
+      await api.updateUserSettings(!(calendarAutoAdd), settings!);
+    });
   }
 }
