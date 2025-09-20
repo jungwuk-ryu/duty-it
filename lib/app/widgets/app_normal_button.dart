@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/widgets/tap_scale.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -10,7 +11,7 @@ class AppNormalButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return TapScale(child: GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
@@ -30,6 +31,6 @@ class AppNormalButton extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
