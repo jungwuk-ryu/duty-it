@@ -21,8 +21,7 @@ class EventBookmarkButton extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: () async {
         HapticFeedback.mediumImpact();
-        bool result = await _controller.bookmark(event);
-        eventRx.value = event.copyWith(isBookmarked: result);
+        await _controller.onBookmarkButtonClick(eventRx);
       },
       child: Obx(() => Image.asset(
         isBookmarked
