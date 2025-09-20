@@ -18,6 +18,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   late final TextEditingController editingController;
 
   final int _maxLen = 10;
+  final int _minLen = 2;
   int _txtLen = 0;
 
   @override
@@ -135,8 +136,8 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
     final AccountViewController controller = Get.find<AccountViewController>();
 
     var newName = editingController.text.trim();
-    if (newName.length < 2 || newName.length > 10) {
-      AppUtils.showSnackBar('닉네임은 2~10자여야 합니다.');
+    if (newName.length < _minLen || newName.length > _maxLen) {
+      AppUtils.showSnackBar('닉네임은 $_minLen~$_maxLen자여야 합니다.');
       return;
     }
 
