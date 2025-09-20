@@ -4,6 +4,7 @@ import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:synchronized/synchronized.dart';
 
 class SettingsViewController extends GetxController {
   ApiClient get api => Get.find<ApiClient>();
@@ -24,7 +25,10 @@ class SettingsViewController extends GetxController {
   bool get calendarNoti => settings?.calendar ?? false;
 
   // 캘린더 행사 자동 추가
-  bool get calendarAutoAdd => authService.appUser?.autoAddBookmarkToCalendar ?? true;
+  bool get calendarAutoAdd =>
+      authService.appUser?.autoAddBookmarkToCalendar ?? true;
+
+  final Lock _settingUpdateLock = Lock();
 
   @override
   void onInit() async {
@@ -35,6 +39,15 @@ class SettingsViewController extends GetxController {
   Future _updatePermissionStatus() async {
     final status = await Permission.notification.status;
     hasPermission.value = status.isGranted || status.isProvisional;
+  }
+
+  Future<void> updateSettings(
+    bool autoAddBookmark,
+    AlarmSettings settings,
+  ) async {
+    await _settingUpdateLock.synchronized(() async {
+      await api.updateUserSettings(autoAddBookmark, settings);
+    });
   }
 
   Future togglePushNoti() async {
@@ -53,7 +66,7 @@ class SettingsViewController extends GetxController {
 
     if (!hasPermission.value) return;
 
-    await api.updateUserSettings(
+    await updateSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(push: !pushNoti),
     );
@@ -62,7 +75,7 @@ class SettingsViewController extends GetxController {
   Future toggleMarketingNoti() async {
     HapticFeedback.mediumImpact();
 
-    await api.updateUserSettings(
+    await updateSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(marketing: !marketingNoti),
     );
@@ -71,7 +84,7 @@ class SettingsViewController extends GetxController {
   Future toggleBookmarkNoti() async {
     HapticFeedback.mediumImpact();
 
-    await api.updateUserSettings(
+    await updateSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(bookmark: !bookmarkNoti),
     );
@@ -80,7 +93,7 @@ class SettingsViewController extends GetxController {
   Future toggleCalendarNoti() async {
     HapticFeedback.mediumImpact();
 
-    await api.updateUserSettings(
+    await updateSettings(
       authService.appUser?.autoAddBookmarkToCalendar ?? false,
       settings!.copyWith(calendar: !calendarNoti),
     );
@@ -89,9 +102,6 @@ class SettingsViewController extends GetxController {
   Future toggleAutoAdd() async {
     HapticFeedback.mediumImpact();
 
-    await api.updateUserSettings(
-      !(calendarAutoAdd),
-      settings!,
-    );
+    await updateSettings(!(calendarAutoAdd), settings!);
   }
 }
