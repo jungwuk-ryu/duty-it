@@ -94,6 +94,9 @@ class $AssetsIconsGen {
   AssetGenImage get calendar =>
       const AssetGenImage('assets/icons/calendar.png');
 
+  /// File path: assets/icons/check.png
+  AssetGenImage get check => const AssetGenImage('assets/icons/check.png');
+
   /// File path: assets/icons/close.png
   AssetGenImage get close => const AssetGenImage('assets/icons/close.png');
 
@@ -149,6 +152,7 @@ class $AssetsIconsGen {
     bookmark,
     bookmarkRed,
     calendar,
+    check,
     close,
     filter,
     filterSort,

@@ -6,8 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppNormalButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
+  final Color? color;
 
-  const AppNormalButton({super.key, required this.text, required this.onTap});
+  const AppNormalButton({super.key, required this.text, required this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class AppNormalButton extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 14.h),
         decoration: BoxDecoration(
-          color: AppColors.main,
+          color: color ?? AppColors.main,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
