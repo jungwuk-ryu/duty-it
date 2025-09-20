@@ -63,6 +63,10 @@ class AccountView extends GetView<AccountViewController> {
                       onTap: () => controller.withdraw(),
                       child: AccountViewItemText("회원 탈퇴", color: AppColors.g05),
                     ),
+
+                    //TODO: 테스트 후 제거
+                    SizedBox(height: 16.h),
+                    Obx(() => SelectableText(controller.tempFcmToken.value))
                   ],
                 ),
               ),

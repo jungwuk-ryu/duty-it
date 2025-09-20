@@ -64,7 +64,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   autofocus: true,
                   maxLength: _maxLen,
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9가-힣 ]'))
+                    FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]'))
                   ],
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => onSubmitted(),
