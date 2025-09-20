@@ -3,6 +3,7 @@ import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/account/controllers/account_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -61,6 +62,9 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   controller: editingController,
                   autofocus: true,
                   maxLength: _maxLen,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9가-힣 ]'))
+                  ],
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => onSubmitted(),
                   decoration:
@@ -68,7 +72,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                         hintText: "도라지 감자도리",
                         hintStyle: TextStyle(color: AppColors.g05),
                       ).copyWith(
-                        counterText: '', // 이 줄이 카운터를 숨깁니다
+                        counterText: '',
                       ),
                 ),
               ),
@@ -131,6 +135,11 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
     final AccountViewController controller = Get.find<AccountViewController>();
 
     var newName = editingController.text.trim();
+    if (newName.length < 2 || newName.length > 10) {
+      AppUtils.showSnackBar('닉네임은 2~10자여야 합니다.');
+      return;
+    }
+
     var available = await controller.isNicknameAvailable(newName);
     if (!available) {
       AppUtils.showSnackBar('이 이름은 사용할 수 없어요');
@@ -138,7 +147,11 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
     }
 
     bool result = await controller.setUserName(newName);
-    if (result) Get.back();
+    if (result) {
+      Get.back();
+    } else {
+      AppUtils.showSnackBar('이름을 변경하지 못했어요');
+    }
 
     controller.fetchUser();
   }
