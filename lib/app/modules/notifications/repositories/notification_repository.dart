@@ -38,11 +38,12 @@ class NotificationRepository {
 
       idList.insert(0, noti.id);
       await _saveIdList(idList);
-
-      if (idList.length > itemCountLimit) {
-        await removeNotification(idList.last);
-      }
     });
+
+    List<String> idList = await getIdList();
+    if (idList.length > itemCountLimit) {
+      await removeNotification(idList.last);
+    }
   }
 
   Future<void> removeNotification(String id) async {
