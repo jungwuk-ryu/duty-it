@@ -1,84 +1,78 @@
+import 'dart:convert';
+
 import 'package:duty_it/app/modules/notifications/models/fcm_notification.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:synchronized/synchronized.dart';
 
 class NotificationRepository {
-  static const String _storageName = "notifications";
-  static const String _idListKey = "id_list";
-  static const String _itemKeyPrefix = "noti_";
+  static const String _prefix = "notifications:";
+  static const String _itemKeyPrefix = "${_prefix}noti:";
+  static const String _idListKey = "${_prefix}id_list";
   static const int itemCountLimit = 100;
 
-  late Future<GetStorage> _storage;
-  late Future<List<String>> _idList;
-
-  final Lock _storageLock = Lock();
+  late final SharedPreferencesAsync sp;
+  final Lock _workLock = Lock();
 
   NotificationRepository() {
-    loadFromDisk();
+    sp = SharedPreferencesAsync();
   }
 
-  Future<void> loadFromDisk() async {
-    _storage = _initStorage();
-    _idList = _intiIdList();
-  }
+  Future<List<String>> getIdList() async {
+    List<String>? list = await sp.getStringList(_idListKey);
+    if (list == null) return [];
 
-  Future<GetStorage> _initStorage() async {
-    await GetStorage.init(_storageName);
-    return GetStorage(_storageName);
-  }
-
-  Future<List<String>> _intiIdList() async {
-    var storage = await _storage;
-    if (!storage.hasData(_idListKey)) return [];
-
-    return List<String>.from(storage.read(_idListKey));
+    return list;
   }
 
   Future<void> addNotification(RemoteMessage rm) async {
-    List<String> idList = await _idList;
-    FcmNotification noti = FcmNotification.fromRemoteMessage(rm);
+    await _workLock.synchronized(() async {
+      List<String> idList = await getIdList();
+      FcmNotification noti = FcmNotification.fromRemoteMessage(rm);
 
-    var storage = await _storage;
-    await storage.write(
-      _getItemKey(noti.id),
-      Map<String, dynamic>.from(noti.toJson()),
-    );
+      await sp.setString(
+        _getItemKey(noti.id),
+        json.encode(Map<String, dynamic>.from(noti.toJson())),
+      );
 
-    idList.insert(0, noti.id);
-    await _saveIdList();
+      idList.insert(0, noti.id);
+      await _saveIdList(idList);
+    });
 
+    List<String> idList = await getIdList();
     if (idList.length > itemCountLimit) {
       await removeNotification(idList.last);
     }
   }
 
   Future<void> removeNotification(String id) async {
-    List<String> idList = await _idList;
+    await _workLock.synchronized(() async {
+      List<String> idList = await getIdList();
+      idList.remove(id);
 
-    var storage = await _storage;
-    await storage.remove(_getItemKey(id));
-
-    idList.remove(id);
-    await _saveIdList();
+      await Future.wait([sp.remove(_getItemKey(id)), _saveIdList(idList)]);
+    });
   }
 
   Future<void> readNotification(String id) async {
-    var storage = await _storage;
-    String key = _getItemKey(id);
-    if (!storage.hasData(key)) return;
+    await _workLock.synchronized(() async {
+      String key = _getItemKey(id);
+      if (!await sp.containsKey(key)) return;
 
-    FcmNotification noti = FcmNotification.fromJson(
-      Map<String, dynamic>.from(storage.read(key)),
-    );
-    noti = noti.copyWith(read: true);
+      FcmNotification noti = FcmNotification.fromJson(
+        Map<String, dynamic>.from(
+          json.decode((await sp.getString(key)) as String),
+        ),
+      );
+      noti = noti.copyWith(read: true);
 
-    await storage.write(key, Map<String, dynamic>.from(noti.toJson()));
+      await sp.setString(key, json.encode(noti.toJson()));
+    });
   }
 
   Future<List<FcmNotification>> getNotificationList() async {
-    var idList = await _idList;
+    List<String> idList = await getIdList();
     List<FcmNotification> notiList = [];
 
     for (var id in idList) {
@@ -89,19 +83,14 @@ class NotificationRepository {
     return notiList;
   }
 
-  Future<List<String>> getIdList() async {
-    return List<String>.from(await _idList);
-  }
-
   Future<FcmNotification?> getNotificationById(String id) async {
-    var storage = await _storage;
     String key = _getItemKey(id);
 
-    if (storage.hasData(key)) {
+    String? jsonNoti = await sp.getString(key);
+
+    if (jsonNoti != null) {
       try {
-        FcmNotification noti = FcmNotification.fromJson(
-          Map<String, dynamic>.from(storage.read(key)!),
-        );
+        FcmNotification noti = FcmNotification.fromJson(json.decode(jsonNoti));
         return noti;
       } catch (e, st) {
         FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
@@ -112,19 +101,20 @@ class NotificationRepository {
   }
 
   Future<void> clearList() async {
-    var storage = await _storage;
-    await storage.erase();
-    (await _idList).clear();
+    await _workLock.synchronized(() async {
+      var idList = await getIdList();
+      await Future.wait(
+        idList.map((e) => sp.remove(_getItemKey(e))).toList()
+          ..add(_saveIdList([])),
+      );
+    });
   }
 
   String _getItemKey(String id) {
     return "$_itemKeyPrefix$id";
   }
 
-  Future<void> _saveIdList() async {
-    await _storageLock.synchronized(() async {
-      var storage = await _storage;
-      await storage.write(_idListKey, await _idList);
-    });
+  Future<void> _saveIdList(List<String> idList) async {
+    await sp.setStringList(_idListKey, idList);
   }
 }

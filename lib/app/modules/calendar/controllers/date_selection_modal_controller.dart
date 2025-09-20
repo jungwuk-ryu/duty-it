@@ -5,30 +5,34 @@ import 'package:get/get.dart';
 class DateSelectionModalController extends GetxController {
   CalendarViewController get _calViewController =>
       Get.find<CalendarViewController>();
-  late final DateTime baseDateTime;
-  int selectedItemIndex = 0;
+
+  late final DateTime baseDate;
+  final RxInt _selectedMonth = RxInt(0);
+  final RxInt _selectedYear = RxInt(0);
+  int get selectedMonth => _selectedMonth.value;
+  int get selectedYear => _selectedYear.value;
+  set selectedMonth(int month) => _selectedMonth.value = month;
+  set selectedYear(int year) => _selectedYear.value = year;
 
   @override
   void onInit() {
     super.onInit();
-    baseDateTime = _calViewController.currentDate;
+    baseDate = DateUtils.dateOnly(
+      _calViewController.currentDate,
+    ).copyWith(day: 1);
+    selectedMonth = baseDate.month;
+    selectedYear = baseDate.year;
   }
 
   void closeAndApply() {
     Get.back();
-    
     var pagingController = _calViewController.pageController;
-    pagingController.jumpToPage(
-      ((pagingController.page as int?) ?? CalendarViewController.initPage) +
-          selectedItemIndex,
-    );
-  }
 
-  DateTime getSelectedDateTime() {
-    return getDateTimeByIndex(selectedItemIndex);
-  }
+    var currentPage =
+        (pagingController.page as int?) ?? CalendarViewController.initPage;
+    var newDateTime = DateTime(selectedYear, selectedMonth);
+    var monthDiff = DateUtils.monthDelta(newDateTime, baseDate);
 
-  DateTime getDateTimeByIndex(int index) {
-    return DateUtils.addMonthsToMonthDate(baseDateTime, index);
+    pagingController.jumpToPage(currentPage - monthDiff);
   }
 }

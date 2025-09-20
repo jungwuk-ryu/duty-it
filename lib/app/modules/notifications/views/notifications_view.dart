@@ -10,30 +10,37 @@ class NotificationsView extends GetView<NotificationsViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SimpleAppBar(title: '알림'),
-          Expanded(
-            child: RefreshIndicator.adaptive(
-              child: Obx(
-                () { 
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SimpleAppBar(title: '알림', bottomMargin: 0),
+            Expanded(
+              child: RefreshIndicator.adaptive(
+                child: Obx(() {
                   var list = controller.notificationList;
                   if (list.isEmpty) {
-                    return Center(child: Text("알림 목록이 비어 있습니다", style: TextStyle(fontWeight: FontWeight.w800)));
+                    return Center(
+                      child: Text(
+                        "알림 목록이 비어 있습니다",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF6F6F6F),
+                        ),
+                      ),
+                    );
                   }
-                  
+
                   return ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (_, i) =>
-                      NotificationItem(list[i]),
-                );
-                }
+                    itemCount: list.length,
+                    itemBuilder: (_, i) => NotificationItem(list[i]),
+                  );
+                }),
+                onRefresh: () async => await controller.loadNotificationList(),
               ),
-              onRefresh: () async => await controller.loadNotificationList(),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

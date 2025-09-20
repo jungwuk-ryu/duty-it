@@ -43,8 +43,8 @@ class _LoginButtonState extends State<LoginButton> {
         }
       },
       child: Container(
-        width: double.infinity,
-        height: 45.h,
+        width: 328,
+        height: 45,
         decoration: BoxDecoration(
           //border: Border.all(color: AppColors.g07, width: 3),
           boxShadow: [
@@ -70,7 +70,7 @@ class _LoginButtonState extends State<LoginButton> {
                   height: 20,
                   fit: BoxFit.contain,
                 ),
-                SizedBox(width: 10.w),
+                SizedBox(width: 10),
                 Obx(
                   () => Visibility(
                     visible: isLogining.value,
