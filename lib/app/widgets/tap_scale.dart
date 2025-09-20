@@ -17,7 +17,7 @@ class _TapScaleState extends State<TapScale> {
       behavior: HitTestBehavior.translucent,
       onPointerDown: (_) async {
         setState(() {
-          _scale = 0.99;
+          _scale = 0.98;
         });
         await Future.delayed(Duration(milliseconds: 100));
         setState(() {
