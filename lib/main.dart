@@ -27,16 +27,7 @@ void main() async {
   var dotenvFuture = dotenv.load(fileName: ".env");
 
   /* Firebase init start */
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+  await _initFirebase();
 
   // 권한 요청
   FirebaseMessaging.instance.requestPermission(
@@ -90,9 +81,24 @@ void main() async {
   );
 }
 
+Future<void> _initFirebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+}
+
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _initFirebase();
+  
   final repo = NotificationRepository();
   await repo.addNotification(message);
 }
