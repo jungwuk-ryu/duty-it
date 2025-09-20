@@ -1,6 +1,6 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:duty_it/app/core/constants/app_colors.dart';
 
 class HomeTabButton extends StatelessWidget {
   final bool isSelected;
@@ -16,6 +16,8 @@ class HomeTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Duration animationDuration = Duration(milliseconds: 100);
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: onTap,
@@ -23,22 +25,22 @@ class HomeTabButton extends StatelessWidget {
         width: 148.w,
         child: Column(
           children: [
-            Text(
-              title,
+            AnimatedDefaultTextStyle(
               style: TextStyle(
                 color: isSelected ? AppColors.black : AppColors.g04,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 height: 1.20,
               ),
+              duration: animationDuration,
+              child: Text(title),
             ),
             SizedBox(height: 8.h),
-            SizedBox(
+            AnimatedContainer(
               height: 4.h,
               width: 148.w,
-              child: ColoredBox(
-                color: isSelected ? AppColors.main : Colors.transparent,
-              ),
+              color: isSelected ? AppColors.main : Colors.transparent,
+              duration: animationDuration,
             ),
           ],
         ),
