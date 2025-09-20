@@ -18,7 +18,7 @@ class DateSelectionBottomModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double itemExtent = 50;
-    final double startYear = 2000;
+    final int startYear = 2000;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 13.w),
@@ -72,13 +72,13 @@ class DateSelectionBottomModal extends StatelessWidget {
                           initialIndex: max(
                             controller.baseDate.year - startYear,
                             0,
-                          ),
+                          ).toDouble(),
                           itemSize: itemExtent,
                           onItemFocus: (i) {
-                            controller.selectedYear = startYear + i as int;
+                            controller.selectedYear = startYear + i;
                           },
                           itemBuilder: (context, i) {
-                            final year = startYear + i as int;
+                            final year = startYear + i;
 
                             return SizedBox(
                               height: itemExtent,
