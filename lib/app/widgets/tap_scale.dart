@@ -15,19 +15,11 @@ class _TapScaleState extends State<TapScale> {
   Widget build(BuildContext context) {
     return Listener(
       behavior: HitTestBehavior.translucent,
-      onPointerDown: (_) {
+      onPointerDown: (_) async {
         setState(() {
-          _scale = 0.98;
+          _scale = 0.99;
         });
-      },
-
-      onPointerUp: (_) {
-        setState(() {
-          _scale = 1.0;
-        });
-      },
-
-      onPointerCancel: (_) {
+        await Future.delayed(Duration(milliseconds: 100));
         setState(() {
           _scale = 1.0;
         });
