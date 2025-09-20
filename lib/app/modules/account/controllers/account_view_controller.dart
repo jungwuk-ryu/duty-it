@@ -4,6 +4,7 @@ import 'package:duty_it/app/modules/account/widgets/account_dialog.dart';
 import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,11 +13,16 @@ class AccountViewController extends GetxController {
   AuthService get _authService => Get.find<AuthService>();
   String get providerName => _authService.getLastUsedProvider().displayName;
 
+  //TODO : 테스트 후 제거
+  RxString tempFcmToken = RxString("loading...");
+
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
 
     fetchUser();
+
+    tempFcmToken.value = (await FirebaseMessaging.instance.getToken()) ?? "null";
   }
 
   Future<void> fetchUser() async {
