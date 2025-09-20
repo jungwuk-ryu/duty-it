@@ -30,6 +30,7 @@ class HomeAppBar extends StatelessWidget {
           ),
           Expanded(child: SizedBox()),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             onTap: () {
               controller.openNotificationsPage();
             },
@@ -48,6 +49,7 @@ class HomeAppBar extends StatelessWidget {
           ),
           SizedBox(width: 13),
           GestureDetector(
+            behavior: HitTestBehavior.translucent,
             onTap: () {
               Get.find<MainViewController>().openEndDrawer();
             },
