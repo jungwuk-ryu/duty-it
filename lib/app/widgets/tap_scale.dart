@@ -20,9 +20,11 @@ class _TapScaleState extends State<TapScale> {
           _scale = 0.98;
         });
         await Future.delayed(Duration(milliseconds: 100));
-        setState(() {
-          _scale = 1.0;
-        });
+        if (mounted) {
+          setState(() {
+            _scale = 1.0;
+          });
+        }
       },
       child: AnimatedScale(
         scale: _scale,
