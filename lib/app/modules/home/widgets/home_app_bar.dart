@@ -3,7 +3,6 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 
 class HomeAppBar extends StatelessWidget {
@@ -35,28 +34,36 @@ class HomeAppBar extends StatelessWidget {
               controller.openNotificationsPage();
             },
             child: SizedBox(
-              width: 14,
-              height: 18,
-              child: Obx(
-                () => Image.asset(
-                  controller.hasNewNotification
-                      ? Assets.icons.bellNew.path
-                      : Assets.icons.bell.path,
-                  fit: BoxFit.contain,
+              width: 40,
+              height: 40,
+              child: Center(
+                child: Obx(
+                  () => Image.asset(
+                    controller.hasNewNotification
+                        ? Assets.icons.bellNew.path
+                        : Assets.icons.bell.path,
+                    width: 14,
+                    height: 18,
+                  ),
                 ),
               ),
             ),
           ),
-          SizedBox(width: 13),
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
               Get.find<MainViewController>().openEndDrawer();
             },
-            child: Image.asset(
-              Assets.icons.hamburger.path,
-              width: 18,
-              height: 14,
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Center(
+                child: Image.asset(
+                  Assets.icons.hamburger.path,
+                  width: 18,
+                  height: 14,
+                ),
+              ),
             ),
           ),
         ],
