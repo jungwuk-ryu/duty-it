@@ -22,9 +22,7 @@ class MainView extends GetView<MainViewController> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Obx(
-          () => Column(
-            children: [Expanded(child: pages[controller.currentIndex.value])],
-          ),
+          () => pages[controller.currentIndex.value],
         ),
       ),
       bottomNavigationBar: Obx(
