@@ -1,7 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CalendarViewTitleSection extends StatelessWidget {
   final DateTime dt;
@@ -22,7 +21,7 @@ class CalendarViewTitleSection extends StatelessWidget {
             height: 1.60,
           ),
         ),
-        SizedBox(width: 7.w),
+        SizedBox(width: 7),
         Column(
           children: [
             Row(
@@ -39,14 +38,10 @@ class CalendarViewTitleSection extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 4),
-                Image.asset(
-                  Assets.icons.go.path,
-                  width: 16.r,
-                  height: 16.r,
-                ),
+                Image.asset(Assets.icons.go.path, width: 16, height: 16),
               ],
             ),
-            SizedBox(height: 7.h),
+            SizedBox(height: 7),
           ],
         ),
       ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
@@ -13,7 +13,7 @@ class CustomCalendarEventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.only(bottom: 7.h, left: 16.w, right: 16.w),
+      padding: EdgeInsetsGeometry.only(bottom: 7, left: 16, right: 16),
       child: InkWell(
         onTap: () {
           if (event != null) {
@@ -21,17 +21,19 @@ class CustomCalendarEventCard extends StatelessWidget {
           }
         },
         child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: 48.h),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 7.h),
-          decoration: BoxDecoration(
-            color: event?.color ?? AppColors.g01,
-            borderRadius: BorderRadius.circular(4),
+          constraints: BoxConstraints(minHeight: 48),
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+            decoration: BoxDecoration(
+              color: event?.color ?? AppColors.g01,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: event != null
+                ? _EventMetadataColumn(event!)
+                : _NoEventText(),
           ),
-          child: event != null ? _EventMetadataColumn(event!) : _NoEventText(),
         ),
-      ),
       ),
     );
   }

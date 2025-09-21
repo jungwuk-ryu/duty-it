@@ -4,15 +4,15 @@ import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class SearchFilterViewController extends GetxController {
   SearchFilterService get service => Get.find<SearchFilterService>();
-  
-   final Rx<SearchFilter> _filterRx = SearchFilter().obs;
+
+  final Rx<SearchFilter> _filterRx = SearchFilter().obs;
   SearchFilter get _filter => _filterRx.value;
-  
+
   Host? get selectedHost => _filter.host;
   set selectedHost(Host? v) => _filterRx(_filter.copyWith(host: v));
 
@@ -67,7 +67,7 @@ class SearchFilterViewController extends GetxController {
       context: Get.context!,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => HostSelectionBottomModal(),
     );

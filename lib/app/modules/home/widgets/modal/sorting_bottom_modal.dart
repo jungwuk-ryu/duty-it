@@ -6,7 +6,7 @@ import 'package:duty_it/app/widgets/custom_radio_buttom.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class SortingBottomModal extends StatelessWidget {
@@ -19,11 +19,11 @@ class SortingBottomModal extends StatelessWidget {
     List<EventSortingType> types = EventSortingType.values;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 24.h),
+          SizedBox(height: 24),
           Stack(
             alignment: Alignment.center,
             children: [
@@ -53,14 +53,12 @@ class SortingBottomModal extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 8),
           ...List<Widget>.generate(types.length, (i) {
             EventSortingType type = types[i];
 
             return Padding(
-              padding: EdgeInsetsGeometry.symmetric(
-                vertical: 20.h,
-              ),
+              padding: EdgeInsetsGeometry.symmetric(vertical: 20),
               child: Row(
                 children: [
                   Text(
@@ -87,8 +85,11 @@ class SortingBottomModal extends StatelessWidget {
               ),
             );
           }),
-          AppNormalButton(text: '정렬 적용', onTap: () => controller.applyAndClose()),
-          SizedBox(height: 16.h),
+          AppNormalButton(
+            text: '정렬 적용',
+            onTap: () => controller.applyAndClose(),
+          ),
+          SizedBox(height: 16),
         ],
       ),
     );

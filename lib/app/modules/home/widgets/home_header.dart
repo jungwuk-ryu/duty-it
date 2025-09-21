@@ -7,7 +7,7 @@ import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -22,9 +22,9 @@ class HomeHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20.h),
+          SizedBox(height: 20),
           HomeSearchBar(controller: controller.searchTextEditingController),
-          SizedBox(height: 18.h),
+          SizedBox(height: 18),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -48,7 +48,7 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
 
           Obx(() {
             var service = Get.find<SearchFilterService>();
@@ -63,7 +63,7 @@ class HomeHeader extends StatelessWidget {
                     Get.find<SearchFilterService>().resetFilter(false);
                   },
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: 8),
                 CategoryTag(
                   name: '필터',
                   isSelected: filterApplied,
@@ -88,7 +88,7 @@ class HomeHeader extends StatelessWidget {
             );
           }),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
         ],
       ),
     );

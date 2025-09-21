@@ -6,7 +6,6 @@ import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_control
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_day_header.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class CustomCalendarWeekCell extends StatelessWidget {
@@ -63,7 +62,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 2.h,
+          spacing: 2,
           children: [
             Row(
               children: List.generate(7, (i) {
@@ -79,7 +78,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
               }),
             ),
             SizedBox(
-              height: 16.h,
+              height: 16,
               child: _WeekEventRow(
                 startOfWeek: startOfWeek,
                 endOfWeek: endOfWeek,
@@ -87,7 +86,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 16.h,
+              height: 16,
               child: _WeekEventRow(
                 startOfWeek: startOfWeek,
                 endOfWeek: endOfWeek,
@@ -95,7 +94,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 16.h,
+              height: 16,
               child: _WeekEventLastRow(
                 startOfWeek: startOfWeek,
                 endOfWeek: endOfWeek,
@@ -194,22 +193,22 @@ class _WeekEventRow extends StatelessWidget {
           bool isEnd = !endOfWeek.isBefore(event.endDate);
 
           double widgetWidth = width * (diffDays + 1);
-          if (isStart) widgetWidth -= 2.w;
-          if (isEnd) widgetWidth -= 2.w;
+          if (isStart) widgetWidth -= 2;
+          if (isEnd) widgetWidth -= 2;
 
           children.add(
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              padding: EdgeInsets.symmetric(horizontal: 4),
               margin: EdgeInsets.only(
-                left: isStart ? 2.w : 0,
-                right: isEnd ? 2.w : 0,
+                left: isStart ? 2 : 0,
+                right: isEnd ? 2 : 0,
               ),
               width: widgetWidth,
               decoration: BoxDecoration(
                 color: event.color,
                 borderRadius: BorderRadius.horizontal(
-                  left: Radius.circular(isStart ? 4.r : 0),
-                  right: Radius.circular(isEnd ? 4.r : 0),
+                  left: Radius.circular(isStart ? 4 : 0),
+                  right: Radius.circular(isEnd ? 4 : 0),
                 ),
               ),
               child: Text(

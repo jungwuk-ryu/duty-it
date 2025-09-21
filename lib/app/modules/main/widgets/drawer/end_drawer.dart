@@ -1,6 +1,6 @@
 import 'package:duty_it/app/widgets/custom_divider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_accout_section.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_category_section.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_close_button.dart';
@@ -15,28 +15,28 @@ class EndDrawer extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
-      width: 256.w,
+      width: 256,
 
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 49.h),
+            SizedBox(height: 49),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              padding: EdgeInsets.symmetric(horizontal: 4),
               child: DrawerCloseButton(),
             ),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: DrawerAccoutSection(),
             ),
 
-            SizedBox(height: 38.h),
+            SizedBox(height: 38),
             CustomDivider(),
-            SizedBox(height: 10.h),
+            SizedBox(height: 10),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: DrawerCategorySection(),
             ),
           ],

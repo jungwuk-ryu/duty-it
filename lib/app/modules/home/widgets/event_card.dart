@@ -7,7 +7,7 @@ import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
 import 'package:duty_it/app/widgets/tap_scale.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -20,8 +20,8 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardBorderRadius = BorderRadius.circular(8.r);
-    double cardHeight = 164.h;
+    final cardBorderRadius = BorderRadius.circular(8);
+    double cardHeight = 164;
 
     return TapScale(
       child: GestureDetector(
@@ -35,7 +35,7 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 12.h),
+            SizedBox(height: 12),
             Stack(
               children: [
                 Container(
@@ -106,7 +106,7 @@ class EventCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 16),
             Text(
               event.title,
               style: TextStyle(
@@ -116,7 +116,7 @@ class EventCard extends StatelessWidget {
                 height: 1.20,
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 4),
             Row(
               children: [
                 Expanded(
@@ -127,25 +127,25 @@ class EventCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 8.w),
+                    padding: EdgeInsets.only(left: 8),
                     child: EventMetaItem(name: "주최", value: event.host.name),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 4),
             EventMetaItem(
               name: "일시",
               value:
                   "${AppUtils.formatDateTime(event.startAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.endAt ?? DateTime.now())}",
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 4),
             EventMetaItem(
               name: "모집",
               value:
                   "${AppUtils.formatDateTime(event.recruitmentStartAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.recruitmentEndAt ?? DateTime.now())}",
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 12),
           ],
         ),
       ),
@@ -169,7 +169,7 @@ class EventMetaItem extends StatelessWidget {
             text: name,
             style: TextStyle(fontWeight: FontWeight.w400, color: AppColors.g05),
           ),
-          WidgetSpan(child: SizedBox(width: 8.w)),
+          WidgetSpan(child: SizedBox(width: 8)),
           TextSpan(
             text: value,
             style: TextStyle(

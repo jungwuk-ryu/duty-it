@@ -2,7 +2,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/settings/widgets/toggle_setting_item.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 import '../controllers/settings_view_controller.dart';
@@ -21,16 +21,17 @@ class SettingsView extends GetView<SettingsViewController> {
             children: [
               SimpleAppBar(title: '앱 설정'),
               Padding(
-                padding: EdgeInsetsGeometry.symmetric(horizontal: 16.w),
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 16),
                 child: Column(
-                  spacing: 24.h,
+                  spacing: 24,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Obx(
                       () => ToggleSettingItem(
                         title: '푸시 알림',
                         checked: controller.pushNoti,
-                        onToggleTap: () async => await controller.togglePushNoti(),
+                        onToggleTap: () async =>
+                            await controller.togglePushNoti(),
                       ),
                     ),
                     Obx(
@@ -38,7 +39,8 @@ class SettingsView extends GetView<SettingsViewController> {
                         title: '행사 알림 수신',
                         subtitle: "북마크 해놓은 행사의 모집일정과 행사 시작일을 알려드려요.",
                         checked: controller.bookmarkNoti,
-                        onToggleTap: () async => await controller.toggleBookmarkNoti(),
+                        onToggleTap: () async =>
+                            await controller.toggleBookmarkNoti(),
                         enabled: controller.pushNoti,
                       ),
                     ),
@@ -65,7 +67,8 @@ class SettingsView extends GetView<SettingsViewController> {
                         title: '북마크 - 캘린더 자동 연동',
                         checked: controller.calendarAutoAdd,
                         subtitle: "북마크 설정시, 모집과 행사 일정을 캘린더에 자동으로 등록합니다. ",
-                        onToggleTap: () async => await controller.toggleAutoAdd(),
+                        onToggleTap: () async =>
+                            await controller.toggleAutoAdd(),
                       ),
                     ),
                     SizedBox(height: 40),

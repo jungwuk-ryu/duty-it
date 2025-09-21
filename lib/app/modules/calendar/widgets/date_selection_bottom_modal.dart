@@ -5,7 +5,7 @@ import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_co
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
@@ -21,11 +21,11 @@ class DateSelectionBottomModal extends StatelessWidget {
     final int startYear = 2000;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 13.w),
+      padding: EdgeInsets.symmetric(horizontal: 13),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
           Stack(
             alignment: Alignment.center,
             children: [
@@ -55,7 +55,7 @@ class DateSelectionBottomModal extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 20),
 
           SizedBox(
             height: itemExtent * 3,
@@ -170,9 +170,9 @@ class DateSelectionBottomModal extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 30),
           AppNormalButton(text: '이동', onTap: controller.closeAndApply),
-          SizedBox(height: 24.h),
+          SizedBox(height: 24),
         ],
       ),
     );

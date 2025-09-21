@@ -1,6 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SearchFilterSectionTitle extends StatelessWidget {
   final String text;
@@ -10,7 +9,7 @@ class SearchFilterSectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
+      padding: EdgeInsets.only(bottom: 8),
       child: Text(
         text,
         style: TextStyle(

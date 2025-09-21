@@ -3,7 +3,7 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class EventBookmarkButton extends StatelessWidget {
@@ -13,7 +13,7 @@ class EventBookmarkButton extends StatelessWidget {
   bool get isBookmarked => event.isBookmarked;
   HomeViewController get _controller => Get.find<HomeViewController>();
 
-   const EventBookmarkButton({super.key, required this.eventRx});
+  const EventBookmarkButton({super.key, required this.eventRx});
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +23,15 @@ class EventBookmarkButton extends StatelessWidget {
         HapticFeedback.mediumImpact();
         await _controller.onBookmarkButtonClick(eventRx);
       },
-      child: Obx(() => Image.asset(
-        isBookmarked
-            ? Assets.icons.bookmarkRed.path
-            : Assets.icons.bookmark.path,
-        width: 40.r,
-        height: 40.r,
-      )),
+      child: Obx(
+        () => Image.asset(
+          isBookmarked
+              ? Assets.icons.bookmarkRed.path
+              : Assets.icons.bookmark.path,
+          width: 40,
+          height: 40,
+        ),
+      ),
     );
   }
 }

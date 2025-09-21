@@ -4,7 +4,7 @@ import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_host_section.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 import '../controllers/search_filter_view_controller.dart';
@@ -22,9 +22,9 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
             SearchFilterAppBar(),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-                  spacing: 24.h,
+                  spacing: 24,
                   children: [
                     SearchFilterCategorySection(),
                     SearchFilterHostSection(),
@@ -34,7 +34,7 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+              padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
               child: AppNormalButton(
                 text: '필터 적용',
                 onTap: controller.onApplyButtonClicked,

@@ -4,7 +4,7 @@ import 'package:duty_it/app/modules/account/controllers/account_view_controller.
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class AccountBottomModal extends StatefulWidget {
@@ -40,11 +40,16 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 17.h, left: 17.w, right: 17.w, bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.only(
+        top: 17,
+        left: 17,
+        right: 17,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
           Text(
             "닉네임 수정",
             style: TextStyle(
@@ -54,7 +59,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
               color: AppColors.black,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -64,20 +69,19 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   autofocus: true,
                   maxLength: _maxLen,
                   inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]'))
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'[A-Za-z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]'),
+                    ),
                   ],
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => onSubmitted(),
-                  decoration:
-                      InputDecoration.collapsed(
-                        hintText: "도라지 감자도리",
-                        hintStyle: TextStyle(color: AppColors.g05),
-                      ).copyWith(
-                        counterText: '',
-                      ),
+                  decoration: InputDecoration.collapsed(
+                    hintText: "도라지 감자도리",
+                    hintStyle: TextStyle(color: AppColors.g05),
+                  ).copyWith(counterText: ''),
                 ),
               ),
-              SizedBox(width: 5.w),
+              SizedBox(width: 5),
               Text(
                 "$_txtLen/$_maxLen",
                 style: TextStyle(
@@ -96,19 +100,19 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                 },
                 child: Image.asset(
                   Assets.icons.textdelete.path,
-                  width: 16.r,
-                  height: 16.r,
+                  width: 16,
+                  height: 16,
                 ),
               ),
             ],
           ),
           SizedBox(
-            height: 1.h,
+            height: 1,
             width: double.infinity,
             child: ColoredBox(color: AppColors.g05),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
           Text(
             "닉네임은 2~10자의 한글·영문·숫자만 가능하며, 변경 시 되돌릴 수 없습니다",
             style: TextStyle(
@@ -118,7 +122,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
               height: 1.20,
             ),
           ),
-          SizedBox(height: 40.h),
+          SizedBox(height: 40),
         ],
       ),
     );

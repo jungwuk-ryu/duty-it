@@ -2,7 +2,7 @@ import 'package:duty_it/app/modules/search_filter/widgets/search_filter_section_
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_section.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class SearchFilterEndedEventSection extends SearchFilterSection {
@@ -18,7 +18,7 @@ class SearchFilterEndedEventSection extends SearchFilterSection {
           bool showEnded = controller.showEnded;
 
           return Row(
-            spacing: 8.w,
+            spacing: 8,
             children: [
               CategoryTag(
                 name: "안 보기",

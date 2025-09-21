@@ -5,7 +5,7 @@ import 'package:duty_it/app/modules/notifications/repositories/notification_repo
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class AccountViewController extends GetxController {
@@ -32,7 +32,7 @@ class AccountViewController extends GetxController {
       context: Get.context!,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => AccountBottomModal(),
     );

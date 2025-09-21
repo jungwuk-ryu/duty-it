@@ -1,7 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryTag extends StatelessWidget {
   final String? imageAsset;
@@ -25,21 +24,18 @@ class CategoryTag extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: 32.h),
+        constraints: BoxConstraints(minHeight: 32),
         child: Container(
           decoration: BoxDecoration(
             color: isSelected ? AppColors.main : AppColors.white,
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(16),
             border: BoxBorder.all(
               width: 1,
               color: isSelected ? AppColors.transparent : AppColors.g04,
             ),
           ),
           child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(
-              horizontal: 16.w,
-              vertical: 6.h,
-            ),
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 6),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -51,11 +47,11 @@ class CategoryTag extends StatelessWidget {
                     children: [
                       Image.asset(
                         imageAsset ?? "",
-                        width: 16.r,
-                        height: 16.r,
+                        width: 16,
+                        height: 16,
                         color: imageColor,
                       ),
-                      SizedBox(width: 4.w),
+                      SizedBox(width: 4),
                     ],
                   ),
                 ),

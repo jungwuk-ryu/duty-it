@@ -4,7 +4,7 @@ import 'package:duty_it/app/modules/account/widgets/account_view_item_title.dart
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 import '../controllers/account_view_controller.dart';
@@ -22,12 +22,12 @@ class AccountView extends GetView<AccountViewController> {
             children: [
               SimpleAppBar(title: '계정 설정'),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AccountViewItemTitle("닉네임"),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 8),
                     Row(
                       children: [
                         Obx(
@@ -37,27 +37,27 @@ class AccountView extends GetView<AccountViewController> {
                           onTap: () => controller.onUserNameEditButtonClicked(),
                           child: Image.asset(
                             Assets.icons.pen.path,
-                            width: 24.w,
-                            height: 24.h,
+                            width: 24,
+                            height: 24,
                           ),
                         ),
                       ],
                     ),
 
-                    SizedBox(height: 42.h),
+                    SizedBox(height: 42),
 
                     AccountViewItemTitle("연결된 ${controller.providerName} 계정"),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 8),
                     Obx(() => AccountViewItemText(controller.getAccountId())),
 
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 32),
                     GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () => controller.logout(),
                       child: AccountViewItemText("로그아웃", color: AppColors.g05),
                     ),
 
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 16),
                     GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () => controller.withdraw(),

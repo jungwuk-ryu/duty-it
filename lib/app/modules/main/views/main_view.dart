@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
@@ -38,8 +37,8 @@ class MainView extends GetView<MainViewController> {
             BottomNavigationBarItem(
               icon: Image.asset(
                 Assets.icons.paper.path,
-                width: 20.r,
-                height: 20.r,
+                width: 20,
+                height: 20,
                 color: controller.currentIndex.value == 0
                     ? AppColors.black
                     : AppColors.g04,
@@ -49,8 +48,8 @@ class MainView extends GetView<MainViewController> {
             BottomNavigationBarItem(
               icon: Image.asset(
                 Assets.icons.calendar.path,
-                width: 20.r,
-                height: 20.r,
+                width: 20,
+                height: 20,
                 color: controller.currentIndex.value == 1
                     ? AppColors.black
                     : AppColors.g04,

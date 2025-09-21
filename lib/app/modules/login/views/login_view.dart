@@ -3,7 +3,7 @@ import 'package:duty_it/app/modules/splash/views/splash_view.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 import '../controllers/login_view_controller.dart';
@@ -15,7 +15,7 @@ class LoginView extends GetView<LoginViewController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 50.h, horizontal: 16.w),
+        padding: EdgeInsets.symmetric(vertical: 50, horizontal: 16),
         child: SizedBox(
           width: double.infinity,
           child: Column(
@@ -31,7 +31,7 @@ class LoginView extends GetView<LoginViewController> {
               ),
               Spacer(),
               Column(
-                spacing: 16.h,
+                spacing: 16,
                 children: [
                   LoginButton(
                     iconPath: Assets.icons.kakao.path,

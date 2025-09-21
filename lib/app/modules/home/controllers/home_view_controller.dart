@@ -18,7 +18,7 @@ import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:synchronized/synchronized.dart';
@@ -182,7 +182,7 @@ class HomeViewController extends GetxController {
       context: Get.context!,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => SortingBottomModal(),
     ).whenComplete(() => Get.delete<SortingModalController>());
@@ -190,18 +190,23 @@ class HomeViewController extends GetxController {
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {
     var appSettings = Get.find<AppSettingsService>();
-    if (!eventRx.value.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
-      Get.put<BookmarkModalController>(BookmarkModalController(eventRx: eventRx));
+    if (!eventRx.value.isBookmarked &&
+        !appSettings.dontShowAutoAddModal.value) {
+      Get.put<BookmarkModalController>(
+        BookmarkModalController(eventRx: eventRx),
+      );
       showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
         builder: (_) => BookmarkBottomModal(),
       ).whenComplete(() => Get.delete<BookmarkModalController>());
     } else {
-      eventRx.value = eventRx.value.copyWith(isBookmarked: await bookmark(eventRx.value));
+      eventRx.value = eventRx.value.copyWith(
+        isBookmarked: await bookmark(eventRx.value),
+      );
     }
   }
 

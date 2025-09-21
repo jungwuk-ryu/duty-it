@@ -2,7 +2,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/widgets/custom_divider.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class SimpleAppBar extends StatelessWidget {
@@ -10,22 +10,27 @@ class SimpleAppBar extends StatelessWidget {
   final List<Widget>? endChildren;
   final double bottomMargin;
 
-  const SimpleAppBar({super.key, required this.title, this.endChildren, this.bottomMargin = 16});
+  const SimpleAppBar({
+    super.key,
+    required this.title,
+    this.endChildren,
+    this.bottomMargin = 16,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 25.h),
+        SizedBox(height: 25),
         Row(
           children: [
             GestureDetector(
               onTap: () => Get.back(),
               child: Image.asset(
                 Assets.icons.backLeft.path,
-                width: 40.r,
-                height: 40.h,
+                width: 40,
+                height: 40,
               ),
             ),
             Text(
@@ -46,9 +51,9 @@ class SimpleAppBar extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: 8),
         CustomDivider(),
-        SizedBox(height: bottomMargin.h),
+        SizedBox(height: bottomMargin),
       ],
     );
   }
