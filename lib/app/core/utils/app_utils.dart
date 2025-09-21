@@ -32,7 +32,7 @@ class AppUtils {
 
   static String weekDay2Text(int weekDay) {
     final List<String> texts = ['월', '화', '수', '목', '금', '토', '일'];
-    return texts[weekDay % 7];
+    return texts[weekDay - 1];
   }
 
   static bool isSameDay(DateTime dt1, DateTime dt2) {
