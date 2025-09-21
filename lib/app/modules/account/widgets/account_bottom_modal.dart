@@ -143,16 +143,16 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
 
     var available = await controller.isNicknameAvailable(newName);
     if (!available) {
-      AppUtils.showSnackBar('이 이름은 사용할 수 없어요');
+      AppUtils.showSnackBar('이 닉네임은 사용할 수 없어요');
       return;
     }
 
     bool result = await controller.setUserName(newName);
     if (result) {
       Get.back();
-      AppUtils.showSnackBar('이름이 변경되었어요');
+      AppUtils.showSnackBar('닉네임이 변경되었어요');
     } else {
-      AppUtils.showSnackBar('이름을 변경하지 못했어요');
+      AppUtils.showSnackBar('닉네임을 변경하지 못했어요');
     }
 
     controller.fetchUser();
