@@ -1,0 +1,96 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
+import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
+import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
+import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:duty_it/app/widgets/category_tag.dart';
+import 'package:duty_it/gen/assets.gen.dart';
+import 'package:flutter/widgets.dart';
+
+import 'package:get/get.dart';
+
+class HomeHeader extends StatelessWidget {
+  final HomeViewController controller;
+
+  const HomeHeader({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: AppColors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          HomeSearchBar(controller: controller.searchTextEditingController),
+          SizedBox(height: 18),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Obx(() {
+                const HomeTab tab = HomeTab.event;
+                return HomeTabButton(
+                  isSelected: controller.selectedTab == tab,
+                  onTap: () => controller.selectedTab = tab,
+                  title: '행사 리스트',
+                );
+              }),
+              Obx(() {
+                const HomeTab tab = HomeTab.bookmark;
+                return HomeTabButton(
+                  isSelected: controller.selectedTab == tab,
+                  onTap: () => controller.selectedTab = tab,
+                  title: '북마크',
+                );
+              }),
+            ],
+          ),
+
+          SizedBox(height: 16),
+
+          Obx(() {
+            var service = Get.find<SearchFilterService>();
+            bool filterApplied = service.hasFilterChanges();
+
+            return Row(
+              children: [
+                CategoryTag(
+                  name: '전체',
+                  isSelected: !filterApplied,
+                  onTap: () {
+                    Get.find<SearchFilterService>().resetFilter(false);
+                  },
+                ),
+                SizedBox(width: 8),
+                CategoryTag(
+                  name: '필터',
+                  isSelected: filterApplied,
+                  imageAsset: Assets.icons.filter.path,
+                  imageColor: filterApplied ? AppColors.white : null,
+                  onTap: () {
+                    Get.toNamed(Routes.SEARCH_FILTER);
+                  },
+                ),
+                Expanded(child: SizedBox()),
+                Obx(
+                  () => CategoryTag(
+                    name: controller.sortingType.shortName,
+                    isSelected: false,
+                    imageAsset: Assets.icons.filterSort.path,
+                    onTap: () {
+                      controller.showSortingBottomModal();
+                    },
+                  ),
+                ),
+              ],
+            );
+          }),
+
+          SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
