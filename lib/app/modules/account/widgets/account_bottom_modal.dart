@@ -150,6 +150,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
     bool result = await controller.setUserName(newName);
     if (result) {
       Get.back();
+      AppUtils.showSnackBar('이름이 변경되었어요');
     } else {
       AppUtils.showSnackBar('이름을 변경하지 못했어요');
     }
