@@ -8,7 +8,7 @@ import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -48,7 +48,7 @@ class CalendarViewController extends GetxController {
       context: Get.context!,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => DateSelectionBottomModal(),
     ).whenComplete(() => Get.delete<DateSelectionModalController>());
@@ -62,7 +62,10 @@ class CalendarViewController extends GetxController {
     try {
       var storage = await _cacheStorageFuture;
       var cache = storage.read(_dateTimeToCacheKey(date)) ?? [];
-      var events = List<Event>.generate(cache.length, (i) => Event.fromJson(cache[i]));
+      var events = List<Event>.generate(
+        cache.length,
+        (i) => Event.fromJson(cache[i]),
+      );
 
       yield events2CalendarEvents(events);
     } catch (e, st) {
@@ -87,7 +90,10 @@ class CalendarViewController extends GetxController {
     List<Event> events = reqSuccess.data;
 
     var storage = await _cacheStorageFuture;
-    storage.write(_dateTimeToCacheKey(date), List.generate(events.length, (i) => events[i].toJson()));
+    storage.write(
+      _dateTimeToCacheKey(date),
+      List.generate(events.length, (i) => events[i].toJson()),
+    );
 
     yield events2CalendarEvents(events);
   }

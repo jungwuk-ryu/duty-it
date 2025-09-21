@@ -2,7 +2,7 @@ import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_control
 import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 import '../controllers/calendar_view_controller.dart';
@@ -16,23 +16,23 @@ class CalendarView extends GetView<CalendarViewController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 15.h),
+        SizedBox(height: 15),
         Padding(
-          padding: EdgeInsetsGeometry.only(left: 16.w),
+          padding: EdgeInsetsGeometry.only(left: 16),
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () => controller.showDateSelectionBottomModal(),
             child: Obx(
-            () => CalendarViewTitleSection(dt: controller.currentDate),
-          ),
+              () => CalendarViewTitleSection(dt: controller.currentDate),
+            ),
           ),
         ),
         Container(
           width: double.infinity,
-          height: 8.h,
+          height: 8,
           decoration: BoxDecoration(color: const Color(0xFFEEEEEE)),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: 16),
         Expanded(
           child: PageView.builder(
             controller: controller.pageController,
@@ -43,7 +43,9 @@ class CalendarView extends GetView<CalendarViewController> {
               );
             },
             itemBuilder: (_, i) {
-              DateTime month = now.copyWith(month: now.month + i - CalendarViewController.initPage);
+              DateTime month = now.copyWith(
+                month: now.month + i - CalendarViewController.initPage,
+              );
               var calendarController = CustomCalendarController(month);
 
               _loadCalendarEvents(month, calendarController);
@@ -59,7 +61,10 @@ class CalendarView extends GetView<CalendarViewController> {
     );
   }
 
-  Future _loadCalendarEvents(DateTime date, CustomCalendarController calController) async {
+  Future _loadCalendarEvents(
+    DateTime date,
+    CustomCalendarController calController,
+  ) async {
     await for (var events in controller.getCalendarEvents(date)) {
       calController.events = events;
     }

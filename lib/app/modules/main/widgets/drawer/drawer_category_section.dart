@@ -1,6 +1,6 @@
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -22,12 +22,22 @@ class DrawerCategorySection extends StatelessWidget {
             height: 1.60,
           ),
         ),
-        SizedBox(height: 16.h),
-        _PageItemButton(title: "앱 설정", onTap: () {Get.toNamed(Routes.SETTINGS);}),
-        SizedBox(height: 16.h),
-        _PageItemButton(title: "행사 등록 요청", onTap: () async {
-          launchUrlString('https://docs.google.com/forms/d/e/1FAIpQLSdqCHTNlfXnDm7gYuLtnx-LGxKJhJGvPCdiZ5Ui4QkAmeEdxw/viewform');
-        }),
+        SizedBox(height: 16),
+        _PageItemButton(
+          title: "앱 설정",
+          onTap: () {
+            Get.toNamed(Routes.SETTINGS);
+          },
+        ),
+        SizedBox(height: 16),
+        _PageItemButton(
+          title: "행사 등록 요청",
+          onTap: () async {
+            launchUrlString(
+              'https://docs.google.com/forms/d/e/1FAIpQLSdqCHTNlfXnDm7gYuLtnx-LGxKJhJGvPCdiZ5Ui4QkAmeEdxw/viewform',
+            );
+          },
+        ),
       ],
     );
   }

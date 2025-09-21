@@ -3,7 +3,6 @@ import 'package:duty_it/app/modules/home/controllers/bookmark_modal_controller.d
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class BookmarkBottomModal extends StatelessWidget {
@@ -14,11 +13,11 @@ class BookmarkBottomModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 16.h),
+          SizedBox(height: 16),
           Stack(
             children: [
               Align(

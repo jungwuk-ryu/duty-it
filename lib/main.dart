@@ -12,7 +12,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_auth.dart';
 
@@ -30,12 +29,16 @@ void main() async {
   await _initFirebase();
 
   // 권한 요청
-  FirebaseMessaging.instance.requestPermission(
-    alert: true, badge: true, sound: true,
-  ).then((v) => 
-  FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true, badge: true, sound: true,
-  ));
+  FirebaseMessaging.instance
+      .requestPermission(alert: true, badge: true, sound: true)
+      .then(
+        (v) => FirebaseMessaging.instance
+            .setForegroundNotificationPresentationOptions(
+              alert: true,
+              badge: true,
+              sound: true,
+            ),
+      );
 
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   handleFirebaseForegroundMessages(FirebaseMessaging.onMessage);
@@ -54,29 +57,29 @@ void main() async {
   Get.put(apiClient);
 
   runApp(
-    ScreenUtilInit(
-      designSize: Size(360, 760),
-      child: GetMaterialApp(
-        theme: ThemeData(
-          fontFamily: FontFamily.pretendard,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: AppColors.main,
-            brightness: Brightness.light,
-            background: AppColors.main,
-          ).copyWith(surface: Colors.white, background: Colors.white),
-          primaryColor: AppColors.main,
-          bottomSheetTheme: BottomSheetThemeData(backgroundColor: AppColors.white),
-          drawerTheme: DrawerThemeData(backgroundColor: AppColors.white)
+    GetMaterialApp(
+      useInheritedMediaQuery: true,
+      theme: ThemeData(
+        fontFamily: FontFamily.pretendard,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.main,
+          brightness: Brightness.light,
+          background: AppColors.main,
+        ).copyWith(surface: Colors.white, background: Colors.white),
+        primaryColor: AppColors.main,
+        bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: AppColors.white,
         ),
-        debugShowCheckedModeBanner: false,
-        title: "듀잇 - Du it!",
-        initialRoute: AppPages.INITIAL,
-        initialBinding: InitialBindings(),
-        getPages: AppPages.routes,
-        navigatorObservers: [
-          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-        ],
+        drawerTheme: DrawerThemeData(backgroundColor: AppColors.white),
       ),
+      debugShowCheckedModeBanner: false,
+      title: "듀잇 - Du it!",
+      initialRoute: AppPages.INITIAL,
+      initialBinding: InitialBindings(),
+      getPages: AppPages.routes,
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+      ],
     ),
   );
 }
@@ -98,12 +101,14 @@ Future<void> _initFirebase() async {
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   WidgetsFlutterBinding.ensureInitialized();
   await _initFirebase();
-  
+
   final repo = NotificationRepository();
   await repo.addNotification(message);
 }
 
-Future<void> handleFirebaseForegroundMessages(Stream<RemoteMessage> stream) async {
+Future<void> handleFirebaseForegroundMessages(
+  Stream<RemoteMessage> stream,
+) async {
   await for (var message in stream) {
     if (!Get.isRegistered<NotificationRepository>()) return;
     await Get.find<NotificationRepository>().addNotification(message);

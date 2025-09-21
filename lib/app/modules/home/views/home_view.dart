@@ -5,7 +5,7 @@ import 'package:duty_it/app/modules/home/widgets/home_header.dart';
 import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.dart';
 import 'package:duty_it/app/modules/home/widgets/no_search_item_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:persistent_header_adaptive/persistent_header_adaptive.dart';
@@ -16,7 +16,7 @@ class HomeView extends GetView<HomeViewController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -49,7 +49,7 @@ class HomeView extends GetView<HomeViewController> {
                   }
 
                   return NoSearchItemIndicator();
-                }
+                },
               ),
             );
           }),

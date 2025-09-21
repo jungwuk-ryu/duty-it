@@ -3,7 +3,7 @@ import 'package:duty_it/app/modules/search_filter/widgets/search_filter_section_
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_section.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class SearchFilterHostSection extends SearchFilterSection {
@@ -17,12 +17,7 @@ class SearchFilterHostSection extends SearchFilterSection {
         SearchFilterSectionTitle("주최"),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.only(
-            top: 11.h,
-            bottom: 11.h,
-            left: 16.w,
-            right: 8.w,
-          ),
+          padding: EdgeInsets.only(top: 11, bottom: 11, left: 16, right: 8),
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               side: BorderSide(width: 1, color: AppColors.g04),
@@ -65,7 +60,7 @@ class SearchFilterHostSection extends SearchFilterSection {
                       ? Assets.icons.go.path
                       : Assets.icons.textdelete.path;
 
-                  return Image.asset(imgPath, width: 12.r, height: 12.r);
+                  return Image.asset(imgPath, width: 12, height: 12);
                 }),
               ],
             ),

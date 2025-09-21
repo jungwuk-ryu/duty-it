@@ -1,7 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeSearchBar extends StatefulWidget {
   final TextEditingController controller;
@@ -16,8 +15,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 360.w,
-      height: 40.h,
+      height: 40,
       decoration: BoxDecoration(
         color: AppColors.g02,
         borderRadius: BorderRadius.circular(8),
@@ -29,8 +27,8 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
             SizedBox(width: 16),
             Image.asset(
               Assets.icons.search.path,
-              height: 16.r,
-              width: 16.r,
+              height: 16,
+              width: 16,
               color: Color(0xff878898),
             ),
             SizedBox(width: 8),
@@ -64,8 +62,8 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                   },
                   child: Image.asset(
                     Assets.icons.textdelete.path,
-                    width: 16.r,
-                    height: 16.r,
+                    width: 16,
+                    height: 16,
                   ),
                 ),
               ),

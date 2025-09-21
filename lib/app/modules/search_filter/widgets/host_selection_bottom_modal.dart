@@ -3,7 +3,7 @@ import 'package:duty_it/app/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class HostSelectionBottomModal extends StatefulWidget {
@@ -41,9 +41,12 @@ class _SearchFilterHostSelectionBottomModal
       ),
       duration: Duration(milliseconds: 200),
       child: SizedBox(
-        height: 420.h,
+        height: 420,
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w).copyWith(bottom: 0),
+          padding: EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 16,
+          ).copyWith(bottom: 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -56,24 +59,24 @@ class _SearchFilterHostSelectionBottomModal
                   color: AppColors.black,
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 8),
               Container(
-                width: 328.w,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                width: 328,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppColors.g02,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
                       Assets.icons.search.path,
-                      width: 12.r,
-                      height: 12.r,
+                      width: 12,
+                      height: 12,
                     ),
 
-                    SizedBox(width: 8.w),
+                    SizedBox(width: 8),
 
                     Expanded(
                       child: Center(
@@ -112,15 +115,15 @@ class _SearchFilterHostSelectionBottomModal
                         },
                         child: Image.asset(
                           Assets.icons.textdelete.path,
-                          width: 16.r,
-                          height: 16.r,
+                          width: 16,
+                          height: 16,
                         ),
                       ),
                   ],
                 ),
               ),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               Text(
                 '검색 결과',
                 style: TextStyle(
@@ -131,7 +134,7 @@ class _SearchFilterHostSelectionBottomModal
                 ),
               ),
 
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               Expanded(
                 child: Obx(() {
                   List<Host> hosts = controller.filteredHosts;
@@ -179,7 +182,7 @@ class _HostItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 15.h, left: 1, top: 1),
+      padding: EdgeInsets.only(bottom: 15, left: 1, top: 1),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => controller.onHostSelect(host),
@@ -187,8 +190,8 @@ class _HostItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 40.r,
-              height: 40.r,
+              width: 40,
+              height: 40,
               decoration: ShapeDecoration(
                 color: const Color(0xFFF5F5F5),
                 shape: OvalBorder(
@@ -200,7 +203,7 @@ class _HostItem extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: 16.w),
+            SizedBox(width: 16),
             Text(
               host.name,
               style: TextStyle(

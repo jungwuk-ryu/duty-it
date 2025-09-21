@@ -28,8 +28,7 @@ class DateSelectionModalController extends GetxController {
     Get.back();
     var pagingController = _calViewController.pageController;
 
-    var currentPage =
-        (pagingController.page as int?) ?? CalendarViewController.initPage;
+    var currentPage = pagingController.page?.round() ?? CalendarViewController.initPage;
     var newDateTime = DateTime(selectedYear, selectedMonth);
     var monthDiff = DateUtils.monthDelta(newDateTime, baseDate);
 

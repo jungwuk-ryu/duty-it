@@ -3,7 +3,7 @@ import 'package:duty_it/app/modules/search_filter/widgets/search_filter_section_
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_section.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class SearchFilterCategorySection extends SearchFilterSection {
@@ -18,13 +18,13 @@ class SearchFilterCategorySection extends SearchFilterSection {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SearchFilterSectionTitle("카테고리"),
-            SizedBox(width: 8.w),
+            SizedBox(width: 8),
             SearchFilterSectionSubtitle('중복 선택 가능'),
           ],
         ),
         Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
+          spacing: 8,
+          runSpacing: 8,
           children: [
             Obx(
               () => IntrinsicWidth(

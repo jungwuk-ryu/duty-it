@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 
@@ -11,9 +11,9 @@ class AppUtils {
       GetSnackBar(
         duration: const Duration(seconds: 2),
         backgroundColor: AppColors.g07,
-        borderRadius: 8.r,
-        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        borderRadius: 8,
+        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         snackPosition: SnackPosition.BOTTOM,
         messageText: Center(
           child: Text(

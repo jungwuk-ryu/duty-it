@@ -3,7 +3,7 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get.dart';
 
 class HomeAppBar extends StatelessWidget {
@@ -14,7 +14,7 @@ class HomeAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 20.h),
+      padding: EdgeInsets.only(top: 20),
       child: Row(
         children: [
           Image.asset(Assets.icons.logo.path, width: 16, height: 16),

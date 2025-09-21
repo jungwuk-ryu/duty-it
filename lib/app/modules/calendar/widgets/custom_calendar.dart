@@ -5,7 +5,7 @@ import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_event_card.
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_header_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_week_cell.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class CustomCalendar extends StatelessWidget {
@@ -28,18 +28,18 @@ class CustomCalendar extends StatelessWidget {
         SliverList(
           delegate: SliverChildListDelegate([
             CustomCalendarHeaderSection(),
-            SizedBox(height: 8.h),
+            SizedBox(height: 8),
             ...List.generate(5, (i) {
               final DateTime cDt = startOfMonth.add(Duration(days: 7 * i));
               if (cDt.month != date.month) return SizedBox.shrink();
               return CustomCalendarWeekCell(
-                  date: cDt,
-                  events: controller.events,
-                  controller: controller,
-                );
+                date: cDt,
+                events: controller.events,
+                controller: controller,
+              );
             }),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Obx(() {
                 DateTime selectedDate = controller.currentDateTime;
                 return Text(
@@ -53,7 +53,7 @@ class CustomCalendar extends StatelessWidget {
                 );
               }),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 4),
           ]),
         ),
         Obx(() {

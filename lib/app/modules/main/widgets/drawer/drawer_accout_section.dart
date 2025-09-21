@@ -1,6 +1,6 @@
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_account_button.dart';
 import 'package:get/get.dart';
@@ -15,7 +15,7 @@ class DrawerAccoutSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 8.h),
+        SizedBox(height: 8),
         Text(
           "계정",
           style: TextStyle(
@@ -28,15 +28,17 @@ class DrawerAccoutSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Obx(() => Text(
-              controller.getUserName(),
-              style: TextStyle(
-                color: AppColors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                height: 1.60,
+            Obx(
+              () => Text(
+                controller.getUserName(),
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  height: 1.60,
+                ),
               ),
-            )),
+            ),
             DrawerAccountButton(),
           ],
         ),
