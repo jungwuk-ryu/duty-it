@@ -18,14 +18,13 @@ import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:synchronized/synchronized.dart';
 
 enum HomeTab { event, bookmark }
 
-class HomeViewController extends GetxController {
+class HomeViewController extends GetxController with WidgetsBindingObserver {
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
 
@@ -48,6 +47,11 @@ class HomeViewController extends GetxController {
 
   final RxBool _hasNewNotification = RxBool(false);
   bool get hasNewNotification => _hasNewNotification.value;
+
+  WidgetsBinding get binding => WidgetsBinding.instance;
+  bool get isForeground => binding.lifecycleState == AppLifecycleState.resumed;
+
+  Timer? _newNotiTimer;
 
   @override
   void onInit() {
@@ -79,7 +83,29 @@ class HomeViewController extends GetxController {
     );
 
     checkNewNotification();
-    Timer.periodic(Duration(seconds: 10), (_) => checkNewNotification());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (isForeground) {
+      _startNewNotiTimer();
+    } else {
+      _stopNewNotiTimer();
+    }
+  }
+
+  void _startNewNotiTimer() {
+    _stopNewNotiTimer();
+    _newNotiTimer = Timer.periodic(
+      Duration(seconds: 10),
+      (_) => checkNewNotification(),
+    );
+  }
+
+  void _stopNewNotiTimer() {
+    _newNotiTimer?.cancel();
   }
 
   Future<void> checkNewNotification() async {
