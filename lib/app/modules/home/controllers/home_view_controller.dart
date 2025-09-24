@@ -83,6 +83,17 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
     );
 
     checkNewNotification();
+    binding.addObserver(this);
+    if (isForeground) {
+      _startNewNotiTimer();
+    }
+  }
+
+  @override
+  void onClose() {
+    _stopNewNotiTimer();
+    binding.removeObserver(this);
+    super.onClose();
   }
 
   @override
