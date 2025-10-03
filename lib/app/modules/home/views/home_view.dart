@@ -42,6 +42,7 @@ class HomeView extends GetView<HomeViewController> {
               fetchNextPage: controller.fetchNextPage,
               builderDelegate: PagedChildBuilderDelegate<EventCard>(
                 itemBuilder: (context, item, index) => item,
+                newPageProgressIndicatorBuilder: (_) => CircularProgressIndicator.adaptive(),
                 noItemsFoundIndicatorBuilder: (_) {
                   HomeTab tab = controller.selectedTab;
                   if (tab == HomeTab.bookmark) {
