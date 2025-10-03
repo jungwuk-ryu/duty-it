@@ -122,7 +122,7 @@ class _EventCardImageSection extends StatelessWidget {
                   ),
                   image: DecorationImage(
                     image: imageProvider,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fitWidth,
                     alignment: Alignment.center,
                   ),
                 ),
