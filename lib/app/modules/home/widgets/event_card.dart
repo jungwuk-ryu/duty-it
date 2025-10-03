@@ -238,16 +238,51 @@ class _EventCardMetaSection extends StatelessWidget {
         SizedBox(height: 4),
         _EventMetaItem(
           name: "일시",
-          value:
-              "${AppUtils.formatDateTime(event.startAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.endAt ?? DateTime.now())}",
+          value: _formatPeriod(event.startAt, event.endAt),
         ),
-        SizedBox(height: 4),
-        _EventMetaItem(
-          name: "모집",
-          value:
-              "${AppUtils.formatDateTime(event.recruitmentStartAt ?? DateTime.now())} ~ ${AppUtils.formatDateTime(event.recruitmentEndAt ?? DateTime.now())}",
+        Visibility(
+          visible:
+              !(event.recruitmentStartAt == null &&
+                  event.recruitmentEndAt == null),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 4),
+              _EventMetaItem(
+                name: "모집",
+                value: _formatPeriod(
+                  event.recruitmentStartAt,
+                  event.recruitmentEndAt,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
+  }
+
+  String _formatPeriod(DateTime? start, DateTime? end) {
+    String? startStr = start != null ? AppUtils.formatDateTime(start) : null;
+    String? endStr = end != null ? AppUtils.formatDateTime(end) : null;
+
+    String ret;
+
+    if (start != null && end != null) {
+      if (startStr == endStr) {
+        ret = "$startStr";
+      } else {
+        ret = "$startStr ~ $endStr";
+      }
+    } else if (start == null && end == null) {
+      ret = "정보 없음";
+    } else if (start != null) {
+      ret = "$startStr";
+    } else {
+      // Only end date
+      ret = " ~ $endStr";
+    }
+
+    return ret;
   }
 }
