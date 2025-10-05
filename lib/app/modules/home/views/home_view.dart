@@ -54,7 +54,7 @@ class HomeView extends GetView<HomeViewController> {
                     ),
                   ),
                   animateTransitions: true,
-                  transitionDuration: Duration(milliseconds: 200),
+                  transitionDuration: Duration(milliseconds: 100),
                   noItemsFoundIndicatorBuilder: (_) {
                     HomeTab tab = controller.selectedTab;
                     if (tab == HomeTab.bookmark) {
