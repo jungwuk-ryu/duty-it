@@ -7,9 +7,14 @@
   <img width="20%" height="20%" alt="ios-1" src="https://github.com/user-attachments/assets/a6094188-c78b-45ad-86da-4cc5f14cef02" />
   <img width="20%" height="20%" alt="ios-2" src="https://github.com/user-attachments/assets/df5c78af-74cb-4f83-8d7a-6ee02d0093ab" />
   <img width="20%" height="20%" alt="ios-3" src="https://github.com/user-attachments/assets/747168ee-5d83-4048-a45c-ef5d4b07db6c" />
-</div>
+</div>  
 
-간호 행사(학술행사·세미나·교육)를 한 곳에서 모아보고, '참여할 수 있는’ 행사를 개인 캘린더에 추가해보세요.
+<div align="center">
+  <a href="https://apps.apple.com/eg/app/id6751395152"><img alt="ios" src="https://img.shields.io/badge/App_Store-0D96F6?style=for-the-badge&logo=app-store&logoColor=white" /></a>
+  <a href="https://play.google.com/store/apps/details?id=com.dutyit.app"><img alt="ios" src="https://playbadges.pavi2410.com/badge/downloads?id=com.dutyit.app" /></a>
+  
+  간호 행사(학술행사·세미나·교육)를 한 곳에서 모아보고, '참여할 수 있는’ 행사를 개인 캘린더에 추가해보세요.
+</div>
 
 ## 프로젝트 의의
 2025년 05월 기준 국내에는 아직 간호 대학생과 간호 업계 종사자를 대상으로 하는 행사 큐레이션 앱이나 서비스가 없거나 매우 열악합니다. 듀잇은 이러한 문제점을 발견하고 시작된 프로젝트입니다.
