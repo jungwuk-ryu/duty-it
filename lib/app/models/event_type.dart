@@ -7,6 +7,7 @@ enum EventType {
   WORKSHOP('워크숍'),
   CONTEST('콘테스트'),
   CONTINUING_EDUCATION("보수교육"),
+  EDUCATION("교육"),
   ETC('기타');
    
   final String displayName;
