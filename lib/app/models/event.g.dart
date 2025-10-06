@@ -22,7 +22,11 @@ _Event _$EventFromJson(Map<String, dynamic> json) => _Event(
   uri: json['uri'] as String? ?? "",
   thumbnail: json['thumbnail'] as String? ?? "",
   eventType:
-      $enumDecodeNullable(_$EventTypeEnumMap, json['eventType']) ??
+      $enumDecodeNullable(
+        _$EventTypeEnumMap,
+        json['eventType'],
+        unknownValue: EventType.ETC,
+      ) ??
       EventType.ETC,
   host: json['host'] == null
       ? const Host(id: 0)
@@ -50,5 +54,7 @@ const _$EventTypeEnumMap = {
   EventType.WEBINAR: 'WEBINAR',
   EventType.WORKSHOP: 'WORKSHOP',
   EventType.CONTEST: 'CONTEST',
+  EventType.CONTINUING_EDUCATION: 'CONTINUING_EDUCATION',
+  EventType.EDUCATION: 'EDUCATION',
   EventType.ETC: 'ETC',
 };

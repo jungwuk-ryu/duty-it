@@ -26,7 +26,8 @@ abstract class Event with _$Event {
     DateTime? recruitmentEndAt,
     @Default("") String uri,
     @Default("") String thumbnail,
-    @Default(EventType.ETC) EventType eventType,
+    // ignore: invalid_annotation_target
+    @JsonKey(unknownEnumValue: EventType.ETC) @Default(EventType.ETC) EventType eventType,
     @Default(Host(id: 0)) Host host,
     @Default(false) bool isBookmarked,
   }) = _Event;
