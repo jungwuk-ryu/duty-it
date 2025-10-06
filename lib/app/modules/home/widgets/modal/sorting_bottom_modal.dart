@@ -89,7 +89,7 @@ class SortingBottomModal extends StatelessWidget {
             text: '정렬 적용',
             onTap: () => controller.applyAndClose(),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 24),
         ],
       ),
     );

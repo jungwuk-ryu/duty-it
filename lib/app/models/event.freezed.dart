@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Event {
 
- int get id; String get title; DateTime? get startAt; DateTime? get endAt; DateTime? get recruitmentStartAt; DateTime? get recruitmentEndAt; String get uri; String get thumbnail; EventType get eventType; Host get host; bool get isBookmarked;
+ int get id; String get title; DateTime? get startAt; DateTime? get endAt; DateTime? get recruitmentStartAt; DateTime? get recruitmentEndAt; String get uri; String get thumbnail;@JsonKey(unknownEnumValue: EventType.ETC) EventType get eventType; Host get host; bool get isBookmarked;
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $EventCopyWith<$Res>  {
   factory $EventCopyWith(Event value, $Res Function(Event) _then) = _$EventCopyWithImpl;
 @useResult
 $Res call({
- int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail, EventType eventType, Host host, bool isBookmarked
+ int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail,@JsonKey(unknownEnumValue: EventType.ETC) EventType eventType, Host host, bool isBookmarked
 });
 
 
@@ -172,7 +172,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host,  bool isBookmarked)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Event() when $default != null:
 return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
@@ -193,7 +193,7 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host,  bool isBookmarked)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)  $default,) {final _that = this;
 switch (_that) {
 case _Event():
 return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
@@ -213,7 +213,7 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail,  EventType eventType,  Host host,  bool isBookmarked)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)?  $default,) {final _that = this;
 switch (_that) {
 case _Event() when $default != null:
 return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
@@ -228,7 +228,7 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 @JsonSerializable()
 
 class _Event implements Event {
-  const _Event({required this.id, this.title = "?", this.startAt, this.endAt, this.recruitmentStartAt, this.recruitmentEndAt, this.uri = "", this.thumbnail = "", this.eventType = EventType.ETC, this.host = const Host(id: 0), this.isBookmarked = false});
+  const _Event({required this.id, this.title = "?", this.startAt, this.endAt, this.recruitmentStartAt, this.recruitmentEndAt, this.uri = "", this.thumbnail = "", @JsonKey(unknownEnumValue: EventType.ETC) this.eventType = EventType.ETC, this.host = const Host(id: 0), this.isBookmarked = false});
   factory _Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
 @override final  int id;
@@ -239,7 +239,7 @@ class _Event implements Event {
 @override final  DateTime? recruitmentEndAt;
 @override@JsonKey() final  String uri;
 @override@JsonKey() final  String thumbnail;
-@override@JsonKey() final  EventType eventType;
+@override@JsonKey(unknownEnumValue: EventType.ETC) final  EventType eventType;
 @override@JsonKey() final  Host host;
 @override@JsonKey() final  bool isBookmarked;
 
@@ -276,7 +276,7 @@ abstract mixin class _$EventCopyWith<$Res> implements $EventCopyWith<$Res> {
   factory _$EventCopyWith(_Event value, $Res Function(_Event) _then) = __$EventCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail, EventType eventType, Host host, bool isBookmarked
+ int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail,@JsonKey(unknownEnumValue: EventType.ETC) EventType eventType, Host host, bool isBookmarked
 });
 
 

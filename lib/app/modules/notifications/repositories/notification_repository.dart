@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:duty_it/app/modules/notifications/models/fcm_notification.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,18 +10,20 @@ import 'package:synchronized/synchronized.dart';
 class NotificationRepository {
   static const String _prefix = "notifications:";
   static const String _itemKeyPrefix = "${_prefix}noti:";
-  static const String _idListKey = "${_prefix}id_list";
   static const int itemCountLimit = 100;
 
   late final SharedPreferencesAsync sp;
   final Lock _workLock = Lock();
 
+  Future<String> get _uid async => FirebaseAuth.instance.currentUser?.uid ?? "unknown";
+  Future<String> get _idListKey async => "${_prefix}id_list:${await _uid}";
+
   NotificationRepository() {
     sp = SharedPreferencesAsync();
   }
-
+  
   Future<List<String>> getIdList() async {
-    List<String>? list = await sp.getStringList(_idListKey);
+    List<String>? list = await sp.getStringList(await _idListKey);
     if (list == null) return [];
 
     return list;
@@ -32,7 +35,7 @@ class NotificationRepository {
       FcmNotification noti = FcmNotification.fromRemoteMessage(rm);
 
       await sp.setString(
-        _getItemKey(noti.id),
+        await _getItemKey(noti.id),
         json.encode(Map<String, dynamic>.from(noti.toJson())),
       );
 
@@ -51,13 +54,13 @@ class NotificationRepository {
       List<String> idList = await getIdList();
       idList.remove(id);
 
-      await Future.wait([sp.remove(_getItemKey(id)), _saveIdList(idList)]);
+      await Future.wait([sp.remove(await _getItemKey(id)), _saveIdList(idList)]);
     });
   }
 
   Future<void> readNotification(String id) async {
     await _workLock.synchronized(() async {
-      String key = _getItemKey(id);
+      String key = await _getItemKey(id);
       if (!await sp.containsKey(key)) return;
 
       FcmNotification noti = FcmNotification.fromJson(
@@ -84,7 +87,7 @@ class NotificationRepository {
   }
 
   Future<FcmNotification?> getNotificationById(String id) async {
-    String key = _getItemKey(id);
+    String key = await _getItemKey(id);
 
     String? jsonNoti = await sp.getString(key);
 
@@ -104,17 +107,18 @@ class NotificationRepository {
     await _workLock.synchronized(() async {
       var idList = await getIdList();
       await Future.wait(
-        idList.map((e) => sp.remove(_getItemKey(e))).toList()
+        idList.map((e) async => await sp.remove(await _getItemKey(e))).toList()
           ..add(_saveIdList([])),
       );
     });
   }
 
-  String _getItemKey(String id) {
-    return "$_itemKeyPrefix$id";
+  Future<String> _getItemKey(String id) async {
+    String uid = await _uid;
+    return "$_itemKeyPrefix$uid:$id";
   }
 
   Future<void> _saveIdList(List<String> idList) async {
-    await sp.setStringList(_idListKey, idList);
+    await sp.setStringList(await _idListKey, idList);
   }
 }
