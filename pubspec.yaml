@@ -59,6 +59,7 @@ dependencies:
   synchronized: ^3.4.0
   shared_preferences: ^2.5.3
   scroll_snap_list: ^0.9.1
+  cloud_functions: ^6.0.2
 
 dev_dependencies:
   flutter_test:
