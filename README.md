@@ -11,7 +11,7 @@
 
 <div align="center">
   <a href="https://apps.apple.com/eg/app/id6751395152"><img alt="ios" src="https://img.shields.io/badge/App_Store-0D96F6?style=for-the-badge&logo=app-store&logoColor=white" /></a>
-  <a href="https://play.google.com/store/apps/details?id=com.dutyit.app"><img alt="ios" src="https://playbadges.pavi2410.com/badge/downloads?id=com.dutyit.app" /></a>
+  <a href="https://play.google.com/store/apps/details?id=com.dutyit.app"><img alt="google-play" src="https://playbadges.pavi2410.com/badge/downloads?id=com.dutyit.app" /></a>
   
   간호 행사(학술행사·세미나·교육)를 한 곳에서 모아보고, '참여할 수 있는’ 행사를 개인 캘린더에 추가해보세요.
 </div>
