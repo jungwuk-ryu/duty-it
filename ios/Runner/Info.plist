@@ -56,6 +56,10 @@
 	<array>
 		<string>google</string>
 		<string>com.google</string>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+		<string>kakaoplus</string>
+		<string>kakaotalk</string>
 	</array>
 	<key>GIDClientID</key>
 	<string>348194173787-lbm02t1gmn4krroo8ehjl0c0a7hh1f0m.apps.googleusercontent.com</string>
@@ -74,13 +78,6 @@
 			<string>kakao5b75899fba79dc8e1651fa8c98ba12f8</string>
 		</array>
 	</dict>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>kakaokompassauth</string>
-		<string>kakaolink</string>
-		<string>kakaoplus</string>
-		<string>kakaotalk</string>
 	</array>
 </dict>
 </plist>
