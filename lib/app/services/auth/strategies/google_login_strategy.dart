@@ -40,6 +40,8 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
 
   @override
   Future<void> logout() async {
-    await GoogleSignIn.instance.signOut();
+    GoogleSignIn googleSignIn = GoogleSignIn.instance;
+    await googleSignIn.initialize();
+    await googleSignIn.signOut();
   }
 }

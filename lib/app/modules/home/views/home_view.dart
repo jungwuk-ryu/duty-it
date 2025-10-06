@@ -18,7 +18,7 @@ class HomeView extends GetView<HomeViewController> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: RefreshIndicator.adaptive(
         onRefresh: () async {
-          controller.fetchNextPage(clearPage: true);
+          await controller.fetchNextPage(clearPage: true);
         },
         child: CustomScrollView(
           slivers: [
