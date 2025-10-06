@@ -2,7 +2,6 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/modules/account/widgets/account_bottom_modal.dart';
 import 'package:duty_it/app/modules/account/widgets/account_dialog.dart';
 import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
-import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -62,9 +61,6 @@ class AccountViewController extends GetxController {
         actionText: '로그아웃',
         action: () async {
           await _authService.logout();
-          if (Get.isRegistered<NotificationRepository>()) {
-            Get.find<NotificationRepository>().clearList();
-          }
         },
       ),
     );
@@ -77,11 +73,11 @@ class AccountViewController extends GetxController {
         content: '탈퇴 하시겠습니까?\n이 작업은 복구할 수 없습니다.',
         actionText: '탈퇴',
         action: () async {
-          if (await _authService.withdraw()) {
-            if (Get.isRegistered<NotificationRepository>()) {
-              Get.find<NotificationRepository>().clearList();
-            }
+          if (Get.isRegistered<NotificationRepository>()) {
+            await Get.find<NotificationRepository>().clearList(); // TODO: 회원탈퇴에 실패했지만 알림 목록이 초기화되는 현상이 발생할 수 있음
           }
+
+          await _authService.withdraw();
         },
       ),
     );
