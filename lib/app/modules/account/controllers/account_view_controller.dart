@@ -61,12 +61,10 @@ class AccountViewController extends GetxController {
         content: '로그아웃 하시겠습니까?',
         actionText: '로그아웃',
         action: () async {
-          Get.back();
           await _authService.logout();
           if (Get.isRegistered<NotificationRepository>()) {
             Get.find<NotificationRepository>().clearList();
           }
-          Get.offAndToNamed(Routes.LOGIN);
         },
       ),
     );
@@ -83,7 +81,6 @@ class AccountViewController extends GetxController {
             if (Get.isRegistered<NotificationRepository>()) {
               Get.find<NotificationRepository>().clearList();
             }
-            Get.offAndToNamed(Routes.LOGIN);
           }
         },
       ),
