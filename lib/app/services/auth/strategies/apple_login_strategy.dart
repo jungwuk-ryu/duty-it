@@ -12,8 +12,9 @@ class AppleLoginStrategy extends SocialLoginStrategy {
       final appleProvider = AppleAuthProvider();
       appleProvider.addScope('email');
       appleProvider.addScope('name');
-
-      await FirebaseAuth.instance.signInWithProvider(appleProvider);
+      
+      if (kIsWeb) await FirebaseAuth.instance.signInWithPopup(appleProvider);
+      else await FirebaseAuth.instance.signInWithProvider(appleProvider);
       return SocialLoginSuccess();
     } catch (e, st) {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
