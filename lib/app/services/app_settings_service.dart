@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
+import 'package:duty_it/app/services/models/app_setting.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -20,27 +21,4 @@ class AppSettingsService extends GetxService {
   EventSortingType get eventSortingType => EventSortingType.fromName(eventSortingTypeSetting.value);
   set eventSortingType(EventSortingType t) => eventSortingTypeSetting.value = t.name;
 
-}
-
-class AppSetting<T> {
-  final String key;
-  final GetStorage box;
-  final T defaultValue;
-  late final Rx<T> rxValue;
-
-  AppSetting({required this.key, required this.box, required this.defaultValue}) {
-    rxValue = defaultValue.obs;
-
-    var tempValue = box.read(key);
-    if (tempValue != null) value = tempValue;
-
-    debounce(rxValue, (v) {
-      box.write(key, v);
-    }, time: Duration(milliseconds: 100));
-  }
-  
-  T get value => rxValue.value;
-  set value(T v) => rxValue(v);
-
-  
 }
