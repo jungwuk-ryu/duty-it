@@ -1,4 +1,7 @@
+// ignore_for_file: unused_import
+
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';

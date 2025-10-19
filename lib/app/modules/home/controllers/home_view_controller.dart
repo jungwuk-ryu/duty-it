@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
-import 'package:duty_it/app/core/events/event_bookmark_event.dart';
+import 'package:duty_it/app/core/enums/event_sorting_type.dart';
+import 'package:duty_it/app/core/utils/events/event_bookmark_event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/models/event.dart';
-import 'package:duty_it/app/models/event_type.dart';
+import 'package:duty_it/app/core/models/event.dart';
+import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/modules/home/controllers/bookmark_modal_controller.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';

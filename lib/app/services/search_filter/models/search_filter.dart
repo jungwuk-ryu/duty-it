@@ -1,4 +1,4 @@
-import 'package:duty_it/app/models/host.dart';
+import 'package:duty_it/app/core/models/host.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

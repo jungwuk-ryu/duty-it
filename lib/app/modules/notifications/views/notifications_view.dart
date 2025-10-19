@@ -1,4 +1,4 @@
-import 'package:duty_it/app/models/app_notification.dart';
+import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/modules/notifications/widgets/notification_item.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';

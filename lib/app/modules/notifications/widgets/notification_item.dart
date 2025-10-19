@@ -1,6 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/models/app_notification.dart';
-import 'package:duty_it/app/models/event.dart';
+import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
+import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 

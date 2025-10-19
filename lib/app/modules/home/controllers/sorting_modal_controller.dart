@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:get/get.dart';
 

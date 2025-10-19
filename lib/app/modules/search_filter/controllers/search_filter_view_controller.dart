@@ -1,5 +1,5 @@
-import 'package:duty_it/app/models/event_type.dart';
-import 'package:duty_it/app/models/host.dart';
+import 'package:duty_it/app/core/enums/event_type.dart';
+import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';

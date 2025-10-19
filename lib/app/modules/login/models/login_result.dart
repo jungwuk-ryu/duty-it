@@ -1,4 +1,4 @@
-import 'package:duty_it/app/models/app_user.dart';
+import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 

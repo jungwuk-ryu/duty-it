@@ -1,6 +1,6 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/models/host.dart';
+import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/search_filter_view_controller.dart';
 import 'package:get/get.dart';
 

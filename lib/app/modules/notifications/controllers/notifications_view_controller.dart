@@ -1,5 +1,5 @@
 import 'package:duty_it/app/api_client.dart';
-import 'package:duty_it/app/models/app_notification.dart';
+import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
