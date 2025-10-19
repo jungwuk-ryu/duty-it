@@ -73,7 +73,7 @@ class HomeHeader extends StatelessWidget {
                     Get.toNamed(Routes.SEARCH_FILTER);
                   },
                 ),
-                Expanded(child: SizedBox()),
+                Spacer(),
                 Obx(
                   () => CategoryTag(
                     name: controller.sortingType.shortName,

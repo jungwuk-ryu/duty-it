@@ -49,7 +49,7 @@ class ToggleSettingItem extends StatelessWidget {
             ),
           ],
         ),
-        Expanded(child: SizedBox()),
+        Spacer(),
         CustomToggleButton(
           checked: checked,
           enabled: enabled,

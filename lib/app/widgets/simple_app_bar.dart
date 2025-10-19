@@ -42,7 +42,7 @@ class SimpleAppBar extends StatelessWidget {
                 height: 1.60,
               ),
             ),
-            Expanded(child: SizedBox()),
+            Spacer(),
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,

@@ -70,7 +70,7 @@ class SortingBottomModal extends StatelessWidget {
                       height: 1.20,
                     ),
                   ),
-                  Expanded(child: SizedBox()),
+                  Spacer(),
                   Obx(() {
                     var selectedType = controller.selectedType;
                     return CustomRadioButtom(
