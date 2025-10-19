@@ -1,5 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/widgets/custom_toggle_button.dart';
+import 'package:duty_it/app/widgets/app_toggle_button.dart';
 import 'package:flutter/widgets.dart';
 
 class ToggleSettingItem extends StatelessWidget {
@@ -50,7 +50,7 @@ class ToggleSettingItem extends StatelessWidget {
           ],
         ),
         Spacer(),
-        CustomToggleButton(
+        AppToggleButton(
           checked: checked,
           enabled: enabled,
           onTap: () async {

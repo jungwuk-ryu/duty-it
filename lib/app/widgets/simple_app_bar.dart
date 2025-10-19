@@ -1,5 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/widgets/custom_divider.dart';
+import 'package:duty_it/app/widgets/section_divider.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -52,7 +52,7 @@ class SimpleAppBar extends StatelessWidget {
           ],
         ),
         SizedBox(height: 8),
-        CustomDivider(),
+        SectionDivider(),
         SizedBox(height: bottomMargin),
       ],
     );
