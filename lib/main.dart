@@ -1,7 +1,6 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/bindings/initial_bindings.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -39,9 +38,6 @@ void main() async {
               sound: true,
             ),
       );
-
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  handleFirebaseForegroundMessages(FirebaseMessaging.onMessage);
 
   /* Firebase init end */
 
@@ -95,22 +91,4 @@ Future<void> _initFirebase() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-}
-
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await _initFirebase();
-
-  final repo = NotificationRepository();
-  await repo.addNotification(message);
-}
-
-Future<void> handleFirebaseForegroundMessages(
-  Stream<RemoteMessage> stream,
-) async {
-  await for (var message in stream) {
-    if (!Get.isRegistered<NotificationRepository>()) return;
-    await Get.find<NotificationRepository>().addNotification(message);
-  }
 }

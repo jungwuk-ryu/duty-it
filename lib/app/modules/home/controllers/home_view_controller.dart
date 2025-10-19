@@ -10,7 +10,6 @@ import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.da
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/bookmark_bottom_modal.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
-import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
@@ -120,20 +119,7 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   }
 
   Future<void> checkNewNotification() async {
-    var repo = Get.find<NotificationRepository>();
-    List<String> list = await repo.getIdList();
-    if (list.isEmpty) {
-      _hasNewNotification.value = false;
-      return;
-    }
-
-    var noti = await repo.getNotificationById(list.first);
-    if (noti == null) {
-      _hasNewNotification.value = false;
-      return;
-    }
-
-    _hasNewNotification.value = !noti.read;
+    _hasNewNotification.value = false;
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {

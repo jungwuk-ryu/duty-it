@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:duty_it/app/models/alarm_settings.dart';
+import 'package:duty_it/app/models/app_notification.dart';
 import 'package:duty_it/app/models/app_user.dart';
 import 'package:duty_it/app/models/event.dart';
 import 'package:duty_it/app/models/event_type.dart';
@@ -154,6 +155,36 @@ class ApiClient extends GetConnect {
     }
   }
 
+  // ---------- Alarm ----------
+  Future<RequestResult<List<AppNotification>>> getNotificationList(
+    int page,
+  ) async {
+    return await _send(
+      () async => await get(
+        '/alarms',
+        query: {
+          'page': "$page",
+          'size': '10',
+          'sortDirection': 'DESC',
+          'field': 'ID',
+        },
+      ),
+      map: (rp) {
+        List<AppNotification> list = [];
+
+        var body = rp.body;
+        if (body is! Map) return list;
+
+        var rawList = body['content'];
+        for (Map data in rawList) {
+          list.add(AppNotification.fromJson(Map<String, dynamic>.from(data)));
+        }
+
+        return list;
+      },
+    );
+  }
+
   /// 소셜 로그인 (auth/social)
   Future<RequestResult<LoginResult>> loginAndRefreshToken() {
     if (_loginFuture != null) {
@@ -202,13 +233,10 @@ class ApiClient extends GetConnect {
     AlarmSettings alarmSettings,
   ) {
     return _send(
-      () async => await patch(
-        '/users/settings',
-        {
-          'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
-          'alarmSettings': alarmSettings.toJson(),
-        },
-      ),
+      () async => await patch('/users/settings', {
+        'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
+        'alarmSettings': alarmSettings.toJson(),
+      }),
       map: (rp) {
         AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
 
@@ -250,8 +278,11 @@ class ApiClient extends GetConnect {
     if (token == null) {
       return RequestFail(null);
     }
-    
-    return _send(() async => await patch('/users/device/$token', {}), map: (_) => true);
+
+    return _send(
+      () async => await patch('/users/device/$token', {}),
+      map: (_) => true,
+    );
   }
 
   // ---------- Event ----------

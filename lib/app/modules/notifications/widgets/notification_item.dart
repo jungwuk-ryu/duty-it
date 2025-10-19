@@ -1,18 +1,17 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/modules/notifications/controllers/notifications_view_controller.dart';
-import 'package:duty_it/app/modules/notifications/models/fcm_notification.dart';
+import 'package:duty_it/app/models/app_notification.dart';
+import 'package:duty_it/app/models/event.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class NotificationItem extends StatelessWidget {
-  final FcmNotification noti;
+  final AppNotification noti;
 
   const NotificationItem(this.noti, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
+    return /* Dismissible(
       background: Container(
         color: AppColors.main,
         child: Row(
@@ -31,15 +30,16 @@ class NotificationItem extends StatelessWidget {
           ],
         ),
       ),
-      key: Key(noti.id),
+      key: Key("${noti.id}"),
       onDismissed: (_) {
         NotificationsViewController con = Get.find<NotificationsViewController>();
         con.removeNotification(noti.id);
       },
-      child: Container(
+      child: */ Container(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: !noti.read ? AppColors.cal2 : AppColors.white,
+          //color: !noti.read ? AppColors.cal2 : AppColors.white,
+          color: AppColors.white,
         ),
         child: Row(
           children: [
@@ -66,7 +66,7 @@ class NotificationItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  noti.title,
+                  _getTitle(noti),
                   style: TextStyle(
                     color: const Color(0xFF333333),
                     fontSize: 14,
@@ -76,7 +76,7 @@ class NotificationItem extends StatelessWidget {
                 ),
                 SizedBox(height: 2),
                 Text(
-                  noti.body,
+                  _getContent(noti),
                   style: TextStyle(
                     color: const Color(0xFF6F6F6F),
                     fontSize: 12,
@@ -85,7 +85,7 @@ class NotificationItem extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  _formatDateTime(noti.timestamp),
+                  _formatDateTime(noti.createdAt),
                   style: TextStyle(
                     color: const Color(0xFF949494),
                     fontSize: 8,
@@ -98,11 +98,35 @@ class NotificationItem extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
+    //);
   }
 
-  String _formatDateTime(DateTime dt) {
+  static String _formatDateTime(DateTime? dt) {
+    if (dt == null) return "";
     return '${dt.year}. ${dt.month.toString().padLeft(2, '0')}. ${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  static String _getTitle(AppNotification noti) {
+    String type = noti.type;
+    switch (type) {
+      case "EVENT_START": return "내일 북마크한 행사가 시작됩니다";
+      case "RECRUITMENT_START": return "내일 북마크한 행사의 모집이 시작됩니다";
+      case "RECRUITMENT_END": return "내일 북마크한 행사의 모집이 마감됩니다.";
+    }
+
+    return "앱을 업데이트 해주세요";
+  }
+
+  static String _getContent(AppNotification noti) {
+     String type = noti.type;
+     Event? event = noti.event;
+    switch (type) {
+      case "EVENT_START": return "듀근 듀근 ☺️❤️ [${event?.title}]가 내일 ${event?.startAt?.hour}시에 시작됩니다!";
+      case "RECRUITMENT_START": return "\uD83D\uDCE2[${event?.title}]의 모집이 내일 ${event?.recruitmentStartAt?.hour}시부터 시작됩니다! 잊지말고 신청하세요!";
+      case "RECRUITMENT_END": return "⏰[${event?.title}]의 모집이 내일 ${event?.recruitmentEndAt?.hour}시에 마감됩니다. 잊진 않으셨죠?";
+    }
+
+    return "앱을 업데이트 해주세요";
   }
 }
