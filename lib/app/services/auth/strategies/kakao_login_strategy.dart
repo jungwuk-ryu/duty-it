@@ -98,8 +98,7 @@ Future<void> linkKakaoOidcViaRedirect(User user) async {
   provider.setCustomParameters({
     'prompt': 'consent',
   });
-  provider.addScope('openid');
-  provider.addScope('profile');
+  provider.addScope('profile_nickname');
   provider.addScope('account_email');
 
   await user.linkWithProvider(provider);

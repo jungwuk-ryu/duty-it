@@ -1,5 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/models/host.dart';
+import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';

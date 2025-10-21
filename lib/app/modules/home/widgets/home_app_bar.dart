@@ -27,7 +27,7 @@ class HomeAppBar extends StatelessWidget {
               height: 1.60,
             ),
           ),
-          Expanded(child: SizedBox()),
+          Spacer(),
           GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {

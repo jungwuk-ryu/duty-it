@@ -1,31 +1,36 @@
-import 'package:duty_it/app/modules/notifications/models/fcm_notification.dart';
-import 'package:duty_it/app/modules/notifications/repositories/notification_repository.dart';
+import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class NotificationsViewController extends GetxController {
-  NotificationRepository get repo => Get.find<NotificationRepository>();
-  RxList notificationList = RxList();
+  final Rx<PagingState<int, AppNotification>> _pagingState =
+      PagingState<int, AppNotification>().obs;
+  PagingState<int, AppNotification> get pagingState => _pagingState.value;
+  set pagingState(PagingState<int, AppNotification> state) =>
+      _pagingState.value = state;
 
-  @override
-  void onInit() {
-    super.onInit();
-    loadNotificationList();
-  }
+  Future<void> fetchNotificationList() async {
+    ApiClient apiClient = Get.find<ApiClient>();
+    pagingState = pagingState.copyWith(isLoading: true);
 
-  Future<void> loadNotificationList({bool markAsRead = true}) async {
-    List<FcmNotification> list = await repo.getNotificationList();
-
-    if (markAsRead) {
-      for (var noti in list) {
-        if (!noti.read) await repo.readNotification(noti.id);
-      }
+    final int nextKey = (pagingState.keys?.last ?? -1) + 1;
+    RequestResult reqResult = await apiClient.getNotificationList(nextKey);
+    if (reqResult is RequestFail) {
+      pagingState = pagingState.copyWith(
+        isLoading: false,
+        error: reqResult.serverFail,
+      );
+      return;
     }
 
-    notificationList.value = list;
-  }
-
-  Future<void> removeNotification(String id) async {
-    notificationList.removeWhere((e) => e.id == id);
-    await repo.removeNotification(id);
+    List<AppNotification> notiList =
+        (reqResult as RequestSuccess<List<AppNotification>>).data;
+    pagingState = pagingState.copyWith(
+      isLoading: false,
+      pages: [...pagingState.pages ?? [], notiList],
+      keys: [...pagingState.keys ?? [], nextKey],
+      hasNextPage: notiList.isNotEmpty,
+    );
   }
 }

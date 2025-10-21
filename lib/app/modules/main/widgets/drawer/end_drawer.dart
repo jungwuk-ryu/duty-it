@@ -1,4 +1,4 @@
-import 'package:duty_it/app/widgets/custom_divider.dart';
+import 'package:duty_it/app/widgets/section_divider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_accout_section.dart';
@@ -33,7 +33,7 @@ class EndDrawer extends StatelessWidget {
             ),
 
             SizedBox(height: 38),
-            CustomDivider(),
+            SectionDivider(),
             SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),

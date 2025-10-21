@@ -2,12 +2,12 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 
-class CustomToggleButton extends StatefulWidget {
+class AppToggleButton extends StatefulWidget {
   final bool checked;
   final Function() onTap;
   final bool enabled;
 
-  const CustomToggleButton({
+  const AppToggleButton({
     super.key,
     required this.checked,
     required this.onTap,
@@ -15,10 +15,10 @@ class CustomToggleButton extends StatefulWidget {
   });
 
   @override
-  State<CustomToggleButton> createState() => _CustomToggleButtonState();
+  State<AppToggleButton> createState() => _AppToggleButtonState();
 }
 
-class _CustomToggleButtonState extends State<CustomToggleButton> {
+class _AppToggleButtonState extends State<AppToggleButton> {
   bool loading = false;
 
   @override
@@ -27,7 +27,7 @@ class _CustomToggleButtonState extends State<CustomToggleButton> {
       onTap: () async {
         if (loading) return;
         setState(() {
-          loading = true;  
+          loading = true;
         });
 
         try {
@@ -37,8 +37,8 @@ class _CustomToggleButtonState extends State<CustomToggleButton> {
         } finally {
           if (mounted) {
             setState(() {
-            loading = false;
-          });
+              loading = false;
+            });
           }
         }
       },
