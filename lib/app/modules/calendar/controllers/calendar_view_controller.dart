@@ -1,7 +1,7 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/models/event_type.dart';
+import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../../../models/event.dart';
+import '../../../core/models/event.dart';
 
 class CalendarViewController extends GetxController {
   static const String _cacheStorageName = "calendarCache";

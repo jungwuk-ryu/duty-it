@@ -1,4 +1,4 @@
-import 'package:duty_it/app/models/alarm_settings.dart';
+import 'package:duty_it/app/modules/settings/models/alarm_settings.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 

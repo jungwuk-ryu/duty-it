@@ -1,4 +1,4 @@
-import 'package:duty_it/app/core/events/app_event.dart';
+import 'package:duty_it/app/core/utils/events/app_event.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:get/get.dart';
 

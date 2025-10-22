@@ -1,5 +1,5 @@
 import 'package:duty_it/app/api_client.dart';
-import 'package:duty_it/app/models/alarm_settings.dart';
+import 'package:duty_it/app/modules/settings/models/alarm_settings.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

@@ -1,8 +1,11 @@
+// ignore_for_file: unused_import
+
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
-import 'package:duty_it/app/widgets/custom_radio_buttom.dart';
+import 'package:duty_it/app/widgets/app_radio_buttom.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -70,10 +73,10 @@ class SortingBottomModal extends StatelessWidget {
                       height: 1.20,
                     ),
                   ),
-                  Expanded(child: SizedBox()),
+                  Spacer(),
                   Obx(() {
                     var selectedType = controller.selectedType;
-                    return CustomRadioButtom(
+                    return AppRadioButtom(
                       checked: selectedType == type,
                       onTap: () {
                         controller.selectedType = type;

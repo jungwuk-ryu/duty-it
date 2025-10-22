@@ -1,4 +1,4 @@
-import 'package:duty_it/app/models/event.dart';
+import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';

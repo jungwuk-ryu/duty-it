@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Event {
 
- int get id; String get title; DateTime? get startAt; DateTime? get endAt; DateTime? get recruitmentStartAt; DateTime? get recruitmentEndAt; String get uri; String get thumbnail;@JsonKey(unknownEnumValue: EventType.ETC) EventType get eventType; Host get host; bool get isBookmarked;
+ int get id; String get title; DateTime? get startAt; DateTime? get endAt; DateTime? get recruitmentStartAt; DateTime? get recruitmentEndAt; String get uri; String get thumbnail;// ignore: invalid_annotation_target
+@JsonKey(unknownEnumValue: EventType.ETC) EventType get eventType; Host get host; bool get isBookmarked;
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -239,6 +240,7 @@ class _Event implements Event {
 @override final  DateTime? recruitmentEndAt;
 @override@JsonKey() final  String uri;
 @override@JsonKey() final  String thumbnail;
+// ignore: invalid_annotation_target
 @override@JsonKey(unknownEnumValue: EventType.ETC) final  EventType eventType;
 @override@JsonKey() final  Host host;
 @override@JsonKey() final  bool isBookmarked;

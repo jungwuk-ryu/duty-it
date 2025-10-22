@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/models/event.dart';
+import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
 import 'package:duty_it/app/widgets/adaptive_layout.dart';
 import 'package:duty_it/app/widgets/tap_scale.dart';

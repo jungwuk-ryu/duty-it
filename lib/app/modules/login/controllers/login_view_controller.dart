@@ -1,6 +1,6 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/models/login_result.dart';
+import 'package:duty_it/app/modules/login/models/login_result.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';

@@ -4,8 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:duty_it/app/models/event_type.dart';
-import 'package:duty_it/app/models/host.dart';
+import 'package:duty_it/app/core/enums/event_type.dart';
+import 'package:duty_it/app/core/models/host.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'event.freezed.dart';

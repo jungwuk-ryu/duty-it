@@ -1,6 +1,6 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/models/event.dart';
+import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
