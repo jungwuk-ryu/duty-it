@@ -1,8 +1,10 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/notifications/controllers/notifications_view_controller.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NotificationItem extends StatelessWidget {
   final AppNotification noti;
@@ -11,7 +13,7 @@ class NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return /* Dismissible(
+    return Dismissible(
       background: Container(
         color: AppColors.main,
         child: Row(
@@ -31,11 +33,11 @@ class NotificationItem extends StatelessWidget {
         ),
       ),
       key: Key("${noti.id}"),
-      onDismissed: (_) {
+      onDismissed: (_) async {
         NotificationsViewController con = Get.find<NotificationsViewController>();
-        con.removeNotification(noti.id);
+        await con.deleteNotification(noti.id);
       },
-      child: */ Container(
+      child:  Container(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
           color: !noti.isRead ? AppColors.cal2 : AppColors.white,
@@ -97,8 +99,8 @@ class NotificationItem extends StatelessWidget {
             ),
           ],
         ),
-      );
-    //);
+      ),
+    );
   }
 
   static String _formatDateTime(DateTime? dt) {

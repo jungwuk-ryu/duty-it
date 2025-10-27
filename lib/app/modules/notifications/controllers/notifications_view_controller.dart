@@ -43,4 +43,10 @@ class NotificationsViewController extends GetxController {
     
     return success;
   }
+
+  Future<bool> deleteNotification(int id) async {
+    RequestResult rst = await _apiClient.deleteNotification(id);
+    bool success = !(rst is RequestFail || (rst is RequestSuccess && rst.data == false)); 
+    return success;
+  }
 }
