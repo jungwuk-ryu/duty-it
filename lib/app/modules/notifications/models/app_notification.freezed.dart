@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppNotification {
 
- int get id; String get type; Event? get event; DateTime? get createdAt;
+ int get id; String get type; bool get isRead; Event? get event; DateTime? get createdAt;
 /// Create a copy of AppNotification
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AppNotificationCopyWith<AppNotification> get copyWith => _$AppNotificationCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppNotification&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppNotification&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,event,createdAt);
+int get hashCode => Object.hash(runtimeType,id,type,isRead,event,createdAt);
 
 @override
 String toString() {
-  return 'AppNotification(id: $id, type: $type, event: $event, createdAt: $createdAt)';
+  return 'AppNotification(id: $id, type: $type, isRead: $isRead, event: $event, createdAt: $createdAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AppNotificationCopyWith<$Res>  {
   factory $AppNotificationCopyWith(AppNotification value, $Res Function(AppNotification) _then) = _$AppNotificationCopyWithImpl;
 @useResult
 $Res call({
- int id, String type, Event? event, DateTime? createdAt
+ int id, String type, bool isRead, Event? event, DateTime? createdAt
 });
 
 
@@ -65,11 +65,12 @@ class _$AppNotificationCopyWithImpl<$Res>
 
 /// Create a copy of AppNotification
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? type = null,Object? event = freezed,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? type = null,Object? isRead = null,Object? event = freezed,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as String,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
+as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as bool,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as Event?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -168,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String type,  Event? event,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String type,  bool isRead,  Event? event,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppNotification() when $default != null:
-return $default(_that.id,_that.type,_that.event,_that.createdAt);case _:
+return $default(_that.id,_that.type,_that.isRead,_that.event,_that.createdAt);case _:
   return orElse();
 
 }
@@ -189,10 +190,10 @@ return $default(_that.id,_that.type,_that.event,_that.createdAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String type,  Event? event,  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String type,  bool isRead,  Event? event,  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _AppNotification():
-return $default(_that.id,_that.type,_that.event,_that.createdAt);case _:
+return $default(_that.id,_that.type,_that.isRead,_that.event,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +210,10 @@ return $default(_that.id,_that.type,_that.event,_that.createdAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String type,  Event? event,  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String type,  bool isRead,  Event? event,  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AppNotification() when $default != null:
-return $default(_that.id,_that.type,_that.event,_that.createdAt);case _:
+return $default(_that.id,_that.type,_that.isRead,_that.event,_that.createdAt);case _:
   return null;
 
 }
@@ -224,11 +225,12 @@ return $default(_that.id,_that.type,_that.event,_that.createdAt);case _:
 @JsonSerializable()
 
 class _AppNotification implements AppNotification {
-  const _AppNotification({required this.id, required this.type, this.event, this.createdAt});
+  const _AppNotification({required this.id, required this.type, required this.isRead, this.event, this.createdAt});
   factory _AppNotification.fromJson(Map<String, dynamic> json) => _$AppNotificationFromJson(json);
 
 @override final  int id;
 @override final  String type;
+@override final  bool isRead;
 @override final  Event? event;
 @override final  DateTime? createdAt;
 
@@ -245,16 +247,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppNotification&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppNotification&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.event, event) || other.event == event)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,type,event,createdAt);
+int get hashCode => Object.hash(runtimeType,id,type,isRead,event,createdAt);
 
 @override
 String toString() {
-  return 'AppNotification(id: $id, type: $type, event: $event, createdAt: $createdAt)';
+  return 'AppNotification(id: $id, type: $type, isRead: $isRead, event: $event, createdAt: $createdAt)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$AppNotificationCopyWith<$Res> implements $AppNotification
   factory _$AppNotificationCopyWith(_AppNotification value, $Res Function(_AppNotification) _then) = __$AppNotificationCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String type, Event? event, DateTime? createdAt
+ int id, String type, bool isRead, Event? event, DateTime? createdAt
 });
 
 
@@ -282,11 +284,12 @@ class __$AppNotificationCopyWithImpl<$Res>
 
 /// Create a copy of AppNotification
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? type = null,Object? event = freezed,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? type = null,Object? isRead = null,Object? event = freezed,Object? createdAt = freezed,}) {
   return _then(_AppNotification(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as String,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
+as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as bool,event: freezed == event ? _self.event : event // ignore: cast_nullable_to_non_nullable
 as Event?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

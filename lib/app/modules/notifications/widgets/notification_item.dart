@@ -38,8 +38,7 @@ class NotificationItem extends StatelessWidget {
       child: */ Container(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          //color: !noti.read ? AppColors.cal2 : AppColors.white,
-          color: AppColors.white,
+          color: !noti.isRead ? AppColors.cal2 : AppColors.white,
         ),
         child: Row(
           children: [

@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class NotificationsViewController extends GetxController {
+  ApiClient get _apiClient => Get.find<ApiClient>();
+
   final Rx<PagingState<int, AppNotification>> _pagingState =
       PagingState<int, AppNotification>().obs;
   PagingState<int, AppNotification> get pagingState => _pagingState.value;
@@ -11,17 +13,16 @@ class NotificationsViewController extends GetxController {
       _pagingState.value = state;
 
   Future<void> fetchNotificationList() async {
-    ApiClient apiClient = Get.find<ApiClient>();
+    
     pagingState = pagingState.copyWith(isLoading: true);
 
     final int nextKey = (pagingState.keys?.last ?? -1) + 1;
-    RequestResult reqResult = await apiClient.getNotificationList(nextKey);
+    RequestResult reqResult = await _apiClient.getNotificationList(nextKey);
     if (reqResult is RequestFail) {
       pagingState = pagingState.copyWith(
         isLoading: false,
         error: reqResult.serverFail,
       );
-      return;
     }
 
     List<AppNotification> notiList =
@@ -32,5 +33,14 @@ class NotificationsViewController extends GetxController {
       keys: [...pagingState.keys ?? [], nextKey],
       hasNextPage: notiList.isNotEmpty,
     );
+
+    markAllAsRead();
+  }
+
+  Future<bool> markAllAsRead() async {
+    RequestResult rst = await _apiClient.readAllNotification();
+    bool success = !(rst is RequestFail || (rst is RequestSuccess && rst.data == false)); 
+    
+    return success;
   }
 }

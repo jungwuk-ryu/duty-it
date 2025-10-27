@@ -14,6 +14,7 @@ abstract class AppNotification with _$AppNotification {
     const factory AppNotification({
         required int id,
         required String type,
+        required bool isRead,
         Event? event,
         DateTime? createdAt,
     }) = _AppNotification;
