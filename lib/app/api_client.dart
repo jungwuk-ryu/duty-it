@@ -156,6 +156,8 @@ class ApiClient extends GetConnect {
   }
 
   // ---------- Alarm ----------
+  
+  /// 알람 목록 조회 (alarms)
   Future<RequestResult<List<AppNotification>>> getNotificationList(
     int page,
   ) async {
@@ -184,6 +186,35 @@ class ApiClient extends GetConnect {
       },
     );
   }
+
+  /// 알람 모두 읽음 처리 (/alarms/read-all)
+  Future<RequestResult<bool>> readAllNotification() async {
+    return await _send(
+      () async => await patch(
+        '/alarms/read-all', {}
+      ),
+      map: (rp) {
+        if (rp.statusCode == HttpStatus.noContent) return true;
+        return false;
+      },
+    );
+  }
+
+
+  /// 알람 삭제 처리 (/alarms/{alarmId})
+  Future<RequestResult<bool>> deleteNotification(int alarmId) async {
+    return await _send(
+      () async => await delete(
+        '/alarms/$alarmId'
+      ),
+      map: (rp) {
+        if (rp.statusCode == HttpStatus.noContent) return true;
+        return false;
+      },
+    );
+  }
+
+  // ---------- Auth ----------
 
   /// 소셜 로그인 (auth/social)
   Future<RequestResult<LoginResult>> loginAndRefreshToken() {
