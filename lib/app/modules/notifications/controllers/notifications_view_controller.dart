@@ -13,7 +13,6 @@ class NotificationsViewController extends GetxController {
       _pagingState.value = state;
 
   Future<void> fetchNotificationList() async {
-    
     pagingState = pagingState.copyWith(isLoading: true);
 
     final int nextKey = (pagingState.keys?.last ?? -1) + 1;
@@ -39,14 +38,16 @@ class NotificationsViewController extends GetxController {
 
   Future<bool> markAllAsRead() async {
     RequestResult rst = await _apiClient.readAllNotification();
-    bool success = !(rst is RequestFail || (rst is RequestSuccess && rst.data == false)); 
-    
+    bool success =
+        !(rst is RequestFail || (rst is RequestSuccess && rst.data == false));
+
     return success;
   }
 
   Future<bool> deleteNotification(int id) async {
     RequestResult rst = await _apiClient.deleteNotification(id);
-    bool success = !(rst is RequestFail || (rst is RequestSuccess && rst.data == false)); 
+    bool success =
+        !(rst is RequestFail || (rst is RequestSuccess && rst.data == false));
     return success;
   }
 }
