@@ -13,6 +13,7 @@ class NotificationsViewController extends GetxController {
       _pagingState.value = state;
 
   Future<void> fetchNotificationList() async {
+    if (pagingState.isLoading) return;
     pagingState = pagingState.copyWith(isLoading: true);
 
     final int nextKey = (pagingState.keys?.last ?? -1) + 1;
