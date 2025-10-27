@@ -5,12 +5,34 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class NotificationsViewController extends GetxController {
   ApiClient get _apiClient => Get.find<ApiClient>();
+  bool _didMarkAllAsRead = false;
 
   final Rx<PagingState<int, AppNotification>> _pagingState =
       PagingState<int, AppNotification>().obs;
   PagingState<int, AppNotification> get pagingState => _pagingState.value;
   set pagingState(PagingState<int, AppNotification> state) =>
       _pagingState.value = state;
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    bool isMarkingAllAsRead = false;
+    _pagingState.listen((state) async {
+      if (_didMarkAllAsRead) return;
+      if ((state.pages?.isNotEmpty ?? false) && !isMarkingAllAsRead) {
+        isMarkingAllAsRead = true;
+
+        try {
+          _didMarkAllAsRead = await markAllAsRead();
+        } finally {
+          isMarkingAllAsRead = false;
+        }
+      }
+    });
+
+    fetchNotificationList();
+  }
 
   Future<void> fetchNotificationList() async {
     if (pagingState.isLoading) return;
@@ -33,8 +55,6 @@ class NotificationsViewController extends GetxController {
       keys: [...pagingState.keys ?? [], nextKey],
       hasNextPage: notiList.isNotEmpty,
     );
-
-    markAllAsRead();
   }
 
   Future<bool> markAllAsRead() async {
