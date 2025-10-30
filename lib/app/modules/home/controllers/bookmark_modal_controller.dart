@@ -38,6 +38,11 @@ class BookmarkModalController extends GetxController {
     var appSettings = Get.find<AppSettingsService>();
     appSettings.dontShowAutoAddModal.value = dontShowAgain;
 
-    eventRx.value = eventRx.value.copyWith(isBookmarked: await hController.bookmark(eventRx.value));
+    var event = eventRx.value;
+
+    eventRx.value = event.copyWith(isBookmarked: !event.isBookmarked);
+    eventRx.value = event.copyWith(
+      isBookmarked: await hController.bookmark(event),
+    );
   }
 }

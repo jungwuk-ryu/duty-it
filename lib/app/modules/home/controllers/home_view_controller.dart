@@ -214,7 +214,9 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {
     var appSettings = Get.find<AppSettingsService>();
-    if (!eventRx.value.isBookmarked &&
+    var event = eventRx.value;
+
+    if (!event.isBookmarked &&
         !appSettings.dontShowAutoAddModal.value) {
       Get.put<BookmarkModalController>(
         BookmarkModalController(eventRx: eventRx),
@@ -228,14 +230,19 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
         builder: (_) => BookmarkBottomModal(),
       ).whenComplete(() => Get.delete<BookmarkModalController>());
     } else {
-      eventRx.value = eventRx.value.copyWith(
-        isBookmarked: await bookmark(eventRx.value),
+      eventRx.value = event.copyWith(
+        isBookmarked: !event.isBookmarked,
+      );
+
+      eventRx.value = event.copyWith(
+        isBookmarked: await bookmark(event),
       );
     }
   }
 
   Future<bool> bookmark(Event event) async {
     bool isBookmarked = event.isBookmarked;
+    
     var client = Get.find<ApiClient>();
     var result = await client.toggleBookmark(event.id);
     if (result is RequestSuccess) {
