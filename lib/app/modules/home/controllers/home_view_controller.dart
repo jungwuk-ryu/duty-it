@@ -143,7 +143,7 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
       }
 
       // set params
-      const int size = 10;
+      const int size = 5;
       var filter = sfService.filter;
       List<String> categories = filter.categories.toList();
       List<EventType> types = [];
