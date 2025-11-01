@@ -34,7 +34,7 @@ class DrawerCategorySection extends StatelessWidget {
           title: "행사 등록 요청",
           onTap: () async {
             launchUrlString(
-              'https://docs.google.com/forms/d/e/1FAIpQLSdqCHTNlfXnDm7gYuLtnx-LGxKJhJGvPCdiZ5Ui4QkAmeEdxw/viewform',
+              'https://www.dutyit.net/submit-event',
             );
           },
         ),
