@@ -31,7 +31,7 @@ class DrawerCategorySection extends StatelessWidget {
         ),
         SizedBox(height: 16),
         _PageItemButton(
-          title: "행사 등록 요청",
+          title: "행사 제보",
           onTap: () async {
             launchUrlString(
               'https://www.dutyit.net/submit-event',
