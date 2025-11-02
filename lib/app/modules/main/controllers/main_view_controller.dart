@@ -61,6 +61,7 @@ class MainViewController extends GetxController {
     } else {
       Get.toNamed(Routes.ACCOUNT);
     }
+    Get.find<MainViewController>().closeEndDrawer();
   }
 
   String getUserName() {
