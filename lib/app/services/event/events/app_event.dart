@@ -1,4 +1,4 @@
-class AppEvent<V> {
+abstract class AppEvent<V> {
   final V? value;
 
   AppEvent({this.value});
