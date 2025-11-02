@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
-import 'package:duty_it/app/core/utils/events/event_bookmark_event.dart';
+import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
@@ -12,7 +12,7 @@ import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/bookmark_bottom_modal.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:duty_it/app/services/app_event_service.dart';
+import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
