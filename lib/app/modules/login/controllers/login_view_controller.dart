@@ -44,7 +44,7 @@ class LoginViewController extends GetxController {
               .loginAndRefreshToken();
 
           if (rp is RequestSuccess) {
-            Get.offAndToNamed(Routes.MAIN);
+            AppUtils.resetApp();
             _analytics.logEvent(name: "login_success", parameters: {'provider': provider.displayName});
           } else {
             var fail = rp as RequestFail;
