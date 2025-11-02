@@ -1,6 +1,6 @@
 import 'package:duty_it/app/modules/calendar/controllers/calendar_view_controller.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
-import 'package:duty_it/app/services/app_event_service.dart';
+import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/in_app_review_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
@@ -15,8 +15,8 @@ class MainBinding extends Bindings {
     Get.put<InAppReviewService>(InAppReviewService());
     Get.put<SearchFilterService>(SearchFilterService());
     Get.put<MainViewController>(MainViewController());
-    Get.lazyPut<AppSettingsService>(() => AppSettingsService());
-    Get.lazyPut<HomeViewController>(() => HomeViewController());
-    Get.lazyPut<CalendarViewController>(() => CalendarViewController());
+    Get.put<AppSettingsService>(AppSettingsService());
+    Get.put<HomeViewController>(HomeViewController());
+    Get.put<CalendarViewController>(CalendarViewController());
   }
 }

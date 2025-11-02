@@ -10,6 +10,7 @@ _AppNotification _$AppNotificationFromJson(Map<String, dynamic> json) =>
     _AppNotification(
       id: (json['id'] as num).toInt(),
       type: json['type'] as String,
+      isRead: json['isRead'] as bool,
       event: json['event'] == null
           ? null
           : Event.fromJson(json['event'] as Map<String, dynamic>),
@@ -22,6 +23,7 @@ Map<String, dynamic> _$AppNotificationToJson(_AppNotification instance) =>
     <String, dynamic>{
       'id': instance.id,
       'type': instance.type,
+      'isRead': instance.isRead,
       'event': instance.event?.toJson(),
       'createdAt': instance.createdAt?.toIso8601String(),
     };

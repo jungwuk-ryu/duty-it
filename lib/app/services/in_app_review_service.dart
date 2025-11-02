@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:duty_it/app/core/utils/events/app_event.dart';
-import 'package:duty_it/app/core/utils/events/event_bookmark_event.dart';
-import 'package:duty_it/app/services/app_event_service.dart';
+import 'package:duty_it/app/services/event/events/app_event.dart';
+import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
+import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';

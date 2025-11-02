@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
-import 'package:duty_it/app/core/utils/events/event_bookmark_event.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
@@ -12,9 +13,10 @@ import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/bookmark_bottom_modal.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:duty_it/app/services/app_event_service.dart';
+import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +27,8 @@ import 'package:synchronized/synchronized.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController with WidgetsBindingObserver {
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
 
@@ -34,7 +38,13 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   set pagingState(state) => _pagingState.value = state;
 
   final Rx<HomeTab> _selectedTab = HomeTab.event.obs;
-  set selectedTab(HomeTab tab) => _selectedTab.value = tab;
+  set selectedTab(HomeTab tab) {
+    if (tab != HomeTab.event && !Get.find<AuthService>().isLoggined()) {
+      Get.toNamed(Routes.LOGIN);
+      return;  
+    }
+    _selectedTab.value = tab;
+  }
   HomeTab get selectedTab => _selectedTab.value;
 
   EventSortingType get sortingType => _settingsService.eventSortingType;
@@ -56,6 +66,7 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   @override
   void onInit() {
     super.onInit();
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
     searchTextEditingController.addListener(
       () => searchQuery.value = searchTextEditingController.text.trim(),
@@ -63,7 +74,10 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
 
     debounce(
       searchQuery,
-      (v) async => await fetchNextPage(clearPage: true),
+      (v) async {
+        analytics.logSearch(searchTerm: searchQuery.value);
+        await fetchNextPage(clearPage: true);
+      },
       time: Duration(milliseconds: 500),
     );
 
@@ -143,7 +157,7 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
       }
 
       // set params
-      const int size = 10;
+      const int size = 5;
       var filter = sfService.filter;
       List<String> categories = filter.categories.toList();
       List<EventType> types = [];
@@ -213,9 +227,23 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   }
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {
+    if (!Get.find<AuthService>().isLoggined()) {
+      Get.toNamed(Routes.LOGIN);
+      return;
+    }
+
     var appSettings = Get.find<AppSettingsService>();
-    if (!eventRx.value.isBookmarked &&
-        !appSettings.dontShowAutoAddModal.value) {
+    var event = eventRx.value;
+
+    analytics.logEvent(
+      name: 'event_bookmark_button_click',
+      parameters: {
+        'event_id': event.id.toString(),
+        'currentState': event.isBookmarked.toString(),
+      },
+    );
+
+    if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
       Get.put<BookmarkModalController>(
         BookmarkModalController(eventRx: eventRx),
       );
@@ -228,20 +256,33 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
         builder: (_) => BookmarkBottomModal(),
       ).whenComplete(() => Get.delete<BookmarkModalController>());
     } else {
-      eventRx.value = eventRx.value.copyWith(
-        isBookmarked: await bookmark(eventRx.value),
-      );
+      eventRx.value = event.copyWith(isBookmarked: !event.isBookmarked);
+
+      eventRx.value = event.copyWith(isBookmarked: await toggleBookmark(event));
     }
   }
 
-  Future<bool> bookmark(Event event) async {
+  Future<bool> toggleBookmark(Event event) async {
     bool isBookmarked = event.isBookmarked;
+
     var client = Get.find<ApiClient>();
     var result = await client.toggleBookmark(event.id);
     if (result is RequestSuccess) {
       isBookmarked = (result as RequestSuccess<bool>).data;
       if (isBookmarked) {
         _eventService.fire(EventBookmarkEvent());
+
+        analytics.logAddToWishlist(
+          items: [
+            AnalyticsEventItem(
+              itemId: event.id.toString(),
+              itemName: event.title,
+              itemBrand: event.host.name,
+            ),
+          ],
+        );
+      } else {
+        analytics.logEvent(name: 'unbookmark', parameters: {'event_id': event.id.toString()});
       }
     } else {
       var reqFail = result as RequestFail;

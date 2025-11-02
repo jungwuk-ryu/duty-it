@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-import '../middlewares/auth_guard.dart';
 import '../modules/account/bindings/account_binding.dart';
 import '../modules/account/views/account_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -39,7 +38,6 @@ class AppPages {
       name: _Paths.MAIN,
       page: () => MainView(),
       binding: MainBinding(),
-      middlewares: [AuthGuard()],
       children: [
         GetPage(
           name: _Paths.ACCOUNT,
