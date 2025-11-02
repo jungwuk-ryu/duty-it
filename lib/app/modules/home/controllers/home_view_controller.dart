@@ -26,6 +26,8 @@ import 'package:synchronized/synchronized.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController with WidgetsBindingObserver {
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
 
@@ -221,6 +223,14 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
     var appSettings = Get.find<AppSettingsService>();
     var event = eventRx.value;
 
+    analytics.logEvent(
+      name: 'event_bookmark_button_click',
+      parameters: {
+        'event_id': event.id.toString(),
+        'currentState': event.isBookmarked.toString(),
+      },
+    );
+
     if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
       Get.put<BookmarkModalController>(
         BookmarkModalController(eventRx: eventRx),
@@ -249,6 +259,20 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
       isBookmarked = (result as RequestSuccess<bool>).data;
       if (isBookmarked) {
         _eventService.fire(EventBookmarkEvent());
+      }
+
+      if (event.isBookmarked) {
+        analytics.logAddToWishlist(
+          items: [
+            AnalyticsEventItem(
+              itemId: event.id.toString(),
+              itemName: event.title,
+              itemBrand: event.host.name,
+            ),
+          ],
+        );
+      } else {
+        analytics.logEvent(name: 'unbookmark', parameters: {'event_id': event.id.toString()});
       }
     } else {
       var reqFail = result as RequestFail;
