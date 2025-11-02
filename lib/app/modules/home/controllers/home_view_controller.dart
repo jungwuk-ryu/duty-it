@@ -271,9 +271,7 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
       isBookmarked = (result as RequestSuccess<bool>).data;
       if (isBookmarked) {
         _eventService.fire(EventBookmarkEvent());
-      }
 
-      if (event.isBookmarked) {
         analytics.logAddToWishlist(
           items: [
             AnalyticsEventItem(
