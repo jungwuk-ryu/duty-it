@@ -45,6 +45,8 @@ class NotificationsViewController extends GetxController {
         isLoading: false,
         error: reqResult.serverFail,
       );
+
+      return;
     }
 
     List<AppNotification> notiList =
