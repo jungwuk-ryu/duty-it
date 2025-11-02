@@ -7,6 +7,7 @@ import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
 import 'package:duty_it/app/widgets/adaptive_layout.dart';
 import 'package:duty_it/app/widgets/tap_scale.dart';
 import 'package:duty_it/gen/assets.gen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -36,6 +37,8 @@ class EventCard extends StatelessWidget {
 
     var apiClient = Get.find<ApiClient>();
     apiClient.increaseViewCount(event.id);
+
+    FirebaseAnalytics.instance.logSelectContent(contentType: 'event', itemId: event.id.toString());
   }
 }
 
