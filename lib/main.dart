@@ -1,5 +1,3 @@
-import 'package:duty_it/app/api_client.dart';
-import 'package:duty_it/app/bindings/initial_bindings.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
@@ -49,9 +47,6 @@ void main() async {
 
   await Future.wait([dotenvFuture]);
 
-  ApiClient apiClient = ApiClient();
-  Get.put(apiClient);
-
   runApp(
     GetMaterialApp(
       useInheritedMediaQuery: true,
@@ -71,7 +66,6 @@ void main() async {
       debugShowCheckedModeBanner: false,
       title: "듀잇 - Du it!",
       initialRoute: AppPages.INITIAL,
-      initialBinding: InitialBindings(),
       getPages: AppPages.routes,
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
@@ -92,3 +86,5 @@ Future<void> _initFirebase() async {
     return true;
   };
 }
+
+

@@ -15,8 +15,8 @@ class MainBinding extends Bindings {
     Get.put<InAppReviewService>(InAppReviewService());
     Get.put<SearchFilterService>(SearchFilterService());
     Get.put<MainViewController>(MainViewController());
-    Get.lazyPut<AppSettingsService>(() => AppSettingsService());
-    Get.lazyPut<HomeViewController>(() => HomeViewController());
-    Get.lazyPut<CalendarViewController>(() => CalendarViewController());
+    Get.put<AppSettingsService>(AppSettingsService());
+    Get.put<HomeViewController>(HomeViewController());
+    Get.put<CalendarViewController>(CalendarViewController());
   }
 }

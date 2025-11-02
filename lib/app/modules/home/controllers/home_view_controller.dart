@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/core/models/event.dart';
@@ -37,7 +38,13 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   set pagingState(state) => _pagingState.value = state;
 
   final Rx<HomeTab> _selectedTab = HomeTab.event.obs;
-  set selectedTab(HomeTab tab) => _selectedTab.value = tab;
+  set selectedTab(HomeTab tab) {
+    if (tab != HomeTab.event && !Get.find<AuthService>().isLoggined()) {
+      Get.toNamed(Routes.LOGIN);
+      return;  
+    }
+    _selectedTab.value = tab;
+  }
   HomeTab get selectedTab => _selectedTab.value;
 
   EventSortingType get sortingType => _settingsService.eventSortingType;
@@ -220,6 +227,11 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   }
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {
+    if (!Get.find<AuthService>().isLoggined()) {
+      Get.toNamed(Routes.LOGIN);
+      return;
+    }
+
     var appSettings = Get.find<AppSettingsService>();
     var event = eventRx.value;
 
