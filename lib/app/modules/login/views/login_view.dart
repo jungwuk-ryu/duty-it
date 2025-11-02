@@ -33,13 +33,13 @@ class LoginView extends GetView<LoginViewController> {
               Column(
                 spacing: 16,
                 children: [
-                  LoginButton(
+                  /*LoginButton(
                     iconPath: Assets.icons.kakao.path,
                     providerName: "Kakao",
                     buttonColor: Color(0xFFFEE500),
                     onTap: () async =>
                         controller.onLoginButtonTap(SocialProvider.kakao),
-                  ),
+                  ),*/
                   LoginButton(
                     iconPath: Assets.icons.appleWhite.path,
                     buttonColor: Color(0xFF000000),
