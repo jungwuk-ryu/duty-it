@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/calendar/views/calendar_view.dart';
+import 'package:duty_it/app/modules/home/views/home_view.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +13,10 @@ import 'package:get/get.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 
 class MainViewController extends GetxController {
+  RxInt pageIndex = 0.obs;
+  final pages = [HomeView(), CalendarView()];
+  final pageNames = ['/home', '/calendar'];
+  
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   get scaffoldKey => _scaffoldKey;
   StreamSubscription? _authListener;
@@ -48,10 +55,10 @@ class MainViewController extends GetxController {
     _scaffoldKey.currentState!.closeEndDrawer();
   }
 
-  RxInt currentIndex = 0.obs;
-
   void changeTab(int index) {
-    currentIndex.value = index;
+    pageIndex.value = index;
+
+    FirebaseAnalytics.instance.logScreenView(screenName: pageNames[index]);
   }
 
   void onAccountSettingButtonClicked() {
