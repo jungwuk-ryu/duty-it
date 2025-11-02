@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/login/widgets/login_button.dart';
 import 'package:duty_it/app/modules/splash/views/splash_view.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
@@ -45,6 +46,14 @@ class LoginView extends GetView<LoginViewController> {
                     onTap: () async =>
                         controller.onLoginButtonTap(SocialProvider.kakao),
                   ),*/
+                  Text(
+                      '10초만에 로그인하고 모든 기능을 이용해보세요!',
+                      style: TextStyle(
+                        color: AppColors.g07,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                         LoginButton(
                           iconPath: Assets.icons.appleWhite.path,
                           buttonColor: Color(0xFF000000),
