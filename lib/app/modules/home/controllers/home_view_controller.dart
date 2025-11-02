@@ -15,6 +15,7 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,6 +57,7 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   @override
   void onInit() {
     super.onInit();
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
     searchTextEditingController.addListener(
       () => searchQuery.value = searchTextEditingController.text.trim(),
@@ -63,7 +65,10 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
 
     debounce(
       searchQuery,
-      (v) async => await fetchNextPage(clearPage: true),
+      (v) async {
+        analytics.logSearch(searchTerm: searchQuery.value);
+        await fetchNextPage(clearPage: true);
+      },
       time: Duration(milliseconds: 500),
     );
 
