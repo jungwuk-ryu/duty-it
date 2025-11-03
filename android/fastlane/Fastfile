@@ -32,6 +32,8 @@ platform :android do
       echo "Bumped version: $CURRENT -> #{next_code}"
     BASH
 
+    sh "flutter build appbundle --release"
+
     upload_to_play_store(
       track: "beta",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
