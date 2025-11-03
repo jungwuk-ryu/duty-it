@@ -23,7 +23,7 @@ platform :android do
 
   desc "Deploy a new Beta Build to Google Play"
   lane :beta do
-    codes = google_play_track_version_codes(track: 'beta') # internal, production 등도 가능
+    codes = google_play_track_version_codes.values.flatten
     next_code = (codes.max || 1) + 1
 
     sh <<~BASH
