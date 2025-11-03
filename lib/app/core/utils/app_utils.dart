@@ -1,3 +1,4 @@
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
@@ -71,5 +72,10 @@ class AppUtils {
     final mm = dt.month.toString().padLeft(2, '0');
     final dd = dt.day.toString().padLeft(2, '0');
     return '${dt.year}년 $mm월 $dd일(${weekDay2Text(dt.weekday)})';
+  }
+
+  static Future<void> resetApp() async {
+    await Get.deleteAll(force: true);
+    Get.offAllNamed(Routes.SPLASH);
   }
 }

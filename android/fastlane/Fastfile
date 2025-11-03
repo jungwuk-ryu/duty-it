@@ -1,0 +1,60 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Deploy a new Beta Build to Google Play"
+  lane :beta do
+    codes = google_play_track_version_codes.values.flatten
+    next_code = (codes.max || 1) + 1
+
+    sh <<~BASH
+      CURRENT=$(grep '^version:' pubspec.yaml | sed -E 's/.*\\+([0-9]+)/\\1/')
+      sed -E -i "s/(^version: .*\\+)[0-9]+/\\1#{next_code}/" pubspec.yaml
+      echo "Bumped version: $CURRENT -> #{next_code}"
+    BASH
+
+    sh "flutter build appbundle --release"
+
+    upload_to_play_store(
+      track: "beta",
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+      validate_only: false
+    )
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    upload_to_play_store(
+      track: "production"
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+      validate_only: false
+    )
+  end
+end

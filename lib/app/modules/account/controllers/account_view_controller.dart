@@ -1,4 +1,5 @@
 import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/account/widgets/account_bottom_modal.dart';
 import 'package:duty_it/app/modules/account/widgets/account_dialog.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
@@ -61,7 +62,7 @@ class AccountViewController extends GetxController {
         actionText: '로그아웃',
         action: () async {
           await _authService.logout();
-          resetApp();
+          AppUtils.resetApp();
         },
       ),
     );
@@ -75,14 +76,9 @@ class AccountViewController extends GetxController {
         actionText: '탈퇴',
         action: () async {
           await _authService.withdraw();
-          resetApp();
+          AppUtils.resetApp();
         },
       ),
     );
-  }
-
-  Future<void> resetApp() async {
-    await Get.deleteAll(force: true);
-    Get.offAllNamed(Routes.SPLASH);
   }
 }
