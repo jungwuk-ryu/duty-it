@@ -23,6 +23,15 @@ platform :android do
 
   desc "Deploy a new Beta Build to Google Play"
   lane :beta do
+    codes = google_play_track_version_codes(track: 'beta') # internal, production 등도 가능
+    next_code = (codes.max || 1) + 1
+
+    sh <<~BASH
+      CURRENT=$(grep '^version:' pubspec.yaml | sed -E 's/.*\\+([0-9]+)/\\1/')
+      sed -E -i "s/(^version: .*\\+)[0-9]+/\\1#{next_code}/" pubspec.yaml
+      echo "Bumped version: $CURRENT -> #{next_code}"
+    BASH
+
     upload_to_play_store(
       track: "beta",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
