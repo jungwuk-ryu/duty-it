@@ -25,8 +25,11 @@ platform :android do
 
   desc "Deploy a new Beta Build to Google Play"
   lane :beta do
-    codes = google_play_track_version_codes.values.flatten
-    next_code = (codes.max || 1) + 1
+    resp = google_play_track_version_codes 
+    all_codes =
+      if resp.is_a?(Hash) then resp.values.flatten else Array(resp) end
+    max_code = all_codes.compact.map(&:to_i).max
+    next_code = (max_code || 0) + 1
 
     sh <<~BASH
       CURRENT=$(grep '^version:' pubspec.yaml | sed -E 's/.*\\+([0-9]+)/\\1/')
@@ -37,7 +40,7 @@ platform :android do
     sh "flutter build appbundle --release"
 
     upload_to_play_store(
-      track: "beta",
+      track: "closed",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       skip_upload_metadata: true,
       skip_upload_images: true,
