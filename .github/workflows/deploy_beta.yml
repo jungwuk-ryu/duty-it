@@ -70,10 +70,13 @@ jobs:
         with:
           ruby-version: '3.2'
           bundler-cache: true
+          cache-dependency-path: android/Gemfile.lock
           
       - name: Fastlane (bundle)
         working-directory: android
-        run: bundle exec fastlane --version
+        run: |
+          bundle install
+          bundle exec fastlane --version
 
       - name: Fastlane Deploy
         working-directory: android
