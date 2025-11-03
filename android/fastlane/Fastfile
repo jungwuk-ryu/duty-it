@@ -1,3 +1,5 @@
+opt_out_usage
+
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 #
@@ -48,7 +50,7 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     upload_to_play_store(
-      track: "production"
+      track: "production",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       skip_upload_metadata: true,
       skip_upload_images: true,
