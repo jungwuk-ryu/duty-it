@@ -2,7 +2,7 @@ name: Beta Deploy
 
 on:
   push:
-    branches: [ "beta" ]
+    branches: [ "develop" ]
 
 jobs:
   build:
@@ -70,7 +70,7 @@ jobs:
       - name: Check current build number
         id: get
         run: |
-          CURRENT=$(gh variable get BUILD_NUMBER --repo $GITHUB_REPOSITORY --json value -q .value)
+          CURRENT=${{ vars.BUILD_NUMBER }}
           echo "Current build number: $CURRENT"
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
 
