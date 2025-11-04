@@ -90,6 +90,9 @@ jobs:
           
       - name: Get dependencies
         run: flutter pub get
+        
+      - name: Build AppBundle
+        run: flutter build appbundle --release
 
       - uses: ruby/setup-ruby@v1
         with:
