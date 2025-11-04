@@ -12,7 +12,8 @@ jobs:
       actions: write
 
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.ACTION_GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.ACTION_GH_TOKEN }}
 
     steps:
       - name: Clone repository
