@@ -67,6 +67,15 @@ jobs:
       - name: Auth gh
         run: gh auth status || gh auth login --with-token <<< "${GH_TOKEN}"
 
+      - name: Diagnose variables API
+        run: |
+          echo "LIST:"
+          gh api "repos/$GITHUB_REPOSITORY/actions/variables" || echo "LIST=403"
+          echo "GET:"
+          gh api "repos/$GITHUB_REPOSITORY/actions/variables/BUILD_NUMBER" || echo "GET=403"
+          echo "SET(probe):"
+          gh variable set CI_PROBE --repo "$GITHUB_REPOSITORY" --body "ok" || echo "SET=403"
+
       - name: Check current build number
         id: get
         run: |
