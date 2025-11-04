@@ -2,7 +2,7 @@ name: Beta Deploy
 
 on:
   push:
-    branches: [ "beta" ]
+    branches: [ "release" ]
 
 jobs:
   build:
@@ -108,4 +108,4 @@ jobs:
 
       - name: Fastlane Deploy
         working-directory: android
-        run: bundle exec fastlane beta
+        run: bundle exec fastlane deploy
