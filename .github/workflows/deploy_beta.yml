@@ -10,9 +10,6 @@ jobs:
     permissions:
       contents: write
       actions: write
-      id-token: write
-      repository-variables: read
-      repository-variables: write
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -66,6 +63,9 @@ jobs:
           cat > android/fastlane/json_key_file.json << 'EOF'
           ${{ secrets.FASTLANE_JSON_KEY_FILE }}
           EOF
+
+      - name: Auth gh
+        run: gh auth status || gh auth login --with-token <<< "${GH_TOKEN}"
 
       - name: Check current build number
         id: get
