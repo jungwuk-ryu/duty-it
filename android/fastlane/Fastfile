@@ -25,18 +25,6 @@ platform :android do
 
   desc "Deploy a new Beta Build to Google Play"
   lane :beta do
-    resp = google_play_track_version_codes 
-    all_codes =
-      if resp.is_a?(Hash) then resp.values.flatten else Array(resp) end
-    max_code = all_codes.compact.map(&:to_i).max
-    next_code = (max_code || 0) + 1
-
-    sh <<~BASH
-      CURRENT=$(grep '^version:' pubspec.yaml | sed -E 's/.*\\+([0-9]+)/\\1/')
-      sed -E -i "s/(^version: .*\\+)[0-9]+/\\1#{next_code}/" pubspec.yaml
-      echo "Bumped version: $CURRENT -> #{next_code}"
-    BASH
-
     sh "flutter build appbundle --release"
 
     upload_to_play_store(
