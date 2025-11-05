@@ -24,7 +24,7 @@ class AppleLoginStrategy extends SocialLoginStrategy {
     } catch (e, st) {
       if (e is FirebaseAuthException &&
           (e.code == 'popup-closed-by-user' ||
-              e.code == 'web-context-canceled')) { // 사용자 로그인 취소
+              e.code.toLowerCase().contains('canceled'))) { // 사용자 로그인 취소
         FirebaseAnalytics.instance.logEvent(name: 'login_cancelled', parameters: {'provider': 'apple'});
         return SocialLoginFail(reason: "로그인 취소됨");
       }
