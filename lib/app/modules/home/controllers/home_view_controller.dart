@@ -145,8 +145,8 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
       pagingState = pagingState.copyWith(
         isLoading: true,
         error: null,
-        keys: clearPage ? [] : const Omit(),
-        pages: clearPage ? [] : const Omit(),
+        keys: clearPage ? null : const Omit(),
+        pages: clearPage ? null : const Omit(),
       );
 
       // find next key
