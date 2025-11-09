@@ -14,7 +14,7 @@ class AppSettingsService extends GetxService {
   void onInit() async {
     super.onInit();
 
-    eventSortingTypeSetting = AppSetting(key: 'event_sorting_type', box: _box, defaultValue: EventSortingType.eventStartSoon.name);
+    eventSortingTypeSetting = AppSetting(key: 'event_sorting_type', box: _box, defaultValue: EventSortingType.latest.name);
     dontShowAutoAddModal = AppSetting(key: 'dont_show_auto_add_modal', box: _box, defaultValue: false);
   }
 
