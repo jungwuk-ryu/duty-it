@@ -124,13 +124,16 @@ class _SearchFilterHostSelectionBottomModal
               ),
 
               SizedBox(height: 24),
-              Text(
-                '검색 결과',
-                style: TextStyle(
-                  color: AppColors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  height: 1.20,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '검색 결과',
+                  style: TextStyle(
+                    color: AppColors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    height: 1.20,
+                  ),
                 ),
               ),
 

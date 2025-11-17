@@ -17,7 +17,6 @@ class BookmarkModalController extends GetxController {
 
   BookmarkModalController({required this.eventRx});
 
-
   void toggle() {
     dontShowAgain = !dontShowAgain;
   }
@@ -26,7 +25,7 @@ class BookmarkModalController extends GetxController {
     Get.back();
     var api = Get.find<ApiClient>();
     var user = Get.find<AuthService>().appUser!;
-    
+
     if (user.autoAddBookmarkToCalendar != addToCal) {
       var result = await api.updateUserSettings(addToCal, user.alarmSettings);
       if (result is! RequestSuccess) {
@@ -38,6 +37,11 @@ class BookmarkModalController extends GetxController {
     var appSettings = Get.find<AppSettingsService>();
     appSettings.dontShowAutoAddModal.value = dontShowAgain;
 
-    eventRx.value = eventRx.value.copyWith(isBookmarked: await hController.bookmark(eventRx.value));
+    var event = eventRx.value;
+
+    eventRx.value = event.copyWith(isBookmarked: !event.isBookmarked);
+    eventRx.value = event.copyWith(
+      isBookmarked: await hController.toggleBookmark(event),
+    );
   }
 }

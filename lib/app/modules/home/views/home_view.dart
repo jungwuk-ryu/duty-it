@@ -45,6 +45,8 @@ class HomeView extends GetView<HomeViewController> {
                 fetchNextPage: controller.fetchNextPage,
                 builderDelegate: PagedChildBuilderDelegate<EventCard>(
                   itemBuilder: (context, item, index) => item,
+                  firstPageProgressIndicatorBuilder: (_) =>
+                          Center(child: CircularProgressIndicator.adaptive()),
                   newPageProgressIndicatorBuilder: (_) => Align(
                     alignment: Alignment.center,
                     child: SizedBox(

@@ -5,6 +5,7 @@ import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,8 @@ class CalendarViewController extends GetxController {
   }
 
   Stream<List<CalendarEvent>> getCalendarEvents(DateTime date) async* {
+    if (!Get.find<AuthService>().isLoggined()) return;
+    
     try {
       var storage = await _cacheStorageFuture;
       var cache = storage.read(_dateTimeToCacheKey(date)) ?? [];

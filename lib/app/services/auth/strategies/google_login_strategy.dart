@@ -1,6 +1,7 @@
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -29,12 +30,29 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       return SocialLoginSuccess();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'popup-closed-by-user') {
+        // 웹 사용자 취소
+        FirebaseAnalytics.instance.logEvent(name: 'login_cancelled', parameters: {'provider': 'google'});
+        return SocialLoginFail(reason: '로그인 취소됨');
+      }
+      rethrow;
+    } on GoogleSignInException catch (e) {
+      if (e.code.toString().contains('canceled')) {
+        // 모바일 사용자 취소
+        FirebaseAnalytics.instance.logEvent(name: 'login_cancelled', parameters: {'provider': 'google'});
+        return SocialLoginFail(reason: '로그인 취소됨');
+      }
+      rethrow;
     } catch (e, st) {
-      //if (kDebugMode) rethrow;
-      if (kDebugMode) AppUtils.showSnackBar("$e");
-      if (kDebugMode) AppUtils.showSnackBar("$st");
-      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-      return SocialLoginFail(reason: kDebugMode ? "$e\n$st" : '로그인 실패');
+      if (kDebugMode) {
+        AppUtils.showSnackBar("$e");
+        AppUtils.showSnackBar("$st");
+      } else {
+        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      }
+
+      return SocialLoginFail(reason: '로그인 실패');
     }
   }
 

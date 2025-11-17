@@ -11,7 +11,13 @@
 
 <div align="center">
   <a href="https://apps.apple.com/eg/app/id6751395152"><img alt="ios" src="https://img.shields.io/badge/App_Store-0D96F6?style=for-the-badge&logo=app-store&logoColor=white" /></a>
-  <a href="https://play.google.com/store/apps/details?id=com.dutyit.app"><img alt="google-play" src="https://playbadges.pavi2410.com/badge/downloads?id=com.dutyit.app" /></a>
+  <a href="https://play.google.com/store/apps/details?id=com.dutyit.app"><img alt="google-play" src="https://img.shields.io/badge/Google%20Play-414141?logo=googleplay&logoColor=fff&style=for-the-badge" /></a>
+  <br/>
+  <img src="https://img.shields.io/badge/Dart-0175C2?logo=dart&logoColor=fff&style=for-the-badge" alt="Dart Badge">
+  <img src="https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=fff&style=for-the-badge" alt="Flutter Badge">
+  <img src="https://img.shields.io/badge/GetX-8A2BE2?logo=getx&logoColor=fff&style=for-the-badge" alt="GetX Badge">
+  <img src="https://img.shields.io/badge/Firebase-DD2C00?logo=firebase&logoColor=fff&style=for-the-badge" alt="Firebase Badge">
+  <img src="https://img.shields.io/badge/Google%20Analytics-E37400?logo=googleanalytics&logoColor=fff&style=for-the-badge" alt="Google Analytics Badge">
   
   간호 행사(학술행사·세미나·교육)를 한 곳에서 모아보고, '참여할 수 있는’ 행사를 개인 캘린더에 추가해보세요.
 </div>

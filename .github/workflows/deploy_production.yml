@@ -1,0 +1,115 @@
+name: Beta Deploy
+
+on:
+  push:
+    branches: [ "release" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.ACTION_GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.ACTION_GH_TOKEN }}
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Restore Android keystore
+        run: |
+          mkdir -p android/app
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          
+      - name: Create key.properties
+        run: |
+          cat > android/key.properties << 'EOF'
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          storeFile=keystore.jks
+          EOF
+
+      - name: Create google-services.json
+        run: |
+          cat > android/app/google-services.json << 'EOF'
+          ${{ secrets.GOOGLE_SERVICES_JSON }}
+          EOF
+
+      - name: Create firebase_options.dart
+        run: |
+          cat > lib/firebase_options.dart << 'EOF'
+          ${{ secrets.FIREBASE_OPTIONS_DART }}
+          EOF
+
+      - name: Create firebase.json
+        run: |
+          cat > firebase.json << 'EOF'
+          ${{ secrets.FIREBASE_JSON }}
+          EOF
+      
+      - name: Create .env
+        run: |
+          cat > .env << 'EOF'
+          ${{ secrets.DOT_ENV }}
+          EOF
+      
+      - name: Create fastlane google service json key file
+        run: |
+          cat > android/fastlane/json_key_file.json << 'EOF'
+          ${{ secrets.FASTLANE_JSON_KEY_FILE }}
+          EOF
+      
+      - name: Auth gh
+        run: gh auth status || gh auth login --with-token <<< "${GH_TOKEN}"
+
+      - name: Check current build number
+        id: get
+        run: |
+          CURRENT=$(gh variable get BUILD_NUMBER --repo $GITHUB_REPOSITORY --json value -q .value)
+          echo "Current build number: $CURRENT"
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+
+      - name: Increment and update
+        id: inc
+        run: |
+          NEXT=$(( ${{ steps.get.outputs.current }} + 1 ))
+          echo "Next build number: $NEXT"
+          gh variable set BUILD_NUMBER --body "$NEXT" --repo $GITHUB_REPOSITORY
+          echo "next=$NEXT" >> $GITHUB_OUTPUT
+
+      - name: Use new build number
+        run: |
+          sed -i -E "s/^version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+/version: \1+${{ steps.inc.outputs.next }}/" pubspec.yaml
+        
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          
+      - name: Get dependencies
+        run: flutter pub get
+        
+      - name: Build AppBundle
+        run: flutter build appbundle --release
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          cache-dependency-path: android/Gemfile.lock
+          
+      - name: Fastlane (bundle)
+        working-directory: android
+        run: |
+          bundle install
+          bundle exec fastlane --version
+
+      - name: Fastlane Deploy
+        working-directory: android
+        run: bundle exec fastlane deploy

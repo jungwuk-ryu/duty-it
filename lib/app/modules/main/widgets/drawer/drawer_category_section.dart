@@ -1,4 +1,6 @@
+import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:duty_it/app/core/constants/app_colors.dart';
@@ -12,6 +14,7 @@ class DrawerCategorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16,
       children: [
         Text(
           "설정",
@@ -22,20 +25,19 @@ class DrawerCategorySection extends StatelessWidget {
             height: 1.60,
           ),
         ),
-        SizedBox(height: 16),
+        if (Get.find<AuthService>().isLoggined())
+          _PageItemButton(
+            title: "앱 설정",
+            onTap: () {
+              Get.toNamed(Routes.SETTINGS);
+              Get.find<MainViewController>().closeEndDrawer();
+            },
+          ),
         _PageItemButton(
-          title: "앱 설정",
-          onTap: () {
-            Get.toNamed(Routes.SETTINGS);
-          },
-        ),
-        SizedBox(height: 16),
-        _PageItemButton(
-          title: "행사 등록 요청",
+          title: "행사 제보",
           onTap: () async {
-            launchUrlString(
-              'https://docs.google.com/forms/d/e/1FAIpQLSdqCHTNlfXnDm7gYuLtnx-LGxKJhJGvPCdiZ5Ui4QkAmeEdxw/viewform',
-            );
+            launchUrlString('https://www.dutyit.net/submit-event');
+            Get.find<MainViewController>().closeEndDrawer();
           },
         ),
       ],

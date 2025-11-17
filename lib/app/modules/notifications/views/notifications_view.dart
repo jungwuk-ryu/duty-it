@@ -34,6 +34,16 @@ class NotificationsView extends GetView<NotificationsViewController> {
                           ),
                         ),
                       ),
+                      firstPageProgressIndicatorBuilder: (_) =>
+                          Center(child: CircularProgressIndicator.adaptive()),
+                      newPageProgressIndicatorBuilder: (_) => Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
                     ),
                   );
                 }),

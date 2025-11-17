@@ -51,6 +51,7 @@ ios/Runner/GoogleService-Info.plist
 macos/Runner/GoogleService-Info.plist
 firebase.json
 lib/firebase_options.dart
+android/fastlane/json_key_file.json
 
 #vscode
 .vscode
