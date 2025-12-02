@@ -5,7 +5,7 @@ enum EventType {
   SEMINAR('세미나'),
   WEBINAR('웨비나'),
   WORKSHOP('워크숍'),
-  CONTEST('콘테스트'),
+  CONTEST('공모전'),
   CONTINUING_EDUCATION("보수교육"),
   EDUCATION("교육"),
   ETC('기타');
