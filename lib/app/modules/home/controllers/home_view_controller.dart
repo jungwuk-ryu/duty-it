@@ -26,7 +26,7 @@ import 'package:synchronized/synchronized.dart';
 
 enum HomeTab { event, bookmark }
 
-class HomeViewController extends GetxController with WidgetsBindingObserver {
+class HomeViewController extends GetxController {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
 
@@ -62,8 +62,6 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
   WidgetsBinding get binding => WidgetsBinding.instance;
   bool get isForeground => binding.lifecycleState == AppLifecycleState.resumed;
 
-  Timer? _newNotiTimer;
-
   @override
   void onInit() {
     super.onInit();
@@ -98,40 +96,6 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
     );
 
     checkNewNotification();
-    binding.addObserver(this);
-    if (isForeground) {
-      _startNewNotiTimer();
-    }
-  }
-
-  @override
-  void onClose() {
-    _stopNewNotiTimer();
-    binding.removeObserver(this);
-    super.onClose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-
-    if (isForeground) {
-      _startNewNotiTimer();
-    } else {
-      _stopNewNotiTimer();
-    }
-  }
-
-  void _startNewNotiTimer() {
-    _stopNewNotiTimer();
-    _newNotiTimer = Timer.periodic(
-      Duration(seconds: 10),
-      (_) => checkNewNotification(),
-    );
-  }
-
-  void _stopNewNotiTimer() {
-    _newNotiTimer?.cancel();
   }
 
   Future<void> checkNewNotification() async {
