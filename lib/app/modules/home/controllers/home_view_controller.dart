@@ -28,6 +28,7 @@ enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController with WidgetsBindingObserver {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final ScrollController scrollController = ScrollController();
 
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
@@ -135,6 +136,10 @@ class HomeViewController extends GetxController with WidgetsBindingObserver {
 
   Future<void> checkNewNotification() async {
     _hasNewNotification.value = false;
+  }
+
+  void scrollUpEventList() {
+    scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
