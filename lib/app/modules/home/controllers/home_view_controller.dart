@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
+import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
@@ -99,7 +100,23 @@ class HomeViewController extends GetxController {
   }
 
   Future<void> checkNewNotification() async {
-    _hasNewNotification.value = false;
+    if (!Get.find<AuthService>().isLoggined()) {
+      _hasNewNotification.value = false;
+      return;
+    }
+    
+    var api = Get.find<ApiClient>();
+    RequestResult<List<AppNotification>> result = await api.getNotificationList(0);
+    if (result is RequestFail) return;
+
+    List<AppNotification> notiList = (result as RequestSuccess).data;
+    if (notiList.isEmpty) {
+      _hasNewNotification.value = false;
+      return;
+    }
+
+    AppNotification noti = notiList.first;
+    _hasNewNotification.value = !noti.isRead;
   }
 
   void scrollUpEventList() {
@@ -261,7 +278,8 @@ class HomeViewController extends GetxController {
     return isBookmarked;
   }
 
-  void openNotificationsPage() {
-    Get.toNamed(Routes.NOTIFICATIONS);
+  Future<void> openNotificationsPage() async {
+    await Get.toNamed(Routes.NOTIFICATIONS);
+    checkNewNotification();
   }
 }
