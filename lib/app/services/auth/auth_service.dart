@@ -139,6 +139,7 @@ class AuthService extends GetxService {
       return false;
     }
 
+    await FirebaseAuth.instance.currentUser!.delete();
     await logout();
     return true;
   }
