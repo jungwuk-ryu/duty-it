@@ -298,9 +298,9 @@ class ApiClient extends GetConnect {
     );
   }
 
-  /// 회원탈퇴 (/users/{userId}) - DELETE
-  Future<RequestResult<void>> withdrawUser(int userId) async {
-    return _send(() async => await delete('/users/$userId'), map: (_) => true);
+  /// 회원탈퇴 (/users) - DELETE
+  Future<RequestResult<void>> withdrawUser() async {
+    return _send(() async => await delete('/users'), map: (_) => true);
   }
 
   /// 알림 - 사용자 기기 등록 (/users/device/{token}) - PATCH
