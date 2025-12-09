@@ -58,7 +58,7 @@ class LoginView extends GetView<LoginViewController> {
                             ),
                           ),
                           Text(
-                            '10초만에 로그인하고 모든 기능을 이용해보세요!',
+                            '10초만에 로그인하고 모든 기능을 이용해보세요.',
                             style: TextStyle(
                               color: AppColors.g07,
                               fontWeight: FontWeight.w300,
