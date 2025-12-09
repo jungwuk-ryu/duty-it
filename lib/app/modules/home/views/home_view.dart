@@ -41,7 +41,7 @@ class HomeView extends GetView<HomeViewController> {
             ),
 
             Obx(() {
-              return PagedSliverList<int, EventCard>(
+              return PagedSliverList<String?, EventCard>(
                 state: controller.pagingState,
                 fetchNextPage: controller.fetchNextPage,
                 builderDelegate: PagedChildBuilderDelegate<EventCard>(

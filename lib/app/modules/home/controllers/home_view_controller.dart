@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
+import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
@@ -34,19 +35,20 @@ class HomeViewController extends GetxController {
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
 
-  final Rx<PagingState<int, EventCard>> _pagingState =
-      PagingState<int, EventCard>().obs;
-  PagingState<int, EventCard> get pagingState => _pagingState.value;
+  final Rx<PagingState<String?, EventCard>> _pagingState =
+      PagingState<String?, EventCard>().obs;
+  PagingState<String?, EventCard> get pagingState => _pagingState.value;
   set pagingState(state) => _pagingState.value = state;
 
   final Rx<HomeTab> _selectedTab = HomeTab.event.obs;
   set selectedTab(HomeTab tab) {
     if (tab != HomeTab.event && !Get.find<AuthService>().isLoggined()) {
       Get.toNamed(Routes.LOGIN);
-      return;  
+      return;
     }
     _selectedTab.value = tab;
   }
+
   HomeTab get selectedTab => _selectedTab.value;
 
   EventSortingType get sortingType => _settingsService.eventSortingType;
@@ -56,6 +58,7 @@ class HomeViewController extends GetxController {
   final RxString searchQuery = RxString('');
 
   final Lock _fetchPageLock = Lock();
+  bool onlyFinishedMode = false;
 
   final RxBool _hasNewNotification = RxBool(false);
   bool get hasNewNotification => _hasNewNotification.value;
@@ -72,14 +75,10 @@ class HomeViewController extends GetxController {
       () => searchQuery.value = searchTextEditingController.text.trim(),
     );
 
-    debounce(
-      searchQuery,
-      (v) async {
-        analytics.logSearch(searchTerm: searchQuery.value);
-        await fetchNextPage(clearPage: true);
-      },
-      time: Duration(milliseconds: 500),
-    );
+    debounce(searchQuery, (v) async {
+      analytics.logSearch(searchTerm: searchQuery.value);
+      await fetchNextPage(clearPage: true);
+    }, time: Duration(milliseconds: 500));
 
     ever(_selectedTab, (_) async {
       HapticFeedback.lightImpact();
@@ -104,9 +103,11 @@ class HomeViewController extends GetxController {
       _hasNewNotification.value = false;
       return;
     }
-    
+
     var api = Get.find<ApiClient>();
-    RequestResult<List<AppNotification>> result = await api.getNotificationList(0);
+    RequestResult<List<AppNotification>> result = await api.getNotificationList(
+      0,
+    );
     if (result is RequestFail) return;
 
     List<AppNotification> notiList = (result as RequestSuccess).data;
@@ -120,7 +121,11 @@ class HomeViewController extends GetxController {
   }
 
   void scrollUpEventList() {
-    scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.ease);
+    scrollController.animateTo(
+      0,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
@@ -128,19 +133,13 @@ class HomeViewController extends GetxController {
       SearchFilterService sfService = Get.find<SearchFilterService>();
 
       // Update paging state
+      if (clearPage) onlyFinishedMode = false;
       pagingState = pagingState.copyWith(
         isLoading: true,
         error: null,
         keys: clearPage ? null : const Omit(),
         pages: clearPage ? null : const Omit(),
       );
-
-      // find next key
-      int nextKey = 0;
-      if (!clearPage &&
-          !(pagingState.keys == null || pagingState.keys!.isEmpty)) {
-        nextKey = pagingState.keys!.last + 1;
-      }
 
       // set params
       const int size = 5;
@@ -152,31 +151,51 @@ class HomeViewController extends GetxController {
         types.add(EventType.getByDisplayName(category));
       }
 
+      String? pageKey = pagingState.keys?.last;
       int? hostId = sfService.filter.host?.id;
-      bool includeFinished = sfService.filter.showEnded;
+
+      if (!onlyFinishedMode) {
+        if (pageKey == null &&
+            sfService.filter.showEnded &&
+            (pagingState.keys?.isNotEmpty ?? false)) {
+          onlyFinishedMode = true;
+        }
+      }
 
       // request
 
       try {
         var apiClient = Get.find<ApiClient>();
         var reqResult = await apiClient.getEvents(
-          isApproved: true,
-          includeFinished: includeFinished,
-          isBookmarked: selectedTab == HomeTab.bookmark,
-          page: nextKey,
+          finished: onlyFinishedMode,
+          bookmarked: selectedTab == HomeTab.bookmark,
+          cursor: pageKey,
           size: size,
-          sortDirection: sortingType.sortDirection,
           field: sortingType.field,
           searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
           hostId: hostId,
           types: types,
         );
         if (reqResult is RequestSuccess) {
-          var events = (reqResult as RequestSuccess<List<Event>>).data;
+          EventsResponse response =
+              (reqResult as RequestSuccess<EventsResponse>).data;
+          var pageInfo = response.pageInfo;
+          var events = response.events;
+
+          bool hasNext;
+          if (sfService.filter.showEnded) {
+            if (onlyFinishedMode) {
+              hasNext = pageInfo.hasNext;
+            } else {
+              hasNext = true;
+            }
+          } else {
+            hasNext = pageInfo.hasNext;
+          }
 
           pagingState = pagingState.copyWith(
             isLoading: false,
-            keys: [...pagingState.keys ?? [], nextKey],
+            keys: [...pagingState.keys ?? [], pageInfo.nextCursor],
             pages: [
               ...pagingState.pages ?? [],
               List<EventCard>.generate(
@@ -184,7 +203,7 @@ class HomeViewController extends GetxController {
                 (i) => EventCard(eventRx: Rx(events[i])),
               ),
             ],
-            hasNextPage: events.length >= size,
+            hasNextPage: hasNext,
           );
         } else {
           var fail = reqResult as RequestFail;
@@ -268,7 +287,10 @@ class HomeViewController extends GetxController {
           ],
         );
       } else {
-        analytics.logEvent(name: 'unbookmark', parameters: {'event_id': event.id.toString()});
+        analytics.logEvent(
+          name: 'unbookmark',
+          parameters: {'event_id': event.id.toString()},
+        );
       }
     } else {
       var reqFail = result as RequestFail;
