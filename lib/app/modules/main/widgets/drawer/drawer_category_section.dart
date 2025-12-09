@@ -34,7 +34,7 @@ class DrawerCategorySection extends StatelessWidget {
             },
           ),
         _PageItemButton(
-          title: "행사 제보",
+          title: "행사 제보하기",
           onTap: () async {
             launchUrlString('https://www.dutyit.net/submit-event');
             Get.find<MainViewController>().closeEndDrawer();
