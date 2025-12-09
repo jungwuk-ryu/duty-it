@@ -19,6 +19,7 @@ class HomeView extends GetView<HomeViewController> {
       child: RefreshIndicator.adaptive(
         onRefresh: () async {
           await controller.fetchNextPage(clearPage: true);
+          controller.checkNewNotification();
         },
         child: CustomScrollView(
           physics: AlwaysScrollableScrollPhysics(),
