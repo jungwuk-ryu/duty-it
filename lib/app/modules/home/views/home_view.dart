@@ -21,6 +21,7 @@ class HomeView extends GetView<HomeViewController> {
           await controller.fetchNextPage(clearPage: true);
         },
         child: CustomScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           controller: controller.scrollController,
           slivers: [
             SliverAppBar(
