@@ -161,13 +161,14 @@ class ApiClient extends GetConnect {
   /// 알람 목록 조회 (alarms)
   Future<RequestResult<List<AppNotification>>> getNotificationList(
     int page,
+    {int size = 10}
   ) async {
     return await _send(
       () async => await get(
         '/v1/alarms',
         query: {
           'page': "$page",
-          'size': '10',
+          'size': '$size',
           'sortDirection': 'DESC',
           'field': 'ID',
         },
@@ -191,7 +192,7 @@ class ApiClient extends GetConnect {
   /// 알람 모두 읽음 처리 (/alarms/read-all)
   Future<RequestResult<bool>> readAllNotification() async {
     return await _send(
-      () async => await patch('/v1/alarms/read-all', {}),
+      () async => await patch('/v1/alarms/read-all', null),
       map: (rp) {
         if (rp.statusCode == HttpStatus.noContent) return true;
         return false;
