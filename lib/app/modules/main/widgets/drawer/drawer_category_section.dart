@@ -40,6 +40,13 @@ class DrawerCategorySection extends StatelessWidget {
             Get.find<MainViewController>().closeEndDrawer();
           },
         ),
+        _PageItemButton(
+          title: "피드백 남기기",
+          onTap: () async {
+            launchUrlString('https://forms.gle/YEUFTzspFMu6xoNW8');
+            Get.find<MainViewController>().closeEndDrawer();
+          },
+        ),
       ],
     );
   }
