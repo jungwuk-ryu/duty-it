@@ -107,6 +107,7 @@ class HomeViewController extends GetxController {
     var api = Get.find<ApiClient>();
     RequestResult<List<AppNotification>> result = await api.getNotificationList(
       0,
+      size: 1
     );
     if (result is RequestFail) return;
 
