@@ -193,7 +193,6 @@ class HomeViewController extends GetxController {
         }
 
         pagingState = pagingState.copyWith(
-          isLoading: false,
           keys: [...pagingState.keys ?? [], pageInfo.nextCursor],
           pages: [
             ...pagingState.pages ?? [],
