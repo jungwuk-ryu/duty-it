@@ -111,9 +111,49 @@ class AuthService extends GetxService {
   }
 
   Future<void> logout() async {
-    await _currentStrategy?.logout();
+    // Firebase
+    var logoutWaiter = _awaitFirebaseLogout();
     await FirebaseAuth.instance.signOut();
-    await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u == null);
+    await logoutWaiter;
+
+    // Social
+    await _currentStrategy?.logout();
+
+    // finalizing
+    await _doPostLogoutJob();
+  }
+
+  Future<bool> withdraw() async {
+    if (appUser == null) {
+      AppUtils.showSnackBar('회원탈퇴 중 알 수 없는 오류가 발생했어요.');
+      return false;
+    }
+
+    // Server
+    var reqResult = await Get.find<ApiClient>().withdrawUser();
+    if (reqResult is RequestFail) {
+      AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
+      if (reqResult.serverFail != null) {
+        AppUtils.showSnackBar(reqResult.serverFail!.message);
+      }
+      return false;
+    }
+
+    // Firebase
+    var logoutWaiter = _awaitFirebaseLogout();
+    await FirebaseAuth.instance.currentUser!.delete();
+    await logoutWaiter;
+
+    // Social
+    await _currentStrategy?.logout();
+
+    // finalizing
+    await _doPostLogoutJob();
+
+    return true;
+  }
+
+  Future<void> _doPostLogoutJob() async {
     appUser = null;
     _currentStrategy = null;
 
@@ -124,24 +164,8 @@ class AuthService extends GetxService {
     }
   }
 
-  Future<bool> withdraw() async {
-    if (appUser == null) {
-      AppUtils.showSnackBar('회원탈퇴 중 알 수 없는 오류가 발생했어요.');
-      return false;
-    }
-
-    var reqResult = await Get.find<ApiClient>().withdrawUser();
-    if (reqResult is RequestFail) {
-      AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
-      if (reqResult.serverFail != null) {
-        AppUtils.showSnackBar(reqResult.serverFail!.message);
-      }
-      return false;
-    }
-
-    await FirebaseAuth.instance.currentUser!.delete();
-    await logout();
-    return true;
+  Future<void> _awaitFirebaseLogout() async {
+    await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u == null);
   }
 
   bool isLoggined() {

@@ -75,8 +75,8 @@ class AccountViewController extends GetxController {
         content: '탈퇴 하시겠습니까?\n이 작업은 복구할 수 없습니다.',
         actionText: '탈퇴',
         action: () async {
-          await _authService.withdraw();
-          AppUtils.resetApp();
+          bool success = await _authService.withdraw();
+          if (success) AppUtils.resetApp();
         },
       ),
     );
