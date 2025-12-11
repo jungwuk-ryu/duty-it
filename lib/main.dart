@@ -67,6 +67,9 @@ void main() async {
       title: "듀잇 - Du it!",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
+      builder: (context, child) {
+        return Overlay(initialEntries: [OverlayEntry(builder: (_) => child!)]);
+      },
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
       ],
