@@ -57,7 +57,8 @@ class HomeViewController extends GetxController {
       TextEditingController();
   final RxString searchQuery = RxString('');
 
-  final Lock _fetchPageLock = Lock();
+  Future<void>? _pageFetchFuture = null;
+  final Lock _pageFetchLock = Lock();
   bool onlyFinishedMode = false;
 
   final RxBool _hasNewNotification = RxBool(false);
@@ -107,7 +108,7 @@ class HomeViewController extends GetxController {
     var api = Get.find<ApiClient>();
     RequestResult<List<AppNotification>> result = await api.getNotificationList(
       0,
-      size: 1
+      size: 1,
     );
     if (result is RequestFail) return;
 
@@ -130,94 +131,96 @@ class HomeViewController extends GetxController {
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
-    await _fetchPageLock.synchronized(() async {
-      SearchFilterService sfService = Get.find<SearchFilterService>();
+    if (!clearPage && pagingState.isLoading) return;
+    await _pageFetchLock.synchronized(() async => await _fetchNextPage(clearPage: clearPage));
+  }
 
-      // Update paging state
-      if (clearPage) onlyFinishedMode = false;
-      pagingState = pagingState.copyWith(
-        isLoading: true,
-        error: null,
-        keys: clearPage ? null : const Omit(),
-        pages: clearPage ? null : const Omit(),
+  Future<void> _fetchNextPage({bool clearPage = false}) async {
+    SearchFilterService sfService = Get.find<SearchFilterService>();
+
+    // Update paging state
+    if (clearPage) onlyFinishedMode = false;
+    pagingState = pagingState.copyWith(
+      isLoading: true,
+      error: null,
+      keys: clearPage ? null : const Omit(),
+      pages: clearPage ? null : const Omit(),
+    );
+
+    // set params
+    const int size = 5;
+    var filter = sfService.filter;
+    List<String> categories = filter.categories.toList();
+    List<EventType> types = [];
+
+    for (var category in categories) {
+      types.add(EventType.getByDisplayName(category));
+    }
+
+    String? pageKey = pagingState.keys?.last;
+    int? hostId = sfService.filter.host?.id;
+
+    if (!onlyFinishedMode) {
+      if (pageKey == null &&
+          sfService.filter.showEnded &&
+          (pagingState.keys?.isNotEmpty ?? false)) {
+        onlyFinishedMode = true;
+      }
+    }
+
+    // request
+
+    try {
+      var apiClient = Get.find<ApiClient>();
+      var reqResult = await apiClient.getEvents(
+        finished: onlyFinishedMode,
+        bookmarked: selectedTab == HomeTab.bookmark,
+        cursor: pageKey,
+        size: size,
+        field: sortingType.field,
+        searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
+        hostId: hostId,
+        types: types,
       );
+      if (reqResult is RequestSuccess) {
+        EventsResponse response =
+            (reqResult as RequestSuccess<EventsResponse>).data;
+        var pageInfo = response.pageInfo;
+        var events = response.events;
 
-      // set params
-      const int size = 5;
-      var filter = sfService.filter;
-      List<String> categories = filter.categories.toList();
-      List<EventType> types = [];
-
-      for (var category in categories) {
-        types.add(EventType.getByDisplayName(category));
-      }
-
-      String? pageKey = pagingState.keys?.last;
-      int? hostId = sfService.filter.host?.id;
-
-      if (!onlyFinishedMode) {
-        if (pageKey == null &&
-            sfService.filter.showEnded &&
-            (pagingState.keys?.isNotEmpty ?? false)) {
-          onlyFinishedMode = true;
-        }
-      }
-
-      // request
-
-      try {
-        var apiClient = Get.find<ApiClient>();
-        var reqResult = await apiClient.getEvents(
-          finished: onlyFinishedMode,
-          bookmarked: selectedTab == HomeTab.bookmark,
-          cursor: pageKey,
-          size: size,
-          field: sortingType.field,
-          searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
-          hostId: hostId,
-          types: types,
-        );
-        if (reqResult is RequestSuccess) {
-          EventsResponse response =
-              (reqResult as RequestSuccess<EventsResponse>).data;
-          var pageInfo = response.pageInfo;
-          var events = response.events;
-
-          bool hasNext;
-          if (sfService.filter.showEnded) {
-            if (onlyFinishedMode) {
-              hasNext = pageInfo.hasNext;
-            } else {
-              hasNext = true;
-            }
-          } else {
+        bool hasNext;
+        if (sfService.filter.showEnded) {
+          if (onlyFinishedMode) {
             hasNext = pageInfo.hasNext;
+          } else {
+            hasNext = true;
           }
-
-          pagingState = pagingState.copyWith(
-            isLoading: false,
-            keys: [...pagingState.keys ?? [], pageInfo.nextCursor],
-            pages: [
-              ...pagingState.pages ?? [],
-              List<EventCard>.generate(
-                events.length,
-                (i) => EventCard(eventRx: Rx(events[i])),
-              ),
-            ],
-            hasNextPage: hasNext,
-          );
         } else {
-          var fail = reqResult as RequestFail;
-          if (kDebugMode) {
-            AppUtils.showSnackBar(
-              '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
-            );
-          }
+          hasNext = pageInfo.hasNext;
         }
-      } finally {
-        pagingState = pagingState.copyWith(isLoading: false);
+
+        pagingState = pagingState.copyWith(
+          keys: [...pagingState.keys ?? [], pageInfo.nextCursor],
+          pages: [
+            ...pagingState.pages ?? [],
+            List<EventCard>.generate(
+              events.length,
+              (i) => EventCard(eventRx: Rx(events[i])),
+            ),
+          ],
+          hasNextPage: hasNext,
+        );
+      } else {
+        var fail = reqResult as RequestFail;
+        if (kDebugMode) {
+          AppUtils.showSnackBar(
+            '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
+          );
+        }
       }
-    });
+    } finally {
+      pagingState = pagingState.copyWith(isLoading: false);
+    }
   }
 
   void showSortingBottomModal() {

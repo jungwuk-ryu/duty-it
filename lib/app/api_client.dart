@@ -221,6 +221,10 @@ class ApiClient extends GetConnect {
 
     var future = Future<RequestResult<LoginResult>>(() async {
       String? fbToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      if (fbToken == null) {
+        return RequestFail(null);
+      }
+
       return await _send(
         () async => await post('/v1/auth/social', "$fbToken"),
         map: (rp) {
