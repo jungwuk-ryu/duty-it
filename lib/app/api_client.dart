@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/modules/settings/models/alarm_settings.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/core/models/app_user.dart';
@@ -34,7 +35,7 @@ class ApiClient extends GetConnect {
 
     httpClient.addRequestModifier<void>((request) async {
       final path = request.url.path;
-      final isAuthPath = path.contains('/auth/');
+      final isAuthPath = path.contains('/v1/auth/');
       if (isAuthPath) return request;
 
       await _loginFuture;
@@ -47,7 +48,7 @@ class ApiClient extends GetConnect {
 
     httpClient.addAuthenticator<void>((request) async {
       final path = request.url.path;
-      if (path.contains('/auth/')) return request;
+      if (path.contains('/v1/auth/')) return request;
 
       await loginAndRefreshToken();
       if (_token == null || _token!.isEmpty) return request;
@@ -156,17 +157,18 @@ class ApiClient extends GetConnect {
   }
 
   // ---------- Alarm ----------
-  
+
   /// 알람 목록 조회 (alarms)
   Future<RequestResult<List<AppNotification>>> getNotificationList(
     int page,
+    {int size = 10}
   ) async {
     return await _send(
       () async => await get(
-        '/alarms',
+        '/v1/alarms',
         query: {
           'page': "$page",
-          'size': '10',
+          'size': '$size',
           'sortDirection': 'DESC',
           'field': 'ID',
         },
@@ -190,9 +192,7 @@ class ApiClient extends GetConnect {
   /// 알람 모두 읽음 처리 (/alarms/read-all)
   Future<RequestResult<bool>> readAllNotification() async {
     return await _send(
-      () async => await patch(
-        '/alarms/read-all', {}
-      ),
+      () async => await patch('/v1/alarms/read-all', null),
       map: (rp) {
         if (rp.statusCode == HttpStatus.noContent) return true;
         return false;
@@ -200,13 +200,10 @@ class ApiClient extends GetConnect {
     );
   }
 
-
   /// 알람 삭제 처리 (/alarms/{alarmId})
   Future<RequestResult<bool>> deleteNotification(int alarmId) async {
     return await _send(
-      () async => await delete(
-        '/alarms/$alarmId'
-      ),
+      () async => await delete('/v1/alarms/$alarmId'),
       map: (rp) {
         if (rp.statusCode == HttpStatus.noContent) return true;
         return false;
@@ -225,7 +222,7 @@ class ApiClient extends GetConnect {
     var future = Future<RequestResult<LoginResult>>(() async {
       String? fbToken = await FirebaseAuth.instance.currentUser?.getIdToken();
       return await _send(
-        () async => await post('/auth/social', "$fbToken"),
+        () async => await post('/v1/auth/social', "$fbToken"),
         map: (rp) {
           LoginResult result = LoginResult.fromJson(
             json.decode(rp.bodyString!),
@@ -248,7 +245,7 @@ class ApiClient extends GetConnect {
   /// 현재 사용자 정보 조회 (/users/me) - GET
   Future<RequestResult<AppUser>> getCurrentUser() async {
     return _send(
-      () async => await get('/users/me'),
+      () async => await get('/v1/users/me'),
       map: (rp) {
         AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
 
@@ -264,7 +261,7 @@ class ApiClient extends GetConnect {
     AlarmSettings alarmSettings,
   ) {
     return _send(
-      () async => await patch('/users/settings', {
+      () async => await patch('/v1/users/settings', {
         'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
         'alarmSettings': alarmSettings.toJson(),
       }),
@@ -282,7 +279,7 @@ class ApiClient extends GetConnect {
   Future<RequestResult<bool>> isNicknameAvailable(String nickname) async {
     return _send(
       () async =>
-          await get('/users/check-nickname', query: {'nickname': nickname}),
+          await get('/v1/users/check-nickname', query: {'nickname': nickname}),
       map: (_) => true,
     );
   }
@@ -291,16 +288,16 @@ class ApiClient extends GetConnect {
   Future<RequestResult<bool>> updateCurrentUserNickname(String nickname) async {
     return _send(
       () async => await patch(
-        '/users/nickname',
+        '/v1/users/nickname',
         jsonEncode({'nickname': nickname.trim()}),
       ),
       map: (_) => true,
     );
   }
 
-  /// 회원탈퇴 (/users/{userId}) - DELETE
-  Future<RequestResult<void>> withdrawUser(int userId) async {
-    return _send(() async => await delete('/users/$userId'), map: (_) => true);
+  /// 회원탈퇴 (/users) - DELETE
+  Future<RequestResult<void>> withdrawUser() async {
+    return _send(() async => await delete('/v1/users'), map: (_) => true);
   }
 
   /// 알림 - 사용자 기기 등록 (/users/device/{token}) - PATCH
@@ -311,31 +308,31 @@ class ApiClient extends GetConnect {
     }
 
     return _send(
-      () async => await patch('/users/device/$token', {}),
+      () async => await patch('/v1/users/device/$token', {}),
       map: (_) => true,
     );
   }
 
   // ---------- Event ----------
 
-  /// 행사 목록 조회 (/events) - GET
-  Future<RequestResult<List<Event>>> getEvents({
-    bool isApproved = true,
-    bool includeFinished = false,
-    bool isBookmarked = false,
-    int page = 0,
+  /// 행사 목록 조회 (/v2/events) - GET
+  Future<RequestResult<EventsResponse>> getEvents({
+    String? cursor,
+    bool finished = false,
+    bool bookmarked = false,
     int size = 10,
-    SortDirection sortDirection = SortDirection.DESC, // 'ASC' | 'DESC'
-    String field = 'ID', // 'ID' | 'NAME'
-    required List<EventType>
-    types, // 'CONFERENCE' | 'SEMINAR' | 'WEBINAR' | 'WORKSHOP' | 'CONTEST' | 'ETC'
+    String field = 'CREATED_AT',
+    required List<EventType> types,
     int? hostId,
     String? searchKeyword,
   }) async {
     String query =
-        "isApproved=$isApproved&includeFinished=$includeFinished&isBookmarked=$isBookmarked&page=$page&size=$size&sortDirection=${sortDirection.name}&field=$field";
+        "bookmarked=$bookmarked&size=$size&field=$field&statusGroup=${finished ? 'FINISHED' : 'ACTIVE'}";
+    if (cursor != null) {
+      query += "&cursor=$cursor";
+    }
     for (var type in types) {
-      query += "&type=${type.name}";
+      query += "&types=${type.name}";
     }
     if (hostId != null) {
       query += "&hostId=$hostId";
@@ -345,13 +342,10 @@ class ApiClient extends GetConnect {
     }
 
     return _send(
-      () async => await get('/events?$query'),
+      () async => await get('/v2/events?$query'),
       map: (rp) {
-        List<Event> events = [];
-        for (Map ele in List.from(json.decode(rp.bodyString!)['content'])) {
-          events.add(Event.fromJson(Map.from(ele)));
-        }
-        return events;
+        String bodyString = rp.bodyString!;
+        return EventsResponse.fromJson(json.decode(bodyString));
       },
     );
   }
@@ -364,7 +358,7 @@ class ApiClient extends GetConnect {
   }) async {
     return _send(
       () async => await get(
-        '/events/calendar',
+        '/v1/events/calendar',
         query: _cleanQuery({'year': year, 'month': month, 'type': type?.name}),
       ),
       map: (rp) {
@@ -389,7 +383,7 @@ class ApiClient extends GetConnect {
   }) async {
     return _send(
       () async => await get(
-        '/hosts',
+        '/v1/hosts',
         query: _cleanQuery({
           'page': page,
           'size': size,
@@ -413,7 +407,7 @@ class ApiClient extends GetConnect {
   /// 북마크 토글 (/bookmarks/{eventId}) - POST (200)
   Future<RequestResult<bool>> toggleBookmark(int eventId) async {
     return _send(
-      () async => await post('/bookmarks/$eventId', null),
+      () async => await post('/v1/bookmarks/$eventId', null),
       map: (rp) => json.decode(rp.bodyString!)['isBookmarked'] as bool,
     );
   }
@@ -422,7 +416,7 @@ class ApiClient extends GetConnect {
 
   /// 조회수 증가 (/views/{eventId}) - PATCH (204)
   Future<void> increaseViewCount(int eventId) async {
-    await patch('/views/$eventId', null);
+    await patch('/v1/views/$eventId', null);
   }
 }
 

@@ -130,7 +130,7 @@ class AuthService extends GetxService {
       return false;
     }
 
-    var reqResult = await Get.find<ApiClient>().withdrawUser(appUser!.id);
+    var reqResult = await Get.find<ApiClient>().withdrawUser();
     if (reqResult is RequestFail) {
       AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
       if (reqResult.serverFail != null) {
@@ -139,6 +139,7 @@ class AuthService extends GetxService {
       return false;
     }
 
+    await FirebaseAuth.instance.currentUser!.delete();
     await logout();
     return true;
   }

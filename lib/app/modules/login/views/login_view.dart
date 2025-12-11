@@ -28,13 +28,44 @@ class LoginView extends GetView<LoginViewController> {
                   child: Column(
                     children: [
                       Spacer(),
-                      Hero(
-                        tag: SplashView.heroKey,
-                        child: Image.asset(
-                          Assets.icons.logo.path,
-                          width: 84,
-                          height: 80,
-                        ),
+                      Column(
+                        spacing: 10,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.w900,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "듀잇",
+                                  style: TextStyle(color: AppColors.main),
+                                ),
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Hero(
+                                    tag: SplashView.heroKey,
+                                    child: Image.asset(
+                                      Assets.icons.logo.path,
+                                      width: 29,
+                                      height: 25,
+                                    ),
+                                  ),
+                                ),
+                                TextSpan(text: "과 함께,\n모든 간호 행사를 한눈에!"),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            '10초만에 로그인하고 모든 기능을 이용해보세요.',
+                            style: TextStyle(
+                              color: AppColors.g07,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
                       ),
                       Spacer(),
                       Column(
@@ -47,14 +78,6 @@ class LoginView extends GetView<LoginViewController> {
                     onTap: () async =>
                         controller.onLoginButtonTap(SocialProvider.kakao),
                   ),*/
-                          Text(
-                            '10초만에 로그인하고 모든 기능을 이용해보세요!',
-                            style: TextStyle(
-                              color: AppColors.g07,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
                           LoginButton(
                             iconPath: Assets.icons.appleWhite.path,
                             buttonColor: Color(0xFF000000),
