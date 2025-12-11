@@ -36,6 +36,7 @@ class LoginView extends GetView<LoginViewController> {
                               style: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.w900,
+                                color: AppColors.black
                               ),
                               children: [
                                 TextSpan(
