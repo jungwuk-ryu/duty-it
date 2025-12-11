@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:synchronized/synchronized.dart';
 
 enum HomeTab { event, bookmark }
 
@@ -56,6 +57,8 @@ class HomeViewController extends GetxController {
       TextEditingController();
   final RxString searchQuery = RxString('');
 
+  Future<void>? _pageFetchFuture = null;
+  final Lock _pageFetchLock = Lock();
   bool onlyFinishedMode = false;
 
   final RxBool _hasNewNotification = RxBool(false);
@@ -105,7 +108,7 @@ class HomeViewController extends GetxController {
     var api = Get.find<ApiClient>();
     RequestResult<List<AppNotification>> result = await api.getNotificationList(
       0,
-      size: 1
+      size: 1,
     );
     if (result is RequestFail) return;
 
@@ -128,7 +131,11 @@ class HomeViewController extends GetxController {
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
-    if (pagingState.isLoading) return;
+    if (!clearPage && pagingState.isLoading) return;
+    await _pageFetchLock.synchronized(() async => await _fetchNextPage(clearPage: clearPage));
+  }
+
+  Future<void> _fetchNextPage({bool clearPage = false}) async {
     SearchFilterService sfService = Get.find<SearchFilterService>();
 
     // Update paging state
