@@ -4,6 +4,8 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/modules/home/widgets/event_bookmark_button.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/widgets/adaptive_layout.dart';
 import 'package:duty_it/app/widgets/tap_scale.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -33,6 +35,11 @@ class EventCard extends StatelessWidget {
   }
 
   void _onTap() {
+    if (!Get.find<AuthService>().isLoggined()) {
+      Get.toNamed(Routes.LOGIN);
+      return;
+    }
+    
     launchUrlString(event.uri);
 
     var apiClient = Get.find<ApiClient>();

@@ -19,8 +19,11 @@ class HomeView extends GetView<HomeViewController> {
       child: RefreshIndicator.adaptive(
         onRefresh: () async {
           await controller.fetchNextPage(clearPage: true);
+          controller.checkNewNotification();
         },
         child: CustomScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          controller: controller.scrollController,
           slivers: [
             SliverAppBar(
               backgroundColor: Colors.white,
@@ -40,7 +43,7 @@ class HomeView extends GetView<HomeViewController> {
             ),
 
             Obx(() {
-              return PagedSliverList<int, EventCard>(
+              return PagedSliverList<String?, EventCard>(
                 state: controller.pagingState,
                 fetchNextPage: controller.fetchNextPage,
                 builderDelegate: PagedChildBuilderDelegate<EventCard>(

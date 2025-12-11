@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/modules/calendar/views/calendar_view.dart';
+import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/views/home_view.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -50,6 +51,14 @@ class MainViewController extends GetxController {
   }
 
   void changeTab(int index) {
+    if (pageIndex.value == index) {
+      if (index == 0 && Get.isRegistered<HomeViewController>()) { // Home
+        var homeController = Get.find<HomeViewController>();
+        homeController.scrollUpEventList();
+      }
+      return;
+    }
+
     pageIndex.value = index;
 
     FirebaseAnalytics.instance.logScreenView(screenName: pageNames[index]);
