@@ -57,7 +57,6 @@ class HomeViewController extends GetxController {
       TextEditingController();
   final RxString searchQuery = RxString('');
 
-  Future<void>? _pageFetchFuture = null;
   final Lock _pageFetchLock = Lock();
   bool onlyFinishedMode = false;
 
@@ -169,7 +168,7 @@ class HomeViewController extends GetxController {
     }
 
     // request
-
+    FirebaseAnalytics.instance.logEvent(name: 'fetch_events_page', parameters: {'clear_page': "$clearPage"});
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
