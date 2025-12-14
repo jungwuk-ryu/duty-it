@@ -60,31 +60,35 @@ class SortingBottomModal extends StatelessWidget {
           ...List<Widget>.generate(types.length, (i) {
             EventSortingType type = types[i];
 
-            return Padding(
-              padding: EdgeInsetsGeometry.symmetric(vertical: 20),
-              child: Row(
-                children: [
-                  Text(
-                    type.displayName,
-                    style: TextStyle(
-                      color: AppColors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      height: 1.20,
+            return Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: (_) {
+                controller.selectedType = type;
+                HapticFeedback.selectionClick();
+              },
+              child: Padding(
+                padding: EdgeInsetsGeometry.symmetric(vertical: 20),
+                child: Row(
+                  children: [
+                    Text(
+                      type.displayName,
+                      style: TextStyle(
+                        color: AppColors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        height: 1.20,
+                      ),
                     ),
-                  ),
-                  Spacer(),
-                  Obx(() {
-                    var selectedType = controller.selectedType;
-                    return AppRadioButtom(
-                      checked: selectedType == type,
-                      onTap: () {
-                        controller.selectedType = type;
-                        HapticFeedback.selectionClick();
-                      },
-                    );
-                  }),
-                ],
+                    Spacer(),
+                    Obx(() {
+                      var selectedType = controller.selectedType;
+                      return AppRadioButtom(
+                        checked: selectedType == type,
+                        onTap: () {},
+                      );
+                    }),
+                  ],
+                ),
               ),
             );
           }),
