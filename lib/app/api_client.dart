@@ -220,7 +220,14 @@ class ApiClient extends GetConnect {
     }
 
     var future = Future<RequestResult<LoginResult>>(() async {
-      String? fbToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      String? fbToken;
+
+      try {
+        fbToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      } catch (ex, st) {
+        FirebaseCrashlytics.instance.recordError(ex, st);
+      }
+
       if (fbToken == null) {
         return RequestFail(null);
       }
