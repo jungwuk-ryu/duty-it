@@ -12,10 +12,27 @@ import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
 
-class SortingBottomModal extends StatelessWidget {
+class SortingBottomModal extends StatefulWidget {
   const SortingBottomModal({super.key});
 
+  @override
+  State<SortingBottomModal> createState() => _SortingBottomModalState();
+}
+
+class _SortingBottomModalState extends State<SortingBottomModal> {
   SortingModalController get controller => Get.find<SortingModalController>();
+
+  @override
+  void initState() {
+    Get.put<SortingModalController>(SortingModalController());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Get.delete<SortingModalController>();
+  }
 
   @override
   Widget build(BuildContext context) {
