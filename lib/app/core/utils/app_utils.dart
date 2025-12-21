@@ -78,4 +78,17 @@ class AppUtils {
     await Get.deleteAll(force: true);
     Get.offAllNamed(Routes.SPLASH);
   }
+  
+  static Uri setDuitUtmSource(Uri uri) {
+    return uri.replace(
+      queryParameters: {
+        ... uri.queryParameters,
+        'utm_source': 'www.dutyit.net'
+      }
+    );
+  }
+
+  static String setDuitUtmSourceString(String uri) {
+    return setDuitUtmSource(Uri.parse(uri)).toString();
+  }
 }

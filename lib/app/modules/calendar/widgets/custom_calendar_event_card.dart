@@ -27,7 +27,7 @@ class CustomCalendarEventCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (event != null) {
-            launchUrlString(event!.url);
+            launchUrlString(AppUtils.setDuitUtmSourceString(event!.url));
           }
         },
         child: ConstrainedBox(
