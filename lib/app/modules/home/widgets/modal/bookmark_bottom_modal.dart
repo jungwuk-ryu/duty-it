@@ -1,14 +1,36 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/modules/home/controllers/bookmark_modal_controller.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class BookmarkBottomModal extends StatelessWidget {
+class BookmarkBottomModal extends StatefulWidget {
+  final Rx<Event> eventRx;
+  
+  const BookmarkBottomModal({super.key, required this.eventRx});
+
+  @override
+  State<BookmarkBottomModal> createState() => _BookmarkBottomModalState();
+}
+
+class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
   BookmarkModalController get controller => Get.find<BookmarkModalController>();
 
-  const BookmarkBottomModal({super.key});
+  @override
+  void initState() {
+    Get.put<BookmarkModalController>(
+        BookmarkModalController(eventRx: widget.eventRx),
+      );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Get.delete<BookmarkModalController>();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -9,11 +9,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scroll_snap_list/scroll_snap_list.dart';
 
-class DateSelectionBottomModal extends StatelessWidget {
+class DateSelectionBottomModal extends StatefulWidget {
+  const DateSelectionBottomModal({super.key});
+
+  @override
+  State<DateSelectionBottomModal> createState() => _DateSelectionBottomModalState();
+}
+
+class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
   DateSelectionModalController get controller =>
       Get.find<DateSelectionModalController>();
 
-  const DateSelectionBottomModal({super.key});
+  @override
+  void initState() {
+    Get.put(DateSelectionModalController());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Get.delete<DateSelectionModalController>();
+  }
 
   @override
   Widget build(BuildContext context) {

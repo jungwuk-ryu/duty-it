@@ -44,7 +44,6 @@ class CalendarViewController extends GetxController {
   }
 
   void showDateSelectionBottomModal() {
-    Get.put(DateSelectionModalController());
     showModalBottomSheet(
       context: Get.context!,
       isScrollControlled: true,
@@ -52,7 +51,7 @@ class CalendarViewController extends GetxController {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => DateSelectionBottomModal(),
-    ).whenComplete(() => Get.delete<DateSelectionModalController>());
+    );
   }
 
   String _dateTimeToCacheKey(DateTime dt) {

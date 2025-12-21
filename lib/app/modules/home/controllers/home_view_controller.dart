@@ -57,7 +57,6 @@ class HomeViewController extends GetxController {
       TextEditingController();
   final RxString searchQuery = RxString('');
 
-  Future<void>? _pageFetchFuture = null;
   final Lock _pageFetchLock = Lock();
   bool onlyFinishedMode = false;
 
@@ -169,7 +168,7 @@ class HomeViewController extends GetxController {
     }
 
     // request
-
+    FirebaseAnalytics.instance.logEvent(name: 'fetch_events_page', parameters: {'clear_page': "$clearPage"});
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
@@ -224,7 +223,6 @@ class HomeViewController extends GetxController {
   }
 
   void showSortingBottomModal() {
-    Get.put<SortingModalController>(SortingModalController());
     showModalBottomSheet(
       context: Get.context!,
       isScrollControlled: true,
@@ -232,7 +230,7 @@ class HomeViewController extends GetxController {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => SortingBottomModal(),
-    ).whenComplete(() => Get.delete<SortingModalController>());
+    );
   }
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {
@@ -253,17 +251,15 @@ class HomeViewController extends GetxController {
     );
 
     if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
-      Get.put<BookmarkModalController>(
-        BookmarkModalController(eventRx: eventRx),
-      );
+      
       showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
-        builder: (_) => BookmarkBottomModal(),
-      ).whenComplete(() => Get.delete<BookmarkModalController>());
+        builder: (_) => BookmarkBottomModal(eventRx: eventRx),
+      );
     } else {
       eventRx.value = event.copyWith(isBookmarked: !event.isBookmarked);
 

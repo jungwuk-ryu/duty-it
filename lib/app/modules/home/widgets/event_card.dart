@@ -40,7 +40,7 @@ class EventCard extends StatelessWidget {
       return;
     }
     
-    launchUrlString(event.uri);
+    launchUrlString(AppUtils.setDuitUtmSourceString(event.uri));
 
     var apiClient = Get.find<ApiClient>();
     apiClient.increaseViewCount(event.id);
