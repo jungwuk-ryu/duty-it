@@ -9,8 +9,6 @@ import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
-import 'package:duty_it/app/modules/home/controllers/bookmark_modal_controller.dart';
-import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/bookmark_bottom_modal.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
@@ -19,16 +17,19 @@ import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:synchronized/synchronized.dart';
 
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
+  static final String storageBoxName = "homeContainer";
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
 
@@ -96,6 +97,7 @@ class HomeViewController extends GetxController {
     );
 
     checkNewNotification();
+    fetchNextPage(clearPage: true, loadCache: true);
   }
 
   Future<void> checkNewNotification() async {
@@ -129,12 +131,12 @@ class HomeViewController extends GetxController {
     );
   }
 
-  Future<void> fetchNextPage({bool clearPage = false}) async {
+  Future<void> fetchNextPage({bool clearPage = false, bool loadCache = false}) async {
     if (!clearPage && pagingState.isLoading) return;
-    await _pageFetchLock.synchronized(() async => await _fetchNextPage(clearPage: clearPage));
+    await _pageFetchLock.synchronized(() async => await _fetchNextPage(clearPage: clearPage, loadCache: loadCache));
   }
 
-  Future<void> _fetchNextPage({bool clearPage = false}) async {
+  Future<void> _fetchNextPage({bool clearPage = false, bool loadCache = false}) async {
     SearchFilterService sfService = Get.find<SearchFilterService>();
 
     // Update paging state
@@ -146,24 +148,54 @@ class HomeViewController extends GetxController {
       pages: clearPage ? null : const Omit(),
     );
 
+
     // set params
     const int size = 5;
     var filter = sfService.filter;
     List<String> categories = filter.categories.toList();
     List<EventType> types = [];
+    String? pageKey = pagingState.keys?.last;
+    int? hostId = sfService.filter.host?.id;
 
     for (var category in categories) {
       types.add(EventType.getByDisplayName(category));
     }
-
-    String? pageKey = pagingState.keys?.last;
-    int? hostId = sfService.filter.host?.id;
 
     if (!onlyFinishedMode) {
       if (pageKey == null &&
           sfService.filter.showEnded &&
           (pagingState.keys?.isNotEmpty ?? false)) {
         onlyFinishedMode = true;
+      }
+    }
+
+    GetStorage box = GetStorage(storageBoxName);
+    final String cacheKey = "event_list_cache_key";
+    if (loadCache) {
+      try {
+        Map? cache = box.read(cacheKey);
+
+        if (cache != null) {
+          EventsResponse cachedResponse = EventsResponse.fromJson(
+            Map<String, dynamic>.from(cache),
+          );
+          pagingState = pagingState.copyWith(
+            keys: [
+              ...pagingState.keys ?? [],
+              cachedResponse.pageInfo.nextCursor,
+            ],
+            pages: [
+              List<EventCard>.generate(
+                cachedResponse.events.length,
+                (i) => EventCard(eventRx: Rx(cachedResponse.events[i])),
+              ),
+            ],
+            hasNextPage: false,
+            isLoading: true,
+          );
+        }
+      } catch (e, s) {
+        FirebaseCrashlytics.instance.recordError(e, s);
       }
     }
 
@@ -199,9 +231,9 @@ class HomeViewController extends GetxController {
         }
 
         pagingState = pagingState.copyWith(
-          keys: [...pagingState.keys ?? [], pageInfo.nextCursor],
+          keys: [...(!loadCache ? (pagingState.keys ?? []) : []), pageInfo.nextCursor],
           pages: [
-            ...pagingState.pages ?? [],
+            ...(!loadCache ? (pagingState.pages ?? []) : []),
             List<EventCard>.generate(
               events.length,
               (i) => EventCard(eventRx: Rx(events[i])),
@@ -209,6 +241,10 @@ class HomeViewController extends GetxController {
           ],
           hasNextPage: hasNext,
         );
+
+        if (clearPage && searchQuery.isEmpty) {
+          box.write(cacheKey, response.toJson());
+        }
       } else {
         var fail = reqResult as RequestFail;
         if (kDebugMode) {
