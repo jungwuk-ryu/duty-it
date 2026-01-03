@@ -1,3 +1,4 @@
+import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
@@ -17,6 +18,7 @@ class SplashViewController extends GetxController {
       GetStorage.init(AppSettingsService.storageBoxName),
       GetStorage.init(AuthService.storageBoxName),
       GetStorage.init(SearchFilterService.storageBoxName),
+      GetStorage.init(HomeViewController.storageBoxName),
       GetStorage.init(appInfoBoxName),
       Future.delayed(Duration(seconds: 1)),
     ]);
