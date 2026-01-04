@@ -19,6 +19,7 @@ abstract class EventsResponse with _$EventsResponse {
     const factory EventsResponse({
         @JsonKey(name: 'content') required List<Event> events,
         required EventsPageInfo pageInfo,
+        @JsonKey(includeFromJson: false, includeToJson: false) String? reqUrl
     }) = _EventsResponse;
 
     factory EventsResponse.fromJson(Map<String, dynamic> json) => _$EventsResponseFromJson(json);
