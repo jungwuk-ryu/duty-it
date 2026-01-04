@@ -4,6 +4,7 @@ import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../controllers/settings_view_controller.dart';
 
@@ -76,6 +77,18 @@ class SettingsView extends GetView<SettingsViewController> {
                       onTap: () => Get.to(LicensePage(applicationName: "듀잇")),
                       child: Text(
                         "오픈소스 라이선스",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          height: 1.60,
+                          color: AppColors.g05,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => launchUrlString("mailto:contact@dutyit.net"),
+                      child: Text(
+                        "문의 메일 : contact@dutyit.net",
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
