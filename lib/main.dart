@@ -134,7 +134,8 @@ Future<void> initPlatformState() async {
         BackgroundFetch.finish(taskId);
       }
     },
-    (String taskId) async { // Time out handler
+    (String taskId) async {
+      // Time out handler
       BackgroundFetch.finish(taskId);
     },
   );
@@ -142,9 +143,9 @@ Future<void> initPlatformState() async {
 
 Future<void> _backgroundJob() async {
   await dotenv.load(fileName: ".env");
-  await GetStorage.init(HomeViewController.storageBoxName);
+  await GetStorage.init(HomeViewController.cacheStorageBoxName);
 
-  GetStorage cacheBox = GetStorage(HomeViewController.storageBoxName);
+  GetStorage cacheBox = GetStorage(HomeViewController.cacheStorageBoxName);
   String? cacheUrl = cacheBox.read(HomeViewController.urlCacheKey);
   if (cacheUrl == null) return;
 
@@ -154,5 +155,8 @@ Future<void> _backgroundJob() async {
 
   EventsResponse rep = (result as RequestSuccess).data;
   await cacheBox.write(HomeViewController.listCacheKey, rep.toJson());
-  await cacheBox.write(HomeViewController.lastUpdateCacheKey, DateTime.now().millisecondsSinceEpoch);
+  await cacheBox.write(
+    HomeViewController.lastUpdateCacheKey,
+    DateTime.now().millisecondsSinceEpoch,
+  );
 }

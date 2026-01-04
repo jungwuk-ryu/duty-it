@@ -29,11 +29,11 @@ import 'package:synchronized/synchronized.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
-  static final String storageBoxName = "homeContainer";
+  static final String cacheStorageBoxName = "homeContainer";
   static final String listCacheKey = "event_list";
   static final String urlCacheKey = "request_url";
   static final String lastUpdateCacheKey = "last_update";
-  
+
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
 
@@ -135,12 +135,21 @@ class HomeViewController extends GetxController {
     );
   }
 
-  Future<void> fetchNextPage({bool clearPage = false, bool loadCache = false}) async {
+  Future<void> fetchNextPage({
+    bool clearPage = false,
+    bool loadCache = false,
+  }) async {
     if (!clearPage && pagingState.isLoading) return;
-    await _pageFetchLock.synchronized(() async => await _fetchNextPage(clearPage: clearPage, loadCache: loadCache));
+    await _pageFetchLock.synchronized(
+      () async =>
+          await _fetchNextPage(clearPage: clearPage, loadCache: loadCache),
+    );
   }
 
-  Future<void> _fetchNextPage({bool clearPage = false, bool loadCache = false}) async {
+  Future<void> _fetchNextPage({
+    bool clearPage = false,
+    bool loadCache = false,
+  }) async {
     SearchFilterService sfService = Get.find<SearchFilterService>();
 
     // Update paging state
@@ -151,7 +160,6 @@ class HomeViewController extends GetxController {
       keys: clearPage ? null : const Omit(),
       pages: clearPage ? null : const Omit(),
     );
-
 
     // set params
     const int size = 5;
@@ -173,15 +181,19 @@ class HomeViewController extends GetxController {
       }
     }
 
-    GetStorage box = GetStorage(storageBoxName);
+    GetStorage box = GetStorage(cacheStorageBoxName);
 
     if (loadCache) {
       try {
         Map? listCache = box.read(listCacheKey);
         int? lastUpdateMills = box.read(lastUpdateCacheKey);
-        DateTime? lastUpdate = lastUpdateMills != null ? DateTime.fromMillisecondsSinceEpoch(lastUpdateMills) : null;
+        DateTime? lastUpdate = lastUpdateMills != null
+            ? DateTime.fromMillisecondsSinceEpoch(lastUpdateMills)
+            : null;
 
-        if (lastUpdate != null && DateTime.now().difference(lastUpdate).inDays < 7 && listCache != null) {
+        if (lastUpdate != null &&
+            DateTime.now().difference(lastUpdate).inDays < 7 &&
+            listCache != null) {
           EventsResponse cachedResponse = EventsResponse.fromJson(
             Map<String, dynamic>.from(listCache),
           );
@@ -206,7 +218,10 @@ class HomeViewController extends GetxController {
     }
 
     // request
-    FirebaseAnalytics.instance.logEvent(name: 'fetch_events_page', parameters: {'clear_page': "$clearPage"});
+    FirebaseAnalytics.instance.logEvent(
+      name: 'fetch_events_page',
+      parameters: {'clear_page': "$clearPage"},
+    );
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
@@ -237,7 +252,10 @@ class HomeViewController extends GetxController {
         }
 
         pagingState = pagingState.copyWith(
-          keys: [...(!loadCache ? (pagingState.keys ?? []) : []), pageInfo.nextCursor],
+          keys: [
+            ...(!loadCache ? (pagingState.keys ?? []) : []),
+            pageInfo.nextCursor,
+          ],
           pages: [
             ...(!loadCache ? (pagingState.pages ?? []) : []),
             List<EventCard>.generate(
@@ -295,7 +313,6 @@ class HomeViewController extends GetxController {
     );
 
     if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
-      
       showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
