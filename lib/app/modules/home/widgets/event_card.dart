@@ -109,12 +109,7 @@ class _EventCardImageSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardBorderRadius = BorderRadius.circular(8);
-    final bool eventEnded;
-    if (event.endAt != null) {
-      eventEnded = DateUtils.dateOnly(event.endAt!).isBefore(DateUtils.dateOnly(DateTime.now()));
-    } else {
-      eventEnded = DateUtils.dateOnly(event.startAt!).isBefore(DateUtils.dateOnly(DateTime.now()));
-    }
+    final bool eventEnded = DateUtils.dateOnly(event.endAt ?? event.startAt).isBefore(DateUtils.dateOnly(DateTime.now()));
 
     return AspectRatio(
       aspectRatio: 400 / 200,
