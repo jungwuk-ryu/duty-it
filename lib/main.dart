@@ -4,6 +4,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -143,8 +144,16 @@ Future<void> initPlatformState() async {
 }
 
 Future<void> _backgroundJob() async {
-  await dotenv.load(fileName: ".env");
-  await GetStorage.init(HomeViewCache.boxName);
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Future.wait([
+    dotenv.load(fileName: ".env"),
+    GetStorage.init(AuthService.storageBoxName),
+    GetStorage.init(HomeViewCache.boxName),
+    _initFirebase()
+  ]);
+
+  Get.lazyPut(() => AuthService());
 
   var cache = HomeViewCache();
   String? cacheUrl = cache.getEventsUrl();
@@ -156,4 +165,5 @@ Future<void> _backgroundJob() async {
 
   EventsResponse rep = (result as RequestSuccess).data;
   await cache.saveEvents(rep);
+  await FirebaseAnalytics.instance.logEvent(name: 'background_fetch_events_updated');
 }

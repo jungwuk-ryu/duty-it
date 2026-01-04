@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 
 class HomeViewCache {
   static final String boxName = "homeContainer";
-   static const int _cacheValidityInDays = 7;
+  static const int _cacheValidityInDays = 7;
   static const String _eventListKey = "event_list";
   static const String _eventsUrlKey = "request_url";
   static const String _eventsLastUpdateCacheKey = "last_update";
