@@ -109,6 +109,12 @@ class _EventCardImageSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardBorderRadius = BorderRadius.circular(8);
+    final bool eventEnded;
+    if (event.endAt != null) {
+      eventEnded = DateUtils.dateOnly(event.endAt!).isBefore(DateUtils.dateOnly(DateTime.now()));
+    } else {
+      eventEnded = DateUtils.dateOnly(event.startAt!).isBefore(DateUtils.dateOnly(DateTime.now()));
+    }
 
     return AspectRatio(
       aspectRatio: 400 / 200,
@@ -144,9 +150,7 @@ class _EventCardImageSection extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: DateUtils.dateOnly(
-              event.endAt ?? DateTime.now(),
-            ).isBefore(DateUtils.dateOnly(DateTime.now())),
+            visible: eventEnded,
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.bg,
