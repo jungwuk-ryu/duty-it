@@ -24,6 +24,11 @@ import 'package:get/get.dart';
 class ApiClient extends GetConnect {
   Future<RequestResult<LoginResult>>? _loginFuture;
   String? _token;
+  bool _background = false;
+
+  ApiClient({bool background = false}) {
+    _background = background;
+  }
 
   @override
   void onInit() {
@@ -32,6 +37,7 @@ class ApiClient extends GetConnect {
     httpClient.baseUrl = dotenv.env['server'];
     httpClient.timeout = const Duration(seconds: 15);
     httpClient.defaultContentType = 'application/json';
+    httpClient.userAgent = buildUserAgent();
 
     httpClient.addRequestModifier<void>((request) async {
       final path = request.url.path;
@@ -61,6 +67,16 @@ class ApiClient extends GetConnect {
     httpClient.maxAuthRetries = 1;
 
     loginAndRefreshToken();
+  }
+
+  String buildUserAgent() {
+    final platform = Platform.isAndroid
+        ? 'android'
+        : Platform.isIOS
+        ? 'ios'
+        : 'unknown';
+
+    return 'Duit-Client/1.0.0 (flutter; $platform${_background ? '; background' : ''}; ${kDebugMode ? 'debug' : 'release'})';
   }
 
   Map<String, String> _cleanQuery(Map<String, dynamic> raw) {
@@ -160,9 +176,9 @@ class ApiClient extends GetConnect {
 
   /// 알람 목록 조회 (alarms)
   Future<RequestResult<List<AppNotification>>> getNotificationList(
-    int page,
-    {int size = 10}
-  ) async {
+    int page, {
+    int size = 10,
+  }) async {
     return await _send(
       () async => await get(
         '/v1/alarms',

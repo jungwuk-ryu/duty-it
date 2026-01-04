@@ -159,7 +159,7 @@ Future<void> _backgroundJob() async {
   String? cacheUrl = cache.getEventsUrl();
   if (cacheUrl == null) return;
 
-  var client = ApiClient();
+  var client = ApiClient(background: true);
   RequestResult<EventsResponse> result = await client.getEventsByUrl(cacheUrl);
   if (result is RequestFail) return;
 
