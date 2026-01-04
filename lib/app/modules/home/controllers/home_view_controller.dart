@@ -30,6 +30,10 @@ enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
   static final String storageBoxName = "homeContainer";
+  static final String listCacheKey = "event_list";
+  static final String urlCacheKey = "request_url";
+  static final String lastUpdateCacheKey = "last_update";
+  
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
 
@@ -170,14 +174,16 @@ class HomeViewController extends GetxController {
     }
 
     GetStorage box = GetStorage(storageBoxName);
-    final String cacheKey = "event_list_cache_key";
+
     if (loadCache) {
       try {
-        Map? cache = box.read(cacheKey);
+        Map? listCache = box.read(listCacheKey);
+        int? lastUpdateMills = box.read(lastUpdateCacheKey);
+        DateTime? lastUpdate = lastUpdateMills != null ? DateTime.fromMillisecondsSinceEpoch(lastUpdateMills) : null;
 
-        if (cache != null) {
+        if (lastUpdate != null && DateTime.now().difference(lastUpdate).inDays < 7 && listCache != null) {
           EventsResponse cachedResponse = EventsResponse.fromJson(
-            Map<String, dynamic>.from(cache),
+            Map<String, dynamic>.from(listCache),
           );
           pagingState = pagingState.copyWith(
             keys: [
@@ -243,7 +249,9 @@ class HomeViewController extends GetxController {
         );
 
         if (clearPage && searchQuery.isEmpty) {
-          box.write(cacheKey, response.toJson());
+          box.write(listCacheKey, response.toJson());
+          box.write(urlCacheKey, response.reqUrl);
+          box.write(lastUpdateCacheKey, DateTime.now().millisecondsSinceEpoch);
         }
       } else {
         var fail = reqResult as RequestFail;
