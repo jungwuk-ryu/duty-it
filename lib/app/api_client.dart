@@ -352,11 +352,18 @@ class ApiClient extends GetConnect {
       query += "&searchKeyword=${Uri.encodeQueryComponent(searchKeyword)}";
     }
 
+    return await getEventsByUrl('/v2/events?$query');
+  }
+
+  Future<RequestResult<EventsResponse>> getEventsByUrl(String url) async {
     return _send(
-      () async => await get('/v2/events?$query'),
+      () async => await get(url),
       map: (rp) {
         String bodyString = rp.bodyString!;
-        return EventsResponse.fromJson(json.decode(bodyString));
+        EventsResponse rep = EventsResponse.fromJson(json.decode(bodyString));
+        rep = rep.copyWith(reqUrl: rp.request?.url.toString());
+
+        return rep;
       },
     );
   }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EventsResponse {
 
-@JsonKey(name: 'content') List<Event> get events; EventsPageInfo get pageInfo;
+@JsonKey(name: 'content') List<Event> get events; EventsPageInfo get pageInfo;@JsonKey(includeFromJson: false, includeToJson: false) String? get reqUrl;
 /// Create a copy of EventsResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $EventsResponseCopyWith<EventsResponse> get copyWith => _$EventsResponseCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsResponse&&const DeepCollectionEquality().equals(other.events, events)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsResponse&&const DeepCollectionEquality().equals(other.events, events)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo)&&(identical(other.reqUrl, reqUrl) || other.reqUrl == reqUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(events),pageInfo);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(events),pageInfo,reqUrl);
 
 @override
 String toString() {
-  return 'EventsResponse(events: $events, pageInfo: $pageInfo)';
+  return 'EventsResponse(events: $events, pageInfo: $pageInfo, reqUrl: $reqUrl)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $EventsResponseCopyWith<$Res>  {
   factory $EventsResponseCopyWith(EventsResponse value, $Res Function(EventsResponse) _then) = _$EventsResponseCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'content') List<Event> events, EventsPageInfo pageInfo
+@JsonKey(name: 'content') List<Event> events, EventsPageInfo pageInfo,@JsonKey(includeFromJson: false, includeToJson: false) String? reqUrl
 });
 
 
@@ -65,11 +65,12 @@ class _$EventsResponseCopyWithImpl<$Res>
 
 /// Create a copy of EventsResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? events = null,Object? pageInfo = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? events = null,Object? pageInfo = null,Object? reqUrl = freezed,}) {
   return _then(_self.copyWith(
 events: null == events ? _self.events : events // ignore: cast_nullable_to_non_nullable
 as List<Event>,pageInfo: null == pageInfo ? _self.pageInfo : pageInfo // ignore: cast_nullable_to_non_nullable
-as EventsPageInfo,
+as EventsPageInfo,reqUrl: freezed == reqUrl ? _self.reqUrl : reqUrl // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of EventsResponse
@@ -163,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'content')  List<Event> events,  EventsPageInfo pageInfo)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'content')  List<Event> events,  EventsPageInfo pageInfo, @JsonKey(includeFromJson: false, includeToJson: false)  String? reqUrl)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventsResponse() when $default != null:
-return $default(_that.events,_that.pageInfo);case _:
+return $default(_that.events,_that.pageInfo,_that.reqUrl);case _:
   return orElse();
 
 }
@@ -184,10 +185,10 @@ return $default(_that.events,_that.pageInfo);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'content')  List<Event> events,  EventsPageInfo pageInfo)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'content')  List<Event> events,  EventsPageInfo pageInfo, @JsonKey(includeFromJson: false, includeToJson: false)  String? reqUrl)  $default,) {final _that = this;
 switch (_that) {
 case _EventsResponse():
-return $default(_that.events,_that.pageInfo);case _:
+return $default(_that.events,_that.pageInfo,_that.reqUrl);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +205,10 @@ return $default(_that.events,_that.pageInfo);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'content')  List<Event> events,  EventsPageInfo pageInfo)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'content')  List<Event> events,  EventsPageInfo pageInfo, @JsonKey(includeFromJson: false, includeToJson: false)  String? reqUrl)?  $default,) {final _that = this;
 switch (_that) {
 case _EventsResponse() when $default != null:
-return $default(_that.events,_that.pageInfo);case _:
+return $default(_that.events,_that.pageInfo,_that.reqUrl);case _:
   return null;
 
 }
@@ -219,7 +220,7 @@ return $default(_that.events,_that.pageInfo);case _:
 @JsonSerializable()
 
 class _EventsResponse implements EventsResponse {
-  const _EventsResponse({@JsonKey(name: 'content') required final  List<Event> events, required this.pageInfo}): _events = events;
+  const _EventsResponse({@JsonKey(name: 'content') required final  List<Event> events, required this.pageInfo, @JsonKey(includeFromJson: false, includeToJson: false) this.reqUrl}): _events = events;
   factory _EventsResponse.fromJson(Map<String, dynamic> json) => _$EventsResponseFromJson(json);
 
  final  List<Event> _events;
@@ -230,6 +231,7 @@ class _EventsResponse implements EventsResponse {
 }
 
 @override final  EventsPageInfo pageInfo;
+@override@JsonKey(includeFromJson: false, includeToJson: false) final  String? reqUrl;
 
 /// Create a copy of EventsResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -244,16 +246,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsResponse&&const DeepCollectionEquality().equals(other._events, _events)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsResponse&&const DeepCollectionEquality().equals(other._events, _events)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo)&&(identical(other.reqUrl, reqUrl) || other.reqUrl == reqUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_events),pageInfo);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_events),pageInfo,reqUrl);
 
 @override
 String toString() {
-  return 'EventsResponse(events: $events, pageInfo: $pageInfo)';
+  return 'EventsResponse(events: $events, pageInfo: $pageInfo, reqUrl: $reqUrl)';
 }
 
 
@@ -264,7 +266,7 @@ abstract mixin class _$EventsResponseCopyWith<$Res> implements $EventsResponseCo
   factory _$EventsResponseCopyWith(_EventsResponse value, $Res Function(_EventsResponse) _then) = __$EventsResponseCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'content') List<Event> events, EventsPageInfo pageInfo
+@JsonKey(name: 'content') List<Event> events, EventsPageInfo pageInfo,@JsonKey(includeFromJson: false, includeToJson: false) String? reqUrl
 });
 
 
@@ -281,11 +283,12 @@ class __$EventsResponseCopyWithImpl<$Res>
 
 /// Create a copy of EventsResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? events = null,Object? pageInfo = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? events = null,Object? pageInfo = null,Object? reqUrl = freezed,}) {
   return _then(_EventsResponse(
 events: null == events ? _self._events : events // ignore: cast_nullable_to_non_nullable
 as List<Event>,pageInfo: null == pageInfo ? _self.pageInfo : pageInfo // ignore: cast_nullable_to_non_nullable
-as EventsPageInfo,
+as EventsPageInfo,reqUrl: freezed == reqUrl ? _self.reqUrl : reqUrl // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
