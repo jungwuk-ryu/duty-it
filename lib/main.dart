@@ -2,6 +2,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
@@ -143,10 +144,10 @@ Future<void> initPlatformState() async {
 
 Future<void> _backgroundJob() async {
   await dotenv.load(fileName: ".env");
-  await GetStorage.init(HomeViewController.cacheStorageBoxName);
+  await GetStorage.init(HomeViewCache.boxName);
 
-  GetStorage cacheBox = GetStorage(HomeViewController.cacheStorageBoxName);
-  String? cacheUrl = cacheBox.read(HomeViewController.urlCacheKey);
+  var cache = HomeViewCache();
+  String? cacheUrl = cache.getEventsUrl();
   if (cacheUrl == null) return;
 
   var client = ApiClient();
@@ -154,9 +155,5 @@ Future<void> _backgroundJob() async {
   if (result is RequestFail) return;
 
   EventsResponse rep = (result as RequestSuccess).data;
-  await cacheBox.write(HomeViewController.listCacheKey, rep.toJson());
-  await cacheBox.write(
-    HomeViewController.lastUpdateCacheKey,
-    DateTime.now().millisecondsSinceEpoch,
-  );
+  await cache.saveEvents(rep);
 }

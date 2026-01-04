@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
@@ -29,11 +30,7 @@ import 'package:synchronized/synchronized.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
-  static final String cacheStorageBoxName = "homeContainer";
-  static final String listCacheKey = "event_list";
-  static final String urlCacheKey = "request_url";
-  static final String lastUpdateCacheKey = "last_update";
-
+  final HomeViewCache _cache = HomeViewCache();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
 
@@ -181,22 +178,10 @@ class HomeViewController extends GetxController {
       }
     }
 
-    GetStorage box = GetStorage(cacheStorageBoxName);
-
     if (loadCache) {
       try {
-        Map? listCache = box.read(listCacheKey);
-        int? lastUpdateMills = box.read(lastUpdateCacheKey);
-        DateTime? lastUpdate = lastUpdateMills != null
-            ? DateTime.fromMillisecondsSinceEpoch(lastUpdateMills)
-            : null;
-
-        if (lastUpdate != null &&
-            DateTime.now().difference(lastUpdate).inDays < 7 &&
-            listCache != null) {
-          EventsResponse cachedResponse = EventsResponse.fromJson(
-            Map<String, dynamic>.from(listCache),
-          );
+        var cachedResponse = _cache.getEvents();
+        if (cachedResponse != null) {
           pagingState = pagingState.copyWith(
             keys: [
               ...pagingState.keys ?? [],
@@ -267,9 +252,7 @@ class HomeViewController extends GetxController {
         );
 
         if (clearPage && searchQuery.isEmpty) {
-          box.write(listCacheKey, response.toJson());
-          box.write(urlCacheKey, response.reqUrl);
-          box.write(lastUpdateCacheKey, DateTime.now().millisecondsSinceEpoch);
+          _cache.saveEvents(response);
         }
       } else {
         var fail = reqResult as RequestFail;
