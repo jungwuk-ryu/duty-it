@@ -7,7 +7,6 @@ import 'package:duty_it/app/modules/calendar/controllers/calendar_view_controlle
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/apple_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/google_login_strategy.dart';
-import 'package:duty_it/app/services/auth/strategies/kakao_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -78,7 +77,6 @@ class AuthService extends GetxService {
   }
 
   void _initStrategies() {
-    _strategies[SocialProvider.kakao] = KakaoLoginStrategy();
     _strategies[SocialProvider.google] = GoogleLoginStrategy();
     _strategies[SocialProvider.apple] = AppleLoginStrategy();
   }
