@@ -165,5 +165,4 @@ Future<void> _backgroundJob() async {
 
   EventsResponse rep = (result as RequestSuccess).data;
   await cache.saveEvents(rep);
-  await FirebaseAnalytics.instance.logEvent(name: 'background_fetch_events_updated');
 }
