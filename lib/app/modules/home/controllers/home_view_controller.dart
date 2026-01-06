@@ -32,6 +32,10 @@ class HomeViewController extends GetxController {
   final HomeViewCache _cache = HomeViewCache();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  bool loadEventListFromCache = true; 
 
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
@@ -97,7 +101,9 @@ class HomeViewController extends GetxController {
     );
 
     checkNewNotification();
-    fetchNextPage(clearPage: true, loadCache: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshIndicatorKey.currentState?.show(); 
+    });
   }
 
   Future<void> checkNewNotification() async {
@@ -133,19 +139,20 @@ class HomeViewController extends GetxController {
 
   Future<void> fetchNextPage({
     bool clearPage = false,
-    bool loadCache = false,
   }) async {
     if (!clearPage && pagingState.isLoading) return;
     await _pageFetchLock.synchronized(
       () async =>
-          await _fetchNextPage(clearPage: clearPage, loadCache: loadCache),
+          await _fetchNextPage(clearPage: clearPage),
     );
   }
 
   Future<void> _fetchNextPage({
     bool clearPage = false,
-    bool loadCache = false,
   }) async {
+    final loadCache = loadEventListFromCache;
+    loadEventListFromCache = false;
+
     SearchFilterService sfService = Get.find<SearchFilterService>();
 
     // Update paging state

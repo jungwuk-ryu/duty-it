@@ -17,6 +17,7 @@ class HomeView extends GetView<HomeViewController> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: RefreshIndicator.adaptive(
+        key: controller.refreshIndicatorKey,
         onRefresh: () async {
           await controller.fetchNextPage(clearPage: true);
           controller.checkNewNotification();
