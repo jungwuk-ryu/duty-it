@@ -70,7 +70,9 @@ class ApiClient extends GetConnect {
   }
 
   String buildUserAgent() {
-    final platform = Platform.isAndroid
+    final platform = kIsWeb 
+        ? 'web'
+        : Platform.isAndroid
         ? 'android'
         : Platform.isIOS
         ? 'ios'

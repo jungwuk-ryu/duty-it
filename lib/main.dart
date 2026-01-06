@@ -53,8 +53,10 @@ void main() async {
 
   await Future.wait([dotenvFuture]);
 
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-  initPlatformState();
+  if (kIsWeb == false) {
+    BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+    initPlatformState();
+  }
 
   runApp(
     GetMaterialApp(
