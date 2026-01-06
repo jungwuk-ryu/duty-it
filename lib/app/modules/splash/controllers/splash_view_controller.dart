@@ -1,5 +1,4 @@
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
-import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';

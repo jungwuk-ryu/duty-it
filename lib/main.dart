@@ -3,7 +3,6 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
-import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
@@ -150,7 +149,7 @@ Future<void> _backgroundJob() async {
     dotenv.load(fileName: ".env"),
     GetStorage.init(AuthService.storageBoxName),
     GetStorage.init(HomeViewCache.boxName),
-    _initFirebase()
+    _initFirebase(),
   ]);
 
   Get.lazyPut(() => AuthService());
