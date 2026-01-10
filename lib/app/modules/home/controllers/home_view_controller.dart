@@ -35,13 +35,13 @@ class HomeViewController extends GetxController {
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
-  bool loadEventListFromCache = true; 
+  bool loadEventListFromCache = true;
 
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
 
   final Rx<PagingState<String?, EventCard>> _pagingState =
-      PagingState<String?, EventCard>().obs;
+      PagingState<String?, EventCard>(isLoading: true).obs;
   PagingState<String?, EventCard> get pagingState => _pagingState.value;
   set pagingState(state) => _pagingState.value = state;
 
@@ -102,7 +102,7 @@ class HomeViewController extends GetxController {
 
     checkNewNotification();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      refreshIndicatorKey.currentState?.show(); 
+      refreshIndicatorKey.currentState?.show();
     });
   }
 
@@ -137,19 +137,14 @@ class HomeViewController extends GetxController {
     );
   }
 
-  Future<void> fetchNextPage({
-    bool clearPage = false,
-  }) async {
+  Future<void> fetchNextPage({bool clearPage = false}) async {
     if (!clearPage && pagingState.isLoading) return;
     await _pageFetchLock.synchronized(
-      () async =>
-          await _fetchNextPage(clearPage: clearPage),
+      () async => await _fetchNextPage(clearPage: clearPage),
     );
   }
 
-  Future<void> _fetchNextPage({
-    bool clearPage = false,
-  }) async {
+  Future<void> _fetchNextPage({bool clearPage = false}) async {
     final loadCache = loadEventListFromCache;
     loadEventListFromCache = false;
 
