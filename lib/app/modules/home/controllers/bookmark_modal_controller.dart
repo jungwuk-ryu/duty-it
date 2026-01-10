@@ -22,7 +22,6 @@ class BookmarkModalController extends GetxController {
   }
 
   Future<void> done(bool addToCal) async {
-    Get.back();
     var api = Get.find<ApiClient>();
     var user = Get.find<AuthService>().appUser!;
 
@@ -43,5 +42,7 @@ class BookmarkModalController extends GetxController {
     eventRx.value = event.copyWith(
       isBookmarked: await hController.toggleBookmark(event),
     );
+
+    Get.back();
   }
 }
