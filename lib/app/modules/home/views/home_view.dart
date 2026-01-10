@@ -1,6 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
+import 'package:duty_it/app/modules/home/widgets/events_first_page_error_indicator.dart';
 import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:duty_it/app/modules/home/widgets/home_header.dart';
 import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.dart';
@@ -73,30 +74,7 @@ class HomeView extends GetView<HomeViewController> {
                     return NoSearchItemIndicator();
                   },
                   firstPageErrorIndicatorBuilder: (_) => Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 300),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('행사 목록을 불러오지 못했어요', textAlign: TextAlign.center),
-                          SizedBox(height: 20),
-                          AppNormalButton(
-                            text: '다시 시도',
-                            onTap: () async {
-                              await controller.fetchNextPage(clearPage: true);
-                            },
-                          ),
-                          SizedBox(height: 10),
-                          AppNormalButton(
-                            text: '서비스 상태 확인',
-                            color: AppColors.g05,
-                            onTap: () {
-                              launchUrlString("https://status.dutyit.net");
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: EventsFirstPageErrorIndicator(controller: controller),
                   ),
                   newPageErrorIndicatorBuilder: (_) => Center(
                     child: Padding(
