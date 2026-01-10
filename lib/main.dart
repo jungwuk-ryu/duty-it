@@ -3,7 +3,6 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
-import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
@@ -17,7 +16,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_auth.dart';
 
 import 'app/routes/app_pages.dart';
 
@@ -45,17 +43,12 @@ void main() async {
       );
 
   /* Firebase init end */
-
-  if (kIsWeb) {
-    KakaoSdk.init(javaScriptAppKey: "a09a43b25e54febe3c34cee618f23b2c");
-  } else {
-    KakaoSdk.init(nativeAppKey: "5b75899fba79dc8e1651fa8c98ba12f8");
-  }
-
   await Future.wait([dotenvFuture]);
 
-  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
-  initPlatformState();
+  if (kIsWeb == false) {
+    BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+    initPlatformState();
+  }
 
   runApp(
     GetMaterialApp(
@@ -120,7 +113,7 @@ void backgroundFetchHeadlessTask(HeadlessTask task) async {
 Future<void> initPlatformState() async {
   await BackgroundFetch.configure(
     BackgroundFetchConfig(
-      minimumFetchInterval: 15, //TODO: 테스트 후 2시간 이상으로 확대
+      minimumFetchInterval: 60 * 5,
       stopOnTerminate: false,
       enableHeadless: true,
       requiresBatteryNotLow: true,
@@ -150,7 +143,7 @@ Future<void> _backgroundJob() async {
     dotenv.load(fileName: ".env"),
     GetStorage.init(AuthService.storageBoxName),
     GetStorage.init(HomeViewCache.boxName),
-    _initFirebase()
+    _initFirebase(),
   ]);
 
   Get.lazyPut(() => AuthService());
@@ -165,5 +158,4 @@ Future<void> _backgroundJob() async {
 
   EventsResponse rep = (result as RequestSuccess).data;
   await cache.saveEvents(rep);
-  await FirebaseAnalytics.instance.logEvent(name: 'background_fetch_events_updated');
 }

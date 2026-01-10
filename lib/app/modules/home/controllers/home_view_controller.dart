@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
-import 'package:duty_it/app/core/models/events_response.dart';
-import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
-import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
-import 'package:duty_it/app/services/auth/auth_service.dart';
-import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
-import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
+import 'package:duty_it/app/core/models/event.dart';
+import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/bookmark_bottom_modal.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
+import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/event/app_event_service.dart';
+import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -23,7 +23,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -33,12 +32,16 @@ class HomeViewController extends GetxController {
   final HomeViewCache _cache = HomeViewCache();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  bool loadEventListFromCache = true;
 
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
 
   final Rx<PagingState<String?, EventCard>> _pagingState =
-      PagingState<String?, EventCard>().obs;
+      PagingState<String?, EventCard>(isLoading: true).obs;
   PagingState<String?, EventCard> get pagingState => _pagingState.value;
   set pagingState(state) => _pagingState.value = state;
 
@@ -98,7 +101,9 @@ class HomeViewController extends GetxController {
     );
 
     checkNewNotification();
-    fetchNextPage(clearPage: true, loadCache: true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshIndicatorKey.currentState?.show();
+    });
   }
 
   Future<void> checkNewNotification() async {
@@ -132,21 +137,17 @@ class HomeViewController extends GetxController {
     );
   }
 
-  Future<void> fetchNextPage({
-    bool clearPage = false,
-    bool loadCache = false,
-  }) async {
+  Future<void> fetchNextPage({bool clearPage = false}) async {
     if (!clearPage && pagingState.isLoading) return;
     await _pageFetchLock.synchronized(
-      () async =>
-          await _fetchNextPage(clearPage: clearPage, loadCache: loadCache),
+      () async => await _fetchNextPage(clearPage: clearPage),
     );
   }
 
-  Future<void> _fetchNextPage({
-    bool clearPage = false,
-    bool loadCache = false,
-  }) async {
+  Future<void> _fetchNextPage({bool clearPage = false}) async {
+    final loadCache = loadEventListFromCache;
+    loadEventListFromCache = false;
+
     SearchFilterService sfService = Get.find<SearchFilterService>();
 
     // Update paging state
@@ -207,6 +208,7 @@ class HomeViewController extends GetxController {
       name: 'fetch_events_page',
       parameters: {'clear_page': "$clearPage"},
     );
+    bool hasError = false;
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
@@ -255,14 +257,27 @@ class HomeViewController extends GetxController {
           _cache.saveEvents(response);
         }
       } else {
-        var fail = reqResult as RequestFail;
+        hasError = true;
         if (kDebugMode) {
           AppUtils.showSnackBar(
-            '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
+            '이벤트 목록을 불러오지 못했습니다: ${(reqResult as RequestFail).serverFail?.message ?? ""}',
           );
         }
       }
+    } catch (ex, st) {
+      hasError = true;
+      if (kDebugMode) {
+        print(ex.toString() + st.toString());
+      }
+      FirebaseCrashlytics.instance.recordError(ex, st);
     } finally {
+      if (hasError) {
+        pagingState = pagingState.copyWith(
+          keys: clearPage ? [] : Omit(),
+          pages: clearPage ? [] : Omit(),
+          error: true,
+        );
+      }
       pagingState = pagingState.copyWith(isLoading: false);
     }
   }
