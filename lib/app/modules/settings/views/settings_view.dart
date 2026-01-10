@@ -62,7 +62,6 @@ class SettingsView extends GetView<SettingsViewController> {
                     //     enabled: controller.pushNoti,
                     //   ),
                     // ),
-                    SizedBox(height: 40),
                     Obx(
                       () => ToggleSettingItem(
                         title: '북마크 - 캘린더 자동 연동',
@@ -72,7 +71,6 @@ class SettingsView extends GetView<SettingsViewController> {
                             await controller.toggleAutoAdd(),
                       ),
                     ),
-                    SizedBox(height: 40),
                     GestureDetector(
                       onTap: () => Get.to(LicensePage(applicationName: "듀잇")),
                       child: Text(
