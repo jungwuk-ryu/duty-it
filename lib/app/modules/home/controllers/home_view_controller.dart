@@ -271,8 +271,12 @@ class HomeViewController extends GetxController {
       }
       FirebaseCrashlytics.instance.recordError(ex, st);
     } finally {
-      if (hasError && clearPage) {
-        pagingState = pagingState.copyWith(keys: [], pages: [], error: true);
+      if (hasError) {
+        pagingState = pagingState.copyWith(
+          keys: clearPage ? [] : Omit(),
+          pages: clearPage ? [] : Omit(),
+          error: true,
+        );
       }
       pagingState = pagingState.copyWith(isLoading: false);
     }

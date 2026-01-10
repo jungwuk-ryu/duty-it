@@ -73,28 +73,47 @@ class HomeView extends GetView<HomeViewController> {
                     return NoSearchItemIndicator();
                   },
                   firstPageErrorIndicatorBuilder: (_) => Center(
-                    child: ConstrainedBox(constraints: BoxConstraints(maxWidth: 300),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('행사 목록을 불러오지 못했어요', textAlign: TextAlign.center),
-                        SizedBox(height: 20),
-                        AppNormalButton(
-                          text: '다시 시도',
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 300),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('행사 목록을 불러오지 못했어요', textAlign: TextAlign.center),
+                          SizedBox(height: 20),
+                          AppNormalButton(
+                            text: '다시 시도',
+                            onTap: () async {
+                              await controller.fetchNextPage(clearPage: true);
+                            },
+                          ),
+                          SizedBox(height: 10),
+                          AppNormalButton(
+                            text: '서비스 상태 확인',
+                            color: AppColors.g05,
+                            onTap: () {
+                              launchUrlString("https://status.dutyit.net");
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  newPageErrorIndicatorBuilder: (_) => Center(
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.symmetric(
+                        vertical: 5,
+                        horizontal: 10,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 200),
+                        child: AppNormalButton(
+                          text: '재시도',
                           onTap: () async {
-                            await controller.fetchNextPage(clearPage: true);
+                            await controller.fetchNextPage();
                           },
                         ),
-                        SizedBox(height: 10),
-                        AppNormalButton(
-                          text: '서비스 상태 확인',
-                          color: AppColors.g05,
-                          onTap: () {
-                            launchUrlString("https://status.dutyit.net");
-                          },
-                        ),
-                      ],
-                    ),),
+                      ),
+                    ),
                   ),
                 ),
               );
