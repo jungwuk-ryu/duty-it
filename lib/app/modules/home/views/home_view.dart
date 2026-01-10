@@ -1,4 +1,3 @@
-import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/events_first_page_error_indicator.dart';
@@ -11,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:persistent_header_adaptive/persistent_header_adaptive.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeView extends GetView<HomeViewController> {
   const HomeView({super.key});
@@ -74,7 +72,9 @@ class HomeView extends GetView<HomeViewController> {
                     return NoSearchItemIndicator();
                   },
                   firstPageErrorIndicatorBuilder: (_) => Center(
-                    child: EventsFirstPageErrorIndicator(controller: controller),
+                    child: EventsFirstPageErrorIndicator(
+                      controller: controller,
+                    ),
                   ),
                   newPageErrorIndicatorBuilder: (_) => Center(
                     child: Padding(
