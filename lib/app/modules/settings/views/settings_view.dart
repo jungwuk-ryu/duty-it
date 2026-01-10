@@ -66,7 +66,7 @@ class SettingsView extends GetView<SettingsViewController> {
                       () => ToggleSettingItem(
                         title: '북마크 - 캘린더 자동 연동',
                         checked: controller.calendarAutoAdd,
-                        subtitle: "북마크 설정시, 행사 일정을 듀잇 캘린더에 자동으로 등록합니다. ",
+                        subtitle: "북마크 설정시, 모집과 행사 일정을 캘린더에 자동으로 등록합니다. ",
                         onToggleTap: () async =>
                             await controller.toggleAutoAdd(),
                       ),
