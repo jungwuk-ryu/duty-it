@@ -253,7 +253,7 @@ class HomeViewController extends GetxController {
           hasNextPage: hasNext,
         );
 
-        if (clearPage && searchQuery.isEmpty) {
+        if (clearPage && searchQuery.isEmpty && _selectedTab.value == HomeTab.event) {
           _cache.saveEvents(response);
         }
       } else {
