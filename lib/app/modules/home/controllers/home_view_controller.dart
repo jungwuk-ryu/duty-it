@@ -208,6 +208,7 @@ class HomeViewController extends GetxController {
       name: 'fetch_events_page',
       parameters: {'clear_page': "$clearPage"},
     );
+    bool hasError = false;
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
@@ -256,14 +257,23 @@ class HomeViewController extends GetxController {
           _cache.saveEvents(response);
         }
       } else {
-        var fail = reqResult as RequestFail;
+        hasError = true;
         if (kDebugMode) {
           AppUtils.showSnackBar(
-            '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
+            '이벤트 목록을 불러오지 못했습니다: ${(reqResult as RequestFail).serverFail?.message ?? ""}',
           );
         }
       }
+    } catch (ex, st) {
+      hasError = true;
+      if (kDebugMode) {
+        print(ex.toString() + st.toString());
+      }
+      FirebaseCrashlytics.instance.recordError(ex, st);
     } finally {
+      if (hasError && clearPage) {
+        pagingState = pagingState.copyWith(keys: [], pages: [], error: true);
+      }
       pagingState = pagingState.copyWith(isLoading: false);
     }
   }
