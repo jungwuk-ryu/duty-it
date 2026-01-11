@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:get/get_state_manager/get_state_manager.dart';
 
-class CustomCalendar extends StatelessWidget {
+class CustomCalendar extends StatefulWidget {
   final DateTime date;
   final CustomCalendarController controller;
 
@@ -19,8 +19,19 @@ class CustomCalendar extends StatelessWidget {
   });
 
   @override
+  State<CustomCalendar> createState() => _CustomCalendarState();
+}
+
+class _CustomCalendarState extends State<CustomCalendar> {
+  @override
+  void dispose() {
+    widget.controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final DateTime startOfMonth = date.copyWith(day: 1);
+    final DateTime startOfMonth = widget.date.copyWith(day: 1);
 
     return CustomScrollView(
       //crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,17 +42,17 @@ class CustomCalendar extends StatelessWidget {
             SizedBox(height: 8),
             ...List.generate(5, (i) {
               final DateTime cDt = startOfMonth.add(Duration(days: 7 * i));
-              if (cDt.month != date.month) return SizedBox.shrink();
+              if (cDt.month != widget.date.month) return SizedBox.shrink();
               return CustomCalendarWeekCell(
                 date: cDt,
-                events: controller.events,
-                controller: controller,
+                events: widget.controller.events,
+                controller: widget.controller,
               );
             }),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Obx(() {
-                DateTime selectedDate = controller.currentDateTime;
+                DateTime selectedDate = widget.controller.currentDateTime;
                 return Text(
                   "${selectedDate.month}월 ${selectedDate.day}일 (${AppUtils.weekDay2Text(selectedDate.weekday)})",
                   style: TextStyle(
@@ -57,7 +68,7 @@ class CustomCalendar extends StatelessWidget {
           ]),
         ),
         Obx(() {
-          var events = controller.getEventsByDay(controller.currentDateTime);
+          var events = widget.controller.getEventsByDay(widget.controller.currentDateTime);
           if (events.isEmpty) {
             return SliverToBoxAdapter(child: CustomCalendarEventCard(null));
           }

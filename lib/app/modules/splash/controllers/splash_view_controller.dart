@@ -1,6 +1,8 @@
+import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -17,7 +19,9 @@ class SplashViewController extends GetxController {
       GetStorage.init(AppSettingsService.storageBoxName),
       GetStorage.init(AuthService.storageBoxName),
       GetStorage.init(SearchFilterService.storageBoxName),
+      GetStorage.init(HomeViewCache.boxName),
       GetStorage.init(appInfoBoxName),
+      GetStorage.init(CalendarService.registeredEventsBoxName),
       Future.delayed(Duration(seconds: 1)),
     ]);
     PackageInfo packageInfo = results[0];

@@ -1,4 +1,9 @@
+import 'package:background_fetch/background_fetch.dart';
+import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -10,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_auth.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'app/routes/app_pages.dart';
 
@@ -38,14 +43,12 @@ void main() async {
       );
 
   /* Firebase init end */
-
-  if (kIsWeb) {
-    KakaoSdk.init(javaScriptAppKey: "a09a43b25e54febe3c34cee618f23b2c");
-  } else {
-    KakaoSdk.init(nativeAppKey: "5b75899fba79dc8e1651fa8c98ba12f8");
-  }
-
   await Future.wait([dotenvFuture]);
+
+  if (kIsWeb == false) {
+    BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
+    initPlatformState();
+  }
 
   runApp(
     GetMaterialApp(
@@ -90,4 +93,69 @@ Future<void> _initFirebase() async {
   };
 }
 
+@pragma('vm:entry-point')
+void backgroundFetchHeadlessTask(HeadlessTask task) async {
+  String taskId = task.taskId;
+  bool isTimeout = task.timeout;
+  if (isTimeout) {
+    BackgroundFetch.finish(taskId);
+    return;
+  }
 
+  try {
+    await _backgroundJob();
+  } finally {
+    BackgroundFetch.finish(taskId);
+  }
+}
+
+// Configure BackgroundFetch.
+Future<void> initPlatformState() async {
+  await BackgroundFetch.configure(
+    BackgroundFetchConfig(
+      minimumFetchInterval: 60 * 5,
+      stopOnTerminate: false,
+      enableHeadless: true,
+      requiresBatteryNotLow: true,
+      requiresCharging: false,
+      requiresStorageNotLow: false,
+      requiresDeviceIdle: false,
+      requiredNetworkType: NetworkType.ANY,
+    ),
+    (String taskId) async {
+      try {
+        await _backgroundJob();
+      } finally {
+        BackgroundFetch.finish(taskId);
+      }
+    },
+    (String taskId) async {
+      // Time out handler
+      BackgroundFetch.finish(taskId);
+    },
+  );
+}
+
+Future<void> _backgroundJob() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Future.wait([
+    dotenv.load(fileName: ".env"),
+    GetStorage.init(AuthService.storageBoxName),
+    GetStorage.init(HomeViewCache.boxName),
+    _initFirebase(),
+  ]);
+
+  Get.lazyPut(() => AuthService());
+
+  var cache = HomeViewCache();
+  String? cacheUrl = cache.getEventsUrl();
+  if (cacheUrl == null) return;
+
+  var client = ApiClient(background: true);
+  RequestResult<EventsResponse> result = await client.getEventsByUrl(cacheUrl);
+  if (result is RequestFail) return;
+
+  EventsResponse rep = (result as RequestSuccess).data;
+  await cache.saveEvents(rep);
+}

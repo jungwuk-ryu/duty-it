@@ -15,6 +15,12 @@
 		<string>듀티</string>
 		<string>간호사</string>
 	</array>
+	<key>NSCalendarsUsageDescription</key>
+	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 전체 접근이 필요해요.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -33,6 +39,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+	<string>com.transistorsoft.fetch</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -67,7 +77,8 @@
 	<string>348194173787-lbm02t1gmn4krroo8ehjl0c0a7hh1f0m.apps.googleusercontent.com</string>
 	<key>UIBackgroundModes</key>
 	<array>
-	<string>remote-notification</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>

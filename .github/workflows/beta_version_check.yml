@@ -1,0 +1,36 @@
+name: Beta App Version Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [beta]
+
+jobs:
+  beta-app-version-check:
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event.pull_request.base.ref == 'beta' &&
+      github.event.pull_request.head.ref == 'develop'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compare versions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin release:refs/remotes/origin/release
+          git fetch origin beta:refs/remotes/origin/beta
+
+          release_ver_full="$(git show origin/release:pubspec.yaml | awk -F': *' '$1=="version"{print $2; exit}')"
+          beta_ver_full="$(git show origin/beta:pubspec.yaml | awk -F': *' '$1=="version"{print $2; exit}')"
+
+          if [[ "${beta_ver_full}" == "${release_ver_full}" ]]; then
+            echo "❌ FAIL: 릴리즈 버전과 베타의 버전이 동일합니다."
+            exit 1
+          fi
+
+          echo "✅ OK"

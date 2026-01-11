@@ -2,23 +2,26 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
-import 'package:duty_it/app/core/models/events_response.dart';
-import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
-import 'package:duty_it/app/services/auth/auth_service.dart';
-import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
-import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
-import 'package:duty_it/app/modules/home/controllers/bookmark_modal_controller.dart';
-import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
+import 'package:duty_it/app/core/models/event.dart';
+import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/bookmark_bottom_modal.dart';
 import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
+import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/calendar_service.dart';
+import 'package:duty_it/app/services/event/app_event_service.dart';
+import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/no_calendar_permission_modal.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,14 +32,19 @@ import 'package:synchronized/synchronized.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
+  final HomeViewCache _cache = HomeViewCache();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
+  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
+  bool loadEventListFromCache = true;
 
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   AppEventService get _eventService => Get.find<AppEventService>();
 
   final Rx<PagingState<String?, EventCard>> _pagingState =
-      PagingState<String?, EventCard>().obs;
+      PagingState<String?, EventCard>(isLoading: true).obs;
   PagingState<String?, EventCard> get pagingState => _pagingState.value;
   set pagingState(state) => _pagingState.value = state;
 
@@ -96,6 +104,9 @@ class HomeViewController extends GetxController {
     );
 
     checkNewNotification();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshIndicatorKey.currentState?.show();
+    });
   }
 
   Future<void> checkNewNotification() async {
@@ -131,10 +142,15 @@ class HomeViewController extends GetxController {
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
     if (!clearPage && pagingState.isLoading) return;
-    await _pageFetchLock.synchronized(() async => await _fetchNextPage(clearPage: clearPage));
+    await _pageFetchLock.synchronized(
+      () async => await _fetchNextPage(clearPage: clearPage),
+    );
   }
 
   Future<void> _fetchNextPage({bool clearPage = false}) async {
+    final loadCache = loadEventListFromCache;
+    loadEventListFromCache = false;
+
     SearchFilterService sfService = Get.find<SearchFilterService>();
 
     // Update paging state
@@ -151,13 +167,12 @@ class HomeViewController extends GetxController {
     var filter = sfService.filter;
     List<String> categories = filter.categories.toList();
     List<EventType> types = [];
+    String? pageKey = pagingState.keys?.last;
+    int? hostId = sfService.filter.host?.id;
 
     for (var category in categories) {
       types.add(EventType.getByDisplayName(category));
     }
-
-    String? pageKey = pagingState.keys?.last;
-    int? hostId = sfService.filter.host?.id;
 
     if (!onlyFinishedMode) {
       if (pageKey == null &&
@@ -167,8 +182,36 @@ class HomeViewController extends GetxController {
       }
     }
 
+    if (loadCache) {
+      try {
+        var cachedResponse = _cache.getEvents();
+        if (cachedResponse != null) {
+          pagingState = pagingState.copyWith(
+            keys: [
+              ...pagingState.keys ?? [],
+              cachedResponse.pageInfo.nextCursor,
+            ],
+            pages: [
+              List<EventCard>.generate(
+                cachedResponse.events.length,
+                (i) => EventCard(eventRx: Rx(cachedResponse.events[i])),
+              ),
+            ],
+            hasNextPage: false,
+            isLoading: true,
+          );
+        }
+      } catch (e, s) {
+        FirebaseCrashlytics.instance.recordError(e, s);
+      }
+    }
+
     // request
-    FirebaseAnalytics.instance.logEvent(name: 'fetch_events_page', parameters: {'clear_page': "$clearPage"});
+    FirebaseAnalytics.instance.logEvent(
+      name: 'fetch_events_page',
+      parameters: {'clear_page': "$clearPage"},
+    );
+    bool hasError = false;
     try {
       var apiClient = Get.find<ApiClient>();
       var reqResult = await apiClient.getEvents(
@@ -199,9 +242,12 @@ class HomeViewController extends GetxController {
         }
 
         pagingState = pagingState.copyWith(
-          keys: [...pagingState.keys ?? [], pageInfo.nextCursor],
+          keys: [
+            ...(!loadCache ? (pagingState.keys ?? []) : []),
+            pageInfo.nextCursor,
+          ],
           pages: [
-            ...pagingState.pages ?? [],
+            ...(!loadCache ? (pagingState.pages ?? []) : []),
             List<EventCard>.generate(
               events.length,
               (i) => EventCard(eventRx: Rx(events[i])),
@@ -209,15 +255,34 @@ class HomeViewController extends GetxController {
           ],
           hasNextPage: hasNext,
         );
+
+        if (clearPage &&
+            searchQuery.isEmpty &&
+            _selectedTab.value == HomeTab.event) {
+          _cache.saveEvents(response);
+        }
       } else {
-        var fail = reqResult as RequestFail;
+        hasError = true;
         if (kDebugMode) {
           AppUtils.showSnackBar(
-            '이벤트 목록을 불러오지 못했습니다: ${fail.serverFail?.message ?? ""}',
+            '이벤트 목록을 불러오지 못했습니다: ${(reqResult as RequestFail).serverFail?.message ?? ""}',
           );
         }
       }
+    } catch (ex, st) {
+      hasError = true;
+      if (kDebugMode) {
+        print(ex.toString() + st.toString());
+      }
+      FirebaseCrashlytics.instance.recordError(ex, st);
     } finally {
+      if (hasError) {
+        pagingState = pagingState.copyWith(
+          keys: clearPage ? [] : Omit(),
+          pages: clearPage ? [] : Omit(),
+          error: true,
+        );
+      }
       pagingState = pagingState.copyWith(isLoading: false);
     }
   }
@@ -251,8 +316,7 @@ class HomeViewController extends GetxController {
     );
 
     if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
-      
-      showModalBottomSheet(
+      await showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
@@ -264,6 +328,57 @@ class HomeViewController extends GetxController {
       eventRx.value = event.copyWith(isBookmarked: !event.isBookmarked);
 
       eventRx.value = event.copyWith(isBookmarked: await toggleBookmark(event));
+    }
+
+    var user = Get.find<AuthService>().appUser!;
+    var calendarService = Get.find<CalendarService>();
+    if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
+      var result = await calendarService.requestPermission();
+      if (!result) {
+        AppUtils.showSnackBar(
+          "권한이 없어서 캘린더에 추가하지 못했어요.",
+          mainButton: Row(
+            spacing: 15,
+            children: [
+              AppNormalButton(
+                text: '설정하기',
+                width: 100,
+                onTap: () async {
+                  Get.back();
+                  showModalBottomSheet(
+                    context: Get.context!,
+                    isDismissible: true,
+                    useSafeArea: true,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                    ),
+                    builder: (_) => NoCalendarPermissionModal(),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      DateTime now = DateTime.now();
+      DateTime start = event.startAt ?? now;
+      DateTime end = event.endAt ?? start;
+
+      await Get.find<CalendarService>().addEvent(
+        title: event.title,
+        startDate: start,
+        endDate: end,
+        id: event.id.toString(),
+        description: "${event.host.name}\n${event.uri}",
+      );
+    } else if (!eventRx.value.isBookmarked) {
+      if (await calendarService.checkPermission()) {
+        await calendarService.removeEvent(event.id.toString());
+      }
     }
   }
 

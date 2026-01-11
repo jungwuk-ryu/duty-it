@@ -9,16 +9,31 @@ class AppSettingsService extends GetxService {
   late final GetStorage _box = GetStorage(storageBoxName);
   late final AppSetting<String> eventSortingTypeSetting;
   late final AppSetting<bool> dontShowAutoAddModal;
+  late final AppSetting<bool> includeDeviceEvents;
 
+  EventSortingType get eventSortingType =>
+      EventSortingType.fromName(eventSortingTypeSetting.value);
+
+  set eventSortingType(EventSortingType t) =>
+      eventSortingTypeSetting.value = t.name;
   @override
   void onInit() async {
     super.onInit();
 
-    eventSortingTypeSetting = AppSetting(key: 'event_sorting_type', box: _box, defaultValue: EventSortingType.latest.name);
-    dontShowAutoAddModal = AppSetting(key: 'dont_show_auto_add_modal', box: _box, defaultValue: false);
+    eventSortingTypeSetting = AppSetting(
+      key: 'event_sorting_type',
+      box: _box,
+      defaultValue: EventSortingType.latest.name,
+    );
+    dontShowAutoAddModal = AppSetting(
+      key: 'dont_show_auto_add_modal',
+      box: _box,
+      defaultValue: false,
+    );
+    includeDeviceEvents = AppSetting(
+      key: 'include_device_events',
+      box: _box,
+      defaultValue: true,
+    );
   }
-
-  EventSortingType get eventSortingType => EventSortingType.fromName(eventSortingTypeSetting.value);
-  set eventSortingType(EventSortingType t) => eventSortingTypeSetting.value = t.name;
-
 }

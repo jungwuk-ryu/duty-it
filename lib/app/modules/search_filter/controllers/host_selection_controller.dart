@@ -30,7 +30,7 @@ class HostSelectionController extends GetxController {
   }
 
   Future<void> _fetchHosts() async {
-    RequestResult<List<Host>> reqResult = await Get.find<ApiClient>().getHosts();
+    RequestResult<List<Host>> reqResult = await Get.find<ApiClient>().getHosts(size: 500);
     if (reqResult is RequestFail) {
       var fail = reqResult.serverFail;
       AppUtils.showSnackBar('주최 목록을 불러오지 못했어요.\n${fail?.message ?? ''}');

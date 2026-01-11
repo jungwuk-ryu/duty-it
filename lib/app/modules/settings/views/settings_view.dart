@@ -2,8 +2,8 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/settings/widgets/toggle_setting_item.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../controllers/settings_view_controller.dart';
 
@@ -61,7 +61,6 @@ class SettingsView extends GetView<SettingsViewController> {
                     //     enabled: controller.pushNoti,
                     //   ),
                     // ),
-                    SizedBox(height: 40),
                     Obx(
                       () => ToggleSettingItem(
                         title: '북마크 - 캘린더 자동 연동',
@@ -71,11 +70,31 @@ class SettingsView extends GetView<SettingsViewController> {
                             await controller.toggleAutoAdd(),
                       ),
                     ),
-                    SizedBox(height: 40),
+                    Obx(
+                      () => ToggleSettingItem(
+                        title: '캘린더 - 기기 캘린더 행사 포함',
+                        checked: controller.includeDeviceEvents,
+                        subtitle: "캘린더에 기기에 저장된 일정 정보를 표시합니다.",
+                        onToggleTap: () =>
+                            controller.toggleIncludeDeviceEvents(),
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () => Get.to(LicensePage(applicationName: "듀잇")),
                       child: Text(
                         "오픈소스 라이선스",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          height: 1.60,
+                          color: AppColors.g05,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => launchUrlString("mailto:contact@dutyit.net"),
+                      child: Text(
+                        "문의 메일 : contact@dutyit.net",
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
