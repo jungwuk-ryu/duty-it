@@ -333,7 +333,7 @@ class HomeViewController extends GetxController {
     if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
       var result = await calendarService.requestPermission();
       if (!result) {
-        AppUtils.showSnackBar("캘린더 접근 권한이 없어요.");
+        AppUtils.showSnackBar("권한이 없어서 캘린더에 추가하지 못했어요.");
         return;
       }
 
