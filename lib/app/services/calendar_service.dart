@@ -143,7 +143,6 @@ class CalendarService extends GetxService {
     try {
       return calendars.firstWhere(
         (cal) => cal.isPrimary && !cal.readOnly,
-        orElse: () => calendars.first,
       );
     } catch (e) {
       FirebaseCrashlytics.instance.recordError(
