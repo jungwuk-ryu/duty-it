@@ -11,7 +11,8 @@ class AppUtils {
     Get.showSnackbar(
       GetSnackBar(
         duration: const Duration(seconds: 2),
-        backgroundColor: AppColors.g07,
+        backgroundColor: AppColors.g07.withAlpha(165),
+        barBlur: 2,
         borderRadius: 8,
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
