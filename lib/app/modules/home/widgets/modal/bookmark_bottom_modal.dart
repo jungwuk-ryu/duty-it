@@ -98,7 +98,7 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    '다음부터 묻지 않고 캘린더에 추가하기',
+                    '설정 기억하기',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: color,
