@@ -17,6 +17,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../core/models/event.dart';
 
 class CalendarViewController extends GetxController {
+  static const String deviceEventScheme = "device_event://";
   static const String _cacheStorageName = "calendarCache";
 
   static const int initPage = 2000;
@@ -37,13 +38,19 @@ class CalendarViewController extends GetxController {
     List<dcp.Event> deviceCalEvents,
   ) {
         return deviceCalEvents
-        .map((event) => CalendarEvent(
+        .map((event) {
+          final end = event.endDate;
+          var correctedEnd = end;
+          if (event.isAllDay && end.hour == 0 && end.minute == 0 && !AppUtils.isSameDay(event.startDate, end)) {
+            correctedEnd = end.subtract(Duration(minutes: 1));
+          }
+            return CalendarEvent(
               title: event.title,
               startDate: event.startDate,
-              endDate: event.endDate,
+              endDate: correctedEnd,
               color: AppColors.cal1,
-              url: "",
-            ))
+              url: "$deviceEventScheme${event.eventId}",);
+  })
         .toList();
   }
 

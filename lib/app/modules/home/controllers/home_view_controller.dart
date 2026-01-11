@@ -344,6 +344,7 @@ class HomeViewController extends GetxController {
                 text: '설정하기',
                 width: 100,
                 onTap: () async {
+                  Get.back();
                   showModalBottomSheet(
                     context: Get.context!,
                     isDismissible: true,
