@@ -141,9 +141,21 @@ class CalendarService extends GetxService {
     final calendars = await _plugin.listCalendars();
 
     try {
-      return calendars.firstWhere(
+      var found = calendars.where(
         (cal) => cal.isPrimary && !cal.readOnly,
       );
+      if (found.isNotEmpty) {
+        return found.first;
+      }
+
+      found = calendars.where(
+        (cal) => !cal.readOnly,
+      );
+      if (found.isNotEmpty) {
+        return found.first;
+      }
+
+      return null;
     } catch (e) {
       FirebaseCrashlytics.instance.recordError(
         e,
