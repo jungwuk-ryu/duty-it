@@ -7,7 +7,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 class AppUtils {
   AppUtils._();
 
-  static void showSnackBar(String content) {
+  static void showSnackBar(String content, {Widget? mainButton}) {
     Get.showSnackbar(
       GetSnackBar(
         duration: const Duration(seconds: 2),
@@ -27,6 +27,7 @@ class AppUtils {
             ),
           ),
         ),
+        mainButton: mainButton,
       ),
     );
   }
