@@ -32,13 +32,13 @@ class CalendarService extends GetxService {
       }
       return true;
     }
-    var status = await _plugin.hasPermissions();
 
-    if (! await checkPermission()) {
-      await _plugin.requestPermissions();
+    bool hasPermission = await checkPermission();
+    if (!hasPermission) {
+      hasPermission = await _plugin.requestPermissions() == CalendarPermissionStatus.granted;
     }
 
-    return await checkPermission();
+    return hasPermission;
   }
 
   Future<void> addEvent({
@@ -114,14 +114,14 @@ class CalendarService extends GetxService {
   }
 
   Future<void> _registerEvent(String id, String eventId) async {
-    await _box.write(id.toString(), eventId);
+    await _box.write(id, eventId);
   }
   
   Future<void> _unregisterEvent(String id) async {
-    await _box.remove(id.toString());
+    await _box.remove(id);
   }
 
   String? _getRegisteredEventId(String id) {
-    return _box.read(id.toString());
+    return _box.read(id);
   }
 }
