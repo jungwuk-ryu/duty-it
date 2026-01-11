@@ -5,10 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class EventsFirstPageErrorIndicator extends StatelessWidget {
-  const EventsFirstPageErrorIndicator({
-    super.key,
-    required this.controller,
-  });
+  const EventsFirstPageErrorIndicator({super.key, required this.controller});
 
   final HomeViewController controller;
 
@@ -19,7 +16,11 @@ class EventsFirstPageErrorIndicator extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('행사 목록을 불러오지 못했어요', textAlign: TextAlign.center),
+          Text(
+            '행사 목록을 불러오지 못했어요',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 20),
           AppNormalButton(
             text: '다시 시도',
