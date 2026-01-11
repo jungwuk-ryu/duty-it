@@ -1,4 +1,5 @@
 import 'package:device_calendar_plus/device_calendar_plus.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -55,7 +56,7 @@ class CalendarService extends GetxService {
       return;
     }
 
-    if (_isRegistered(id)) return;
+    if (isRegistered(id)) return;
 
     String eventId = await _plugin.createEvent(
       calendarId: (await _getCalendar()).id,
@@ -80,9 +81,9 @@ class CalendarService extends GetxService {
       return;
     }
 
-    if (!_isRegistered(id)) return;
+    if (!isRegistered(id)) return;
 
-    String? eventId = _getRegisteredEventId(id);
+    String? eventId = getRegisteredEventId(id);
     if (eventId != null) {
       await removeEventByEventId(eventId);
     }
@@ -98,7 +99,32 @@ class CalendarService extends GetxService {
       return;
     }
 
-    await _plugin.deleteEvent(eventId: eventId);
+    try {
+      Event? event = await _plugin.getEvent(eventId);
+      if (event != null) await _plugin.deleteEvent(eventId: eventId);
+    } catch (e, st) {
+      if (kDebugMode) {
+        print("캘린더 행사 삭제 중 오류 발생: $e\n$st");
+      }
+
+      FirebaseCrashlytics.instance.recordError(e, st, reason: "캘린더 행사 삭제 중 오류 발생");
+    }
+  }
+
+  Future<List<Event>> retrieveEvents(DateTime start, DateTime end) async {
+    if (kIsWeb) {
+      return [];
+    }
+
+    return await _plugin.listEvents(start, end);
+  }
+  
+  String? getRegisteredEventId(String id) {
+    return _box.read(id);
+  }
+
+  bool isRegistered(String id) {
+    return _box.read(id) != null;
   }
 
   Future<Calendar> _getCalendar() async {
@@ -109,19 +135,11 @@ class CalendarService extends GetxService {
     );
   }
 
-  bool _isRegistered(String id) {
-    return _box.read(id) != null;
-  }
-
   Future<void> _registerEvent(String id, String eventId) async {
     await _box.write(id, eventId);
   }
   
   Future<void> _unregisterEvent(String id) async {
     await _box.remove(id);
-  }
-
-  String? _getRegisteredEventId(String id) {
-    return _box.read(id);
   }
 }

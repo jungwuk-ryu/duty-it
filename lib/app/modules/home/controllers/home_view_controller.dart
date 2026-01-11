@@ -18,6 +18,8 @@ import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/no_calendar_permission_modal.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -333,7 +335,31 @@ class HomeViewController extends GetxController {
     if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
       var result = await calendarService.requestPermission();
       if (!result) {
-        AppUtils.showSnackBar("캘린더 접근 권한이 없어요.");
+        AppUtils.showSnackBar(
+          "권한이 없어서 캘린더에 추가하지 못했어요.",
+          mainButton: Row(
+            spacing: 15,
+            children: [
+              AppNormalButton(
+                text: '설정하기',
+                width: 100,
+                onTap: () async {
+                  showModalBottomSheet(
+                    context: Get.context!,
+                    isDismissible: true,
+                    useSafeArea: true,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                    ),
+                    builder: (_) => NoCalendarPermissionModal(),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
         return;
       }
 
@@ -345,7 +371,7 @@ class HomeViewController extends GetxController {
         title: event.title,
         startDate: start,
         endDate: end,
-        id: event.id.toString(), 
+        id: event.id.toString(),
         description: "${event.host.name}\n${event.uri}",
       );
     } else if (!eventRx.value.isBookmarked) {

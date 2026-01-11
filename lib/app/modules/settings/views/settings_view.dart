@@ -2,7 +2,6 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/settings/widgets/toggle_setting_item.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -69,6 +68,15 @@ class SettingsView extends GetView<SettingsViewController> {
                         subtitle: "북마크 설정시, 모집과 행사 일정을 캘린더에 자동으로 등록합니다. ",
                         onToggleTap: () async =>
                             await controller.toggleAutoAdd(),
+                      ),
+                    ),
+                    Obx(
+                      () => ToggleSettingItem(
+                        title: '캘린더 - 기기 캘린더 행사 포함',
+                        checked: controller.includeDeviceEvents,
+                        subtitle: "캘린더에 기기에 저장된 일정 정보를 표시합니다.",
+                        onToggleTap: () =>
+                            controller.toggleIncludeDeviceEvents(),
                       ),
                     ),
                     GestureDetector(
