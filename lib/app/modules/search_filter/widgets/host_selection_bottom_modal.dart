@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
@@ -204,6 +205,23 @@ class _HostItem extends StatelessWidget {
                     color: const Color(0xFFD0D0D0),
                   ),
                 ),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: host.thumbnail,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xffD9D9D9),
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                ),
+                progressIndicatorBuilder: (_, __, ___) =>
+                    Center(child: Image.asset(Assets.icons.nurseCap.path)),
+                errorWidget: (_, __, ___) =>
+                    Center(child: Image.asset(Assets.icons.nurseCap.path)),
               ),
             ),
             SizedBox(width: 16),

@@ -14,6 +14,7 @@ import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
@@ -253,7 +254,9 @@ class HomeViewController extends GetxController {
           hasNextPage: hasNext,
         );
 
-        if (clearPage && searchQuery.isEmpty) {
+        if (clearPage &&
+            searchQuery.isEmpty &&
+            _selectedTab.value == HomeTab.event) {
           _cache.saveEvents(response);
         }
       } else {
@@ -311,7 +314,7 @@ class HomeViewController extends GetxController {
     );
 
     if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
-      showModalBottomSheet(
+      await showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
@@ -323,6 +326,32 @@ class HomeViewController extends GetxController {
       eventRx.value = event.copyWith(isBookmarked: !event.isBookmarked);
 
       eventRx.value = event.copyWith(isBookmarked: await toggleBookmark(event));
+    }
+
+    var user = Get.find<AuthService>().appUser!;
+    var calendarService = Get.find<CalendarService>();
+    if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
+      var result = await calendarService.requestPermission();
+      if (!result) {
+        AppUtils.showSnackBar("캘린더 접근 권한이 없어요.");
+        return;
+      }
+
+      DateTime now = DateTime.now();
+      DateTime start = event.startAt ?? now;
+      DateTime end = event.endAt ?? start;
+
+      await Get.find<CalendarService>().addEvent(
+        title: event.title,
+        startDate: start,
+        endDate: end,
+        id: event.id.toString(), 
+        description: "${event.host.name}\n${event.uri}",
+      );
+    } else if (!eventRx.value.isBookmarked) {
+      if (await calendarService.checkPermission()) {
+        await calendarService.removeEvent(event.id.toString());
+      }
     }
   }
 

@@ -15,6 +15,12 @@
 		<string>듀티</string>
 		<string>간호사</string>
 	</array>
+	<key>NSCalendarsUsageDescription</key>
+	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 전체 접근이 필요해요.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

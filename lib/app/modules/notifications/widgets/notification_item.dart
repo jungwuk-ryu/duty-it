@@ -125,7 +125,7 @@ class NotificationItem extends StatelessWidget {
 
   static String _formatDateTime(DateTime? dt) {
     if (dt == null) return "";
-    return '${dt.year}. ${dt.month.toString().padLeft(2, '0')}. ${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    return '${dt.year}.${dt.month.toString().padLeft(2, '0')}.${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
   static String _getTitle(AppNotification noti) {
