@@ -57,9 +57,16 @@ class CalendarService extends GetxService {
     }
 
     if (isRegistered(id)) return;
+    Calendar? calendar = await _getCalendar();
+    if (calendar == null) {
+      if (kDebugMode) {
+        print("캘린더를 불러오지 못해 행사를 추가할 수 없습니다.");
+      }
+      return;
+    }
 
     String eventId = await _plugin.createEvent(
-      calendarId: (await _getCalendar()).id,
+      calendarId: calendar.id,
       title: title,
       startDate: startDate,
       endDate: endDate,
@@ -130,12 +137,22 @@ class CalendarService extends GetxService {
     return _box.read(id) != null;
   }
 
-  Future<Calendar> _getCalendar() async {
+  Future<Calendar?> _getCalendar() async {
     final calendars = await _plugin.listCalendars();
-    return calendars.firstWhere(
-      (cal) => cal.isPrimary && !cal.readOnly,
-      orElse: () => calendars.first,
-    );
+
+    try {
+      return calendars.firstWhere(
+        (cal) => cal.isPrimary && !cal.readOnly,
+        orElse: () => calendars.first,
+      );
+    } catch (e) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        null,
+        reason: "캘린더를 불러오는 중 오류 발생",
+      );
+      return null;
+    }
   }
 
   Future<void> _registerEvent(String id, String eventId) async {
