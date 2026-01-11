@@ -206,22 +206,24 @@ class _HostItem extends StatelessWidget {
                   ),
                 ),
               ),
-              child: CachedNetworkImage(
-                imageUrl: host.thumbnail,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xffD9D9D9),
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.fitWidth,
-                      alignment: Alignment.center,
+              child: ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: host.thumbnail,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xffD9D9D9),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.fitWidth,
+                        alignment: Alignment.center,
+                      ),
                     ),
                   ),
+                  progressIndicatorBuilder: (_, __, ___) =>
+                      Center(child: Image.asset(Assets.icons.nurseCap.path)),
+                  errorWidget: (_, __, ___) =>
+                      Center(child: Image.asset(Assets.icons.nurseCap.path)),
                 ),
-                progressIndicatorBuilder: (_, __, ___) =>
-                    Center(child: Image.asset(Assets.icons.nurseCap.path)),
-                errorWidget: (_, __, ___) =>
-                    Center(child: Image.asset(Assets.icons.nurseCap.path)),
               ),
             ),
             SizedBox(width: 16),
