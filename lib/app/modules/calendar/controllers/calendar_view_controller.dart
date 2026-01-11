@@ -36,50 +36,33 @@ class CalendarViewController extends GetxController {
   List<CalendarEvent> deviceCalEvents2CalendarEvents(
     List<dcp.Event> deviceCalEvents,
   ) {
-    List<CalendarEvent> cEvents = [];
-    for (int i = 0; i < deviceCalEvents.length; i++) {
-      dcp.Event event = deviceCalEvents[i];
-
-      cEvents.add(
-        CalendarEvent(
-          title: event.title,
-          startDate: event.startDate,
-          endDate: event.endDate,
-          color: AppColors.cal1,
-          url: "",
-        ),
-      );
-    }
-
-    return cEvents;
+        return deviceCalEvents
+        .map((event) => CalendarEvent(
+              title: event.title,
+              startDate: event.startDate,
+              endDate: event.endDate,
+              color: AppColors.cal1,
+              url: "",
+            ))
+        .toList();
   }
 
   List<CalendarEvent> events2CalendarEvents(List<Event> events) {
-    List<CalendarEvent> cEvents = [];
-    List<Color> colors = [AppColors.cal3, AppColors.cal2, AppColors.cal1];
-    Map<EventType, Color> colorMap = {};
-    var types = EventType.values;
-    for (int i = 0; i < types.length; i++) {
-      EventType type = types[i];
-      colorMap[type] = colors[i % colors.length];
-    }
+    List<Color> colors = [AppColors.cal3, AppColors.cal2, AppColors.cal1];  
+    final colorMap = {  
+      for (var i = 0; i < EventType.values.length; i++) EventType.values[i]: colors[i % colors.length],  
+    };  
 
-    for (int i = 0; i < events.length; i++) {
-      Event event = events[i];
-      Color color = colorMap[event.eventType] ?? colors[0];
-
-      cEvents.add(
-        CalendarEvent(
-          title: event.title,
-          startDate: event.startAt ?? DateTime.now(),
-          endDate: event.endAt ?? DateTime.now(),
-          color: color,
-          url: event.uri,
-        ),
-      );
-    }
-
-    return cEvents;
+    return events.map((event) {  
+      final color = colorMap[event.eventType] ?? colors[0];  
+      return CalendarEvent(  
+        title: event.title,  
+        startDate: event.startAt ?? DateTime.now(),  
+        endDate: event.endAt ?? DateTime.now(),  
+        color: color,  
+        url: event.uri,  
+      );  
+    }).toList();  
   }
 
   Stream<List<CalendarEvent>> getCalendarEvents(DateTime date) async* {
