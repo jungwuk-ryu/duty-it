@@ -69,7 +69,10 @@ class CalendarService extends GetxService {
     );
 
     await _registerEvent(id, eventId);
+    await showEventModal(eventId);
+  }
 
+  Future<void> showEventModal(String eventId) async {
     await _plugin.showEventModal(eventId);
   }
 

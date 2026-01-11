@@ -1,8 +1,11 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/calendar/controllers/calendar_view_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
+import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:duty_it/app/widgets/adaptive_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class CustomCalendarEventCard extends StatelessWidget {
@@ -27,7 +30,13 @@ class CustomCalendarEventCard extends StatelessWidget {
       child: InkWell(
         onTap: () {
           if (event != null) {
-            launchUrlString(AppUtils.setDuitUtmSourceString(event!.url));
+            String url = event!.url;
+            if (url.startsWith(CalendarViewController.deviceEventScheme)) {
+              Get.find<CalendarService>()
+                  .showEventModal(url.replaceFirst(CalendarViewController.deviceEventScheme, ""));
+            } else {
+              launchUrlString(AppUtils.setDuitUtmSourceString(url));
+            }
           }
         },
         child: ConstrainedBox(

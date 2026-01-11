@@ -17,6 +17,7 @@ import 'package:get_storage/get_storage.dart';
 import '../../../core/models/event.dart';
 
 class CalendarViewController extends GetxController {
+  static const String deviceEventScheme = "device_event://";
   static const String _cacheStorageName = "calendarCache";
 
   static const int initPage = 2000;
