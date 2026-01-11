@@ -5,6 +5,7 @@ import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
+import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -86,7 +87,7 @@ class CalendarViewController extends GetxController {
 
     final calService = Get.find<CalendarService>();
     final calPermission = await calService.checkPermission();
-    if (calPermission) {
+    if (calPermission && Get.find<AppSettingsService>().includeDeviceEvents.value) {
       deviceEvents = await calService.retrieveEvents(
         AppUtils.startOfMonth(date),
         AppUtils.endOfMonth(date),
