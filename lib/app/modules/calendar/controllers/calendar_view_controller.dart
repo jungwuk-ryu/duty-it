@@ -41,7 +41,7 @@ class CalendarViewController extends GetxController {
         .map((event) {
           final end = event.endDate;
           var correctedEnd = end;
-          if (event.isAllDay && end.hour == 0 && end.minute == 0 && event.startDate.day != end.day) {
+          if (event.isAllDay && end.hour == 0 && end.minute == 0 && !AppUtils.isSameDay(event.startDate, end)) {
             correctedEnd = end.subtract(Duration(minutes: 1));
           }
             return CalendarEvent(
