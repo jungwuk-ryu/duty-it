@@ -9,11 +9,13 @@ class AppNormalButton extends StatefulWidget {
   final String text;
   final Function() onTap;
   final Color? color;
+  final double width;
 
   const AppNormalButton({
     super.key,
     required this.text,
     required this.onTap,
+    this.width = double.infinity,
     this.color,
   });
 
@@ -30,7 +32,7 @@ class _AppNormalButtonState extends State<AppNormalButton> {
       child: GestureDetector(
         onTap: tap,
         child: Container(
-          width: double.infinity,
+          width: widget.width,
           padding: EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
             color: widget.color ?? AppColors.main,
