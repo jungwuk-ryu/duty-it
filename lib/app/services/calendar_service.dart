@@ -56,7 +56,7 @@ class CalendarService extends GetxService {
       return;
     }
 
-    if (_isRegistered(id)) return;
+    if (isRegistered(id)) return;
 
     String eventId = await _plugin.createEvent(
       calendarId: (await _getCalendar()).id,
@@ -81,9 +81,9 @@ class CalendarService extends GetxService {
       return;
     }
 
-    if (!_isRegistered(id)) return;
+    if (!isRegistered(id)) return;
 
-    String? eventId = _getRegisteredEventId(id);
+    String? eventId = getRegisteredEventId(id);
     if (eventId != null) {
       await removeEventByEventId(eventId);
     }
@@ -111,6 +111,22 @@ class CalendarService extends GetxService {
     }
   }
 
+  Future<List<Event>> retrieveEvents(DateTime start, DateTime end) async {
+    if (kIsWeb) {
+      return [];
+    }
+
+    return await _plugin.listEvents(start, end);
+  }
+  
+  String? getRegisteredEventId(String id) {
+    return _box.read(id);
+  }
+
+  bool isRegistered(String id) {
+    return _box.read(id) != null;
+  }
+
   Future<Calendar> _getCalendar() async {
     final calendars = await _plugin.listCalendars();
     return calendars.firstWhere(
@@ -119,19 +135,11 @@ class CalendarService extends GetxService {
     );
   }
 
-  bool _isRegistered(String id) {
-    return _box.read(id) != null;
-  }
-
   Future<void> _registerEvent(String id, String eventId) async {
     await _box.write(id, eventId);
   }
   
   Future<void> _unregisterEvent(String id) async {
     await _box.remove(id);
-  }
-
-  String? _getRegisteredEventId(String id) {
-    return _box.read(id);
   }
 }

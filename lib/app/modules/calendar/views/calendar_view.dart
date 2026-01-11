@@ -47,8 +47,7 @@ class CalendarView extends GetView<CalendarViewController> {
                 month: now.month + i - CalendarViewController.initPage,
               );
               var calendarController = CustomCalendarController(month);
-
-              _loadCalendarEvents(month, calendarController);
+              calendarController.init();
 
               return CustomCalendar(
                 date: month,
@@ -59,14 +58,5 @@ class CalendarView extends GetView<CalendarViewController> {
         ),
       ],
     );
-  }
-
-  Future _loadCalendarEvents(
-    DateTime date,
-    CustomCalendarController calController,
-  ) async {
-    await for (var events in controller.getCalendarEvents(date)) {
-      calController.events = events;
-    }
   }
 }
