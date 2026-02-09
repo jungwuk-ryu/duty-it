@@ -1,16 +1,14 @@
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
-import 'package:duty_it/app/services/app_settings_service.dart';
+import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:get/get.dart';
 
 class SortingModalController extends GetxController {
-  final AppSettingsService _settingsService = Get.find<AppSettingsService>();
+  HomeViewController get _homeController => Get.find<HomeViewController>();
   
-  final Rx<EventSortingType> _selectedType = Get.find<AppSettingsService>().eventSortingType.obs;
-  EventSortingType get selectedType => _selectedType.value;
-  set selectedType(EventSortingType t) => _selectedType(t);
+  Rx<EventSortingType> selectedType = Rx(Get.find<HomeViewController>().sortingType);
 
   void applyAndClose() {
-    _settingsService.eventSortingType = selectedType;
+    _homeController.sortingType = selectedType.value;
     Get.back();
   }
 }
