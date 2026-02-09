@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-
-import 'package:get/get.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/end_drawer.dart';
 import 'package:duty_it/gen/assets.gen.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../controllers/main_view_controller.dart';
 
@@ -15,7 +14,26 @@ class MainView extends GetView<MainViewController> {
     return Scaffold(
       key: controller.scaffoldKey,
       backgroundColor: Colors.white,
-      body: SafeArea(child: Obx(() => controller.pages[controller.pageIndex.value])),
+      body: SafeArea(
+        child: Obx(
+          () => AnimatedSwitcher(
+            duration: const Duration(milliseconds: 150),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ScaleTransition(
+                  scale: Tween<double>(
+                    begin: 0.99,
+                    end: 1.0,
+                  ).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: controller.pages[controller.pageIndex.value],
+          ),
+        ),
+      ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
           elevation: 50,
