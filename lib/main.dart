@@ -1,3 +1,4 @@
+import 'package:app_links/app_links.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
@@ -16,7 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:app_links/app_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'app/routes/app_pages.dart';
@@ -52,12 +52,12 @@ void main() async {
     initPlatformState();
   }
 
-  final appLinks = AppLinks(); // AppLinks is singleton
+  /* App Links & Universal Links */
+  final appLinks = AppLinks();
   appLinks.getInitialLink().then((uri) {
     if (uri != null) _handleUri(uri);
   });
 
-  // 2) 포그라운드/백그라운드에서 새 링크 수신
   appLinks.uriLinkStream.listen((uri) {
     _handleUri(uri);
   });
@@ -97,9 +97,7 @@ void _handleUri(Uri uri) {
   if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'visitEvent') {
     final id = uri.pathSegments.length > 1 ? uri.pathSegments[1] : null;
     if (id != null) {
-      launchUrl(uri,
-        mode: LaunchMode.inAppWebView
-      );
+      launchUrl(uri);
       return;
     }
   }
