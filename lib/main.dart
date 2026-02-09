@@ -121,6 +121,7 @@ Future<void> initPlatformState() async {
       requiresStorageNotLow: false,
       requiresDeviceIdle: false,
       requiredNetworkType: NetworkType.ANY,
+      startOnBoot: true
     ),
     (String taskId) async {
       try {
