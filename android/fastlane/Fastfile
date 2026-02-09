@@ -26,7 +26,7 @@ platform :android do
   desc "Deploy a new Beta Build to Google Play"
   lane :beta do
     upload_to_play_store(
-      track: "closed",
+      track: "internal",
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       skip_upload_metadata: true,
       skip_upload_images: true,
