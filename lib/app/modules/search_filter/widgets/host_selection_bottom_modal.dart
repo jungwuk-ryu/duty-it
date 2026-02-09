@@ -4,7 +4,6 @@ import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 
 class HostSelectionBottomModal extends StatefulWidget {
@@ -40,7 +39,7 @@ class _SearchFilterHostSelectionBottomModal
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      duration: Duration(milliseconds: 200),
+      duration: Duration(milliseconds: 100),
       child: SizedBox(
         height: 420,
         child: Padding(
