@@ -59,7 +59,9 @@ class HomeViewController extends GetxController {
 
   HomeTab get selectedTab => _selectedTab.value;
 
-  EventSortingType get sortingType => _settingsService.eventSortingType;
+  final Rx<EventSortingType> _sortingType = Rx(EventSortingType.latest);
+  EventSortingType get sortingType => _sortingType.value;
+  set sortingType(EventSortingType type) => _sortingType.value = type;
 
   final TextEditingController searchTextEditingController =
       TextEditingController();
@@ -99,7 +101,7 @@ class HomeViewController extends GetxController {
     );
 
     ever(
-      _settingsService.eventSortingTypeSetting.rxValue,
+      _sortingType,
       (v) => fetchNextPage(clearPage: true),
     );
 
