@@ -4,18 +4,21 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/modules/calendar/views/calendar_view.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/views/home_view.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:duty_it/app/routes/app_pages.dart';
 
 class MainViewController extends GetxController {
   RxInt pageIndex = 0.obs;
-  final pages = [HomeView(), CalendarView()];
+  final pages = [
+    HomeView(key: ValueKey('home')),
+    CalendarView(key: ValueKey('calendar')),
+  ];
   final pageNames = ['/home', '/calendar'];
-  
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   get scaffoldKey => _scaffoldKey;
   StreamSubscription? _authListener;
@@ -52,7 +55,8 @@ class MainViewController extends GetxController {
 
   void changeTab(int index) {
     if (pageIndex.value == index) {
-      if (index == 0 && Get.isRegistered<HomeViewController>()) { // Home
+      if (index == 0 && Get.isRegistered<HomeViewController>()) {
+        // Home
         var homeController = Get.find<HomeViewController>();
         homeController.scrollUpEventList();
       }
