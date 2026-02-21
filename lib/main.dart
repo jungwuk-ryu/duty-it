@@ -53,14 +53,7 @@ void main() async {
   }
 
   /* App Links & Universal Links */
-  final appLinks = AppLinks();
-  appLinks.getInitialLink().then((uri) {
-    if (uri != null) _handleUri(uri);
-  });
-
-  appLinks.uriLinkStream.listen((uri) {
-    _handleUri(uri);
-  });
+  _initDeepLinks();
 
   runApp(
     GetMaterialApp(
@@ -90,6 +83,32 @@ void main() async {
       ],
     ),
   );
+}
+
+Future<void> _initDeepLinks() async {
+  final appLinks = AppLinks();
+
+  final initial = await appLinks.getInitialLink();
+  final initialStr = initial?.toString();
+  if (initial != null) _handleUri(initial);
+
+  final DateTime initTime = DateTime.now();
+  bool skipped = false;
+
+  appLinks.uriLinkStream.listen((uri) {
+    final s = uri.toString();
+
+    // Dedupe
+    if (initialStr != null &&
+        initialStr == s &&
+        !skipped &&
+        DateTime.now().difference(initTime) < const Duration(seconds: 5)) {
+      skipped = true;
+      return;
+    }
+
+    _handleUri(uri);
+  });
 }
 
 void _handleUri(Uri uri) {
