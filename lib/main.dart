@@ -98,6 +98,10 @@ void _handleUri(Uri uri) {
     final id = uri.pathSegments.length > 1 ? uri.pathSegments[1] : null;
     if (id != null) {
       launchUrl(uri);
+
+      FirebaseAnalytics.instance.logEvent(name: 'deep_link_visitEvent', parameters: {
+        'id': id,
+      });
       return;
     }
   }
