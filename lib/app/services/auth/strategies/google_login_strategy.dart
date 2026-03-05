@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleLoginStrategy extends SocialLoginStrategy {
+  bool _isInitialized = false;
+
   @override
   Future<SocialLoginResult> login() async {
     try {
@@ -18,7 +20,7 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
       }
 
       GoogleSignIn googleSignIn = GoogleSignIn.instance;
-      await googleSignIn.initialize();
+      await _ensureInitialized();
 
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
@@ -47,8 +49,8 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
         return SocialLoginFail(reason: '로그인 취소됨');
       }
       rethrow;
-    } on GoogleSignInException catch (e) {
-      if (e.code.toString().contains('canceled')) {
+    } on GoogleSignInException catch (e, st) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
         // 모바일 사용자 취소
         FirebaseAnalytics.instance.logEvent(
           name: 'login_cancelled',
@@ -56,7 +58,9 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
         );
         return SocialLoginFail(reason: '로그인 취소됨');
       }
-      rethrow;
+
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      return SocialLoginFail(reason: '로그인 실패');
     } catch (e, st) {
       if (kDebugMode) {
         AppUtils.showSnackBar("$e");
@@ -72,7 +76,13 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
   @override
   Future<void> logout() async {
     GoogleSignIn googleSignIn = GoogleSignIn.instance;
-    await googleSignIn.initialize();
+    await _ensureInitialized();
     await googleSignIn.signOut();
+  }
+
+  Future<void> _ensureInitialized() async {
+    if (_isInitialized) return;
+    await GoogleSignIn.instance.initialize();
+    _isInitialized = true;
   }
 }
