@@ -22,25 +22,38 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
 
       final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.idToken,
-        idToken: googleAuth.idToken,
-      );
+      if (idToken == null || idToken.isEmpty) {
+        FirebaseCrashlytics.instance.recordError(
+          StateError('Google login succeeded without idToken'),
+          StackTrace.current,
+          fatal: false,
+        );
+        return SocialLoginFail(reason: '로그인 실패');
+      }
+
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       return SocialLoginSuccess();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'popup-closed-by-user') {
         // 웹 사용자 취소
-        FirebaseAnalytics.instance.logEvent(name: 'login_cancelled', parameters: {'provider': 'google'});
+        FirebaseAnalytics.instance.logEvent(
+          name: 'login_cancelled',
+          parameters: {'provider': 'google'},
+        );
         return SocialLoginFail(reason: '로그인 취소됨');
       }
       rethrow;
     } on GoogleSignInException catch (e) {
       if (e.code.toString().contains('canceled')) {
         // 모바일 사용자 취소
-        FirebaseAnalytics.instance.logEvent(name: 'login_cancelled', parameters: {'provider': 'google'});
+        FirebaseAnalytics.instance.logEvent(
+          name: 'login_cancelled',
+          parameters: {'provider': 'google'},
+        );
         return SocialLoginFail(reason: '로그인 취소됨');
       }
       rethrow;
