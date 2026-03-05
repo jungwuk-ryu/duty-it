@@ -138,9 +138,7 @@ class AuthService extends GetxService {
     }
 
     // Firebase
-    var logoutWaiter = _awaitFirebaseLogout();
-    await FirebaseAuth.instance.currentUser!.delete();
-    await logoutWaiter;
+    await _deleteFirebaseUserSafely();
 
     // Social
     await _currentStrategy?.logout();
@@ -164,6 +162,31 @@ class AuthService extends GetxService {
 
   Future<void> _awaitFirebaseLogout() async {
     await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u == null);
+  }
+
+  Future<void> _deleteFirebaseUserSafely() async {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      await _safeFirebaseSignOut();
+      return;
+    }
+
+    try {
+      await currentUser.delete();
+      await _awaitFirebaseLogout();
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      await _safeFirebaseSignOut();
+    }
+  }
+
+  Future<void> _safeFirebaseSignOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+    }
   }
 
   bool isLoggined() {
