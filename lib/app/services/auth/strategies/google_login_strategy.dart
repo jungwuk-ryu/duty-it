@@ -71,7 +71,6 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
         return SocialLoginFail(reason: '로그인 취소됨');
       }
 
-      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       return SocialLoginFail(reason: '로그인 실패');
     } catch (e, st) {
       if (kDebugMode) {
