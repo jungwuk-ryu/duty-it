@@ -79,6 +79,29 @@ class NotificationsViewController extends GetxController {
     RequestResult rst = await _apiClient.deleteNotification(id);
     bool success =
         !(rst is RequestFail || (rst is RequestSuccess && rst.data == false));
+    if (!success) return false;
+
+    final currentPages = pagingState.pages ?? <List<AppNotification>>[];
+    final currentKeys = pagingState.keys ?? <int>[];
+
+    final List<List<AppNotification>> updatedPages = [];
+    final List<int> updatedKeys = [];
+
+    for (int i = 0; i < currentPages.length; i++) {
+      final List<AppNotification> page = currentPages[i]
+          .where((n) => n.id != id)
+          .toList();
+
+      if (page.isEmpty) continue;
+
+      updatedPages.add(page);
+      if (i < currentKeys.length) {
+        updatedKeys.add(currentKeys[i]);
+      }
+    }
+
+    pagingState = pagingState.copyWith(pages: updatedPages, keys: updatedKeys);
+
     return success;
   }
 }

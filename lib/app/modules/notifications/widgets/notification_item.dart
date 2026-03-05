@@ -35,16 +35,18 @@ class NotificationItem extends StatelessWidget {
         ),
       ),
       key: Key("${noti.id}"),
-      onDismissed: (_) async {
+      confirmDismiss: (_) async {
         NotificationsViewController con =
             Get.find<NotificationsViewController>();
-        await con.deleteNotification(noti.id);
+        return await con.deleteNotification(noti.id);
       },
       child: InkWell(
         onTap: () async {
           if (noti.event == null) return;
           Event event = noti.event!;
-          if (await canLaunchUrlString(event.uri)) launchUrlString(AppUtils.setDuitUtmSourceString(event.uri));
+          if (await canLaunchUrlString(event.uri)) {
+            launchUrlString(AppUtils.setDuitUtmSourceString(event.uri));
+          }
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
