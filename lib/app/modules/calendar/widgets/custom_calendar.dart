@@ -23,6 +23,26 @@ class CustomCalendar extends StatefulWidget {
 }
 
 class _CustomCalendarState extends State<CustomCalendar> {
+  DateTime _startOfWeekSunday(DateTime date) {
+    final int offset = date.weekday % 7;
+    return AppUtils.dateTime2Date(date.subtract(Duration(days: offset)));
+  }
+
+  List<DateTime> _getWeekStartsInMonth(DateTime monthDate) {
+    final DateTime startOfMonth = AppUtils.startOfMonth(monthDate);
+    final DateTime endOfMonth = AppUtils.endOfMonth(monthDate);
+
+    final DateTime firstWeekStart = _startOfWeekSunday(startOfMonth);
+    final int startOffset = startOfMonth.weekday % 7;
+    final int daysInMonth = endOfMonth.day;
+    final int weekCount = (startOffset + daysInMonth + 6) ~/ 7;
+
+    return List.generate(
+      weekCount,
+      (i) => firstWeekStart.add(Duration(days: 7 * i)),
+    );
+  }
+
   @override
   void dispose() {
     widget.controller.dispose();
@@ -31,7 +51,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime startOfMonth = widget.date.copyWith(day: 1);
+    final List<DateTime> weekStarts = _getWeekStartsInMonth(widget.date);
 
     return CustomScrollView(
       //crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,11 +60,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
           delegate: SliverChildListDelegate([
             CustomCalendarHeaderSection(),
             SizedBox(height: 8),
-            ...List.generate(5, (i) {
-              final DateTime cDt = startOfMonth.add(Duration(days: 7 * i));
-              if (cDt.month != widget.date.month) return SizedBox.shrink();
+            ...List.generate(weekStarts.length, (i) {
               return CustomCalendarWeekCell(
-                date: cDt,
+                date: weekStarts[i],
+                calendarMonth: widget.date.month,
                 events: widget.controller.events,
                 controller: widget.controller,
               );
@@ -68,7 +87,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
           ]),
         ),
         Obx(() {
-          var events = widget.controller.getEventsByDay(widget.controller.currentDateTime);
+          var events = widget.controller.getEventsByDay(
+            widget.controller.currentDateTime,
+          );
           if (events.isEmpty) {
             return SliverToBoxAdapter(child: CustomCalendarEventCard(null));
           }
