@@ -19,7 +19,8 @@
   <img src="https://img.shields.io/badge/Firebase-DD2C00?logo=firebase&logoColor=fff&style=for-the-badge" alt="Firebase Badge">
   <img src="https://img.shields.io/badge/Google%20Analytics-E37400?logo=googleanalytics&logoColor=fff&style=for-the-badge" alt="Google Analytics Badge">
   
-  간호 행사(학술행사·세미나·교육)를 한 곳에서 모아보고, '참여할 수 있는’ 행사를 개인 캘린더에 추가해보세요.
+  <p>간호 행사(학술행사·세미나·교육)를 한 곳에서 모아보고, '참여할 수 있는’ 행사를 개인 캘린더에 추가해보세요.</p>
+  <bold>MAU 1.2K+</bold>
 </div>
 
 ## About 듀잇
