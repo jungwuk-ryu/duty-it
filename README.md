@@ -83,3 +83,7 @@
 - beta: 이 브랜치의 변경사항은 베타 버전으로 배포됩니다.
 - develop: 개발 단계의 브랜치로, 일반적인 수정사항은 이 브랜치에 커밋해야합니다.
 - feat/*: 큰 규모의 기능 개발일 경우, 브랜치를 만들어 작업합니다.
+
+## 여담
+시대를 따라가기 위해 Agent와 함께 듀잇을 개발하게 되었습니다.  
+AI 및 AI Agent가 생성한 코드가 거의 없는 코드는 [39ecb8a5a3c50eecfeea7221b80ef6f04338f33a](https://github.com/jungwuk-ryu/duty-it/tree/39ecb8a5a3c50eecfeea7221b80ef6f04338f33a) 커밋까지입니다.
