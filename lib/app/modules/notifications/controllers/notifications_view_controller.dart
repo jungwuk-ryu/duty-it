@@ -92,10 +92,8 @@ class NotificationsViewController extends GetxController {
           .where((n) => n.id != id)
           .toList();
 
-      if (page.isEmpty) continue;
-
-      updatedPages.add(page);
-      if (i < currentKeys.length) {
+      if (page.isNotEmpty) {
+        updatedPages.add(page);
         updatedKeys.add(currentKeys[i]);
       }
     }
