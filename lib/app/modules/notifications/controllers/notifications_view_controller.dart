@@ -34,11 +34,19 @@ class NotificationsViewController extends GetxController {
     fetchNotificationList();
   }
 
-  Future<void> fetchNotificationList() async {
-    if (pagingState.isLoading) return;
-    pagingState = pagingState.copyWith(isLoading: true);
+  Future<void> refreshNotificationList() async {
+    await fetchNotificationList(clearPage: true);
+  }
 
-    final int nextKey = (pagingState.keys?.last ?? -1) + 1;
+  Future<void> fetchNotificationList({bool clearPage = false}) async {
+    if (!clearPage && pagingState.isLoading) return;
+
+    final PagingState<int, AppNotification> baseState = clearPage
+        ? PagingState<int, AppNotification>()
+        : pagingState;
+    pagingState = baseState.copyWith(isLoading: true, error: null);
+
+    final int nextKey = (baseState.keys?.last ?? -1) + 1;
     RequestResult reqResult = await _apiClient.getNotificationList(nextKey);
     if (reqResult is RequestFail) {
       pagingState = pagingState.copyWith(
@@ -53,8 +61,8 @@ class NotificationsViewController extends GetxController {
         (reqResult as RequestSuccess<List<AppNotification>>).data;
     pagingState = pagingState.copyWith(
       isLoading: false,
-      pages: [...pagingState.pages ?? [], notiList],
-      keys: [...pagingState.keys ?? [], nextKey],
+      pages: [...baseState.pages ?? [], notiList],
+      keys: [...baseState.keys ?? [], nextKey],
       hasNextPage: notiList.isNotEmpty,
     );
   }
@@ -71,6 +79,27 @@ class NotificationsViewController extends GetxController {
     RequestResult rst = await _apiClient.deleteNotification(id);
     bool success =
         !(rst is RequestFail || (rst is RequestSuccess && rst.data == false));
+    if (!success) return false;
+
+    final currentPages = pagingState.pages ?? <List<AppNotification>>[];
+    final currentKeys = pagingState.keys ?? <int>[];
+
+    final List<List<AppNotification>> updatedPages = [];
+    final List<int> updatedKeys = [];
+
+    for (int i = 0; i < currentPages.length; i++) {
+      final List<AppNotification> page = currentPages[i]
+          .where((n) => n.id != id)
+          .toList();
+
+      if (page.isNotEmpty) {
+        updatedPages.add(page);
+        updatedKeys.add(currentKeys[i]);
+      }
+    }
+
+    pagingState = pagingState.copyWith(pages: updatedPages, keys: updatedKeys);
+
     return success;
   }
 }

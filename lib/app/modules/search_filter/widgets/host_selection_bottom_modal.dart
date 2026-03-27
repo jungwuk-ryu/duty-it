@@ -16,13 +16,14 @@ class HostSelectionBottomModal extends StatefulWidget {
 
 class _SearchFilterHostSelectionBottomModal
     extends State<HostSelectionBottomModal> {
-  HostSelectionController controller = Get.put(HostSelectionController());
+  late final HostSelectionController controller;
   late final TextEditingController editingController;
 
   @override
   void initState() {
     super.initState();
 
+    controller = Get.put(HostSelectionController());
     editingController = TextEditingController();
     editingController.addListener(() => _onTextChanged());
   }
@@ -30,6 +31,9 @@ class _SearchFilterHostSelectionBottomModal
   @override
   void dispose() {
     editingController.dispose();
+    if (Get.isRegistered<HostSelectionController>()) {
+      Get.delete<HostSelectionController>();
+    }
     super.dispose();
   }
 

@@ -10,12 +10,14 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class CustomCalendarWeekCell extends StatelessWidget {
   final CustomCalendarController controller;
+  final int calendarMonth;
   final DateTime date;
   final List<CalendarEvent> events;
 
   const CustomCalendarWeekCell({
     super.key,
     required this.date,
+    required this.calendarMonth,
     required this.events,
     required this.controller,
   });
@@ -71,7 +73,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
                   child: DayHeader(
                     today: now,
                     date: currentDate,
-                    calendarMonth: date.month,
+                    calendarMonth: calendarMonth,
                     controller: controller,
                   ),
                 );

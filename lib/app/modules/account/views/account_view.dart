@@ -9,8 +9,22 @@ import 'package:get/get.dart';
 
 import '../controllers/account_view_controller.dart';
 
-class AccountView extends GetView<AccountViewController> {
+class AccountView extends StatefulWidget {
   const AccountView({super.key});
+
+  @override
+  State<AccountView> createState() => _AccountViewState();
+}
+
+class _AccountViewState extends State<AccountView> {
+  late final AccountViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<AccountViewController>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

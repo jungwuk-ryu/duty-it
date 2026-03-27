@@ -47,7 +47,8 @@ class NotificationsView extends GetView<NotificationsViewController> {
                     ),
                   );
                 }),
-                onRefresh: () async => await controller.fetchNotificationList(),
+                onRefresh: () async =>
+                    await controller.refreshNotificationList(),
               ),
             ),
           ],
