@@ -79,6 +79,8 @@ class HomeHeader extends StatelessWidget {
                     name: controller.sortingType.shortName,
                     isSelected: false,
                     imageAsset: Assets.icons.filterSort.path,
+                    backgroundColor: AppColors.transparent,
+                    textColor: AppColors.g05,
                     onTap: () {
                       controller.showSortingBottomModal();
                     },

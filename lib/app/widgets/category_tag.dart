@@ -8,6 +8,8 @@ class CategoryTag extends StatelessWidget {
   final bool isSelected;
   final GestureTapCallback? onTap;
   final Color? imageColor;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   const CategoryTag({
     super.key,
@@ -16,10 +18,17 @@ class CategoryTag extends StatelessWidget {
     this.imageAsset,
     this.onTap,
     this.imageColor,
+    this.backgroundColor,
+    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final Color effectiveBackgroundColor =
+        backgroundColor ?? (isSelected ? AppColors.sub : AppColors.g02);
+    final Color effectiveTextColor =
+        textColor ?? (isSelected ? AppColors.main : AppColors.black);
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: onTap,
@@ -27,7 +36,7 @@ class CategoryTag extends StatelessWidget {
         constraints: BoxConstraints(minHeight: 32),
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.sub : AppColors.g02,
+            color: effectiveBackgroundColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
@@ -54,7 +63,7 @@ class CategoryTag extends StatelessWidget {
                 Text(
                   name,
                   style: TextStyle(
-                    color: isSelected ? AppColors.main : AppColors.black,
+                    color: effectiveTextColor,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w300,
                     height: 1.60,
                     fontSize: 13,
