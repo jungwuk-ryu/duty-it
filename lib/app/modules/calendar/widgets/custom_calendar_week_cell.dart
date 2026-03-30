@@ -190,9 +190,11 @@ class _WeekEventRow extends StatelessWidget {
             event.endDate.difference(currentDate).inDays,
             endOfWeek.difference(currentDate).inDays,
           );
+          final rowEndDate = currentDate.add(Duration(days: diffDays));
+          final normalizedEventEndDate = AppUtils.dateTime2Date(event.endDate);
 
           bool isStart = AppUtils.isSameDay(event.startDate, currentDate);
-          bool isEnd = !endOfWeek.isBefore(event.endDate);
+          bool isEnd = !rowEndDate.isBefore(normalizedEventEndDate);
 
           double widgetWidth = width * (diffDays + 1);
           if (isStart) widgetWidth -= 2;
