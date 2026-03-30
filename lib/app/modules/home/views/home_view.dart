@@ -91,6 +91,8 @@ class HomeView extends GetView<HomeViewController> {
           const SliverToBoxAdapter(child: SizedBox(height: _listTopSpacing)),
 
         Obx(() {
+          final isPullToRefreshing = controller.isPullToRefreshing;
+
           return PagedSliverList<String?, EventCard>(
             state: controller.pagingState,
             fetchNextPage: controller.fetchNextPage,
@@ -98,16 +100,19 @@ class HomeView extends GetView<HomeViewController> {
               animateTransitions: true,
               transitionDuration: Duration(milliseconds: 100),
               itemBuilder: (context, item, index) => item,
-              firstPageProgressIndicatorBuilder: (_) =>
-                  Center(child: CircularProgressIndicator.adaptive()),
-              newPageProgressIndicatorBuilder: (_) => Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator.adaptive(),
-                ),
-              ),
+              firstPageProgressIndicatorBuilder: (_) => isPullToRefreshing
+                  ? const SizedBox.shrink()
+                  : Center(child: CircularProgressIndicator.adaptive()),
+              newPageProgressIndicatorBuilder: (_) => isPullToRefreshing
+                  ? const SizedBox.shrink()
+                  : Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    ),
               noItemsFoundIndicatorBuilder: (_) {
                 HomeTab tab = controller.selectedTab;
                 if (tab == HomeTab.bookmark) {

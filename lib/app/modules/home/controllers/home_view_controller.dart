@@ -264,22 +264,36 @@ class HomeViewController extends GetxController {
     loadEventListFromCache = false;
 
     SearchFilterService sfService = Get.find<SearchFilterService>();
+    final previousPagingState = pagingState;
+    final preserveVisibleItems = clearPage && _isPullToRefreshing.value;
 
     // Update paging state
     if (clearPage) onlyFinishedMode = false;
-    pagingState = pagingState.copyWith(
-      isLoading: true,
-      error: null,
-      keys: clearPage ? null : const Omit(),
-      pages: clearPage ? null : const Omit(),
-    );
+    if (preserveVisibleItems) {
+      pagingState = pagingState.copyWith(error: null, isLoading: false);
+    } else {
+      pagingState = pagingState.copyWith(
+        isLoading: true,
+        error: null,
+        keys: clearPage ? null : const Omit(),
+        pages: clearPage ? null : const Omit(),
+      );
+    }
 
     // set params
     const int size = 5;
     var filter = sfService.filter;
     List<String> categories = filter.categories.toList();
     List<EventType> types = [];
-    String? pageKey = pagingState.keys?.last;
+    final List<String?> currentKeys = clearPage
+        ? <String?>[]
+        : List<String?>.from(pagingState.keys ?? const <String?>[]);
+    final List<List<EventCard>> currentPages = clearPage
+        ? <List<EventCard>>[]
+        : List<List<EventCard>>.from(
+            pagingState.pages ?? const <List<EventCard>>[],
+          );
+    String? pageKey = currentKeys.isEmpty ? null : currentKeys.last;
     int? hostId = sfService.filter.host?.id;
 
     for (var category in categories) {
@@ -289,7 +303,7 @@ class HomeViewController extends GetxController {
     if (!onlyFinishedMode) {
       if (pageKey == null &&
           sfService.filter.showEnded &&
-          (pagingState.keys?.isNotEmpty ?? false)) {
+          currentKeys.isNotEmpty) {
         onlyFinishedMode = true;
       }
     }
@@ -354,12 +368,9 @@ class HomeViewController extends GetxController {
         }
 
         pagingState = pagingState.copyWith(
-          keys: [
-            ...(!loadCache ? (pagingState.keys ?? []) : []),
-            pageInfo.nextCursor,
-          ],
+          keys: [...(!loadCache ? currentKeys : []), pageInfo.nextCursor],
           pages: [
-            ...(!loadCache ? (pagingState.pages ?? []) : []),
+            ...(!loadCache ? currentPages : []),
             List<EventCard>.generate(
               events.length,
               (i) => EventCard(eventRx: Rx(events[i])),
@@ -389,11 +400,17 @@ class HomeViewController extends GetxController {
       FirebaseCrashlytics.instance.recordError(ex, st);
     } finally {
       if (hasError) {
-        pagingState = pagingState.copyWith(
-          keys: clearPage ? [] : Omit(),
-          pages: clearPage ? [] : Omit(),
-          error: true,
-        );
+        if (preserveVisibleItems) {
+          pagingState = previousPagingState.copyWith(
+            error: previousPagingState.error,
+          );
+        } else {
+          pagingState = pagingState.copyWith(
+            keys: clearPage ? [] : Omit(),
+            pages: clearPage ? [] : Omit(),
+            error: true,
+          );
+        }
       }
       pagingState = pagingState.copyWith(isLoading: false);
     }
