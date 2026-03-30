@@ -80,40 +80,7 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
               height: 1.20,
             ),
           ),
-          SizedBox(height: 28),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => controller.toggle(),
-            child: Obx(() {
-              bool dontShow = controller.dontShowAgain;
-              Color color = dontShow ? AppColors.main : AppColors.g03;
-
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    Assets.icons.check.path,
-                    width: 20,
-                    height: 20,
-                    color: color,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '설정 기억하기',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      height: 1.20,
-                    ),
-                  ),
-                ],
-              );
-            }),
-          ),
-
-          SizedBox(height: 55),
+          SizedBox(height: 103),
           Row(
             children: [
               Flexible(

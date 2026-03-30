@@ -433,7 +433,6 @@ class HomeViewController extends GetxController {
       return;
     }
 
-    var appSettings = Get.find<AppSettingsService>();
     var event = eventRx.value;
 
     analytics.logEvent(
@@ -444,7 +443,7 @@ class HomeViewController extends GetxController {
       },
     );
 
-    if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
+    if (!event.isBookmarked) {
       await showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
