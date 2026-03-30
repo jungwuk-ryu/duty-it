@@ -39,33 +39,42 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '휴대폰 기본 캘린더 연동',
-                  style: TextStyle(
-                    color: AppColors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    height: 1.60,
+          SizedBox(height: 16),
+          SizedBox(
+            height: 40,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    '휴대폰 기본 캘린더 연동',
+                    style: TextStyle(
+                      color: AppColors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      height: 1.60,
+                    ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => Get.back(),
-                  child: Image.asset(
-                    Assets.icons.close.path,
-                    width: 14,
-                    height: 14,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Get.back(),
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Image.asset(
+                        Assets.icons.close.path,
+                        color: AppColors.g05,
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           SizedBox(height: 47),
           Text(
