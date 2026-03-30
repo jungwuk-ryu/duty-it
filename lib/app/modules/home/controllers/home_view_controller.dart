@@ -32,11 +32,11 @@ import 'package:synchronized/synchronized.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
+  static const double _pullToRefreshTriggerFraction = 0.25;
+
   final HomeViewCache _cache = HomeViewCache();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
 
   bool loadEventListFromCache = true;
 
@@ -75,6 +75,30 @@ class HomeViewController extends GetxController {
 
   final RxBool _hasNewNotification = RxBool(false);
   bool get hasNewNotification => _hasNewNotification.value;
+  final Rx<RefreshIndicatorStatus?> _refreshIndicatorStatus =
+      Rx<RefreshIndicatorStatus?>(null);
+  final RxBool _isPullToRefreshing = false.obs;
+  final RxDouble _pullToRefreshProgress = 0.0.obs;
+  double get pullToRefreshProgress => _pullToRefreshProgress.value;
+  double _pullDragOffset = 0.0;
+
+  bool get shouldShowRefreshIndicator {
+    if (_isPullToRefreshing.value) return true;
+
+    switch (_refreshIndicatorStatus.value) {
+      case RefreshIndicatorStatus.drag:
+      case RefreshIndicatorStatus.armed:
+      case RefreshIndicatorStatus.snap:
+        return true;
+      case RefreshIndicatorStatus.refresh:
+      case RefreshIndicatorStatus.done:
+      case RefreshIndicatorStatus.canceled:
+      case null:
+        return false;
+    }
+  }
+
+  bool get isPullToRefreshing => _isPullToRefreshing.value;
 
   WidgetsBinding get binding => WidgetsBinding.instance;
   bool get isForeground => binding.lifecycleState == AppLifecycleState.resumed;
@@ -110,8 +134,91 @@ class HomeViewController extends GetxController {
 
     checkNewNotification();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      refreshIndicatorKey.currentState?.show();
+      fetchNextPage(clearPage: true);
     });
+  }
+
+  void updateRefreshIndicatorStatus(RefreshIndicatorStatus? status) {
+    _refreshIndicatorStatus.value = status;
+
+    switch (status) {
+      case RefreshIndicatorStatus.armed:
+      case RefreshIndicatorStatus.snap:
+      case RefreshIndicatorStatus.refresh:
+        _pullToRefreshProgress.value = 1.0;
+      case RefreshIndicatorStatus.done:
+      case RefreshIndicatorStatus.canceled:
+      case null:
+        _resetPullToRefreshProgress();
+      case RefreshIndicatorStatus.drag:
+        break;
+    }
+  }
+
+  Future<void> onPullToRefresh() async {
+    _isPullToRefreshing.value = true;
+    _pullToRefreshProgress.value = 1.0;
+    try {
+      await fetchNextPage(clearPage: true);
+      await checkNewNotification();
+    } finally {
+      _isPullToRefreshing.value = false;
+      _refreshIndicatorStatus.value = null;
+      _resetPullToRefreshProgress();
+    }
+  }
+
+  bool onPullToRefreshScrollNotification(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) return false;
+
+    final status = _refreshIndicatorStatus.value;
+    final isTrackingPull =
+        status == RefreshIndicatorStatus.drag ||
+        status == RefreshIndicatorStatus.armed;
+
+    if (notification is ScrollStartNotification &&
+        notification.dragDetails != null &&
+        notification.metrics.extentBefore == 0.0) {
+      _pullDragOffset = 0.0;
+      _pullToRefreshProgress.value = 0.0;
+      return false;
+    }
+
+    if (!isTrackingPull) return false;
+
+    if (notification is ScrollUpdateNotification) {
+      if (notification.metrics.axisDirection == AxisDirection.down) {
+        _pullDragOffset -= notification.scrollDelta ?? 0.0;
+      } else if (notification.metrics.axisDirection == AxisDirection.up) {
+        _pullDragOffset += notification.scrollDelta ?? 0.0;
+      }
+      _updatePullToRefreshProgress(notification.metrics.viewportDimension);
+    } else if (notification is OverscrollNotification) {
+      if (notification.metrics.axisDirection == AxisDirection.down) {
+        _pullDragOffset -= notification.overscroll;
+      } else if (notification.metrics.axisDirection == AxisDirection.up) {
+        _pullDragOffset += notification.overscroll;
+      }
+      _updatePullToRefreshProgress(notification.metrics.viewportDimension);
+    }
+
+    return false;
+  }
+
+  void _updatePullToRefreshProgress(double viewportDimension) {
+    if (viewportDimension <= 0) return;
+
+    final progress =
+        (_pullDragOffset / (viewportDimension * _pullToRefreshTriggerFraction))
+            .clamp(0.0, 1.0)
+            .toDouble();
+
+    _pullToRefreshProgress.value = progress;
+  }
+
+  void _resetPullToRefreshProgress() {
+    _pullDragOffset = 0.0;
+    _pullToRefreshProgress.value = 0.0;
   }
 
   Future<void> checkNewNotification() async {
