@@ -27,12 +27,8 @@ class CategoryTag extends StatelessWidget {
         constraints: BoxConstraints(minHeight: 32),
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.main : AppColors.white,
+            color: isSelected ? AppColors.sub : AppColors.g02,
             borderRadius: BorderRadius.circular(16),
-            border: BoxBorder.all(
-              width: 1,
-              color: isSelected ? AppColors.transparent : AppColors.g04,
-            ),
           ),
           child: Padding(
             padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 6),
@@ -58,7 +54,7 @@ class CategoryTag extends StatelessWidget {
                 Text(
                   name,
                   style: TextStyle(
-                    color: isSelected ? AppColors.white : AppColors.g05,
+                    color: isSelected ? AppColors.main : AppColors.black,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w300,
                     height: 1.60,
                     fontSize: 13,
