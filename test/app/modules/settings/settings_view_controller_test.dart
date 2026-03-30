@@ -33,6 +33,7 @@ class FakeApiClient extends ApiClient {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
+  const authBoxName = 'settingsAuthServiceTestBox';
 
   setUpAll(() async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -51,12 +52,12 @@ void main() {
       return null;
     });
 
-    await GetStorage.init(AuthService.storageBoxName);
+    await GetStorage.init(authBoxName);
   });
 
   setUp(() async {
     Get.reset();
-    await GetStorage(AuthService.storageBoxName).erase();
+    await GetStorage(authBoxName).erase();
   });
 
   tearDown(Get.reset);
@@ -82,6 +83,7 @@ void main() {
             alarmSettings: AlarmSettings(bookmark: true),
           ),
         ),
+        storageFactory: (_) => GetStorage(authBoxName),
       ),
     );
     Get.put<ApiClient>(
@@ -122,6 +124,7 @@ void main() {
             alarmSettings: AlarmSettings(bookmark: false),
           ),
         ),
+        storageFactory: (_) => GetStorage(authBoxName),
       ),
     );
     Get.put<ApiClient>(

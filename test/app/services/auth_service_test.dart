@@ -11,6 +11,7 @@ import 'package:get_storage/get_storage.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
+  const authBoxName = 'authServiceTestBox';
 
   setUpAll(() async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -21,12 +22,12 @@ void main() {
       return null;
     });
 
-    await GetStorage.init(AuthService.storageBoxName);
+    await GetStorage.init(authBoxName);
   });
 
   setUp(() async {
     Get.reset();
-    await GetStorage(AuthService.storageBoxName).erase();
+    await GetStorage(authBoxName).erase();
   });
 
   tearDown(Get.reset);
@@ -50,6 +51,7 @@ void main() {
           );
         },
         loggedInChecker: () => true,
+        storageFactory: (_) => GetStorage(authBoxName),
       ),
     );
 
@@ -70,6 +72,7 @@ void main() {
           return RequestSuccess(const AppUser(id: 7));
         },
         loggedInChecker: () => true,
+        storageFactory: (_) => GetStorage(authBoxName),
       ),
     );
 
@@ -92,6 +95,7 @@ void main() {
           return RequestSuccess(const AppUser(id: 3));
         },
         loggedInChecker: () => false,
+        storageFactory: (_) => GetStorage(authBoxName),
       ),
     );
 

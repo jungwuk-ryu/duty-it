@@ -40,8 +40,10 @@ class AuthService extends GetxService {
   AuthService({
     Future<RequestResult<AppUser>> Function()? currentUserLoader,
     bool Function()? loggedInChecker,
+    GetStorage Function(String boxName)? storageFactory,
   }) : _currentUserLoader = currentUserLoader,
-       _loggedInChecker = loggedInChecker;
+       _loggedInChecker = loggedInChecker,
+       _storageFactory = storageFactory ?? GetStorage.new;
 
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};
   final Rxn<AppUser> _appUser = Rxn();
@@ -49,6 +51,7 @@ class AuthService extends GetxService {
   Future<AppUser?>? _appUserLoadFuture;
   final Future<RequestResult<AppUser>> Function()? _currentUserLoader;
   final bool Function()? _loggedInChecker;
+  final GetStorage Function(String boxName) _storageFactory;
 
   AppUser? get appUser => _appUser.value;
   set appUser(AppUser? user) {
@@ -68,7 +71,7 @@ class AuthService extends GetxService {
     super.onInit();
     _initStrategies();
 
-    _box = GetStorage(storageBoxName);
+    _box = _storageFactory(storageBoxName);
     _loadCachedAppUser();
   }
 
