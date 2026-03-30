@@ -15,7 +15,15 @@ class SearchFilterService extends GetxService {
     var json = box.read('filter');
 
     if (json != null) {
-      filterRx.value = SearchFilter.fromJson(json);
+      try {
+        if (json is Map) {
+          filterRx.value = SearchFilter.fromJson(Map<String, dynamic>.from(json));
+        } else {
+          box.remove('filter');
+        }
+      } catch (_) {
+        box.remove('filter');
+      }
     }
 
     debounce(filterRx, (_) {
