@@ -34,7 +34,7 @@ class HomeHeader extends StatelessWidget {
                 return HomeTabButton(
                   isSelected: controller.selectedTab == tab,
                   onTap: () => controller.selectedTab = tab,
-                  title: '행사 리스트',
+                  title: '행사',
                 );
               }),
               Obx(() {
