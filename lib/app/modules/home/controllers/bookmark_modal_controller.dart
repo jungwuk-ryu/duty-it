@@ -14,7 +14,11 @@ class BookmarkModalController extends GetxController {
 
   Future<void> done(bool addToCal) async {
     var api = Get.find<ApiClient>();
-    var user = Get.find<AuthService>().appUser!;
+    var user = await Get.find<AuthService>().ensureAppUserLoaded();
+    if (user == null) {
+      AppUtils.showSnackBar('사용자 정보를 불러오지 못했어요. 다시 시도해 주세요.');
+      return;
+    }
 
     if (user.autoAddBookmarkToCalendar != addToCal) {
       var result = await api.updateUserSettings(addToCal, user.alarmSettings);

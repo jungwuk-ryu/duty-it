@@ -37,9 +37,18 @@ class AuthService extends GetxService {
   static const String _appUserKey = 'app_user';
   static const String _lastUsedProviderKey = 'last_used_provider';
 
+  AuthService({
+    Future<RequestResult<AppUser>> Function()? currentUserLoader,
+    bool Function()? loggedInChecker,
+  }) : _currentUserLoader = currentUserLoader,
+       _loggedInChecker = loggedInChecker;
+
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};
   final Rxn<AppUser> _appUser = Rxn();
   late final GetStorage _box;
+  Future<AppUser?>? _appUserLoadFuture;
+  final Future<RequestResult<AppUser>> Function()? _currentUserLoader;
+  final bool Function()? _loggedInChecker;
 
   AppUser? get appUser => _appUser.value;
   set appUser(AppUser? user) {
@@ -149,6 +158,30 @@ class AuthService extends GetxService {
     return true;
   }
 
+  Future<AppUser?> ensureAppUserLoaded() {
+    final currentUser = appUser;
+    if (currentUser != null) return Future.value(currentUser);
+    if (!isLoggined()) return Future.value(null);
+    if (_appUserLoadFuture != null) return _appUserLoadFuture!;
+
+    final future = (() async {
+      try {
+        final RequestResult<AppUser> reqResult = await _loadCurrentUser();
+        if (reqResult is RequestSuccess<AppUser>) {
+          appUser = reqResult.data;
+          return reqResult.data;
+        }
+      } catch (e, st) {
+        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      }
+
+      return appUser;
+    })().whenComplete(() => _appUserLoadFuture = null);
+
+    _appUserLoadFuture = future;
+    return future;
+  }
+
   Future<void> _doPostLogoutJob() async {
     appUser = null;
     _currentStrategy = null;
@@ -190,7 +223,14 @@ class AuthService extends GetxService {
   }
 
   bool isLoggined() {
+    if (_loggedInChecker != null) return _loggedInChecker();
+
     User? user = FirebaseAuth.instance.currentUser;
     return user != null;
+  }
+
+  Future<RequestResult<AppUser>> _loadCurrentUser() {
+    if (_currentUserLoader != null) return _currentUserLoader();
+    return Get.find<ApiClient>().getCurrentUser();
   }
 }

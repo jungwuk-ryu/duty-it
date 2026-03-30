@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
+import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
@@ -428,12 +429,15 @@ class HomeViewController extends GetxController {
   }
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {
-    if (!Get.find<AuthService>().isLoggined()) {
+    final authService = Get.find<AuthService>();
+    if (!authService.isLoggined()) {
       Get.toNamed(Routes.LOGIN);
       return;
     }
 
     var event = eventRx.value;
+    final initialUser = await _ensureAppUserLoaded();
+    if (initialUser == null) return;
 
     analytics.logEvent(
       name: 'event_bookmark_button_click',
@@ -458,7 +462,8 @@ class HomeViewController extends GetxController {
       eventRx.value = event.copyWith(isBookmarked: await toggleBookmark(event));
     }
 
-    var user = Get.find<AuthService>().appUser!;
+    var user = await _ensureAppUserLoaded();
+    if (user == null) return;
     var calendarService = Get.find<CalendarService>();
     if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
       var result = await calendarService.requestPermission();
@@ -541,6 +546,14 @@ class HomeViewController extends GetxController {
     }
 
     return isBookmarked;
+  }
+
+  Future<AppUser?> _ensureAppUserLoaded() async {
+    final user = await Get.find<AuthService>().ensureAppUserLoaded();
+    if (user != null) return user;
+
+    AppUtils.showSnackBar('사용자 정보를 불러오지 못했어요. 다시 시도해 주세요.');
+    return null;
   }
 
   Future<void> openNotificationsPage() async {
