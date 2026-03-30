@@ -96,9 +96,8 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
                     ),
                     Spacer(),
                     Obx(() {
-                      var selectedType = controller.selectedType;
                       return AppRadioButtom(
-                        checked: selectedType == type,
+                        checked: controller.selectedType.value == type,
                         onTap: () {},
                       );
                     }),
