@@ -6,14 +6,8 @@ import 'package:get_storage/get_storage.dart';
 
 class CalendarService extends GetxService {
   static const String registeredEventsBoxName = "calendarServiceRegisteredEvents";
-  late GetStorage _box;
+  final GetStorage _box = GetStorage(registeredEventsBoxName);
   final _plugin = DeviceCalendar.instance;
-
-  @override
-  void onReady() {
-    super.onReady();
-    _box = GetStorage(registeredEventsBoxName);
-  }
 
   Future<bool> checkPermission() async {
     if (kIsWeb) {
