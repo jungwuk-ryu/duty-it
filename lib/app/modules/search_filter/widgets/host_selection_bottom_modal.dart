@@ -187,6 +187,8 @@ class _HostItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final thumbnail = host.thumbnail.trim();
+
     return Padding(
       padding: EdgeInsets.only(bottom: 15, left: 1, top: 1),
       child: GestureDetector(
@@ -209,23 +211,25 @@ class _HostItem extends StatelessWidget {
                 ),
               ),
               child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: host.thumbnail,
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xffD9D9D9),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.fitWidth,
-                        alignment: Alignment.center,
+                child: thumbnail.isEmpty
+                    ? const _HostThumbnailFallback()
+                    : CachedNetworkImage(
+                        imageUrl: thumbnail,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xffD9D9D9),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.fitWidth,
+                              alignment: Alignment.center,
+                            ),
+                          ),
+                        ),
+                        progressIndicatorBuilder: (_, __, ___) =>
+                            const _HostThumbnailFallback(),
+                        errorWidget: (_, __, ___) =>
+                            const _HostThumbnailFallback(),
                       ),
-                    ),
-                  ),
-                  progressIndicatorBuilder: (_, __, ___) =>
-                      Center(child: Image.asset(Assets.icons.nurseCap.path)),
-                  errorWidget: (_, __, ___) =>
-                      Center(child: Image.asset(Assets.icons.nurseCap.path)),
-                ),
               ),
             ),
             SizedBox(width: 16),
@@ -239,6 +243,25 @@ class _HostItem extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HostThumbnailFallback extends StatelessWidget {
+  const _HostThumbnailFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Color(0xFFF5F5F5),
+      child: Center(
+        child: Image.asset(
+          Assets.icons.logo.path,
+          width: 20,
+          height: 20,
+          fit: BoxFit.contain,
         ),
       ),
     );
