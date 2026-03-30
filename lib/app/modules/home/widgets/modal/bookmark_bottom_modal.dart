@@ -46,7 +46,7 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  '캘린더 연동',
+                  '휴대폰 기본 캘린더 연동',
                   style: TextStyle(
                     color: AppColors.black,
                     fontSize: 15,
@@ -71,7 +71,7 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
           ),
           SizedBox(height: 47),
           Text(
-            '이 행사를 캘린더에도 추가할까요?',
+            '공고를 기본 캘린더 앱애도 자동 추가할까요?',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
