@@ -82,20 +82,19 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
           ),
           SizedBox(height: 103),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Flexible(
-                child: AppNormalButton(
-                  text: "아니요",
-                  color: AppColors.g04,
-                  onTap: () => controller.done(false),
-                ),
+              AppNormalButton(
+                text: "아니요",
+                width: 80,
+                color: AppColors.g04,
+                onTap: () => controller.done(false),
               ),
               SizedBox(width: 16),
-              Flexible(
-                child: AppNormalButton(
-                  text: "네, 추가할게요",
-                  onTap: () => controller.done(true),
-                ),
+              AppNormalButton(
+                text: "네, 추가할게요",
+                width: 232,
+                onTap: () => controller.done(true),
               ),
             ],
           ),
