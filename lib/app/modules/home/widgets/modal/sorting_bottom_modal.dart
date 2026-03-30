@@ -86,7 +86,7 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
               ),
             );
           }),
-          SizedBox(height: 24),
+          SizedBox(height: 80),
         ],
       ),
     );
