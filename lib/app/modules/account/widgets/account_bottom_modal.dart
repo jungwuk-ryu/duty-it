@@ -1,6 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/account/controllers/account_view_controller.dart';
+import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,7 +42,6 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        top: 17,
         left: 17,
         right: 17,
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -49,7 +49,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 16),
+          const AppBottomSheetHandle(),
           Text(
             "닉네임 수정",
             style: TextStyle(

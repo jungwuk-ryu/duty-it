@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
+import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,13 +48,11 @@ class _SearchFilterHostSelectionBottomModal
       child: SizedBox(
         height: 420,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
-          ).copyWith(bottom: 0),
+          padding: EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const AppBottomSheetHandle(),
               Text(
                 "주최 선택",
                 style: TextStyle(
