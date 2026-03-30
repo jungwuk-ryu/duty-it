@@ -4,7 +4,6 @@ import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.da
 import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/app/widgets/app_radio_buttom.dart';
-import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -42,31 +41,15 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const AppBottomSheetHandle(),
-          Stack(
-            alignment: Alignment.center,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "정렬",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => Get.back(),
-                  child: Image.asset(
-                    Assets.icons.close.path,
-                    color: AppColors.g05,
-                    width: 40,
-                    height: 40,
-                  ),
+              Text(
+                "정렬",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
                 ),
               ),
             ],
