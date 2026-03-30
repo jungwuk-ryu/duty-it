@@ -1,7 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/modules/home/controllers/bookmark_modal_controller.dart';
-import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +39,6 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const AppBottomSheetHandle(),
           Stack(
             children: [
               Align(
