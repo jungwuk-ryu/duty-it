@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 
 class SortingModalController extends GetxController {
   HomeViewController get _homeController => Get.find<HomeViewController>();
-  
-  Rx<EventSortingType> selectedType = Rx(Get.find<HomeViewController>().sortingType);
 
-  void applyAndClose() {
-    _homeController.sortingType = selectedType.value;
+  EventSortingType get selectedType => _homeController.sortingType;
+
+  void selectTypeAndClose(EventSortingType type) {
+    _homeController.sortingType = type;
     Get.back();
   }
 }

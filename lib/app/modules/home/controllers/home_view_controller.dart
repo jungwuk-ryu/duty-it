@@ -61,7 +61,10 @@ class HomeViewController extends GetxController {
 
   final Rx<EventSortingType> _sortingType = Rx(EventSortingType.latest);
   EventSortingType get sortingType => _sortingType.value;
-  set sortingType(EventSortingType type) => _sortingType.value = type;
+  set sortingType(EventSortingType type) {
+    _sortingType.value = type;
+    _settingsService.eventSortingType.value = type.name;
+  }
 
   final TextEditingController searchTextEditingController =
       TextEditingController();
@@ -80,6 +83,9 @@ class HomeViewController extends GetxController {
   void onInit() {
     super.onInit();
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    _sortingType.value = EventSortingType.fromName(
+      _settingsService.eventSortingType.value,
+    );
 
     searchTextEditingController.addListener(
       () => searchQuery.value = searchTextEditingController.text.trim(),
@@ -100,10 +106,7 @@ class HomeViewController extends GetxController {
       (v) => fetchNextPage(clearPage: true),
     );
 
-    ever(
-      _sortingType,
-      (v) => fetchNextPage(clearPage: true),
-    );
+    ever(_sortingType, (v) => fetchNextPage(clearPage: true));
 
     checkNewNotification();
     WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -8,6 +8,7 @@ class AppSettingsService extends GetxService {
   late final GetStorage _box = GetStorage(storageBoxName);
   late final AppSetting<bool> dontShowAutoAddModal;
   late final AppSetting<bool> includeDeviceEvents;
+  late final AppSetting<String> eventSortingType;
 
   @override
   void onInit() async {
@@ -21,6 +22,11 @@ class AppSettingsService extends GetxService {
       key: 'include_device_events',
       box: _box,
       defaultValue: true,
+    );
+    eventSortingType = AppSetting(
+      key: 'event_sorting_type',
+      box: _box,
+      defaultValue: 'latest',
     );
   }
 }

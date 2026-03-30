@@ -2,7 +2,6 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
 import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
-import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/app/widgets/app_radio_buttom.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -61,7 +60,7 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
             return Listener(
               behavior: HitTestBehavior.translucent,
               onPointerDown: (_) {
-                controller.selectedType.value = type;
+                controller.selectTypeAndClose(type);
                 HapticFeedback.selectionClick();
               },
               child: Padding(
@@ -78,21 +77,15 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
                       ),
                     ),
                     Spacer(),
-                    Obx(() {
-                      return AppRadioButtom(
-                        checked: controller.selectedType.value == type,
-                        onTap: () {},
-                      );
-                    }),
+                    AppRadioButtom(
+                      checked: controller.selectedType == type,
+                      onTap: () {},
+                    ),
                   ],
                 ),
               ),
             );
           }),
-          AppNormalButton(
-            text: '정렬 적용',
-            onTap: () => controller.applyAndClose(),
-          ),
           SizedBox(height: 24),
         ],
       ),
