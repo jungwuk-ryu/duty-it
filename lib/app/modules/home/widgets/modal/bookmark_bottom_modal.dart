@@ -87,7 +87,7 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
               height: 1.20,
             ),
           ),
-          SizedBox(height: 103),
+          SizedBox(height: 64),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
