@@ -1,9 +1,7 @@
-// ignore_for_file: unused_import
-
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
-import 'package:duty_it/app/services/app_settings_service.dart';
+import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/app/widgets/app_radio_buttom.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -11,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class SortingBottomModal extends StatefulWidget {
   const SortingBottomModal({super.key});
@@ -44,7 +41,7 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 24),
+          const AppBottomSheetHandle(),
           Stack(
             alignment: Alignment.center,
             children: [
