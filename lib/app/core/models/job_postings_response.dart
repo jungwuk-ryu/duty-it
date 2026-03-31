@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'dart:convert';
 
 import 'package:duty_it/app/core/models/cursor_page_info.dart';
@@ -16,7 +18,6 @@ String jobPostingsResponseToJson(JobPostingsResponse data) =>
 @freezed
 abstract class JobPostingsResponse with _$JobPostingsResponse {
   const factory JobPostingsResponse({
-    // ignore: invalid_annotation_target
     @JsonKey(name: 'content') required List<JobPosting> jobs,
     required CursorPageInfo pageInfo,
   }) = _JobPostingsResponse;

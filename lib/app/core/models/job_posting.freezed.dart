@@ -15,13 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobPosting {
 
- int get id;// ignore: invalid_annotation_target
-@JsonKey(unknownEnumValue: JobSourceType.unknown) JobSourceType get sourceType; String get title; String get companyName; String get jobCategory; String get location;// ignore: invalid_annotation_target
-@JsonKey(unknownEnumValue: WorkRegion.unknown) WorkRegion? get workRegion; String get workDistrict;// ignore: invalid_annotation_target
-@JsonKey(unknownEnumValue: JobEmploymentType.unknown) JobEmploymentType? get employmentType; String get careerDescription;// ignore: invalid_annotation_target
-@JsonKey(unknownEnumValue: JobEducationLevel.unknown) JobEducationLevel? get educationLevel; String get salaryDescription;// ignore: invalid_annotation_target
-@JsonKey(unknownEnumValue: JobSalaryType.unknown) JobSalaryType? get salaryType; String get postingUrl; DateTime? get postedAt; DateTime? get expiresAt;// ignore: invalid_annotation_target
-@JsonKey(unknownEnumValue: JobCloseType.unknown) JobCloseType get closeType; bool get isBookmarked; DateTime? get createdAt;
+ int get id;@JsonKey(unknownEnumValue: JobSourceType.unknown) JobSourceType get sourceType; String get title; String get companyName; String get jobCategory; String get location;@JsonKey(unknownEnumValue: WorkRegion.unknown) WorkRegion? get workRegion; String get workDistrict;@JsonKey(unknownEnumValue: JobEmploymentType.unknown) JobEmploymentType? get employmentType; String get careerDescription;@JsonKey(unknownEnumValue: JobEducationLevel.unknown) JobEducationLevel? get educationLevel; String get salaryDescription;@JsonKey(unknownEnumValue: JobSalaryType.unknown) JobSalaryType? get salaryType; String get postingUrl; DateTime? get postedAt; DateTime? get expiresAt;@JsonKey(unknownEnumValue: JobCloseType.unknown) JobCloseType get closeType; bool get isBookmarked; DateTime? get createdAt;
 /// Create a copy of JobPosting
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -237,27 +231,21 @@ class _JobPosting implements JobPosting {
   factory _JobPosting.fromJson(Map<String, dynamic> json) => _$JobPostingFromJson(json);
 
 @override final  int id;
-// ignore: invalid_annotation_target
 @override@JsonKey(unknownEnumValue: JobSourceType.unknown) final  JobSourceType sourceType;
 @override@JsonKey() final  String title;
 @override@JsonKey() final  String companyName;
 @override@JsonKey() final  String jobCategory;
 @override@JsonKey() final  String location;
-// ignore: invalid_annotation_target
 @override@JsonKey(unknownEnumValue: WorkRegion.unknown) final  WorkRegion? workRegion;
 @override@JsonKey() final  String workDistrict;
-// ignore: invalid_annotation_target
 @override@JsonKey(unknownEnumValue: JobEmploymentType.unknown) final  JobEmploymentType? employmentType;
 @override@JsonKey() final  String careerDescription;
-// ignore: invalid_annotation_target
 @override@JsonKey(unknownEnumValue: JobEducationLevel.unknown) final  JobEducationLevel? educationLevel;
 @override@JsonKey() final  String salaryDescription;
-// ignore: invalid_annotation_target
 @override@JsonKey(unknownEnumValue: JobSalaryType.unknown) final  JobSalaryType? salaryType;
 @override@JsonKey() final  String postingUrl;
 @override final  DateTime? postedAt;
 @override final  DateTime? expiresAt;
-// ignore: invalid_annotation_target
 @override@JsonKey(unknownEnumValue: JobCloseType.unknown) final  JobCloseType closeType;
 @override@JsonKey() final  bool isBookmarked;
 @override final  DateTime? createdAt;
