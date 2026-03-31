@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/account/bindings/account_binding.dart';
 import '../modules/account/views/account_view.dart';
+import '../modules/job/bindings/job_filter_binding.dart';
+import '../modules/job/views/job_filter_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/main/bindings/main_binding.dart';
@@ -48,6 +50,11 @@ class AppPages {
           name: _Paths.SEARCH_FILTER,
           page: () => const SearchFilterView(),
           binding: SearchFilterBinding(),
+        ),
+        GetPage(
+          name: _Paths.JOB_FILTER,
+          page: () => const JobFilterView(),
+          binding: JobFilterBinding(),
         ),
         GetPage(
           name: _Paths.SETTINGS,

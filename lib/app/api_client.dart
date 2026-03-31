@@ -4,12 +4,16 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/core/models/job_posting.dart';
+import 'package:duty_it/app/core/models/job_postings_response.dart';
 import 'package:duty_it/app/modules/settings/models/alarm_settings.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
+import 'package:duty_it/app/core/enums/job_employment_type.dart';
 import 'package:duty_it/app/core/models/host.dart';
+import 'package:duty_it/app/core/enums/work_region.dart';
 import 'package:duty_it/app/modules/login/models/login_result.dart';
 import 'package:duty_it/app/core/models/server_fail.dart';
 import 'package:duty_it/app/core/enums/sort_direction.dart';
@@ -405,6 +409,51 @@ class ApiClient extends GetConnect {
 
         return events;
       },
+    );
+  }
+
+  // ---------- Job ----------
+
+  Future<RequestResult<JobPostingsResponse>> getJobPostings({
+    String? cursor,
+    required bool bookmarked,
+    int size = 10,
+    String field = 'CREATED_AT',
+    required List<WorkRegion> workRegions,
+    required List<JobEmploymentType> employmentTypes,
+    String? searchKeyword,
+  }) async {
+    String query = 'bookmarked=$bookmarked&size=$size&field=$field';
+    if (cursor != null) {
+      query += '&cursor=$cursor';
+    }
+    for (final workRegion in workRegions) {
+      query += '&workRegions=${workRegion.name.toUpperCase()}';
+    }
+    for (final employmentType in employmentTypes) {
+      query += '&employmentTypes=${employmentType.apiValue}';
+    }
+    if (searchKeyword != null) {
+      query += '&searchKeyword=${Uri.encodeQueryComponent(searchKeyword)}';
+    }
+
+    return _send(
+      () async => await get('/v1/job-postings?$query'),
+      map: (rp) => JobPostingsResponse.fromJson(json.decode(rp.bodyString!)),
+    );
+  }
+
+  Future<RequestResult<JobPosting>> getJobPostingDetail(int jobPostingId) async {
+    return _send(
+      () async => await get('/v1/job-postings/$jobPostingId'),
+      map: (rp) => JobPosting.fromJson(json.decode(rp.bodyString!)),
+    );
+  }
+
+  Future<RequestResult<bool>> toggleJobBookmark(int jobPostingId) async {
+    return _send(
+      () async => await post('/v1/job-bookmarks/$jobPostingId', null),
+      map: (rp) => json.decode(rp.bodyString!)['isBookmarked'] as bool,
     );
   }
 

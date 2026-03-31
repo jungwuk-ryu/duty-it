@@ -4,6 +4,7 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/modules/calendar/views/calendar_view.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/views/home_view.dart';
+import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
 import 'package:duty_it/app/modules/job/views/job_view.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
@@ -61,6 +62,10 @@ class MainViewController extends GetxController {
         // Home
         var homeController = Get.find<HomeViewController>();
         homeController.scrollUpEventList();
+      }
+      if (index == 1 && Get.isRegistered<JobViewController>()) {
+        final jobController = Get.find<JobViewController>();
+        jobController.scrollUpJobList();
       }
       return;
     }

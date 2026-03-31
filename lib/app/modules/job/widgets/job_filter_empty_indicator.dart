@@ -1,20 +1,15 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:flutter/widgets.dart';
 
-class NoSearchItemIndicator extends StatelessWidget {
-  final String text;
-
-  const NoSearchItemIndicator({
-    super.key,
-    this.text = '검색 결과가 존재하지 않습니다.',
-  });
+class JobFilterEmptyIndicator extends StatelessWidget {
+  const JobFilterEmptyIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsGeometry.symmetric(vertical: 70, horizontal: 70),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 70, horizontal: 40),
       child: Text(
-        text,
+        '필터에 부합하는 행사가 없습니다.',
         textAlign: TextAlign.center,
         style: TextStyle(
           color: AppColors.g06,

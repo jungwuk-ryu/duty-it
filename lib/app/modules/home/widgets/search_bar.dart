@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 
 class HomeSearchBar extends StatefulWidget {
   final TextEditingController controller;
+  final String hintText;
 
-  const HomeSearchBar({super.key, required this.controller});
+  const HomeSearchBar({
+    super.key,
+    required this.controller,
+    this.hintText = '찾으시는 행사가 있나요?',
+  });
 
   @override
   State<HomeSearchBar> createState() => _HomeSearchBarState();
@@ -29,7 +34,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
               Assets.icons.search.path,
               height: 16,
               width: 16,
-              color: Color(0xff878898),
+              color: AppColors.g05,
             ),
             SizedBox(width: 8),
             Expanded(
@@ -39,7 +44,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                 onChanged: (_) => setState(() {}),
                 decoration: InputDecoration(
                   isCollapsed: true,
-                  hintText: '찾으시는 행사가 있나요?',
+                  hintText: widget.hintText,
                   hintStyle: TextStyle(
                     color: AppColors.g05,
                     fontSize: 15,
