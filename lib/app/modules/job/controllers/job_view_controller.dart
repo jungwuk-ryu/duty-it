@@ -378,6 +378,10 @@ class JobViewController extends GetxController {
     checkNewNotification();
   }
 
+  void openJobDetail(Rx<JobPosting> jobRx) {
+    Get.toNamed(Routes.JOB_DETAIL, arguments: {'jobRx': jobRx});
+  }
+
   void openJobFilterPage() {
     Get.toNamed(Routes.JOB_FILTER);
   }

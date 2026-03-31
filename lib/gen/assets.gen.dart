@@ -143,6 +143,9 @@ class $AssetsIconsGen {
   AssetGenImage get textdelete =>
       const AssetGenImage('assets/icons/textdelete.png');
 
+  /// File path: assets/icons/work24.png
+  AssetGenImage get work24 => const AssetGenImage('assets/icons/work24.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     appIcon,
@@ -170,6 +173,7 @@ class $AssetsIconsGen {
     pen,
     search,
     textdelete,
+    work24,
   ];
 }
 

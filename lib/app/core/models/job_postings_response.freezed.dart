@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobPostingsResponse {
 
+// ignore: invalid_annotation_target
 @JsonKey(name: 'content') List<JobPosting> get jobs; CursorPageInfo get pageInfo;
 /// Create a copy of JobPostingsResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -222,7 +223,9 @@ class _JobPostingsResponse implements JobPostingsResponse {
   const _JobPostingsResponse({@JsonKey(name: 'content') required final  List<JobPosting> jobs, required this.pageInfo}): _jobs = jobs;
   factory _JobPostingsResponse.fromJson(Map<String, dynamic> json) => _$JobPostingsResponseFromJson(json);
 
+// ignore: invalid_annotation_target
  final  List<JobPosting> _jobs;
+// ignore: invalid_annotation_target
 @override@JsonKey(name: 'content') List<JobPosting> get jobs {
   if (_jobs is EqualUnmodifiableListView) return _jobs;
   // ignore: implicit_dynamic_type

@@ -10,6 +10,7 @@ abstract class Routes {
   static const ACCOUNT = _Paths.ACCOUNT;
   static const SEARCH_FILTER = _Paths.SEARCH_FILTER;
   static const JOB_FILTER = _Paths.JOB_FILTER;
+  static const JOB_DETAIL = _Paths.JOB_DETAIL;
   static const SETTINGS = _Paths.SETTINGS;
   static const SPLASH = _Paths.SPLASH;
   static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
@@ -22,6 +23,7 @@ abstract class _Paths {
   static const ACCOUNT = '/account';
   static const SEARCH_FILTER = '/search-filter';
   static const JOB_FILTER = '/job-filter';
+  static const JOB_DETAIL = '/job-detail';
   static const SETTINGS = '/settings';
   static const SPLASH = '/splash';
   static const NOTIFICATIONS = '/notifications';

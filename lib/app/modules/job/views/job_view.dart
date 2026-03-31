@@ -99,7 +99,10 @@ class JobView extends GetView<JobViewController> {
             builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
               animateTransitions: true,
               transitionDuration: const Duration(milliseconds: 100),
-              itemBuilder: (_, item, __) => JobCard(jobRx: item),
+              itemBuilder: (_, item, __) => JobCard(
+                jobRx: item,
+                onTap: () => controller.openJobDetail(item),
+              ),
               firstPageProgressIndicatorBuilder: (_) => isPullToRefreshing
                   ? const SizedBox.shrink()
                   : const Center(child: CircularProgressIndicator.adaptive()),
