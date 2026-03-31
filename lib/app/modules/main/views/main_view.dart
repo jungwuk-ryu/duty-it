@@ -57,10 +57,21 @@ class MainView extends GetView<MainViewController> {
             ),
             BottomNavigationBarItem(
               icon: Image.asset(
-                Assets.icons.calendar.path,
+                Assets.icons.job.path,
                 width: 20,
                 height: 20,
                 color: controller.pageIndex.value == 1
+                    ? AppColors.black
+                    : AppColors.g04,
+              ),
+              label: '채용',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                Assets.icons.calendar.path,
+                width: 20,
+                height: 20,
+                color: controller.pageIndex.value == 2
                     ? AppColors.black
                     : AppColors.g04,
               ),

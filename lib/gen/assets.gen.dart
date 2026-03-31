@@ -117,6 +117,9 @@ class $AssetsIconsGen {
   AssetGenImage get hamburger =>
       const AssetGenImage('assets/icons/hamburger.png');
 
+  /// File path: assets/icons/job.png
+  AssetGenImage get job => const AssetGenImage('assets/icons/job.png');
+
   /// File path: assets/icons/kakao.png
   AssetGenImage get kakao => const AssetGenImage('assets/icons/kakao.png');
 
@@ -159,6 +162,7 @@ class $AssetsIconsGen {
     go,
     google,
     hamburger,
+    job,
     kakao,
     logo,
     nurseCap,
