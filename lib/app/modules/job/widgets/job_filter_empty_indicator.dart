@@ -9,7 +9,7 @@ class JobFilterEmptyIndicator extends StatelessWidget {
     return const Padding(
       padding: EdgeInsets.symmetric(vertical: 70, horizontal: 40),
       child: Text(
-        '필터에 부합하는 행사가 없습니다.',
+        '필터에 부합하는 채용공고가 없습니다.',
         textAlign: TextAlign.center,
         style: TextStyle(
           color: AppColors.g06,

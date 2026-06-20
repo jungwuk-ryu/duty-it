@@ -15,16 +15,20 @@ import 'package:get/get.dart';
 
 class MainViewController extends GetxController {
   RxInt pageIndex = 0.obs;
-  final pages = [
-    HomeView(key: ValueKey('home')),
-    JobView(key: ValueKey('job')),
-    CalendarView(key: ValueKey('calendar')),
-  ];
+  late final List<Widget> pages;
   final pageNames = ['/home', '/job', '/calendar'];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   get scaffoldKey => _scaffoldKey;
   StreamSubscription? _authListener;
+
+  MainViewController() {
+    pages = [
+      HomeView(key: ValueKey('home')),
+      JobView(key: ValueKey('job')),
+      CalendarView(key: ValueKey('calendar')),
+    ];
+  }
 
   @override
   void onInit() {
@@ -58,16 +62,35 @@ class MainViewController extends GetxController {
 
   void changeTab(int index) {
     if (pageIndex.value == index) {
+      var resetToPrimaryTab = false;
       if (index == 0 && Get.isRegistered<HomeViewController>()) {
         // Home
         var homeController = Get.find<HomeViewController>();
+        if (homeController.selectedTab == HomeTab.bookmark) {
+          homeController.selectedTab = HomeTab.event;
+          resetToPrimaryTab = true;
+        }
         homeController.scrollUpEventList();
       }
       if (index == 1 && Get.isRegistered<JobViewController>()) {
         final jobController = Get.find<JobViewController>();
+        if (jobController.selectedTab == JobTab.bookmark) {
+          jobController.selectedTab = JobTab.job;
+          resetToPrimaryTab = true;
+        }
         jobController.scrollUpJobList();
       }
+      if (resetToPrimaryTab) {
+        FirebaseAnalytics.instance.logScreenView(screenName: pageNames[index]);
+      }
       return;
+    }
+
+    if (index == 0 && Get.isRegistered<HomeViewController>()) {
+      Get.find<HomeViewController>().selectedTab = HomeTab.event;
+    }
+    if (index == 1 && Get.isRegistered<JobViewController>()) {
+      Get.find<JobViewController>().selectedTab = JobTab.job;
     }
 
     pageIndex.value = index;

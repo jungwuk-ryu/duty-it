@@ -1,13 +1,10 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
+import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
-import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
-import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -24,14 +21,6 @@ class JobHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Obx(
-            () => DuitTopAppBar(
-              showNotifications: Get.find<AuthService>().isLoggined(),
-              hasNewNotification: controller.hasNewNotification,
-              onNotificationsTap: controller.openNotificationsPage,
-              onMenuTap: Get.find<MainViewController>().openEndDrawer,
-            ),
-          ),
           const SizedBox(height: 20),
           HomeSearchBar(
             controller: controller.searchTextEditingController,
@@ -41,20 +30,22 @@ class JobHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Obx(
-                () => HomeTabButton(
-                  isSelected: controller.selectedTab == JobTab.job,
-                  onTap: () => controller.selectedTab = JobTab.job,
-                  title: '채용',
-                ),
-              ),
-              Obx(
-                () => HomeTabButton(
-                  isSelected: controller.selectedTab == JobTab.bookmark,
-                  onTap: () => controller.selectedTab = JobTab.bookmark,
+              Obx(() {
+                const tab = JobTab.job;
+                return HomeTabButton(
+                  isSelected: controller.selectedTab == tab,
+                  onTap: () => controller.selectedTab = tab,
+                  title: '채용공고',
+                );
+              }),
+              Obx(() {
+                const tab = JobTab.bookmark;
+                return HomeTabButton(
+                  isSelected: controller.selectedTab == tab,
+                  onTap: () => controller.selectedTab = tab,
                   title: '북마크',
-                ),
-              ),
+                );
+              }),
             ],
           ),
           const SizedBox(height: 16),

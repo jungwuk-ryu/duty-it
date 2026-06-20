@@ -2,6 +2,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
+import 'package:duty_it/app/modules/job/widgets/job_app_bar.dart';
 import 'package:duty_it/app/modules/job/widgets/job_card.dart';
 import 'package:duty_it/app/modules/job/widgets/job_filter_empty_indicator.dart';
 import 'package:duty_it/app/modules/job/widgets/job_header.dart';
@@ -43,9 +44,7 @@ class JobView extends GetView<JobViewController> {
           automaticallyImplyLeading: false,
           actions: const <Widget>[SizedBox.shrink()],
           leading: const SizedBox.shrink(),
-          flexibleSpace: FlexibleSpaceBar(
-            background: JobHeader(controller: controller),
-          ),
+          flexibleSpace: const FlexibleSpaceBar(background: JobAppBar()),
         ),
         AdaptiveHeightSliverPersistentHeader(
           pinned: true,
@@ -99,7 +98,7 @@ class JobView extends GetView<JobViewController> {
             builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
               animateTransitions: true,
               transitionDuration: const Duration(milliseconds: 100),
-              itemBuilder: (_, item, __) => JobCard(
+              itemBuilder: (_, item, _) => JobCard(
                 jobRx: item,
                 onTap: () => controller.openJobDetail(item),
               ),
@@ -117,17 +116,23 @@ class JobView extends GetView<JobViewController> {
                       ),
                     ),
               noItemsFoundIndicatorBuilder: (_) {
-                if (controller.selectedTab == JobTab.bookmark) {
+                final hasSearchQuery = controller.searchQuery.value.isNotEmpty;
+                final hasFilterChanges = Get.find<JobFilterService>()
+                    .hasFilterChanges();
+
+                if (controller.selectedTab == JobTab.bookmark &&
+                    !hasSearchQuery &&
+                    !hasFilterChanges) {
                   return const NoBookmarkedItemIndicator(
                     text: '북마크된 채용공고가 없습니다.\n채용 리스트에서 북마크를 추가해보세요.',
                   );
                 }
 
-                if (controller.searchQuery.value.isNotEmpty) {
+                if (hasSearchQuery) {
                   return const NoSearchItemIndicator();
                 }
 
-                if (Get.find<JobFilterService>().hasFilterChanges()) {
+                if (hasFilterChanges) {
                   return const JobFilterEmptyIndicator();
                 }
 
