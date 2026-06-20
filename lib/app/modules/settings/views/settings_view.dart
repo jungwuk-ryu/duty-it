@@ -103,6 +103,15 @@ class SettingsView extends GetView<SettingsViewController> {
                         ),
                       ),
                     ),
+                    Text(
+                      "직업정보제공사업 신고번호 : J1205020260001(서울북부 제2026-1호)",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        height: 1.60,
+                        color: AppColors.g05,
+                      ),
+                    ),
                   ],
                 ),
               ),
