@@ -5,7 +5,6 @@ import 'package:duty_it/app/modules/notifications/controllers/notifications_view
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -45,73 +44,45 @@ class NotificationItem extends StatelessWidget {
       child: InkWell(
         onTap: () => _openNotificationTarget(noti),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(22, 13, 22, 12),
           decoration: BoxDecoration(
             color: !noti.isRead ? AppColors.cal2 : AppColors.white,
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                padding: EdgeInsets.only(
-                  top: 11,
-                  right: 10,
-                  bottom: 11,
-                  left: 12,
-                ),
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: OvalBorder(
-                    side: BorderSide(
-                      width: 1,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                      color: const Color(0xFFD0D0D0),
-                    ),
-                  ),
-                ),
-                child: Center(
-                  child: Image.asset(
-                    Assets.icons.logo.path,
-                    fit: BoxFit.contain,
-                  ),
+              Text(
+                _getTitle(noti),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  height: 1.60,
                 ),
               ),
-              SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getTitle(noti),
-                      style: TextStyle(
-                        color: const Color(0xFF333333),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        height: 1.60,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      _getContent(noti),
-                      style: TextStyle(
-                        color: const Color(0xFF6F6F6F),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        height: 1.60,
-                      ),
-                    ),
-                    Text(
-                      _formatDateTime(noti.createdAt),
-                      style: TextStyle(
-                        color: const Color(0xFF949494),
-                        fontSize: 8,
-                        fontFamily: 'Pretendard',
-                        fontWeight: FontWeight.w500,
-                        height: 1.60,
-                      ),
-                    ),
-                  ],
+              const SizedBox(height: 2),
+              Text(
+                _getContent(noti),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.g06,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  height: 1.50,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                _formatDateTime(noti.createdAt),
+                style: const TextStyle(
+                  color: AppColors.g05,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w500,
+                  height: 1.60,
                 ),
               ),
             ],
@@ -123,25 +94,26 @@ class NotificationItem extends StatelessWidget {
 
   static String _formatDateTime(DateTime? dt) {
     if (dt == null) return "";
-    return '${dt.year}.${dt.month.toString().padLeft(2, '0')}.${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    return '${dt.year}. ${dt.month.toString().padLeft(2, '0')}. ${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
   static String _getTitle(AppNotification noti) {
     String type = noti.type;
+    final prefix = _getCategoryPrefix(noti);
     switch (type) {
       case "EVENT_START":
-        return "내일 북마크한 행사가 시작됩니다";
+        return "$prefix 북마크한 행사가 곧 시작돼요";
       case "RECRUITMENT_START":
-        return "내일 북마크한 행사의 모집이 시작됩니다";
+        return "$prefix 북마크한 행사의 모집이 시작돼요";
       case "RECRUITMENT_END":
-        return "내일 북마크한 행사의 모집이 마감됩니다.";
+        return "$prefix 북마크한 행사의 모집이 마감돼요";
       case "EVENT_SUBSCRIPTION_KEYWORD":
       case "EVENT_SUBSCRIPTION_HOST":
       case "EVENT_SUBSCRIPTION_TYPE":
-        return "맞춤 행사공고가 등록됐어요";
+        return "$prefix 새로운 공고가 등록 되었어요";
       case "JOB_SUBSCRIPTION_KEYWORD":
       case "JOB_SUBSCRIPTION_COMPANY":
-        return "맞춤 채용공고가 등록됐어요";
+        return "$prefix 새로운 공고가 등록 되었어요";
     }
 
     return "앱을 업데이트 해주세요";
@@ -152,11 +124,11 @@ class NotificationItem extends StatelessWidget {
     Event? event = noti.event;
     switch (type) {
       case "EVENT_START":
-        return "듀근 듀근 ☺️❤️ [${event?.title}]가 내일 ${event?.startAt?.hour}시에 시작됩니다!";
+        return "[${event?.title ?? '행사공고'}]가 내일 ${event?.startAt?.hour ?? ''}시에 시작됩니다.";
       case "RECRUITMENT_START":
-        return "\uD83D\uDCE2[${event?.title}]의 모집이 내일 ${event?.recruitmentStartAt?.hour}시부터 시작됩니다! 잊지말고 신청하세요!";
+        return "[${event?.title ?? '행사공고'}]의 모집이 내일 ${event?.recruitmentStartAt?.hour ?? ''}시부터 시작됩니다.";
       case "RECRUITMENT_END":
-        return "⏰[${event?.title}]의 모집이 내일 ${event?.recruitmentEndAt?.hour}시에 마감됩니다. 잊진 않으셨죠?";
+        return "[${event?.title ?? '행사공고'}]의 모집이 내일 ${event?.recruitmentEndAt?.hour ?? ''}시에 마감됩니다.";
       case "EVENT_SUBSCRIPTION_KEYWORD":
       case "EVENT_SUBSCRIPTION_HOST":
       case "EVENT_SUBSCRIPTION_TYPE":
@@ -167,6 +139,13 @@ class NotificationItem extends StatelessWidget {
     }
 
     return "앱을 업데이트 해주세요";
+  }
+
+  static String _getCategoryPrefix(AppNotification noti) {
+    if (noti.jobPosting != null || noti.type.startsWith('JOB_')) {
+      return '[채용]';
+    }
+    return '[행사]';
   }
 
   static Future<void> _openNotificationTarget(AppNotification noti) async {
