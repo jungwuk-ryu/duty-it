@@ -91,8 +91,8 @@ class _JobRegionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = highlight && isSelected ? AppColors.main : AppColors.black;
-    final fontWeight = highlight && isSelected
+    final color = isSelected ? AppColors.main : AppColors.black;
+    final fontWeight = isSelected || highlight
         ? FontWeight.w700
         : FontWeight.w400;
 

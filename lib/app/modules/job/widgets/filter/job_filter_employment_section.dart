@@ -14,15 +14,18 @@ class JobFilterEmploymentSection extends GetView<JobFilterViewController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SearchFilterSectionTitle('고용형태'),
+        _buildEmploymentItem(null, '전체 (관계없음)'),
         ...controller.employmentTypes.map(_buildEmploymentItem),
       ],
     );
   }
 
-  Widget _buildEmploymentItem(JobEmploymentType type) {
+  Widget _buildEmploymentItem(JobEmploymentType? type, [String? title]) {
+    void selectType() => controller.selectEmploymentType(type);
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () => controller.toggleEmploymentTypeSelection(type),
+      onTap: selectType,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
@@ -30,12 +33,12 @@ class JobFilterEmploymentSection extends GetView<JobFilterViewController> {
             Obx(
               () => AppRadioButtom(
                 checked: controller.isEmploymentTypeSelected(type),
-                onTap: () {},
+                onTap: selectType,
               ),
             ),
             const SizedBox(width: 8),
             Text(
-              type.filterDisplayName,
+              title ?? type!.filterDisplayName,
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w300,

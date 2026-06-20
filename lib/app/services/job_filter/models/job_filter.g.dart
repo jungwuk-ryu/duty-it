@@ -7,6 +7,11 @@ part of 'job_filter.dart';
 // **************************************************************************
 
 _JobFilter _$JobFilterFromJson(Map<String, dynamic> json) => _JobFilter(
+  careerFilters:
+      (json['careerFilters'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$JobCareerFilterEnumMap, e))
+          .toSet() ??
+      const <JobCareerFilter>{},
   workRegions:
       (json['workRegions'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$WorkRegionEnumMap, e))
@@ -17,17 +22,31 @@ _JobFilter _$JobFilterFromJson(Map<String, dynamic> json) => _JobFilter(
           ?.map((e) => $enumDecode(_$JobEmploymentTypeEnumMap, e))
           .toSet() ??
       const <JobEmploymentType>{},
+  showClosed: json['showClosed'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$JobFilterToJson(_JobFilter instance) =>
     <String, dynamic>{
+      'careerFilters': instance.careerFilters
+          .map((e) => _$JobCareerFilterEnumMap[e]!)
+          .toList(),
       'workRegions': instance.workRegions
           .map((e) => _$WorkRegionEnumMap[e]!)
           .toList(),
       'employmentTypes': instance.employmentTypes
           .map((e) => _$JobEmploymentTypeEnumMap[e]!)
           .toList(),
+      'showClosed': instance.showClosed,
     };
+
+const _$JobCareerFilterEnumMap = {
+  JobCareerFilter.entry: 'entry',
+  JobCareerFilter.oneToThree: 'oneToThree',
+  JobCareerFilter.threeToFive: 'threeToFive',
+  JobCareerFilter.fiveToTen: 'fiveToTen',
+  JobCareerFilter.tenPlus: 'tenPlus',
+  JobCareerFilter.noPreference: 'noPreference',
+};
 
 const _$WorkRegionEnumMap = {
   WorkRegion.seoul: 'SEOUL',

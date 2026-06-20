@@ -17,7 +17,10 @@ class JobFilterService extends GetxService {
     if (json != null) {
       try {
         if (json is Map) {
-          filterRx.value = JobFilter.fromJson(Map<String, dynamic>.from(json));
+          filterRx.value = _normalizeFilter(
+            JobFilter.fromJson(Map<String, dynamic>.from(json)),
+          );
+          box.write('filter', filter.toJson());
         } else {
           box.remove('filter');
         }
@@ -32,14 +35,28 @@ class JobFilterService extends GetxService {
   }
 
   void updateFilter(JobFilter filter) {
-    filterRx.value = filter;
+    filterRx.value = _normalizeFilter(filter);
   }
 
   bool hasFilterChanges() {
-    return filter.workRegions.isNotEmpty || filter.employmentTypes.isNotEmpty;
+    return filter.careerFilters.isNotEmpty ||
+        filter.workRegions.isNotEmpty ||
+        filter.employmentTypes.isNotEmpty ||
+        !filter.showClosed;
   }
 
   void resetFilter() {
     updateFilter(const JobFilter());
+  }
+
+  JobFilter _normalizeFilter(JobFilter filter) {
+    return filter.copyWith(
+      workRegions: filter.workRegions
+          .where(supportedJobFilterWorkRegions.contains)
+          .toSet(),
+      employmentTypes: filter.employmentTypes
+          .where(supportedJobFilterEmploymentTypes.contains)
+          .toSet(),
+    );
   }
 }

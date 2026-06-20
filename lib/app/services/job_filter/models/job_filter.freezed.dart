@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JobFilter {
 
- Set<WorkRegion> get workRegions; Set<JobEmploymentType> get employmentTypes;
+ Set<JobCareerFilter> get careerFilters; Set<WorkRegion> get workRegions; Set<JobEmploymentType> get employmentTypes; bool get showClosed;
 /// Create a copy of JobFilter
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $JobFilterCopyWith<JobFilter> get copyWith => _$JobFilterCopyWithImpl<JobFilter>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobFilter&&const DeepCollectionEquality().equals(other.workRegions, workRegions)&&const DeepCollectionEquality().equals(other.employmentTypes, employmentTypes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobFilter&&const DeepCollectionEquality().equals(other.careerFilters, careerFilters)&&const DeepCollectionEquality().equals(other.workRegions, workRegions)&&const DeepCollectionEquality().equals(other.employmentTypes, employmentTypes)&&(identical(other.showClosed, showClosed) || other.showClosed == showClosed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(workRegions),const DeepCollectionEquality().hash(employmentTypes));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(careerFilters),const DeepCollectionEquality().hash(workRegions),const DeepCollectionEquality().hash(employmentTypes),showClosed);
 
 @override
 String toString() {
-  return 'JobFilter(workRegions: $workRegions, employmentTypes: $employmentTypes)';
+  return 'JobFilter(careerFilters: $careerFilters, workRegions: $workRegions, employmentTypes: $employmentTypes, showClosed: $showClosed)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $JobFilterCopyWith<$Res>  {
   factory $JobFilterCopyWith(JobFilter value, $Res Function(JobFilter) _then) = _$JobFilterCopyWithImpl;
 @useResult
 $Res call({
- Set<WorkRegion> workRegions, Set<JobEmploymentType> employmentTypes
+ Set<JobCareerFilter> careerFilters, Set<WorkRegion> workRegions, Set<JobEmploymentType> employmentTypes, bool showClosed
 });
 
 
@@ -65,11 +65,13 @@ class _$JobFilterCopyWithImpl<$Res>
 
 /// Create a copy of JobFilter
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? workRegions = null,Object? employmentTypes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? careerFilters = null,Object? workRegions = null,Object? employmentTypes = null,Object? showClosed = null,}) {
   return _then(_self.copyWith(
-workRegions: null == workRegions ? _self.workRegions : workRegions // ignore: cast_nullable_to_non_nullable
+careerFilters: null == careerFilters ? _self.careerFilters : careerFilters // ignore: cast_nullable_to_non_nullable
+as Set<JobCareerFilter>,workRegions: null == workRegions ? _self.workRegions : workRegions // ignore: cast_nullable_to_non_nullable
 as Set<WorkRegion>,employmentTypes: null == employmentTypes ? _self.employmentTypes : employmentTypes // ignore: cast_nullable_to_non_nullable
-as Set<JobEmploymentType>,
+as Set<JobEmploymentType>,showClosed: null == showClosed ? _self.showClosed : showClosed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -154,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Set<WorkRegion> workRegions,  Set<JobEmploymentType> employmentTypes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Set<JobCareerFilter> careerFilters,  Set<WorkRegion> workRegions,  Set<JobEmploymentType> employmentTypes,  bool showClosed)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JobFilter() when $default != null:
-return $default(_that.workRegions,_that.employmentTypes);case _:
+return $default(_that.careerFilters,_that.workRegions,_that.employmentTypes,_that.showClosed);case _:
   return orElse();
 
 }
@@ -175,10 +177,10 @@ return $default(_that.workRegions,_that.employmentTypes);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Set<WorkRegion> workRegions,  Set<JobEmploymentType> employmentTypes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Set<JobCareerFilter> careerFilters,  Set<WorkRegion> workRegions,  Set<JobEmploymentType> employmentTypes,  bool showClosed)  $default,) {final _that = this;
 switch (_that) {
 case _JobFilter():
-return $default(_that.workRegions,_that.employmentTypes);case _:
+return $default(_that.careerFilters,_that.workRegions,_that.employmentTypes,_that.showClosed);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +197,10 @@ return $default(_that.workRegions,_that.employmentTypes);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Set<WorkRegion> workRegions,  Set<JobEmploymentType> employmentTypes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Set<JobCareerFilter> careerFilters,  Set<WorkRegion> workRegions,  Set<JobEmploymentType> employmentTypes,  bool showClosed)?  $default,) {final _that = this;
 switch (_that) {
 case _JobFilter() when $default != null:
-return $default(_that.workRegions,_that.employmentTypes);case _:
+return $default(_that.careerFilters,_that.workRegions,_that.employmentTypes,_that.showClosed);case _:
   return null;
 
 }
@@ -210,8 +212,15 @@ return $default(_that.workRegions,_that.employmentTypes);case _:
 @JsonSerializable()
 
 class _JobFilter implements JobFilter {
-  const _JobFilter({final  Set<WorkRegion> workRegions = const <WorkRegion>{}, final  Set<JobEmploymentType> employmentTypes = const <JobEmploymentType>{}}): _workRegions = workRegions,_employmentTypes = employmentTypes;
+  const _JobFilter({final  Set<JobCareerFilter> careerFilters = const <JobCareerFilter>{}, final  Set<WorkRegion> workRegions = const <WorkRegion>{}, final  Set<JobEmploymentType> employmentTypes = const <JobEmploymentType>{}, this.showClosed = true}): _careerFilters = careerFilters,_workRegions = workRegions,_employmentTypes = employmentTypes;
   factory _JobFilter.fromJson(Map<String, dynamic> json) => _$JobFilterFromJson(json);
+
+ final  Set<JobCareerFilter> _careerFilters;
+@override@JsonKey() Set<JobCareerFilter> get careerFilters {
+  if (_careerFilters is EqualUnmodifiableSetView) return _careerFilters;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_careerFilters);
+}
 
  final  Set<WorkRegion> _workRegions;
 @override@JsonKey() Set<WorkRegion> get workRegions {
@@ -227,6 +236,7 @@ class _JobFilter implements JobFilter {
   return EqualUnmodifiableSetView(_employmentTypes);
 }
 
+@override@JsonKey() final  bool showClosed;
 
 /// Create a copy of JobFilter
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobFilter&&const DeepCollectionEquality().equals(other._workRegions, _workRegions)&&const DeepCollectionEquality().equals(other._employmentTypes, _employmentTypes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobFilter&&const DeepCollectionEquality().equals(other._careerFilters, _careerFilters)&&const DeepCollectionEquality().equals(other._workRegions, _workRegions)&&const DeepCollectionEquality().equals(other._employmentTypes, _employmentTypes)&&(identical(other.showClosed, showClosed) || other.showClosed == showClosed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_workRegions),const DeepCollectionEquality().hash(_employmentTypes));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_careerFilters),const DeepCollectionEquality().hash(_workRegions),const DeepCollectionEquality().hash(_employmentTypes),showClosed);
 
 @override
 String toString() {
-  return 'JobFilter(workRegions: $workRegions, employmentTypes: $employmentTypes)';
+  return 'JobFilter(careerFilters: $careerFilters, workRegions: $workRegions, employmentTypes: $employmentTypes, showClosed: $showClosed)';
 }
 
 
@@ -261,7 +271,7 @@ abstract mixin class _$JobFilterCopyWith<$Res> implements $JobFilterCopyWith<$Re
   factory _$JobFilterCopyWith(_JobFilter value, $Res Function(_JobFilter) _then) = __$JobFilterCopyWithImpl;
 @override @useResult
 $Res call({
- Set<WorkRegion> workRegions, Set<JobEmploymentType> employmentTypes
+ Set<JobCareerFilter> careerFilters, Set<WorkRegion> workRegions, Set<JobEmploymentType> employmentTypes, bool showClosed
 });
 
 
@@ -278,11 +288,13 @@ class __$JobFilterCopyWithImpl<$Res>
 
 /// Create a copy of JobFilter
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? workRegions = null,Object? employmentTypes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? careerFilters = null,Object? workRegions = null,Object? employmentTypes = null,Object? showClosed = null,}) {
   return _then(_JobFilter(
-workRegions: null == workRegions ? _self._workRegions : workRegions // ignore: cast_nullable_to_non_nullable
+careerFilters: null == careerFilters ? _self._careerFilters : careerFilters // ignore: cast_nullable_to_non_nullable
+as Set<JobCareerFilter>,workRegions: null == workRegions ? _self._workRegions : workRegions // ignore: cast_nullable_to_non_nullable
 as Set<WorkRegion>,employmentTypes: null == employmentTypes ? _self._employmentTypes : employmentTypes // ignore: cast_nullable_to_non_nullable
-as Set<JobEmploymentType>,
+as Set<JobEmploymentType>,showClosed: null == showClosed ? _self.showClosed : showClosed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

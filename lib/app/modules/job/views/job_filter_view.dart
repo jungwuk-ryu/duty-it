@@ -1,6 +1,8 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/job/controllers/job_filter_view_controller.dart';
 import 'package:duty_it/app/modules/job/widgets/filter/job_filter_app_bar.dart';
+import 'package:duty_it/app/modules/job/widgets/filter/job_filter_career_section.dart';
+import 'package:duty_it/app/modules/job/widgets/filter/job_filter_closed_section.dart';
 import 'package:duty_it/app/modules/job/widgets/filter/job_filter_employment_section.dart';
 import 'package:duty_it/app/modules/job/widgets/filter/job_filter_region_section.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
@@ -30,9 +32,13 @@ class JobFilterView extends GetView<JobFilterViewController> {
                 child: ListView(
                   children: const [
                     SizedBox(height: 24),
+                    JobFilterCareerSection(),
+                    SizedBox(height: 24),
                     JobFilterEmploymentSection(),
                     SizedBox(height: 24),
                     JobFilterRegionSection(),
+                    SizedBox(height: 24),
+                    JobFilterClosedSection(),
                   ],
                 ),
               ),

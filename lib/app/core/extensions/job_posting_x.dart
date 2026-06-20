@@ -3,6 +3,38 @@ import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:flutter/material.dart';
 
 extension JobPostingX on JobPosting {
+  bool get isClosed {
+    if (!isActive) return true;
+
+    final receiptCloseDate = _receiptCloseDateText;
+    if (receiptCloseDate != null) {
+      if (_isOngoingText(receiptCloseDate) || _isOnHireText(receiptCloseDate)) {
+        return false;
+      }
+
+      final targetDate = _parseReceiptCloseDate(receiptCloseDate);
+      if (targetDate == null) return false;
+
+      final today = DateUtils.dateOnly(DateTime.now());
+      final target = DateUtils.dateOnly(targetDate);
+      return target.isBefore(today);
+    }
+
+    switch (closeType) {
+      case JobCloseType.onHire:
+      case JobCloseType.ongoing:
+        return false;
+      case JobCloseType.fixed:
+      case JobCloseType.unknown:
+        final targetDate = expiresAt;
+        if (targetDate == null) return false;
+
+        final today = DateUtils.dateOnly(DateTime.now());
+        final target = DateUtils.dateOnly(targetDate);
+        return target.isBefore(today);
+    }
+  }
+
   String get locationText {
     final rawLocation = _cleanInline(location);
     if (rawLocation != null) return rawLocation;

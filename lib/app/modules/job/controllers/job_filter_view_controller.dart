@@ -18,15 +18,43 @@ class JobFilterViewController extends GetxController {
     _filterRx.value = service.filter;
   }
 
+  List<JobCareerFilter> get careerFilters => JobCareerFilter.values;
+
   List<JobEmploymentType> get employmentTypes =>
-      JobEmploymentType.values
-          .where((element) => element != JobEmploymentType.unknown)
-          .toList();
+      supportedJobFilterEmploymentTypes;
 
-  List<WorkRegion> get workRegions =>
-      WorkRegion.values.where((element) => element != WorkRegion.unknown).toList();
+  List<WorkRegion> get workRegions => supportedJobFilterWorkRegions;
 
-  bool isEmploymentTypeSelected(JobEmploymentType type) {
+  bool get showClosed => filter.showClosed;
+  set showClosed(bool value) => _filterRx(filter.copyWith(showClosed: value));
+
+  bool isCareerFilterSelected(JobCareerFilter? careerFilter) {
+    if (careerFilter == null) {
+      return filter.careerFilters.isEmpty;
+    }
+    return filter.careerFilters.contains(careerFilter);
+  }
+
+  void clearSelectedCareerFilters() {
+    _filterRx(filter.copyWith(careerFilters: <JobCareerFilter>{}));
+  }
+
+  void toggleCareerFilterSelection(JobCareerFilter careerFilter) {
+    final values = Set<JobCareerFilter>.from(filter.careerFilters);
+
+    _filterRx(
+      filter.copyWith(
+        careerFilters: values.contains(careerFilter)
+            ? (values..remove(careerFilter))
+            : (values..add(careerFilter)),
+      ),
+    );
+  }
+
+  bool isEmploymentTypeSelected(JobEmploymentType? type) {
+    if (type == null) {
+      return filter.employmentTypes.isEmpty;
+    }
     return filter.employmentTypes.contains(type);
   }
 
@@ -34,14 +62,10 @@ class JobFilterViewController extends GetxController {
     _filterRx(filter.copyWith(employmentTypes: <JobEmploymentType>{}));
   }
 
-  void toggleEmploymentTypeSelection(JobEmploymentType type) {
-    final values = Set<JobEmploymentType>.from(filter.employmentTypes);
-
+  void selectEmploymentType(JobEmploymentType? type) {
     _filterRx(
       filter.copyWith(
-        employmentTypes: values.contains(type)
-            ? (values..remove(type))
-            : (values..add(type)),
+        employmentTypes: type == null ? <JobEmploymentType>{} : {type},
       ),
     );
   }
@@ -72,8 +96,14 @@ class JobFilterViewController extends GetxController {
       return '전체';
     }
 
-    final selected =
-        workRegions.where(filter.workRegions.contains).map((e) => e.displayName).toList();
+    final selected = workRegions
+        .where(filter.workRegions.contains)
+        .map((e) => e.displayName)
+        .toList();
+    if (selected.isEmpty) {
+      return '전체';
+    }
+
     if (selected.length == 1) {
       return selected.first;
     }

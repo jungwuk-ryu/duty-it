@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/job_sorting_type.dart';
+import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:duty_it/app/core/models/job_postings_response.dart';
@@ -12,6 +13,7 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
+import 'package:duty_it/app/services/job_filter/models/job_filter.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +27,7 @@ enum JobTab { job, bookmark }
 
 class JobViewController extends GetxController {
   static const double _pullToRefreshTriggerFraction = 0.25;
+  static const int _localFilterLookaheadLimit = 3;
 
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
@@ -271,39 +274,59 @@ class JobViewController extends GetxController {
 
     try {
       final apiClient = Get.find<ApiClient>();
-      final reqResult = await apiClient.getJobPostings(
-        bookmarked: selectedTab == JobTab.bookmark,
-        cursor: pageKey,
-        size: size,
-        field: sortingType.field,
-        searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
-        workRegions: filter.workRegions.toList(),
-        employmentTypes: filter.employmentTypes.toList(),
-      );
+      var requestCursor = pageKey;
+      var nextCursor = pageKey;
+      var hasNext = false;
+      final jobs = <JobPosting>[];
+      final requiresLocalFiltering = _requiresLocalFiltering(filter);
+      var fetchedPageCount = 0;
 
-      if (reqResult is RequestSuccess<JobPostingsResponse>) {
+      do {
+        final reqResult = await apiClient.getJobPostings(
+          bookmarked: selectedTab == JobTab.bookmark,
+          cursor: requestCursor,
+          size: size,
+          field: sortingType.field,
+          searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
+          workRegions: filter.workRegions.toList(),
+          employmentTypes: filter.employmentTypes.toList(),
+        );
+
+        if (reqResult is! RequestSuccess<JobPostingsResponse>) {
+          throw _JobPostingRequestFailure(reqResult as RequestFail);
+        }
+
         final response = reqResult.data;
         final pageInfo = response.pageInfo;
-        final jobs = response.jobs;
+        jobs.addAll(
+          response.jobs.where((job) => _matchesLocalFilter(job, filter)),
+        );
+        nextCursor = pageInfo.nextCursor;
+        hasNext = pageInfo.hasNext;
+        requestCursor = nextCursor;
+        fetchedPageCount += 1;
+      } while (jobs.isEmpty &&
+          hasNext &&
+          requiresLocalFiltering &&
+          fetchedPageCount < _localFilterLookaheadLimit);
 
+      if (!hasError) {
         pagingState = pagingState.copyWith(
-          keys: [...currentKeys, pageInfo.nextCursor],
+          keys: [...currentKeys, nextCursor],
           pages: [
             ...currentPages,
             List<Rx<JobPosting>>.generate(jobs.length, (i) => Rx(jobs[i])),
           ],
-          hasNextPage: pageInfo.hasNext,
+          hasNextPage: hasNext,
         );
-      } else {
-        hasError = true;
-        if (kDebugMode) {
-          AppUtils.showSnackBar(
-            '채용 목록을 불러오지 못했습니다: ${(reqResult as RequestFail).serverFail?.message ?? ''}',
-          );
-        }
       }
     } catch (e, s) {
       hasError = true;
+      if (kDebugMode && e is _JobPostingRequestFailure) {
+        AppUtils.showSnackBar(
+          '채용 목록을 불러오지 못했습니다: ${e.fail.serverFail?.message ?? ''}',
+        );
+      }
       if (kDebugMode) {
         print(e.toString() + s.toString());
       }
@@ -385,4 +408,61 @@ class JobViewController extends GetxController {
   void openJobFilterPage() {
     Get.toNamed(Routes.JOB_FILTER);
   }
+
+  bool _requiresLocalFiltering(JobFilter filter) {
+    return filter.careerFilters.isNotEmpty || !filter.showClosed;
+  }
+
+  bool _matchesLocalFilter(JobPosting job, JobFilter filter) {
+    if (!filter.showClosed && _isClosedJob(job)) return false;
+    if (filter.careerFilters.isEmpty) return true;
+
+    return filter.careerFilters.any((careerFilter) {
+      return _matchesCareerFilter(job.careerDescription, careerFilter);
+    });
+  }
+
+  bool _isClosedJob(JobPosting job) {
+    return job.isClosed;
+  }
+
+  bool _matchesCareerFilter(String careerDescription, JobCareerFilter filter) {
+    final text = careerDescription.replaceAll(' ', '');
+    if (text.isEmpty) return false;
+
+    switch (filter) {
+      case JobCareerFilter.entry:
+        return text.contains('신입');
+      case JobCareerFilter.noPreference:
+        return text.contains('무관') || text.contains('관계없음');
+      case JobCareerFilter.oneToThree:
+        return _matchesCareerYears(text, 1, 3);
+      case JobCareerFilter.threeToFive:
+        return _matchesCareerYears(text, 3, 5);
+      case JobCareerFilter.fiveToTen:
+        return _matchesCareerYears(text, 5, 10);
+      case JobCareerFilter.tenPlus:
+        return _extractCareerYears(text).any((year) => year >= 10);
+    }
+  }
+
+  bool _matchesCareerYears(String text, int minYear, int maxExclusiveYear) {
+    return _extractCareerYears(
+      text,
+    ).any((year) => year >= minYear && year < maxExclusiveYear);
+  }
+
+  List<int> _extractCareerYears(String text) {
+    final matches = RegExp(r'(\d+)\s*년').allMatches(text);
+    return matches
+        .map((match) => int.tryParse(match.group(1) ?? ''))
+        .whereType<int>()
+        .toList();
+  }
+}
+
+class _JobPostingRequestFailure implements Exception {
+  final RequestFail fail;
+
+  const _JobPostingRequestFailure(this.fail);
 }
