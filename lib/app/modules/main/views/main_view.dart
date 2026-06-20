@@ -37,6 +37,7 @@ class MainView extends GetView<MainViewController> {
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
           elevation: 50,
+          type: BottomNavigationBarType.fixed,
           currentIndex: controller.pageIndex.value,
           onTap: controller.changeTab,
           selectedFontSize: 10,
