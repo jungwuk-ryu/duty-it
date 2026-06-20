@@ -26,7 +26,7 @@ class JobDetailInfoRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 92,
+            width: 118,
             child: Text(
               row.label,
               style: const TextStyle(

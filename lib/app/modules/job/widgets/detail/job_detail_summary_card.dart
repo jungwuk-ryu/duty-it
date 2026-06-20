@@ -1,6 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
+import 'package:duty_it/app/modules/job/widgets/detail/job_detail_chip_wrap.dart';
 import 'package:flutter/material.dart';
 
 class JobDetailSummaryCard extends StatelessWidget {
@@ -23,11 +24,17 @@ class JobDetailSummaryCard extends StatelessWidget {
         _SummaryRow('고용형태', job.employmentTypeText!),
     ];
 
-    final sections = <_SummarySection>[
-      _SummarySection(title: '지원자격', rows: qualificationRows),
-      _SummarySection(title: '근무조건', rows: workConditionRows),
-      _SummarySection(title: '고용형태', rows: employmentRows),
-    ].where((section) => section.rows.isNotEmpty).toList();
+    final sections =
+        <_SummarySection>[
+              _SummarySection(title: '지원자격', rows: qualificationRows),
+              _SummarySection(title: '근무조건', rows: workConditionRows),
+              _SummarySection(title: '고용형태', rows: employmentRows),
+              _SummarySection(title: '복리후생', chips: job.welfareTags),
+            ]
+            .where(
+              (section) => section.rows.isNotEmpty || section.chips.isNotEmpty,
+            )
+            .toList();
 
     return Container(
       width: double.infinity,
@@ -56,8 +63,13 @@ class JobDetailSummaryCard extends StatelessWidget {
 class _SummarySection {
   final String title;
   final List<_SummaryRow> rows;
+  final List<String> chips;
 
-  const _SummarySection({required this.title, required this.rows});
+  const _SummarySection({
+    required this.title,
+    this.rows = const [],
+    this.chips = const [],
+  });
 }
 
 class _SummaryRow {
@@ -87,39 +99,45 @@ class _SummarySectionWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        ...section.rows.map(
-          (row) => Padding(
+        if (section.chips.isNotEmpty)
+          Padding(
             padding: const EdgeInsets.only(top: 2),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 56,
-                  child: Text(
-                    row.label,
-                    style: const TextStyle(
-                      color: AppColors.g05,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      height: 1.60,
+            child: JobDetailChipWrap(chips: section.chips),
+          )
+        else
+          ...section.rows.map(
+            (row) => Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 56,
+                    child: Text(
+                      row.label,
+                      style: const TextStyle(
+                        color: AppColors.g05,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        height: 1.60,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Text(
-                    row.value,
-                    style: const TextStyle(
-                      color: AppColors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w300,
-                      height: 1.60,
+                  Expanded(
+                    child: Text(
+                      row.value,
+                      style: const TextStyle(
+                        color: AppColors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w300,
+                        height: 1.60,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
       ],
     );
   }

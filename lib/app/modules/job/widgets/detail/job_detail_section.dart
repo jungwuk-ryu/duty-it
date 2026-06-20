@@ -5,12 +5,18 @@ import 'package:flutter/material.dart';
 class JobDetailSection extends StatelessWidget {
   final String title;
   final List<JobDetailInfoRowData> rows;
+  final List<Widget> children;
 
-  const JobDetailSection({super.key, required this.title, required this.rows});
+  const JobDetailSection({
+    super.key,
+    required this.title,
+    required this.rows,
+    this.children = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (rows.isEmpty) {
+    if (rows.isEmpty && children.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -30,6 +36,7 @@ class JobDetailSection extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ...rows.map((row) => JobDetailInfoRow(row: row)),
+          ...children,
         ],
       ),
     );
