@@ -3,6 +3,7 @@ import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/enums/sort_direction.dart';
 import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/modules/settings/models/notification_subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +32,6 @@ class NotificationFilterController extends GetxController {
   final RxBool isSaving = false.obs;
   final RxMap<String, NotificationSubscriptionDraft> drafts =
       <String, NotificationSubscriptionDraft>{}.obs;
-  final RxList<Host> hosts = <Host>[].obs;
   final RxList<NotificationCompany> companies = <NotificationCompany>[].obs;
   final RxString targetQuery = ''.obs;
 
@@ -45,15 +45,6 @@ class NotificationFilterController extends GetxController {
   bool get isEventMode => mode == NotificationFilterMode.event;
 
   List<EventType> get eventTypes => EventType.values;
-
-  List<Host> get filteredHosts {
-    final query = targetQuery.value.trim().toLowerCase();
-    if (query.isEmpty) return hosts;
-
-    return hosts
-        .where((host) => host.name.toLowerCase().contains(query))
-        .toList();
-  }
 
   List<NotificationCompany> get filteredCompanies {
     final query = targetQuery.value.trim().toLowerCase();
@@ -94,9 +85,7 @@ class NotificationFilterController extends GetxController {
     isLoading.value = true;
     try {
       await _fetchSubscriptions();
-      if (isEventMode) {
-        await _fetchHosts();
-      } else {
+      if (!isEventMode) {
         await _fetchCompanies();
       }
     } finally {
@@ -161,6 +150,22 @@ class NotificationFilterController extends GetxController {
       host: host,
     );
     _toggleDraft(draft);
+  }
+
+  void showHostSelectionBottomModal() {
+    showModalBottomSheet(
+      context: Get.context!,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => HostSelectionBottomModal(
+        onHostSelected: toggleHost,
+        isSelected: isHostSelected,
+        sortDirection: SortDirection.ASC,
+        field: 'NAME',
+      ),
+    );
   }
 
   bool isCompanySelected(NotificationCompany company) {
@@ -258,21 +263,6 @@ class NotificationFilterController extends GetxController {
         }),
       ),
     );
-  }
-
-  Future<void> _fetchHosts() async {
-    final result = await api.getHosts(
-      size: 500,
-      sortDirection: SortDirection.ASC,
-      field: 'NAME',
-    );
-
-    if (result is RequestFail) {
-      AppUtils.showSnackBar(result.serverFail?.message ?? '주최 목록을 불러오지 못했어요.');
-      return;
-    }
-
-    hosts.assignAll((result as RequestSuccess<List<Host>>).data);
   }
 
   Future<void> _fetchCompanies() async {

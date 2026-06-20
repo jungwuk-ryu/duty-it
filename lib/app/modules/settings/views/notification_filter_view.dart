@@ -1,5 +1,4 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/settings/controllers/notification_filter_controller.dart';
 import 'package:duty_it/app/modules/settings/models/notification_subscription.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
@@ -77,12 +76,19 @@ class NotificationFilterView extends GetView<NotificationFilterController> {
                       const SizedBox(height: 28),
                       const _SectionHeader(title: '주최'),
                       const SizedBox(height: 10),
-                      _TargetSearchField(
-                        controller: controller.targetSearchController,
-                        hintText: '찾으시는 주최기관을 검색해 보세요.',
+                      _HostSelectionField(controller: controller),
+                      const SizedBox(height: 12),
+                      _SelectedDraftsWrap(
+                        drafts: controller.drafts.values
+                            .where(
+                              (draft) =>
+                                  draft.type ==
+                                  NotificationSubscriptionType.eventHost,
+                            )
+                            .toList(),
+                        emptyText: '선택한 주최가 없어요.',
+                        onRemove: controller.removeDraft,
                       ),
-                      const SizedBox(height: 14),
-                      _HostList(controller: controller),
                     ] else ...[
                       const SizedBox(height: 28),
                       const _SectionHeader(title: '회사'),
@@ -219,18 +225,62 @@ class _TargetSearchField extends StatelessWidget {
   }
 }
 
+class _HostSelectionField extends StatelessWidget {
+  final NotificationFilterController controller;
+
+  const _HostSelectionField({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: controller.showHostSelectionBottomModal,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        decoration: BoxDecoration(
+          color: AppColors.g02,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Row(
+          children: [
+            Expanded(
+              child: Text(
+                '찾으시는 주최기관을 검색해 보세요.',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColors.g05,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  height: 1.20,
+                ),
+              ),
+            ),
+            Icon(Icons.chevron_right, color: AppColors.g05, size: 24),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _SelectedDraftsWrap extends StatelessWidget {
   final List<NotificationSubscriptionDraft> drafts;
+  final String emptyText;
   final void Function(String key) onRemove;
 
-  const _SelectedDraftsWrap({required this.drafts, required this.onRemove});
+  const _SelectedDraftsWrap({
+    required this.drafts,
+    this.emptyText = '추가된 키워드가 없어요.',
+    required this.onRemove,
+  });
 
   @override
   Widget build(BuildContext context) {
     if (drafts.isEmpty) {
-      return const Text(
-        '추가된 키워드가 없어요.',
-        style: TextStyle(
+      return Text(
+        emptyText,
+        style: const TextStyle(
           color: AppColors.g05,
           fontSize: 12,
           fontWeight: FontWeight.w500,
@@ -275,47 +325,6 @@ class _EventTypeChips extends StatelessWidget {
               ),
             )
             .toList(),
-      ),
-    );
-  }
-}
-
-class _HostList extends StatelessWidget {
-  final NotificationFilterController controller;
-
-  const _HostList({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      final hosts = controller.filteredHosts;
-      if (hosts.isEmpty) {
-        return const _EmptyText('선택할 주최가 없어요.');
-      }
-
-      return Column(
-        children: hosts
-            .take(80)
-            .map((host) => _HostOption(controller: controller, host: host))
-            .toList(),
-      );
-    });
-  }
-}
-
-class _HostOption extends StatelessWidget {
-  final NotificationFilterController controller;
-  final Host host;
-
-  const _HostOption({required this.controller, required this.host});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(
-      () => _CheckRow(
-        title: host.name,
-        selected: controller.isHostSelected(host),
-        onTap: () => controller.toggleHost(host),
       ),
     );
   }
