@@ -39,10 +39,6 @@ class NotificationFilterView extends GetView<NotificationFilterController> {
                 ),
               ],
             ),
-            const ColoredBox(
-              color: AppColors.g01,
-              child: SizedBox(width: double.infinity, height: 8),
-            ),
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {

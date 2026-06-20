@@ -6,6 +6,7 @@ import 'package:duty_it/app/modules/job/widgets/filter/job_filter_closed_section
 import 'package:duty_it/app/modules/job/widgets/filter/job_filter_employment_section.dart';
 import 'package:duty_it/app/modules/job/widgets/filter/job_filter_region_section.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/section_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,10 +23,7 @@ class JobFilterView extends GetView<JobFilterViewController> {
           children: [
             const JobFilterAppBar(),
             const SizedBox(height: 8),
-            const ColoredBox(
-              color: AppColors.g01,
-              child: SizedBox(width: double.infinity, height: 8),
-            ),
+            const SectionDivider(),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
