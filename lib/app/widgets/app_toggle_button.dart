@@ -25,6 +25,7 @@ class _AppToggleButtonState extends State<AppToggleButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        if (!widget.enabled) return;
         if (loading) return;
         setState(() {
           loading = true;

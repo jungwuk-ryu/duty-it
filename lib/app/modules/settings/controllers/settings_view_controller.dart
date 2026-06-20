@@ -1,6 +1,7 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/modules/settings/models/alarm_settings.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
@@ -97,7 +98,8 @@ class SettingsViewController extends GetxController {
 
   Future<void> openNotificationSettings() async {
     HapticFeedback.mediumImpact();
-    await openAppSettings();
+    await Get.toNamed(Routes.NOTIFICATION_SETTINGS);
+    await _initialize();
   }
 
   Future toggleIncludeDeviceEvents() async {
