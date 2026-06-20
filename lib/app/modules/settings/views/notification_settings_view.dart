@@ -47,8 +47,8 @@ class NotificationSettingsView extends GetView<NotificationSettingsController> {
                         onToggleTap: controller.toggleMarketingNoti,
                       ),
                       const SizedBox(height: 22),
-                      const _SectionTitle('행사'),
-                      const SizedBox(height: 8),
+                      const _SectionHeader('행사'),
+                      const SizedBox(height: 12),
                       _SettingsToggleRow(
                         title: '북마크한 행사공고 알림',
                         subtitle: '북마크한 공고의 주요 일정과 모집 마감을 안내드려요',
@@ -72,8 +72,8 @@ class NotificationSettingsView extends GetView<NotificationSettingsController> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const _SectionTitle('채용'),
-                      const SizedBox(height: 8),
+                      const _SectionHeader('채용'),
+                      const SizedBox(height: 12),
                       if (_showJobBookmarkAlertSetting) ...[
                         const _UnsupportedToggleRow(
                           title: '북마크한 채용공고 알림',
@@ -108,21 +108,28 @@ class NotificationSettingsView extends GetView<NotificationSettingsController> {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
+class _SectionHeader extends StatelessWidget {
   final String title;
 
-  const _SectionTitle(this.title);
+  const _SectionHeader(this.title);
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        color: AppColors.black,
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        height: 1.60,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: AppColors.black,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            height: 1.60,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Divider(height: 1, thickness: 1, color: AppColors.g02),
+      ],
     );
   }
 }
