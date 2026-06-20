@@ -1,4 +1,5 @@
 import 'package:duty_it/app/modules/calendar/controllers/calendar_view_controller.dart';
+import 'package:duty_it/app/modules/bookmark/controllers/bookmark_view_controller.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
@@ -22,6 +23,7 @@ class MainBinding extends Bindings {
     Get.put<MainViewController>(MainViewController());
     Get.put<HomeViewController>(HomeViewController());
     Get.put<JobViewController>(JobViewController());
+    Get.put<BookmarkViewController>(BookmarkViewController());
     Get.put<CalendarViewController>(CalendarViewController());
     Get.lazyPut(() => CalendarService());
   }

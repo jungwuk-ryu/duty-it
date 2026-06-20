@@ -1,6 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
-import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
@@ -27,28 +26,6 @@ class JobHeader extends StatelessWidget {
             hintText: '원하는 채용공고를 찾아보세요!',
           ),
           const SizedBox(height: 18),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Obx(() {
-                const tab = JobTab.job;
-                return HomeTabButton(
-                  isSelected: controller.selectedTab == tab,
-                  onTap: () => controller.selectedTab = tab,
-                  title: '채용공고',
-                );
-              }),
-              Obx(() {
-                const tab = JobTab.bookmark;
-                return HomeTabButton(
-                  isSelected: controller.selectedTab == tab,
-                  onTap: () => controller.selectedTab = tab,
-                  title: '북마크',
-                );
-              }),
-            ],
-          ),
-          const SizedBox(height: 16),
           Obx(() {
             final filterService = Get.find<JobFilterService>();
             final filterApplied = filterService.hasFilterChanges();

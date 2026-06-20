@@ -1,6 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
-import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
@@ -25,30 +24,6 @@ class HomeHeader extends StatelessWidget {
           SizedBox(height: 20),
           HomeSearchBar(controller: controller.searchTextEditingController),
           SizedBox(height: 18),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Obx(() {
-                const HomeTab tab = HomeTab.event;
-                return HomeTabButton(
-                  isSelected: controller.selectedTab == tab,
-                  onTap: () => controller.selectedTab = tab,
-                  title: '행사',
-                );
-              }),
-              Obx(() {
-                const HomeTab tab = HomeTab.bookmark;
-                return HomeTabButton(
-                  isSelected: controller.selectedTab == tab,
-                  onTap: () => controller.selectedTab = tab,
-                  title: '북마크',
-                );
-              }),
-            ],
-          ),
-
-          SizedBox(height: 16),
 
           Obx(() {
             var service = Get.find<SearchFilterService>();
