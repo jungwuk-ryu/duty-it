@@ -95,6 +95,11 @@ class SettingsViewController extends GetxController {
     });
   }
 
+  Future<void> openNotificationSettings() async {
+    HapticFeedback.mediumImpact();
+    await openAppSettings();
+  }
+
   Future toggleIncludeDeviceEvents() async {
     HapticFeedback.mediumImpact();
     if (!includeDeviceEvents) {
