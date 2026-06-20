@@ -9,6 +9,8 @@ import 'package:get/get.dart';
 class NotificationSettingsView extends GetView<NotificationSettingsController> {
   const NotificationSettingsView({super.key});
 
+  static bool get _showJobBookmarkAlertSetting => false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,11 +74,13 @@ class NotificationSettingsView extends GetView<NotificationSettingsController> {
                       const SizedBox(height: 24),
                       const _SectionTitle('채용'),
                       const SizedBox(height: 8),
-                      const _UnsupportedToggleRow(
-                        title: '북마크한 채용공고 알림',
-                        subtitle: '서버 지원 전까지 맞춤 알림으로 받아볼 수 있어요',
-                      ),
-                      const SizedBox(height: 14),
+                      if (_showJobBookmarkAlertSetting) ...[
+                        const _UnsupportedToggleRow(
+                          title: '북마크한 채용공고 알림',
+                          subtitle: '서버 지원 전까지 맞춤 알림으로 받아볼 수 있어요',
+                        ),
+                        const SizedBox(height: 14),
+                      ],
                       _SettingsToggleRow(
                         title: '채용공고 맞춤 알림',
                         subtitle: '설정한 조건에 맞는 새 채용공고를 안내드려요',
