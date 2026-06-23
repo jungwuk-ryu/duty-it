@@ -44,6 +44,8 @@ class HomeHeader extends StatelessWidget {
                   isSelected: filterApplied,
                   imageAsset: Assets.icons.filter.path,
                   imageColor: filterApplied ? AppColors.white : null,
+                  backgroundColor: filterApplied ? AppColors.main : null,
+                  textColor: filterApplied ? AppColors.white : null,
                   onTap: () {
                     Get.toNamed(Routes.SEARCH_FILTER);
                   },

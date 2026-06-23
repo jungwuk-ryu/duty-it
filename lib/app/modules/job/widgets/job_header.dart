@@ -43,6 +43,8 @@ class JobHeader extends StatelessWidget {
                   isSelected: filterApplied,
                   imageAsset: Assets.icons.filter.path,
                   imageColor: filterApplied ? AppColors.white : null,
+                  backgroundColor: filterApplied ? AppColors.main : null,
+                  textColor: filterApplied ? AppColors.white : null,
                   onTap: () {
                     Get.toNamed(Routes.JOB_FILTER);
                   },

@@ -1,6 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/job/controllers/job_filter_view_controller.dart';
-import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,31 +15,45 @@ class JobRegionSelectionBottomModal extends GetView<JobFilterViewController> {
           const SizedBox(height: 24),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                const Spacer(),
-                const Text(
-                  '지역',
-                  style: TextStyle(
-                    color: AppColors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    height: 1.60,
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 84),
+                    child: Text(
+                      '지역',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        height: 1.60,
+                      ),
+                    ),
                   ),
                 ),
-                const Spacer(),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: controller.selectAllRegions,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      '지역 초기화',
-                      style: TextStyle(
-                        color: AppColors.g04,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        height: 1.60,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: controller.selectAllRegions,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 76),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        child: Text(
+                          '지역 초기화',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColors.g04,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            height: 1.60,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -116,12 +129,7 @@ class _JobRegionItem extends StatelessWidget {
               ),
               const Spacer(),
               if (isSelected)
-                Image.asset(
-                  Assets.icons.check.path,
-                  width: 24,
-                  height: 24,
-                  color: AppColors.main,
-                ),
+                const Icon(Icons.check, color: AppColors.main, size: 24),
             ],
           ),
         ),
