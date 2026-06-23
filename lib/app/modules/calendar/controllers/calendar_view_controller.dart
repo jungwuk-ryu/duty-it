@@ -37,39 +37,59 @@ class CalendarViewController extends GetxController {
   List<CalendarEvent> deviceCalEvents2CalendarEvents(
     List<dcp.Event> deviceCalEvents,
   ) {
-        return deviceCalEvents
-        .map((event) {
-          final end = event.endDate;
-          var correctedEnd = end;
-          if (event.isAllDay && end.hour == 0 && end.minute == 0 && !AppUtils.isSameDay(event.startDate, end)) {
-            correctedEnd = end.subtract(Duration(minutes: 1));
-          }
-            return CalendarEvent(
-              title: event.title,
-              startDate: event.startDate,
-              endDate: correctedEnd,
-              color: AppColors.cal1,
-              url: "$deviceEventScheme${event.eventId}",);
-  })
-        .toList();
+    return deviceCalEvents.map((event) {
+      final end = event.endDate;
+      var correctedEnd = end;
+      if (event.isAllDay &&
+          end.hour == 0 &&
+          end.minute == 0 &&
+          !AppUtils.isSameDay(event.startDate, end)) {
+        correctedEnd = end.subtract(Duration(minutes: 1));
+      }
+      return CalendarEvent(
+        title: event.title,
+        startDate: event.startDate,
+        endDate: correctedEnd,
+        color: AppColors.cal1,
+        url: "$deviceEventScheme${event.eventId}",
+      );
+    }).toList();
   }
 
   List<CalendarEvent> events2CalendarEvents(List<Event> events) {
-    List<Color> colors = [AppColors.cal3, AppColors.cal2, AppColors.cal1];  
-    final colorMap = {  
-      for (var i = 0; i < EventType.values.length; i++) EventType.values[i]: colors[i % colors.length],  
-    };  
+    List<Color> colors = [AppColors.cal3, AppColors.cal2, AppColors.cal1];
+    final colorMap = {
+      for (var i = 0; i < EventType.values.length; i++)
+        EventType.values[i]: colors[i % colors.length],
+    };
 
-    return events.map((event) {  
-      final color = colorMap[event.eventType] ?? colors[0];  
-      return CalendarEvent(  
-        title: event.title,  
-        startDate: event.startAt ?? DateTime.now(),  
-        endDate: event.endAt ?? DateTime.now(),  
-        color: color,  
-        url: event.uri,  
-      );  
-    }).toList();  
+    return events.map((event) {
+      final color = colorMap[event.eventType] ?? colors[0];
+      final fallbackDate = DateTime.now();
+      final startDate =
+          event.startAt ??
+          event.endAt ??
+          event.recruitmentStartAt ??
+          event.recruitmentEndAt ??
+          fallbackDate;
+      var endDate =
+          event.endAt ??
+          event.startAt ??
+          event.recruitmentEndAt ??
+          event.recruitmentStartAt ??
+          startDate;
+      if (endDate.isBefore(startDate)) {
+        endDate = startDate;
+      }
+
+      return CalendarEvent(
+        title: event.title,
+        startDate: startDate,
+        endDate: endDate,
+        color: color,
+        url: event.uri,
+      );
+    }).toList();
   }
 
   Stream<List<CalendarEvent>> getCalendarEvents(DateTime date) async* {
@@ -77,7 +97,8 @@ class CalendarViewController extends GetxController {
 
     final calService = Get.find<CalendarService>();
     final calPermission = await calService.checkPermission();
-    if (calPermission && Get.find<AppSettingsService>().includeDeviceEvents.value) {
+    if (calPermission &&
+        Get.find<AppSettingsService>().includeDeviceEvents.value) {
       deviceEvents = await calService.retrieveEvents(
         AppUtils.startOfMonth(date),
         AppUtils.endOfMonth(date),

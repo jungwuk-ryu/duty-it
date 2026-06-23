@@ -341,8 +341,23 @@ class ApiClient extends GetConnect {
       return RequestFail(null);
     }
 
+    final encodedToken = Uri.encodeComponent(token);
     return _send(
-      () async => await patch('/v1/users/device/$token', {}),
+      () async => await patch('/v1/users/device/$encodedToken', {}),
+      map: (_) => true,
+    );
+  }
+
+  /// 알림 - 사용자 기기 삭제 (/users/device/{token}) - DELETE
+  Future<RequestResult<void>> unregisterDevice() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token == null) {
+      return RequestFail(null);
+    }
+
+    final encodedToken = Uri.encodeComponent(token);
+    return _send(
+      () async => await delete('/v1/users/device/$encodedToken'),
       map: (_) => true,
     );
   }
@@ -360,20 +375,18 @@ class ApiClient extends GetConnect {
     int? hostId,
     String? searchKeyword,
   }) async {
-    String query =
-        "bookmarked=$bookmarked&size=$size&field=$field&statusGroup=${finished ? 'FINISHED' : 'ACTIVE'}";
-    if (cursor != null) {
-      query += "&cursor=$cursor";
-    }
-    for (var type in types) {
-      query += "&types=${type.name}";
-    }
-    if (hostId != null) {
-      query += "&hostId=$hostId";
-    }
-    if (searchKeyword != null) {
-      query += "&searchKeyword=${Uri.encodeQueryComponent(searchKeyword)}";
-    }
+    final query = Uri(
+      queryParameters: {
+        'bookmarked': bookmarked.toString(),
+        'size': size.toString(),
+        'field': field,
+        'statusGroup': finished ? 'FINISHED' : 'ACTIVE',
+        if (cursor != null) 'cursor': cursor,
+        if (types.isNotEmpty) 'types': types.map((type) => type.name),
+        if (hostId != null) 'hostId': hostId.toString(),
+        if (searchKeyword != null) 'searchKeyword': searchKeyword,
+      },
+    ).query;
 
     return await getEventsByUrl('/v2/events?$query');
   }
@@ -424,19 +437,23 @@ class ApiClient extends GetConnect {
     required List<JobEmploymentType> employmentTypes,
     String? searchKeyword,
   }) async {
-    String query = 'bookmarked=$bookmarked&size=$size&field=$field';
-    if (cursor != null) {
-      query += '&cursor=$cursor';
-    }
-    for (final workRegion in workRegions) {
-      query += '&workRegions=${workRegion.name.toUpperCase()}';
-    }
-    for (final employmentType in employmentTypes) {
-      query += '&employmentTypes=${employmentType.apiValue}';
-    }
-    if (searchKeyword != null) {
-      query += '&searchKeyword=${Uri.encodeQueryComponent(searchKeyword)}';
-    }
+    final query = Uri(
+      queryParameters: {
+        'bookmarked': bookmarked.toString(),
+        'size': size.toString(),
+        'field': field,
+        if (cursor != null) 'cursor': cursor,
+        if (workRegions.isNotEmpty)
+          'workRegions': workRegions.map(
+            (workRegion) => workRegion.name.toUpperCase(),
+          ),
+        if (employmentTypes.isNotEmpty)
+          'employmentTypes': employmentTypes.map(
+            (employmentType) => employmentType.apiValue,
+          ),
+        if (searchKeyword != null) 'searchKeyword': searchKeyword,
+      },
+    ).query;
 
     return _send(
       () async => await get('/v1/job-postings?$query'),
