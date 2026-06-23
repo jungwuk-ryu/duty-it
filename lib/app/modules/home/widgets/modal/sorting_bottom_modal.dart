@@ -1,9 +1,6 @@
-import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
-import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
-import 'package:duty_it/app/widgets/app_radio_buttom.dart';
-import 'package:flutter/services.dart';
+import 'package:duty_it/app/widgets/app_sorting_bottom_modal_content.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
@@ -32,63 +29,11 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
 
   @override
   Widget build(BuildContext context) {
-    List<EventSortingType> types = EventSortingType.values;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const AppBottomSheetHandle(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "정렬",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.black,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          ...List<Widget>.generate(types.length, (i) {
-            EventSortingType type = types[i];
-
-            return Listener(
-              behavior: HitTestBehavior.translucent,
-              onPointerDown: (_) {
-                controller.selectTypeAndClose(type);
-                HapticFeedback.selectionClick();
-              },
-              child: Padding(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 20),
-                child: Row(
-                  children: [
-                    Text(
-                      type.displayName,
-                      style: TextStyle(
-                        color: AppColors.black,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        height: 1.20,
-                      ),
-                    ),
-                    Spacer(),
-                    AppRadioButtom(
-                      checked: controller.selectedType == type,
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
-          SizedBox(height: 80),
-        ],
-      ),
+    return AppSortingBottomModalContent<EventSortingType>(
+      selectedType: controller.selectedType,
+      types: EventSortingType.values,
+      displayNameOf: (type) => type.displayName,
+      onApply: controller.selectType,
     );
   }
 }
