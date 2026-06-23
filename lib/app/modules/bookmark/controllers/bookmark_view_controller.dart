@@ -4,7 +4,6 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/enums/job_sorting_type.dart';
-import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
@@ -18,6 +17,7 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
+import 'package:duty_it/app/services/job_filter/job_filter_matcher.dart';
 import 'package:duty_it/app/services/job_filter/models/job_filter.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -339,7 +339,7 @@ class BookmarkViewController extends GetxController {
           size: _jobPageSize,
           field: jobSortingType.field,
           searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
-          workRegions: filter.workRegions.toList(),
+          workRegions: const [],
           employmentTypes: filter.employmentTypes.toList(),
         );
 
@@ -350,7 +350,7 @@ class BookmarkViewController extends GetxController {
         final response = reqResult.data;
         final pageInfo = response.pageInfo;
         jobs.addAll(
-          response.jobs.where((job) => _matchesLocalFilter(job, filter)),
+          response.jobs.where((job) => JobFilterMatcher.matches(job, filter)),
         );
         nextCursor = pageInfo.nextCursor;
         hasNext = pageInfo.hasNext;
@@ -485,50 +485,7 @@ class BookmarkViewController extends GetxController {
   }
 
   bool _requiresLocalFiltering(JobFilter filter) {
-    return filter.careerFilters.isNotEmpty || !filter.showClosed;
-  }
-
-  bool _matchesLocalFilter(JobPosting job, JobFilter filter) {
-    if (!filter.showClosed && job.isClosed) return false;
-    if (filter.careerFilters.isEmpty) return true;
-
-    return filter.careerFilters.any((careerFilter) {
-      return _matchesCareerFilter(job.careerDescription, careerFilter);
-    });
-  }
-
-  bool _matchesCareerFilter(String careerDescription, JobCareerFilter filter) {
-    final text = careerDescription.replaceAll(' ', '');
-    if (text.isEmpty) return false;
-
-    switch (filter) {
-      case JobCareerFilter.entry:
-        return text.contains('신입');
-      case JobCareerFilter.noPreference:
-        return text.contains('무관') || text.contains('관계없음');
-      case JobCareerFilter.oneToThree:
-        return _matchesCareerYears(text, 1, 3);
-      case JobCareerFilter.threeToFive:
-        return _matchesCareerYears(text, 3, 5);
-      case JobCareerFilter.fiveToTen:
-        return _matchesCareerYears(text, 5, 10);
-      case JobCareerFilter.tenPlus:
-        return _extractCareerYears(text).any((year) => year >= 10);
-    }
-  }
-
-  bool _matchesCareerYears(String text, int minYear, int maxExclusiveYear) {
-    return _extractCareerYears(
-      text,
-    ).any((year) => year >= minYear && year < maxExclusiveYear);
-  }
-
-  List<int> _extractCareerYears(String text) {
-    final matches = RegExp(r'(\d+)\s*년').allMatches(text);
-    return matches
-        .map((match) => int.tryParse(match.group(1) ?? ''))
-        .whereType<int>()
-        .toList();
+    return JobFilterMatcher.requiresLocalFiltering(filter);
   }
 }
 
