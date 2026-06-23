@@ -69,9 +69,9 @@ class _JobDetailViewState extends State<JobDetailView> {
                                 JobDetailMedia(imageUrl: job.attachFileUrlText),
                                 Padding(
                                   padding: const EdgeInsets.fromLTRB(
+                                    16,
                                     24,
-                                    24,
-                                    24,
+                                    16,
                                     0,
                                   ),
                                   child: Column(
@@ -284,12 +284,12 @@ class _JobDetailViewState extends State<JobDetailView> {
 
   Widget _chipInfoRow(String label, List<String> chips) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 118,
+            width: 108,
             child: Text(
               label,
               style: const TextStyle(
@@ -314,15 +314,18 @@ class _HeaderContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final companyName = job.companyName.trim();
+    final title = job.title.trim();
+
     return Padding(
-      padding: const EdgeInsets.only(top: 24, bottom: 20),
+      padding: const EdgeInsets.only(top: 24, bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              job.companyName,
+              companyName.isEmpty ? '-' : companyName,
               style: const TextStyle(
                 color: AppColors.black,
                 fontSize: 14,
@@ -331,11 +334,11 @@ class _HeaderContent extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              job.title,
+              title.isEmpty ? '-' : title,
               style: const TextStyle(
                 color: AppColors.black,
                 fontSize: 18,
@@ -344,9 +347,9 @@ class _HeaderContent extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 4),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               job.closeLabel,
               style: const TextStyle(
@@ -357,7 +360,7 @@ class _HeaderContent extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: JobDetailSummaryCard(job: job),

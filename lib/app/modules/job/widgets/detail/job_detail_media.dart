@@ -7,6 +7,10 @@ class JobDetailMedia extends StatelessWidget {
 
   const JobDetailMedia({super.key, required this.imageUrl});
 
+  static const double _figmaWidth = 392;
+  static const double _figmaHeight = 483;
+  static const double _mediaAspectRatio = _figmaWidth / _figmaHeight;
+
   @override
   Widget build(BuildContext context) {
     final url = imageUrl;
@@ -14,13 +18,16 @@ class JobDetailMedia extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return CachedNetworkImage(
-      imageUrl: url,
-      width: double.infinity,
-      height: 300,
-      fit: BoxFit.cover,
-      placeholder: (_, _) => const _JobDetailMediaPlaceholder(),
-      errorWidget: (_, _, _) => const _JobDetailMediaPlaceholder(),
+    return AspectRatio(
+      aspectRatio: _mediaAspectRatio,
+      child: CachedNetworkImage(
+        imageUrl: url,
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (_, _) => const _JobDetailMediaPlaceholder(),
+        errorWidget: (_, _, _) => const _JobDetailMediaPlaceholder(),
+      ),
     );
   }
 
@@ -43,7 +50,6 @@ class _JobDetailMediaPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 300,
       color: AppColors.g03,
       alignment: Alignment.center,
       child: const Text(

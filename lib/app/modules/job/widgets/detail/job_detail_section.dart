@@ -21,7 +21,7 @@ class JobDetailSection extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 28),
+      padding: const EdgeInsets.only(bottom: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -34,7 +34,6 @@ class JobDetailSection extends StatelessWidget {
               height: 1.60,
             ),
           ),
-          const SizedBox(height: 12),
           ...rows.map((row) => JobDetailInfoRow(row: row)),
           ...children,
         ],

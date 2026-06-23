@@ -84,6 +84,18 @@ void main() {
       expect(job.locationText, '(12345) 서울특별시 강남구');
     });
 
+    test('trims company and posting names from responses', () {
+      final job = JobPosting.fromJson({
+        'id': 5,
+        'title': '  공고 이름  ',
+        'companyName': '  회사 이름  ',
+        'isBookmarked': false,
+      });
+
+      expect(job.companyName, '회사 이름');
+      expect(job.title, '공고 이름');
+    });
+
     test('distinguishes ongoing close text from on-hire close text', () {
       final ongoingJob = JobPosting.fromJson({
         'id': 3,
