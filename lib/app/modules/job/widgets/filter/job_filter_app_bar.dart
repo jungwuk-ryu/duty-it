@@ -15,13 +15,13 @@ class JobFilterAppBar extends GetView<JobFilterViewController> {
           behavior: HitTestBehavior.translucent,
           onTap: Get.back,
           child: SizedBox(
-            width: 40,
-            height: 40,
+            width: 48,
+            height: 48,
             child: Center(
               child: Image.asset(
                 Assets.icons.backLeft.path,
-                width: 8,
-                height: 14,
+                width: 40,
+                height: 40,
               ),
             ),
           ),

@@ -27,7 +27,8 @@ enum JobTab { job, bookmark }
 
 class JobViewController extends GetxController {
   static const double _pullToRefreshTriggerFraction = 0.25;
-  static const int _localFilterLookaheadLimit = 3;
+  static const int _pageSize = 10;
+  static const int _localFilterPageSize = 100;
 
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
@@ -258,7 +259,6 @@ class JobViewController extends GetxController {
       );
     }
 
-    const size = 10;
     final filter = _filterService.filter;
     final currentKeys = clearPage
         ? <String?>[]
@@ -279,17 +279,20 @@ class JobViewController extends GetxController {
       var hasNext = false;
       final jobs = <JobPosting>[];
       final requiresLocalFiltering = _requiresLocalFiltering(filter);
-      var fetchedPageCount = 0;
+      final requestSize = requiresLocalFiltering
+          ? _localFilterPageSize
+          : _pageSize;
 
       do {
+        final previousCursor = requestCursor;
         final reqResult = await apiClient.getJobPostings(
           bookmarked: selectedTab == JobTab.bookmark,
           cursor: requestCursor,
-          size: size,
+          size: requestSize,
           field: sortingType.field,
           searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
           workRegions: const [],
-          employmentTypes: filter.employmentTypes.toList(),
+          employmentTypes: const [],
         );
 
         if (reqResult is! RequestSuccess<JobPostingsResponse>) {
@@ -302,13 +305,9 @@ class JobViewController extends GetxController {
           response.jobs.where((job) => JobFilterMatcher.matches(job, filter)),
         );
         nextCursor = pageInfo.nextCursor;
-        hasNext = pageInfo.hasNext;
+        hasNext = pageInfo.hasNext && nextCursor != previousCursor;
         requestCursor = nextCursor;
-        fetchedPageCount += 1;
-      } while (jobs.isEmpty &&
-          hasNext &&
-          requiresLocalFiltering &&
-          fetchedPageCount < _localFilterLookaheadLimit);
+      } while (jobs.isEmpty && hasNext && requiresLocalFiltering);
 
       if (!hasError) {
         pagingState = pagingState.copyWith(

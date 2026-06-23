@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/enums/job_employment_type.dart';
 import 'package:duty_it/app/core/enums/work_region.dart';
 import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
@@ -8,6 +9,7 @@ class JobFilterMatcher {
 
   static bool requiresLocalFiltering(JobFilter filter) {
     return filter.workRegions.isNotEmpty ||
+        filter.employmentTypes.isNotEmpty ||
         filter.careerFilters.isNotEmpty ||
         !filter.showClosed;
   }
@@ -15,6 +17,7 @@ class JobFilterMatcher {
   static bool matches(JobPosting job, JobFilter filter) {
     if (!filter.showClosed && job.isClosed) return false;
     if (!_matchesRegion(job, filter.workRegions)) return false;
+    if (!_matchesEmploymentType(job, filter.employmentTypes)) return false;
     if (filter.careerFilters.isEmpty) return true;
 
     return filter.careerFilters.any((careerFilter) {
@@ -56,6 +59,54 @@ class JobFilterMatcher {
     }
 
     return null;
+  }
+
+  static bool _matchesEmploymentType(
+    JobPosting job,
+    Set<JobEmploymentType> types,
+  ) {
+    if (types.isEmpty) return true;
+
+    return types.any((type) {
+      return _matchesEmploymentTypeFilter(job, type);
+    });
+  }
+
+  static bool _matchesEmploymentTypeFilter(
+    JobPosting job,
+    JobEmploymentType type,
+  ) {
+    final explicitType = job.employmentType;
+    if (explicitType != null && explicitType != JobEmploymentType.unknown) {
+      return explicitType == type;
+    }
+
+    final text = job.employmentName.replaceAll(' ', '');
+    if (text.isEmpty) return false;
+
+    switch (type) {
+      case JobEmploymentType.fullTime:
+        return text.contains('정규직') || text.contains('기간의정함이없는근로계약');
+      case JobEmploymentType.contract:
+        return text.contains('계약직') || text.contains('기간의정함이있는근로계약');
+      case JobEmploymentType.partTime:
+        return text.contains('파트타임') ||
+            text.contains('아르바이트') ||
+            text.contains('시간제');
+      case JobEmploymentType.dispatch:
+        return text.contains('파견직') ||
+            (text.contains('파견근로') && !text.contains('파견근로비희망'));
+      case JobEmploymentType.intern:
+        return text.contains('인턴');
+      case JobEmploymentType.etc:
+        return !_matchesEmploymentTypeFilter(job, JobEmploymentType.fullTime) &&
+            !_matchesEmploymentTypeFilter(job, JobEmploymentType.contract) &&
+            !_matchesEmploymentTypeFilter(job, JobEmploymentType.partTime) &&
+            !_matchesEmploymentTypeFilter(job, JobEmploymentType.dispatch) &&
+            !_matchesEmploymentTypeFilter(job, JobEmploymentType.intern);
+      case JobEmploymentType.unknown:
+        return false;
+    }
   }
 
   static bool _matchesCareerFilter(

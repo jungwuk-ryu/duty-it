@@ -34,7 +34,7 @@ enum BookmarkContentTab { event, job }
 class BookmarkViewController extends GetxController {
   static const int _eventPageSize = 5;
   static const int _jobPageSize = 10;
-  static const int _localFilterLookaheadLimit = 3;
+  static const int _localFilterJobPageSize = 100;
 
   final ScrollController scrollController = ScrollController();
   final TextEditingController searchTextEditingController =
@@ -330,17 +330,20 @@ class BookmarkViewController extends GetxController {
       var hasNext = false;
       final jobs = <JobPosting>[];
       final requiresLocalFiltering = _requiresLocalFiltering(filter);
-      var fetchedPageCount = 0;
+      final requestSize = requiresLocalFiltering
+          ? _localFilterJobPageSize
+          : _jobPageSize;
 
       do {
+        final previousCursor = requestCursor;
         final reqResult = await Get.find<ApiClient>().getJobPostings(
           bookmarked: true,
           cursor: requestCursor,
-          size: _jobPageSize,
+          size: requestSize,
           field: jobSortingType.field,
           searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
           workRegions: const [],
-          employmentTypes: filter.employmentTypes.toList(),
+          employmentTypes: const [],
         );
 
         if (reqResult is! RequestSuccess<JobPostingsResponse>) {
@@ -353,13 +356,9 @@ class BookmarkViewController extends GetxController {
           response.jobs.where((job) => JobFilterMatcher.matches(job, filter)),
         );
         nextCursor = pageInfo.nextCursor;
-        hasNext = pageInfo.hasNext;
+        hasNext = pageInfo.hasNext && nextCursor != previousCursor;
         requestCursor = nextCursor;
-        fetchedPageCount += 1;
-      } while (jobs.isEmpty &&
-          hasNext &&
-          requiresLocalFiltering &&
-          fetchedPageCount < _localFilterLookaheadLimit);
+      } while (jobs.isEmpty && hasNext && requiresLocalFiltering);
 
       jobPagingState = jobPagingState.copyWith(
         keys: [...currentKeys, nextCursor],
