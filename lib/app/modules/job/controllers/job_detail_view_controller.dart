@@ -1,10 +1,11 @@
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/core/utils/job_posting_url_resolver.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailViewController extends GetxController {
   final RxBool isLoading = false.obs;
@@ -50,13 +51,16 @@ class JobDetailViewController extends GetxController {
   }
 
   Future<void> openPostingUrl() async {
-    final url = job.postingUrl;
-    if (url.isEmpty) {
+    final uri = resolveJobPostingUri(job);
+    if (uri == null) {
       AppUtils.showSnackBar('채용정보 링크가 없습니다.');
       return;
     }
 
-    final didLaunch = await launchUrlString(url);
+    final didLaunch = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
     if (!didLaunch) {
       AppUtils.showSnackBar('채용정보 링크를 열지 못했습니다.');
     }

@@ -1,6 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
+import 'package:duty_it/app/core/utils/job_posting_url_resolver.dart';
 import 'package:duty_it/app/modules/job/controllers/job_detail_view_controller.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_bottom_bar.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_chip_wrap.dart';
@@ -129,7 +130,7 @@ class _JobDetailViewState extends State<JobDetailView> {
         () => JobDetailBottomBar(
           jobRx: controller.jobRx,
           onApplyTap: controller.openPostingUrl,
-          isApplyEnabled: controller.job.postingUrl.isNotEmpty,
+          isApplyEnabled: resolveJobPostingUri(controller.job) != null,
         ),
       ),
     );
