@@ -1,5 +1,6 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
+import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +20,7 @@ class NoCalendarPermissionModal extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const AppBottomSheetHandle(),
             Align(
               alignment: Alignment.topRight,
               child: Padding(

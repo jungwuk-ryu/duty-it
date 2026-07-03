@@ -1,17 +1,12 @@
-// ignore_for_file: unused_import
-
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/modules/home/controllers/sorting_modal_controller.dart';
-import 'package:duty_it/app/services/app_settings_service.dart';
-import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/app/widgets/app_radio_buttom.dart';
-import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class SortingBottomModal extends StatefulWidget {
   const SortingBottomModal({super.key});
@@ -44,32 +39,16 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 24),
-          Stack(
-            alignment: Alignment.center,
+          const AppBottomSheetHandle(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "정렬",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.black,
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => Get.back(),
-                  child: Image.asset(
-                    Assets.icons.close.path,
-                    color: AppColors.g05,
-                    width: 40,
-                    height: 40,
-                  ),
+              Text(
+                "정렬",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
                 ),
               ),
             ],
@@ -81,7 +60,7 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
             return Listener(
               behavior: HitTestBehavior.translucent,
               onPointerDown: (_) {
-                controller.selectedType.value = type;
+                controller.selectTypeAndClose(type);
                 HapticFeedback.selectionClick();
               },
               child: Padding(
@@ -98,23 +77,16 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
                       ),
                     ),
                     Spacer(),
-                    Obx(() {
-                      var selectedType = controller.selectedType;
-                      return AppRadioButtom(
-                        checked: selectedType == type,
-                        onTap: () {},
-                      );
-                    }),
+                    AppRadioButtom(
+                      checked: controller.selectedType == type,
+                      onTap: () {},
+                    ),
                   ],
                 ),
               ),
             );
           }),
-          AppNormalButton(
-            text: '정렬 적용',
-            onTap: () => controller.applyAndClose(),
-          ),
-          SizedBox(height: 24),
+          SizedBox(height: 80),
         ],
       ),
     );

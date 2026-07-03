@@ -1,14 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/enums/sort_direction.dart';
 import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
+import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 
 class HostSelectionBottomModal extends StatefulWidget {
-  const HostSelectionBottomModal({super.key});
+  final void Function(Host host)? onHostSelected;
+  final bool Function(Host host)? isSelected;
+  final SortDirection? sortDirection;
+  final String? field;
+
+  const HostSelectionBottomModal({
+    super.key,
+    this.onHostSelected,
+    this.isSelected,
+    this.sortDirection,
+    this.field,
+  });
 
   @override
   State<HostSelectionBottomModal> createState() =>
@@ -17,13 +29,23 @@ class HostSelectionBottomModal extends StatefulWidget {
 
 class _SearchFilterHostSelectionBottomModal
     extends State<HostSelectionBottomModal> {
-  HostSelectionController controller = Get.put(HostSelectionController());
+  late final HostSelectionController controller;
   late final TextEditingController editingController;
+  late final String controllerTag;
 
   @override
   void initState() {
     super.initState();
 
+    controllerTag = 'host-selection-${identityHashCode(this)}';
+    controller = Get.put(
+      HostSelectionController(
+        onHostSelected: widget.onHostSelected,
+        sortDirection: widget.sortDirection,
+        field: widget.field,
+      ),
+      tag: controllerTag,
+    );
     editingController = TextEditingController();
     editingController.addListener(() => _onTextChanged());
   }
@@ -31,6 +53,9 @@ class _SearchFilterHostSelectionBottomModal
   @override
   void dispose() {
     editingController.dispose();
+    if (Get.isRegistered<HostSelectionController>(tag: controllerTag)) {
+      Get.delete<HostSelectionController>(tag: controllerTag);
+    }
     super.dispose();
   }
 
@@ -40,17 +65,15 @@ class _SearchFilterHostSelectionBottomModal
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      duration: Duration(milliseconds: 200),
+      duration: Duration(milliseconds: 100),
       child: SizedBox(
-        height: 420,
+        height: 625,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
-          ).copyWith(bottom: 0),
+          padding: EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const AppBottomSheetHandle(),
               Text(
                 "주최 선택",
                 style: TextStyle(
@@ -160,7 +183,11 @@ class _SearchFilterHostSelectionBottomModal
 
                   return ListView.builder(
                     itemCount: hosts.length,
-                    itemBuilder: (_, i) => _HostItem(host: hosts[i]),
+                    itemBuilder: (_, i) => _HostItem(
+                      controller: controller,
+                      host: hosts[i],
+                      selected: widget.isSelected?.call(hosts[i]) ?? false,
+                    ),
                   );
                 }),
               ),
@@ -178,13 +205,20 @@ class _SearchFilterHostSelectionBottomModal
 }
 
 class _HostItem extends StatelessWidget {
-  HostSelectionController get controller => Get.find<HostSelectionController>();
+  final HostSelectionController controller;
   final Host host;
+  final bool selected;
 
-  const _HostItem({required this.host});
+  const _HostItem({
+    required this.controller,
+    required this.host,
+    required this.selected,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final thumbnail = host.thumbnail.trim();
+
     return Padding(
       padding: EdgeInsets.only(bottom: 15, left: 1, top: 1),
       child: GestureDetector(
@@ -207,36 +241,63 @@ class _HostItem extends StatelessWidget {
                 ),
               ),
               child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: host.thumbnail,
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xffD9D9D9),
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.fitWidth,
-                        alignment: Alignment.center,
+                child: thumbnail.isEmpty
+                    ? const _HostThumbnailFallback()
+                    : CachedNetworkImage(
+                        imageUrl: thumbnail,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xffD9D9D9),
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.fitWidth,
+                              alignment: Alignment.center,
+                            ),
+                          ),
+                        ),
+                        progressIndicatorBuilder: (_, __, ___) =>
+                            const _HostThumbnailFallback(),
+                        errorWidget: (_, __, ___) =>
+                            const _HostThumbnailFallback(),
                       ),
-                    ),
-                  ),
-                  progressIndicatorBuilder: (_, __, ___) =>
-                      Center(child: Image.asset(Assets.icons.nurseCap.path)),
-                  errorWidget: (_, __, ___) =>
-                      Center(child: Image.asset(Assets.icons.nurseCap.path)),
-                ),
               ),
             ),
             SizedBox(width: 16),
-            Text(
-              host.name,
-              style: TextStyle(
-                color: AppColors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                height: 1.20,
+            Expanded(
+              child: Text(
+                host.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  height: 1.20,
+                ),
               ),
             ),
+            if (selected)
+              const Icon(Icons.check, color: AppColors.main, size: 22),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HostThumbnailFallback extends StatelessWidget {
+  const _HostThumbnailFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Color(0xFFF5F5F5),
+      child: Center(
+        child: Image.asset(
+          Assets.icons.logo.path,
+          width: 20,
+          height: 20,
+          fit: BoxFit.contain,
         ),
       ),
     );

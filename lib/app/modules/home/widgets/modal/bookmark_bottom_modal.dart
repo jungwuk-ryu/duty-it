@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 class BookmarkBottomModal extends StatefulWidget {
   final Rx<Event> eventRx;
-  
+
   const BookmarkBottomModal({super.key, required this.eventRx});
 
   @override
@@ -21,8 +21,8 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
   @override
   void initState() {
     Get.put<BookmarkModalController>(
-        BookmarkModalController(eventRx: widget.eventRx),
-      );
+      BookmarkModalController(eventRx: widget.eventRx),
+    );
     super.initState();
   }
 
@@ -40,37 +40,45 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 16),
-          Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '캘린더 연동',
-                  style: TextStyle(
-                    color: AppColors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    height: 1.60,
+          SizedBox(
+            height: 40,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    '휴대폰 기본 캘린더 연동',
+                    style: TextStyle(
+                      color: AppColors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      height: 1.60,
+                    ),
                   ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () => Get.back(),
-                  child: Image.asset(
-                    Assets.icons.close.path,
-                    width: 14,
-                    height: 14,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Get.back(),
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Image.asset(
+                        Assets.icons.close.path,
+                        color: AppColors.g05,
+                        width: 40,
+                        height: 40,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           SizedBox(height: 47),
           Text(
-            '이 행사를 캘린더에도 추가할까요?',
+            '공고를 기본 캘린더 앱애도 자동 추가할까요?',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
@@ -79,55 +87,21 @@ class _BookmarkBottomModalState extends State<BookmarkBottomModal> {
               height: 1.20,
             ),
           ),
-          SizedBox(height: 28),
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () => controller.toggle(),
-            child: Obx(() {
-              bool dontShow = controller.dontShowAgain;
-              Color color = dontShow ? AppColors.main : AppColors.g03;
-
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    Assets.icons.check.path,
-                    width: 20,
-                    height: 20,
-                    color: color,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '설정 기억하기',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      height: 1.20,
-                    ),
-                  ),
-                ],
-              );
-            }),
-          ),
-
-          SizedBox(height: 55),
+          SizedBox(height: 64),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Flexible(
-                child: AppNormalButton(
-                  text: "아니요",
-                  color: AppColors.g04,
-                  onTap: () => controller.done(false),
-                ),
+              AppNormalButton(
+                text: "아니요",
+                width: 80,
+                color: AppColors.g04,
+                onTap: () => controller.done(false),
               ),
               SizedBox(width: 16),
-              Flexible(
-                child: AppNormalButton(
-                  text: "네, 추가할게요",
-                  onTap: () => controller.done(true),
-                ),
+              AppNormalButton(
+                text: "네, 추가할게요",
+                width: 232,
+                onTap: () => controller.done(true),
               ),
             ],
           ),

@@ -1,5 +1,7 @@
 import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/modules/settings/models/alarm_settings.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
@@ -37,56 +39,67 @@ class SettingsViewController extends GetxController {
   AlarmSettings? get settings => authService.appUser?.alarmSettings;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-    _updatePermissionStatus();
-
-    if (includeDeviceEvents) {
-      var calService = Get.find<CalendarService>();
-      var hasPermission = await calService.checkPermission();
-      if (!hasPermission && includeDeviceEvents) toggleIncludeDeviceEvents();
-    }
+    _initialize();
   }
 
   Future toggleAutoAdd() async {
     HapticFeedback.mediumImpact();
+    final user = await _ensureAppUserLoaded();
+    if (user == null) return;
 
     await _settingUpdateLock.synchronized(() async {
-      await api.updateUserSettings(!(calendarAutoAdd), settings!);
+      await api.updateUserSettings(
+        !user.autoAddBookmarkToCalendar,
+        user.alarmSettings,
+      );
     });
   }
 
   Future toggleBookmarkNoti() async {
     HapticFeedback.mediumImpact();
+    final user = await _ensureAppUserLoaded();
+    if (user == null) return;
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        authService.appUser?.autoAddBookmarkToCalendar ?? false,
-        settings!.copyWith(bookmark: !bookmarkNoti),
+        user.autoAddBookmarkToCalendar,
+        user.alarmSettings.copyWith(bookmark: !user.alarmSettings.bookmark),
       );
     });
   }
 
   Future toggleCalendarNoti() async {
     HapticFeedback.mediumImpact();
+    final user = await _ensureAppUserLoaded();
+    if (user == null) return;
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        authService.appUser?.autoAddBookmarkToCalendar ?? false,
-        settings!.copyWith(calendar: !calendarNoti),
+        user.autoAddBookmarkToCalendar,
+        user.alarmSettings.copyWith(calendar: !user.alarmSettings.calendar),
       );
     });
   }
 
   Future toggleMarketingNoti() async {
     HapticFeedback.mediumImpact();
+    final user = await _ensureAppUserLoaded();
+    if (user == null) return;
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        authService.appUser?.autoAddBookmarkToCalendar ?? false,
-        settings!.copyWith(marketing: !marketingNoti),
+        user.autoAddBookmarkToCalendar,
+        user.alarmSettings.copyWith(marketing: !user.alarmSettings.marketing),
       );
     });
+  }
+
+  Future<void> openNotificationSettings() async {
+    HapticFeedback.mediumImpact();
+    await Get.toNamed(Routes.NOTIFICATION_SETTINGS);
+    await _initialize();
   }
 
   Future toggleIncludeDeviceEvents() async {
@@ -118,17 +131,36 @@ class SettingsViewController extends GetxController {
     }
 
     if (!hasPermission.value) return;
+    final user = await _ensureAppUserLoaded();
+    if (user == null) return;
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        authService.appUser?.autoAddBookmarkToCalendar ?? false,
-        settings!.copyWith(push: !pushNoti),
+        user.autoAddBookmarkToCalendar,
+        user.alarmSettings.copyWith(push: !user.alarmSettings.push),
       );
     });
+  }
+
+  Future<void> _initialize() async {
+    await _updatePermissionStatus();
+    if (authService.isLoggined()) {
+      await _ensureAppUserLoaded();
+    }
+
+    if (!includeDeviceEvents) return;
+
+    var calService = Get.find<CalendarService>();
+    var hasPermission = await calService.checkPermission();
+    if (!hasPermission && includeDeviceEvents) toggleIncludeDeviceEvents();
   }
 
   Future _updatePermissionStatus() async {
     final status = await Permission.notification.status;
     hasPermission.value = status.isGranted || status.isProvisional;
+  }
+
+  Future<AppUser?> _ensureAppUserLoaded() async {
+    return authService.ensureAppUserLoaded();
   }
 }

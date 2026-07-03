@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_sorting_type.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
+import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
@@ -32,11 +33,11 @@ import 'package:synchronized/synchronized.dart';
 enum HomeTab { event, bookmark }
 
 class HomeViewController extends GetxController {
+  static const double _pullToRefreshTriggerFraction = 0.25;
+
   final HomeViewCache _cache = HomeViewCache();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
-  final GlobalKey<RefreshIndicatorState> refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
 
   bool loadEventListFromCache = true;
 
@@ -61,7 +62,10 @@ class HomeViewController extends GetxController {
 
   final Rx<EventSortingType> _sortingType = Rx(EventSortingType.latest);
   EventSortingType get sortingType => _sortingType.value;
-  set sortingType(EventSortingType type) => _sortingType.value = type;
+  set sortingType(EventSortingType type) {
+    _sortingType.value = type;
+    _settingsService.eventSortingType.value = type.name;
+  }
 
   final TextEditingController searchTextEditingController =
       TextEditingController();
@@ -72,6 +76,30 @@ class HomeViewController extends GetxController {
 
   final RxBool _hasNewNotification = RxBool(false);
   bool get hasNewNotification => _hasNewNotification.value;
+  final Rx<RefreshIndicatorStatus?> _refreshIndicatorStatus =
+      Rx<RefreshIndicatorStatus?>(null);
+  final RxBool _isPullToRefreshing = false.obs;
+  final RxDouble _pullToRefreshProgress = 0.0.obs;
+  double get pullToRefreshProgress => _pullToRefreshProgress.value;
+  double _pullDragOffset = 0.0;
+
+  bool get shouldShowRefreshIndicator {
+    if (_isPullToRefreshing.value) return true;
+
+    switch (_refreshIndicatorStatus.value) {
+      case RefreshIndicatorStatus.drag:
+      case RefreshIndicatorStatus.armed:
+      case RefreshIndicatorStatus.snap:
+        return true;
+      case RefreshIndicatorStatus.refresh:
+      case RefreshIndicatorStatus.done:
+      case RefreshIndicatorStatus.canceled:
+      case null:
+        return false;
+    }
+  }
+
+  bool get isPullToRefreshing => _isPullToRefreshing.value;
 
   WidgetsBinding get binding => WidgetsBinding.instance;
   bool get isForeground => binding.lifecycleState == AppLifecycleState.resumed;
@@ -80,6 +108,9 @@ class HomeViewController extends GetxController {
   void onInit() {
     super.onInit();
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    _sortingType.value = EventSortingType.fromName(
+      _settingsService.eventSortingType.value,
+    );
 
     searchTextEditingController.addListener(
       () => searchQuery.value = searchTextEditingController.text.trim(),
@@ -100,15 +131,102 @@ class HomeViewController extends GetxController {
       (v) => fetchNextPage(clearPage: true),
     );
 
-    ever(
-      _sortingType,
-      (v) => fetchNextPage(clearPage: true),
-    );
+    ever(_sortingType, (v) => fetchNextPage(clearPage: true));
 
     checkNewNotification();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      refreshIndicatorKey.currentState?.show();
+      fetchNextPage(clearPage: true);
     });
+  }
+
+  @override
+  void onClose() {
+    searchTextEditingController.dispose();
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void updateRefreshIndicatorStatus(RefreshIndicatorStatus? status) {
+    _refreshIndicatorStatus.value = status;
+
+    switch (status) {
+      case RefreshIndicatorStatus.armed:
+      case RefreshIndicatorStatus.snap:
+      case RefreshIndicatorStatus.refresh:
+        _pullToRefreshProgress.value = 1.0;
+      case RefreshIndicatorStatus.done:
+      case RefreshIndicatorStatus.canceled:
+      case null:
+        _resetPullToRefreshProgress();
+      case RefreshIndicatorStatus.drag:
+        break;
+    }
+  }
+
+  Future<void> onPullToRefresh() async {
+    _isPullToRefreshing.value = true;
+    _pullToRefreshProgress.value = 1.0;
+    try {
+      await fetchNextPage(clearPage: true);
+      await checkNewNotification();
+    } finally {
+      _isPullToRefreshing.value = false;
+      _refreshIndicatorStatus.value = null;
+      _resetPullToRefreshProgress();
+    }
+  }
+
+  bool onPullToRefreshScrollNotification(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) return false;
+
+    final status = _refreshIndicatorStatus.value;
+    final isTrackingPull =
+        status == RefreshIndicatorStatus.drag ||
+        status == RefreshIndicatorStatus.armed;
+
+    if (notification is ScrollStartNotification &&
+        notification.dragDetails != null &&
+        notification.metrics.extentBefore == 0.0) {
+      _pullDragOffset = 0.0;
+      _pullToRefreshProgress.value = 0.0;
+      return false;
+    }
+
+    if (!isTrackingPull) return false;
+
+    if (notification is ScrollUpdateNotification) {
+      if (notification.metrics.axisDirection == AxisDirection.down) {
+        _pullDragOffset -= notification.scrollDelta ?? 0.0;
+      } else if (notification.metrics.axisDirection == AxisDirection.up) {
+        _pullDragOffset += notification.scrollDelta ?? 0.0;
+      }
+      _updatePullToRefreshProgress(notification.metrics.viewportDimension);
+    } else if (notification is OverscrollNotification) {
+      if (notification.metrics.axisDirection == AxisDirection.down) {
+        _pullDragOffset -= notification.overscroll;
+      } else if (notification.metrics.axisDirection == AxisDirection.up) {
+        _pullDragOffset += notification.overscroll;
+      }
+      _updatePullToRefreshProgress(notification.metrics.viewportDimension);
+    }
+
+    return false;
+  }
+
+  void _updatePullToRefreshProgress(double viewportDimension) {
+    if (viewportDimension <= 0) return;
+
+    final progress =
+        (_pullDragOffset / (viewportDimension * _pullToRefreshTriggerFraction))
+            .clamp(0.0, 1.0)
+            .toDouble();
+
+    _pullToRefreshProgress.value = progress;
+  }
+
+  void _resetPullToRefreshProgress() {
+    _pullDragOffset = 0.0;
+    _pullToRefreshProgress.value = 0.0;
   }
 
   Future<void> checkNewNotification() async {
@@ -154,22 +272,36 @@ class HomeViewController extends GetxController {
     loadEventListFromCache = false;
 
     SearchFilterService sfService = Get.find<SearchFilterService>();
+    final previousPagingState = pagingState;
+    final preserveVisibleItems = clearPage && _isPullToRefreshing.value;
 
     // Update paging state
     if (clearPage) onlyFinishedMode = false;
-    pagingState = pagingState.copyWith(
-      isLoading: true,
-      error: null,
-      keys: clearPage ? null : const Omit(),
-      pages: clearPage ? null : const Omit(),
-    );
+    if (preserveVisibleItems) {
+      pagingState = pagingState.copyWith(error: null, isLoading: false);
+    } else {
+      pagingState = pagingState.copyWith(
+        isLoading: true,
+        error: null,
+        keys: clearPage ? null : const Omit(),
+        pages: clearPage ? null : const Omit(),
+      );
+    }
 
     // set params
     const int size = 5;
     var filter = sfService.filter;
     List<String> categories = filter.categories.toList();
     List<EventType> types = [];
-    String? pageKey = pagingState.keys?.last;
+    final List<String?> currentKeys = clearPage
+        ? <String?>[]
+        : List<String?>.from(pagingState.keys ?? const <String?>[]);
+    final List<List<EventCard>> currentPages = clearPage
+        ? <List<EventCard>>[]
+        : List<List<EventCard>>.from(
+            pagingState.pages ?? const <List<EventCard>>[],
+          );
+    String? pageKey = currentKeys.isEmpty ? null : currentKeys.last;
     int? hostId = sfService.filter.host?.id;
 
     for (var category in categories) {
@@ -179,7 +311,7 @@ class HomeViewController extends GetxController {
     if (!onlyFinishedMode) {
       if (pageKey == null &&
           sfService.filter.showEnded &&
-          (pagingState.keys?.isNotEmpty ?? false)) {
+          currentKeys.isNotEmpty) {
         onlyFinishedMode = true;
       }
     }
@@ -244,12 +376,9 @@ class HomeViewController extends GetxController {
         }
 
         pagingState = pagingState.copyWith(
-          keys: [
-            ...(!loadCache ? (pagingState.keys ?? []) : []),
-            pageInfo.nextCursor,
-          ],
+          keys: [...(!loadCache ? currentKeys : []), pageInfo.nextCursor],
           pages: [
-            ...(!loadCache ? (pagingState.pages ?? []) : []),
+            ...(!loadCache ? currentPages : []),
             List<EventCard>.generate(
               events.length,
               (i) => EventCard(eventRx: Rx(events[i])),
@@ -279,11 +408,17 @@ class HomeViewController extends GetxController {
       FirebaseCrashlytics.instance.recordError(ex, st);
     } finally {
       if (hasError) {
-        pagingState = pagingState.copyWith(
-          keys: clearPage ? [] : Omit(),
-          pages: clearPage ? [] : Omit(),
-          error: true,
-        );
+        if (preserveVisibleItems) {
+          pagingState = previousPagingState.copyWith(
+            error: previousPagingState.error,
+          );
+        } else {
+          pagingState = pagingState.copyWith(
+            keys: clearPage ? [] : Omit(),
+            pages: clearPage ? [] : Omit(),
+            error: true,
+          );
+        }
       }
       pagingState = pagingState.copyWith(isLoading: false);
     }
@@ -301,13 +436,15 @@ class HomeViewController extends GetxController {
   }
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {
-    if (!Get.find<AuthService>().isLoggined()) {
+    final authService = Get.find<AuthService>();
+    if (!authService.isLoggined()) {
       Get.toNamed(Routes.LOGIN);
       return;
     }
 
-    var appSettings = Get.find<AppSettingsService>();
     var event = eventRx.value;
+    final initialUser = await _ensureAppUserLoaded();
+    if (initialUser == null) return;
 
     analytics.logEvent(
       name: 'event_bookmark_button_click',
@@ -317,7 +454,7 @@ class HomeViewController extends GetxController {
       },
     );
 
-    if (!event.isBookmarked && !appSettings.dontShowAutoAddModal.value) {
+    if (!event.isBookmarked) {
       await showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
@@ -332,7 +469,8 @@ class HomeViewController extends GetxController {
       eventRx.value = event.copyWith(isBookmarked: await toggleBookmark(event));
     }
 
-    var user = Get.find<AuthService>().appUser!;
+    var user = await _ensureAppUserLoaded();
+    if (user == null) return;
     var calendarService = Get.find<CalendarService>();
     if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
       var result = await calendarService.requestPermission();
@@ -415,6 +553,14 @@ class HomeViewController extends GetxController {
     }
 
     return isBookmarked;
+  }
+
+  Future<AppUser?> _ensureAppUserLoaded() async {
+    final user = await Get.find<AuthService>().ensureAppUserLoaded();
+    if (user != null) return user;
+
+    AppUtils.showSnackBar('사용자 정보를 불러오지 못했어요. 다시 시도해 주세요.');
+    return null;
   }
 
   Future<void> openNotificationsPage() async {

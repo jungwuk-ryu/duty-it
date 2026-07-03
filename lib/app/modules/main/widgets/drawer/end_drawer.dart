@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_accout_section.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_category_section.dart';
-import 'package:duty_it/app/modules/main/widgets/drawer/drawer_close_button.dart';
 
 class EndDrawer extends StatelessWidget {
   const EndDrawer({super.key});
@@ -21,11 +20,7 @@ class EndDrawer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 49),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              child: DrawerCloseButton(),
-            ),
+            SizedBox(height: 100),
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),

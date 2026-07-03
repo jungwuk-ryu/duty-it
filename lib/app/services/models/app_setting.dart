@@ -12,7 +12,12 @@ class AppSetting<T> {
     rxValue = defaultValue.obs;
 
     var tempValue = box.read(key);
-    if (tempValue != null) value = tempValue;
+    final storedValue = _readStoredValue(tempValue);
+    if (storedValue != null) {
+      value = storedValue;
+    } else if (tempValue != null) {
+      box.remove(key);
+    }
 
     debounce(rxValue, (v) {
       box.write(key, v);
@@ -21,4 +26,9 @@ class AppSetting<T> {
   
   T get value => rxValue.value;
   set value(T v) => rxValue(v);
+
+  T? _readStoredValue(dynamic storedValue) {
+    if (storedValue is T) return storedValue;
+    return null;
+  }
 }

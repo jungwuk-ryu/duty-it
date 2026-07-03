@@ -11,9 +11,14 @@ _AppNotification _$AppNotificationFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       type: json['type'] as String,
       isRead: json['isRead'] as bool,
-      event: json['event'] == null
+      event: _readEvent(json, 'event') == null
           ? null
-          : Event.fromJson(json['event'] as Map<String, dynamic>),
+          : Event.fromJson(_readEvent(json, 'event') as Map<String, dynamic>),
+      jobPosting: _readJobPosting(json, 'jobPosting') == null
+          ? null
+          : JobPosting.fromJson(
+              _readJobPosting(json, 'jobPosting') as Map<String, dynamic>,
+            ),
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -25,5 +30,6 @@ Map<String, dynamic> _$AppNotificationToJson(_AppNotification instance) =>
       'type': instance.type,
       'isRead': instance.isRead,
       'event': instance.event?.toJson(),
+      'jobPosting': instance.jobPosting?.toJson(),
       'createdAt': instance.createdAt?.toIso8601String(),
     };
