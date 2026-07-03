@@ -40,7 +40,7 @@ class BookmarkViewController extends GetxController {
   final TextEditingController searchTextEditingController =
       TextEditingController();
   final RxString searchQuery = ''.obs;
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseAnalytics get analytics => FirebaseAnalytics.instance;
 
   AppSettingsService get _settingsService => Get.find<AppSettingsService>();
   SearchFilterService get _eventFilterService =>
@@ -329,7 +329,8 @@ class BookmarkViewController extends GetxController {
       var nextCursor = pageKey;
       var hasNext = false;
       final jobs = <JobPosting>[];
-      final requiresLocalFiltering = _requiresLocalFiltering(filter);
+      final localFilter = JobFilterMatcher.localOnlyFilter(filter);
+      final requiresLocalFiltering = _requiresLocalFiltering(localFilter);
       final requestSize = requiresLocalFiltering
           ? _localFilterJobPageSize
           : _jobPageSize;
@@ -342,8 +343,8 @@ class BookmarkViewController extends GetxController {
           size: requestSize,
           field: jobSortingType.field,
           searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
-          workRegions: const [],
-          employmentTypes: const [],
+          workRegions: filter.workRegions.toList(growable: false),
+          employmentTypes: filter.employmentTypes.toList(growable: false),
         );
 
         if (reqResult is! RequestSuccess<JobPostingsResponse>) {
@@ -353,7 +354,9 @@ class BookmarkViewController extends GetxController {
         final response = reqResult.data;
         final pageInfo = response.pageInfo;
         jobs.addAll(
-          response.jobs.where((job) => JobFilterMatcher.matches(job, filter)),
+          response.jobs.where(
+            (job) => JobFilterMatcher.matches(job, localFilter),
+          ),
         );
         nextCursor = pageInfo.nextCursor;
         hasNext = pageInfo.hasNext && nextCursor != previousCursor;

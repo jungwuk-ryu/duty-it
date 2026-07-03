@@ -30,7 +30,7 @@ class JobViewController extends GetxController {
   static const int _pageSize = 10;
   static const int _localFilterPageSize = 100;
 
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  FirebaseAnalytics get analytics => FirebaseAnalytics.instance;
   final ScrollController scrollController = ScrollController();
   final TextEditingController searchTextEditingController =
       TextEditingController();
@@ -278,7 +278,8 @@ class JobViewController extends GetxController {
       var nextCursor = pageKey;
       var hasNext = false;
       final jobs = <JobPosting>[];
-      final requiresLocalFiltering = _requiresLocalFiltering(filter);
+      final localFilter = JobFilterMatcher.localOnlyFilter(filter);
+      final requiresLocalFiltering = _requiresLocalFiltering(localFilter);
       final requestSize = requiresLocalFiltering
           ? _localFilterPageSize
           : _pageSize;
@@ -291,8 +292,8 @@ class JobViewController extends GetxController {
           size: requestSize,
           field: sortingType.field,
           searchKeyword: searchQuery.isEmpty ? null : searchQuery.value,
-          workRegions: const [],
-          employmentTypes: const [],
+          workRegions: filter.workRegions.toList(growable: false),
+          employmentTypes: filter.employmentTypes.toList(growable: false),
         );
 
         if (reqResult is! RequestSuccess<JobPostingsResponse>) {
@@ -302,7 +303,9 @@ class JobViewController extends GetxController {
         final response = reqResult.data;
         final pageInfo = response.pageInfo;
         jobs.addAll(
-          response.jobs.where((job) => JobFilterMatcher.matches(job, filter)),
+          response.jobs.where(
+            (job) => JobFilterMatcher.matches(job, localFilter),
+          ),
         );
         nextCursor = pageInfo.nextCursor;
         hasNext = pageInfo.hasNext && nextCursor != previousCursor;

@@ -7,6 +7,43 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('JobFilterMatcher', () {
+    test('requires local filtering only for filters not backed by server', () {
+      const serverBackedFilter = JobFilter(
+        workRegions: {WorkRegion.seoul},
+        employmentTypes: {JobEmploymentType.fullTime},
+      );
+      const localOnlyFilter = JobFilter(
+        careerFilters: {JobCareerFilter.fiveToTen},
+      );
+      const hiddenClosedFilter = JobFilter(showClosed: false);
+
+      expect(
+        JobFilterMatcher.requiresLocalFiltering(serverBackedFilter),
+        isFalse,
+      );
+      expect(JobFilterMatcher.requiresLocalFiltering(localOnlyFilter), isTrue);
+      expect(
+        JobFilterMatcher.requiresLocalFiltering(hiddenClosedFilter),
+        isTrue,
+      );
+    });
+
+    test('localOnlyFilter strips server-backed filters', () {
+      const filter = JobFilter(
+        workRegions: {WorkRegion.seoul},
+        employmentTypes: {JobEmploymentType.fullTime},
+        careerFilters: {JobCareerFilter.entry},
+        showClosed: false,
+      );
+
+      final localFilter = JobFilterMatcher.localOnlyFilter(filter);
+
+      expect(localFilter.workRegions, isEmpty);
+      expect(localFilter.employmentTypes, isEmpty);
+      expect(localFilter.careerFilters, {JobCareerFilter.entry});
+      expect(localFilter.showClosed, isFalse);
+    });
+
     test('matches Work24 address strings that start with postal code', () {
       final job = JobPosting.fromJson({
         'id': 1,

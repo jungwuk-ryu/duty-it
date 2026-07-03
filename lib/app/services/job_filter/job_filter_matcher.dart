@@ -7,11 +7,15 @@ import 'package:duty_it/app/services/job_filter/models/job_filter.dart';
 class JobFilterMatcher {
   const JobFilterMatcher._();
 
+  static JobFilter localOnlyFilter(JobFilter filter) {
+    return filter.copyWith(
+      workRegions: const <WorkRegion>{},
+      employmentTypes: const <JobEmploymentType>{},
+    );
+  }
+
   static bool requiresLocalFiltering(JobFilter filter) {
-    return filter.workRegions.isNotEmpty ||
-        filter.employmentTypes.isNotEmpty ||
-        filter.careerFilters.isNotEmpty ||
-        !filter.showClosed;
+    return filter.careerFilters.isNotEmpty || !filter.showClosed;
   }
 
   static bool matches(JobPosting job, JobFilter filter) {
