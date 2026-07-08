@@ -28,4 +28,5 @@ cat > .env <<EOF
 server=${SERVER_ADDRESS}
 EOF
 
-flutter build ios --no-codesign --release
+flutter config --no-enable-swift-package-manager
+flutter build ios --config-only --no-codesign --release

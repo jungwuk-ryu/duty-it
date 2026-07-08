@@ -139,6 +139,13 @@ class HomeViewController extends GetxController {
     });
   }
 
+  @override
+  void onClose() {
+    searchTextEditingController.dispose();
+    scrollController.dispose();
+    super.onClose();
+  }
+
   void updateRefreshIndicatorStatus(RefreshIndicatorStatus? status) {
     _refreshIndicatorStatus.value = status;
 

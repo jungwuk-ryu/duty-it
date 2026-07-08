@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:duty_it/app/api_client.dart';
@@ -121,6 +122,8 @@ class AuthService extends GetxService {
   }
 
   Future<void> logout() async {
+    await _unregisterDeviceSafely();
+
     // Firebase
     var logoutWaiter = _awaitFirebaseLogout();
     await FirebaseAuth.instance.signOut();
@@ -193,6 +196,33 @@ class AuthService extends GetxService {
       Get.find<CalendarViewController>().clearCache().catchError((e, st) {
         FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       });
+    }
+  }
+
+  Future<void> _unregisterDeviceSafely() async {
+    if (!isLoggined() || !Get.isRegistered<ApiClient>()) return;
+
+    try {
+      final result = await Get.find<ApiClient>().unregisterDevice().timeout(
+        const Duration(seconds: 3),
+      );
+      if (result is RequestFail) {
+        FirebaseCrashlytics.instance.recordError(
+          result.serverFail ?? 'Failed to unregister device token',
+          null,
+          fatal: false,
+          reason: '디바이스 토큰 삭제 실패',
+        );
+      }
+    } on TimeoutException catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        st,
+        fatal: false,
+        reason: '디바이스 토큰 삭제 시간 초과',
+      );
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
   }
 

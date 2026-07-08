@@ -9,6 +9,7 @@ class AppSettingsService extends GetxService {
   late final GetStorage _box = GetStorage(storageBoxName);
   late final AppSetting<bool> includeDeviceEvents;
   late final AppSetting<String> eventSortingType;
+  late final AppSetting<String> jobSortingType;
 
   @override
   void onInit() async {
@@ -21,6 +22,11 @@ class AppSettingsService extends GetxService {
     );
     eventSortingType = AppSetting(
       key: 'event_sorting_type',
+      box: _box,
+      defaultValue: 'latest',
+    );
+    jobSortingType = AppSetting(
+      key: 'job_sorting_type',
       box: _box,
       defaultValue: 'latest',
     );

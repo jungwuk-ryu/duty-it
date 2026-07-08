@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/enums/sort_direction.dart';
 import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/host_selection_controller.dart';
 import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
@@ -8,7 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HostSelectionBottomModal extends StatefulWidget {
-  const HostSelectionBottomModal({super.key});
+  final void Function(Host host)? onHostSelected;
+  final bool Function(Host host)? isSelected;
+  final SortDirection? sortDirection;
+  final String? field;
+
+  const HostSelectionBottomModal({
+    super.key,
+    this.onHostSelected,
+    this.isSelected,
+    this.sortDirection,
+    this.field,
+  });
 
   @override
   State<HostSelectionBottomModal> createState() =>
@@ -19,12 +31,21 @@ class _SearchFilterHostSelectionBottomModal
     extends State<HostSelectionBottomModal> {
   late final HostSelectionController controller;
   late final TextEditingController editingController;
+  late final String controllerTag;
 
   @override
   void initState() {
     super.initState();
 
-    controller = Get.put(HostSelectionController());
+    controllerTag = 'host-selection-${identityHashCode(this)}';
+    controller = Get.put(
+      HostSelectionController(
+        onHostSelected: widget.onHostSelected,
+        sortDirection: widget.sortDirection,
+        field: widget.field,
+      ),
+      tag: controllerTag,
+    );
     editingController = TextEditingController();
     editingController.addListener(() => _onTextChanged());
   }
@@ -32,8 +53,8 @@ class _SearchFilterHostSelectionBottomModal
   @override
   void dispose() {
     editingController.dispose();
-    if (Get.isRegistered<HostSelectionController>()) {
-      Get.delete<HostSelectionController>();
+    if (Get.isRegistered<HostSelectionController>(tag: controllerTag)) {
+      Get.delete<HostSelectionController>(tag: controllerTag);
     }
     super.dispose();
   }
@@ -162,7 +183,11 @@ class _SearchFilterHostSelectionBottomModal
 
                   return ListView.builder(
                     itemCount: hosts.length,
-                    itemBuilder: (_, i) => _HostItem(host: hosts[i]),
+                    itemBuilder: (_, i) => _HostItem(
+                      controller: controller,
+                      host: hosts[i],
+                      selected: widget.isSelected?.call(hosts[i]) ?? false,
+                    ),
                   );
                 }),
               ),
@@ -180,10 +205,15 @@ class _SearchFilterHostSelectionBottomModal
 }
 
 class _HostItem extends StatelessWidget {
-  HostSelectionController get controller => Get.find<HostSelectionController>();
+  final HostSelectionController controller;
   final Host host;
+  final bool selected;
 
-  const _HostItem({required this.host});
+  const _HostItem({
+    required this.controller,
+    required this.host,
+    required this.selected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -233,15 +263,21 @@ class _HostItem extends StatelessWidget {
               ),
             ),
             SizedBox(width: 16),
-            Text(
-              host.name,
-              style: TextStyle(
-                color: AppColors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                height: 1.20,
+            Expanded(
+              child: Text(
+                host.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: AppColors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  height: 1.20,
+                ),
               ),
             ),
+            if (selected)
+              const Icon(Icons.check, color: AppColors.main, size: 22),
           ],
         ),
       ),

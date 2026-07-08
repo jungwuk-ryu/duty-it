@@ -4,12 +4,17 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/core/models/job_posting.dart';
+import 'package:duty_it/app/core/models/job_postings_response.dart';
 import 'package:duty_it/app/modules/settings/models/alarm_settings.dart';
+import 'package:duty_it/app/modules/settings/models/notification_subscription.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
+import 'package:duty_it/app/core/enums/job_employment_type.dart';
 import 'package:duty_it/app/core/models/host.dart';
+import 'package:duty_it/app/core/enums/work_region.dart';
 import 'package:duty_it/app/modules/login/models/login_result.dart';
 import 'package:duty_it/app/core/models/server_fail.dart';
 import 'package:duty_it/app/core/enums/sort_direction.dart';
@@ -70,7 +75,7 @@ class ApiClient extends GetConnect {
   }
 
   String buildUserAgent() {
-    final platform = kIsWeb 
+    final platform = kIsWeb
         ? 'web'
         : Platform.isAndroid
         ? 'android'
@@ -183,7 +188,7 @@ class ApiClient extends GetConnect {
   }) async {
     return await _send(
       () async => await get(
-        '/v1/alarms',
+        '/v2/alarms',
         query: {
           'page': "$page",
           'size': '$size',
@@ -336,8 +341,23 @@ class ApiClient extends GetConnect {
       return RequestFail(null);
     }
 
+    final encodedToken = Uri.encodeComponent(token);
     return _send(
-      () async => await patch('/v1/users/device/$token', {}),
+      () async => await patch('/v1/users/device/$encodedToken', {}),
+      map: (_) => true,
+    );
+  }
+
+  /// 알림 - 사용자 기기 삭제 (/users/device/{token}) - DELETE
+  Future<RequestResult<void>> unregisterDevice() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token == null) {
+      return RequestFail(null);
+    }
+
+    final encodedToken = Uri.encodeComponent(token);
+    return _send(
+      () async => await delete('/v1/users/device/$encodedToken'),
       map: (_) => true,
     );
   }
@@ -355,20 +375,18 @@ class ApiClient extends GetConnect {
     int? hostId,
     String? searchKeyword,
   }) async {
-    String query =
-        "bookmarked=$bookmarked&size=$size&field=$field&statusGroup=${finished ? 'FINISHED' : 'ACTIVE'}";
-    if (cursor != null) {
-      query += "&cursor=$cursor";
-    }
-    for (var type in types) {
-      query += "&types=${type.name}";
-    }
-    if (hostId != null) {
-      query += "&hostId=$hostId";
-    }
-    if (searchKeyword != null) {
-      query += "&searchKeyword=${Uri.encodeQueryComponent(searchKeyword)}";
-    }
+    final query = Uri(
+      queryParameters: {
+        'bookmarked': bookmarked.toString(),
+        'size': size.toString(),
+        'field': field,
+        'statusGroup': finished ? 'FINISHED' : 'ACTIVE',
+        if (cursor != null) 'cursor': cursor,
+        if (types.isNotEmpty) 'types': types.map((type) => type.name),
+        if (hostId != null) 'hostId': hostId.toString(),
+        if (searchKeyword != null) 'searchKeyword': searchKeyword,
+      },
+    ).query;
 
     return await getEventsByUrl('/v2/events?$query');
   }
@@ -404,6 +422,124 @@ class ApiClient extends GetConnect {
         }
 
         return events;
+      },
+    );
+  }
+
+  // ---------- Job ----------
+
+  Future<RequestResult<JobPostingsResponse>> getJobPostings({
+    String? cursor,
+    required bool bookmarked,
+    int size = 10,
+    String field = 'CREATED_AT',
+    required List<WorkRegion> workRegions,
+    required List<JobEmploymentType> employmentTypes,
+    String? searchKeyword,
+  }) async {
+    final query = Uri(
+      queryParameters: {
+        'bookmarked': bookmarked.toString(),
+        'size': size.toString(),
+        'field': field,
+        if (cursor != null) 'cursor': cursor,
+        if (workRegions.isNotEmpty)
+          'workRegions': workRegions.map(
+            (workRegion) => workRegion.name.toUpperCase(),
+          ),
+        if (employmentTypes.isNotEmpty)
+          'employmentTypes': employmentTypes.map(
+            (employmentType) => employmentType.apiValue,
+          ),
+        if (searchKeyword != null) 'searchKeyword': searchKeyword,
+      },
+    ).query;
+
+    return _send(
+      () async => await get('/v1/job-postings?$query'),
+      map: (rp) => JobPostingsResponse.fromJson(json.decode(rp.bodyString!)),
+    );
+  }
+
+  Future<RequestResult<JobPosting>> getJobPostingDetail(
+    int jobPostingId,
+  ) async {
+    return _send(
+      () async => await get('/v1/job-postings/$jobPostingId'),
+      map: (rp) => JobPosting.fromJson(json.decode(rp.bodyString!)),
+    );
+  }
+
+  Future<RequestResult<bool>> toggleJobBookmark(int jobPostingId) async {
+    return _send(
+      () async => await post('/v1/job-bookmarks/$jobPostingId', null),
+      map: (rp) => json.decode(rp.bodyString!)['isBookmarked'] as bool,
+    );
+  }
+
+  // ---------- Subscription ----------
+
+  Future<RequestResult<List<NotificationSubscription>>> getSubscriptions({
+    NotificationSubscriptionType? type,
+  }) async {
+    return _send(
+      () async => await get(
+        '/v1/subscriptions',
+        query: _cleanQuery({'type': type?.serverValue}),
+      ),
+      map: (rp) {
+        final body = rp.bodyString == null
+            ? rp.body
+            : json.decode(rp.bodyString!);
+        if (body is! List) return <NotificationSubscription>[];
+
+        return body
+            .whereType<Map>()
+            .map(
+              (e) => NotificationSubscription.fromJson(
+                Map<String, dynamic>.from(e),
+              ),
+            )
+            .toList();
+      },
+    );
+  }
+
+  Future<RequestResult<NotificationSubscription>> createSubscription(
+    NotificationSubscriptionDraft draft,
+  ) async {
+    return _send(
+      () async => await post('/v1/subscriptions', draft.toCreateJson()),
+      map: (rp) => NotificationSubscription.fromJson(
+        Map<String, dynamic>.from(json.decode(rp.bodyString!)),
+      ),
+    );
+  }
+
+  Future<RequestResult<bool>> deleteSubscription(int subscriptionId) async {
+    return _send(
+      () async => await delete('/v1/subscriptions/$subscriptionId'),
+      map: (rp) => rp.statusCode == HttpStatus.noContent,
+    );
+  }
+
+  // ---------- Company ----------
+
+  Future<RequestResult<List<NotificationCompany>>> getBookmarkedCompanies() {
+    return _send(
+      () async => await get('/v1/companies/bookmarked'),
+      map: (rp) {
+        final body = rp.bodyString == null
+            ? rp.body
+            : json.decode(rp.bodyString!);
+        if (body is! List) return <NotificationCompany>[];
+
+        return body
+            .whereType<Map>()
+            .map(
+              (e) => NotificationCompany.fromJson(Map<String, dynamic>.from(e)),
+            )
+            .toList();
       },
     );
   }

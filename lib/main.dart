@@ -113,14 +113,18 @@ Future<void> _initDeepLinks() async {
 
 void _handleUri(Uri uri) {
   // https://www.dutyit.net/visitEvent/123
-  if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'visitEvent') {
+  if (uri.scheme == 'https' &&
+      uri.host.toLowerCase() == 'www.dutyit.net' &&
+      uri.pathSegments.isNotEmpty &&
+      uri.pathSegments.first == 'visitEvent') {
     final id = uri.pathSegments.length > 1 ? uri.pathSegments[1] : null;
-    if (id != null) {
+    if (id != null && id.isNotEmpty) {
       launchUrl(uri);
 
-      FirebaseAnalytics.instance.logEvent(name: 'deep_link_visitEvent', parameters: {
-        'id': id,
-      });
+      FirebaseAnalytics.instance.logEvent(
+        name: 'deep_link_visitEvent',
+        parameters: {'id': id},
+      );
       return;
     }
   }
@@ -167,7 +171,7 @@ Future<void> initPlatformState() async {
       requiresStorageNotLow: false,
       requiresDeviceIdle: false,
       requiredNetworkType: NetworkType.ANY,
-      startOnBoot: true
+      startOnBoot: true,
     ),
     (String taskId) async {
       try {

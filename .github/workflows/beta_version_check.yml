@@ -9,10 +9,6 @@ jobs:
   beta-app-version-check:
     runs-on: ubuntu-latest
 
-    if: >
-      github.event.pull_request.base.ref == 'beta' &&
-      github.event.pull_request.head.ref == 'develop'
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,13 +19,20 @@ jobs:
           set -euo pipefail
 
           git fetch origin release:refs/remotes/origin/release
-          git fetch origin beta:refs/remotes/origin/beta
 
           release_ver_full="$(git show origin/release:pubspec.yaml | awk -F': *' '$1=="version"{print $2; exit}')"
-          beta_ver_full="$(git show origin/beta:pubspec.yaml | awk -F': *' '$1=="version"{print $2; exit}')"
+          beta_ver_full="$(awk -F': *' '$1=="version"{print $2; exit}' pubspec.yaml)"
+          release_marketing_ver="${release_ver_full%%+*}"
+          beta_marketing_ver="${beta_ver_full%%+*}"
 
-          if [[ "${beta_ver_full}" == "${release_ver_full}" ]]; then
+          if [[ "${beta_marketing_ver}" == "${release_marketing_ver}" ]]; then
             echo "❌ FAIL: 릴리즈 버전과 베타의 버전이 동일합니다."
+            exit 1
+          fi
+
+          latest_marketing_ver="$(printf '%s\n%s\n' "${release_marketing_ver}" "${beta_marketing_ver}" | sort -V | tail -n 1)"
+          if [[ "${latest_marketing_ver}" != "${beta_marketing_ver}" ]]; then
+            echo "❌ FAIL: 베타 버전은 릴리즈 버전보다 높아야 합니다."
             exit 1
           fi
 
