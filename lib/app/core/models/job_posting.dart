@@ -100,7 +100,7 @@ Object? _readSourceType(Map json, String key) {
 }
 
 Object? _readTitle(Map json, String key) {
-  return _firstJsonValue(json, [key, 'wantedTitle']);
+  return _decodeHtmlEntities(_firstJsonValue(json, [key, 'wantedTitle']));
 }
 
 Object? _readCompanyName(Map json, String key) {
@@ -173,6 +173,50 @@ Object? _nestedJsonValue(Map json, String objectKey, String valueKey) {
   }
   return null;
 }
+
+Object? _decodeHtmlEntities(Object? value) {
+  if (value is! String) return value;
+
+  return value.replaceAllMapped(_htmlEntityPattern, (match) {
+    final entity = match.group(1);
+    if (entity == null) return match.group(0)!;
+
+    final decodedCodePoint = _decodeHtmlCodePoint(entity);
+    if (decodedCodePoint != null) {
+      return String.fromCharCode(decodedCodePoint);
+    }
+
+    return _htmlEntityNames[entity] ??
+        _htmlEntityNames[entity.toLowerCase()] ??
+        match.group(0)!;
+  });
+}
+
+int? _decodeHtmlCodePoint(String entity) {
+  if (!entity.startsWith('#')) return null;
+
+  final isHex = entity.length > 2 && entity[1].toLowerCase() == 'x';
+  final digits = isHex ? entity.substring(2) : entity.substring(1);
+  final codePoint = int.tryParse(digits, radix: isHex ? 16 : 10);
+  if (codePoint == null || codePoint < 0 || codePoint > 0x10FFFF) {
+    return null;
+  }
+
+  return codePoint;
+}
+
+const Map<String, String> _htmlEntityNames = {
+  'amp': '&',
+  'apos': "'",
+  'gt': '>',
+  'lt': '<',
+  'nbsp': ' ',
+  'quot': '"',
+};
+
+final RegExp _htmlEntityPattern = RegExp(
+  r'&(#(?:[xX][0-9a-fA-F]+|[0-9]+)|[a-zA-Z][a-zA-Z0-9]+);',
+);
 
 const Set<String> _workRegionCodes = {
   'SEOUL',

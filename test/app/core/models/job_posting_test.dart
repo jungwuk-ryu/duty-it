@@ -84,6 +84,23 @@ void main() {
       expect(job.locationText, '(12345) 서울특별시 강남구');
     });
 
+    test('decodes html entities in title fields', () {
+      final listJob = JobPosting.fromJson({
+        'id': 5,
+        'title': '&lt;간호사&gt; 채용 &amp; 교육 담당자',
+        'isBookmarked': false,
+      });
+      final detailJob = JobPosting.fromJson({
+        'id': 6,
+        'title': '',
+        'wantedTitle': '&#X5B;서울&#93; 병동 간호사 &quot;상시&quot; 모집',
+        'isBookmarked': false,
+      });
+
+      expect(listJob.title, '<간호사> 채용 & 교육 담당자');
+      expect(detailJob.title, '[서울] 병동 간호사 "상시" 모집');
+    });
+
     test('distinguishes ongoing close text from on-hire close text', () {
       final ongoingJob = JobPosting.fromJson({
         'id': 3,
