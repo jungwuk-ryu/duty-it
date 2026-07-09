@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/enums/job_close_type.dart';
+import 'package:duty_it/app/core/enums/job_source_type.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:flutter/material.dart';
 
@@ -44,6 +45,12 @@ extension JobPostingX on JobPosting {
     if (workDistrict.isEmpty) return region;
 
     return '$region $workDistrict';
+  }
+
+  String get mapSearchAddress {
+    final address = _stripLeadingPostalCode(locationText);
+    if (address.isEmpty) return '';
+    return address;
   }
 
   String get closeLabel {
@@ -158,6 +165,18 @@ extension JobPostingX on JobPosting {
 
   String? get wantedAuthNoText => _cleanInline(wantedAuthNo);
 
+  String get externalPostingUrl => externalPostingUri?.toString() ?? '';
+
+  Uri? get externalPostingUri {
+    final work24Uri = _work24MobilePostingUri;
+    if (work24Uri != null) return work24Uri;
+
+    final uri = Uri.tryParse(postingUrl);
+    if (uri == null || !_isHttpUri(uri)) return null;
+
+    return uri;
+  }
+
   String? get recruitmentCountText {
     final value = _cleanInline(collectPsncnt);
     if (value == null) return null;
@@ -247,6 +266,47 @@ extension JobPostingX on JobPosting {
   }
 
   String? get _receiptCloseDateText => _cleanInline(receiptCloseDt);
+
+  Uri? get _work24MobilePostingUri {
+    final authNo = wantedAuthNoText ?? _wantedAuthNoFromPostingUrl;
+    if (authNo == null) return null;
+
+    final uri = Uri.tryParse(postingUrl);
+    final host = uri?.host.toLowerCase() ?? '';
+    if (sourceType != JobSourceType.work24 && !_isWork24Host(host)) {
+      return null;
+    }
+
+    return Uri.https('m.work24.go.kr', '/wk/a/b/1500/empDetailAuthView.do', {
+      'infoTypeCd': 'VALIDATION',
+      'infoTypeGroup': 'tb_workinfoworknet',
+      'wantedAuthNo': authNo,
+    });
+  }
+
+  String? get _wantedAuthNoFromPostingUrl {
+    final uri = Uri.tryParse(postingUrl);
+    if (uri == null || !_isWork24Host(uri.host)) {
+      return null;
+    }
+
+    return _cleanInline(uri.queryParameters['wantedAuthNo']);
+  }
+
+  static bool _isHttpUri(Uri uri) {
+    return (uri.scheme == 'https' || uri.scheme == 'http') &&
+        uri.hasAuthority &&
+        uri.host.isNotEmpty;
+  }
+
+  static bool _isWork24Host(String host) {
+    final normalized = host.toLowerCase();
+    return normalized == 'work24.go.kr' || normalized.endsWith('.work24.go.kr');
+  }
+
+  static String _stripLeadingPostalCode(String value) {
+    return value.replaceFirst(RegExp(r'^\(\s*\d{5}\s*\)\s*'), '').trim();
+  }
 
   static bool _isOnHireText(String value) {
     return value.contains('채용시');

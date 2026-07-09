@@ -15,7 +15,8 @@ class JobSortingBottomModal extends StatefulWidget {
 }
 
 class _JobSortingBottomModalState extends State<JobSortingBottomModal> {
-  JobSortingModalController get controller => Get.find<JobSortingModalController>();
+  JobSortingModalController get controller =>
+      Get.find<JobSortingModalController>();
 
   @override
   void initState() {
@@ -55,15 +56,17 @@ class _JobSortingBottomModalState extends State<JobSortingBottomModal> {
           const SizedBox(height: 8),
           ...List<Widget>.generate(types.length, (i) {
             final type = types[i];
+            void select() {
+              FocusManager.instance.primaryFocus?.unfocus();
+              controller.selectTypeAndClose(type);
+              HapticFeedback.selectionClick();
+            }
 
-            return Listener(
+            return GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onPointerDown: (_) {
-                controller.selectTypeAndClose(type);
-                HapticFeedback.selectionClick();
-              },
+              onTap: select,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
                     Text(
@@ -78,14 +81,15 @@ class _JobSortingBottomModalState extends State<JobSortingBottomModal> {
                     const Spacer(),
                     AppRadioButtom(
                       checked: controller.selectedType == type,
-                      onTap: () {},
+                      tapSize: 24,
+                      onTap: select,
                     ),
                   ],
                 ),
               ),
             );
           }),
-          const SizedBox(height: 80),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 32),
         ],
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/enums/job_source_type.dart';
 import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -62,6 +63,7 @@ void main() {
 
       expect(job.location, isEmpty);
       expect(job.locationText, '부산 해운대구');
+      expect(job.mapSearchAddress, '부산 해운대구');
     });
 
     test('falls back to alias fields when normalized fields are blank', () {
@@ -99,6 +101,91 @@ void main() {
 
       expect(listJob.title, '<간호사> 채용 & 교육 담당자');
       expect(detailJob.title, '[서울] 병동 간호사 "상시" 모집');
+    });
+
+    test('strips leading postal code from map search address', () {
+      final job = JobPosting.fromJson({
+        'id': 12,
+        'location': '(41771) 대구광역시 서구 국채보상로 170',
+        'isBookmarked': false,
+      });
+
+      expect(job.locationText, '(41771) 대구광역시 서구 국채보상로 170');
+      expect(job.mapSearchAddress, '대구광역시 서구 국채보상로 170');
+    });
+
+    test('uses mobile Work24 detail URL for external posting link', () {
+      final job = JobPosting.fromJson({
+        'id': 7,
+        'wantedAuthNo': 'K150012607090001',
+        'dtlRecrContUrl':
+            'https://www.work24.go.kr/wk/a/b/1570/empDetailView.do?wantedAuthNo=K150012607090001',
+        'isBookmarked': false,
+      });
+
+      expect(
+        job.externalPostingUrl,
+        'https://m.work24.go.kr/wk/a/b/1500/empDetailAuthView.do?infoTypeCd=VALIDATION&infoTypeGroup=tb_workinfoworknet&wantedAuthNo=K150012607090001',
+      );
+    });
+
+    test('extracts Work24 auth number from posting URL fallback', () {
+      final job = JobPosting.fromJson({
+        'id': 8,
+        'wantedAuthNo': '',
+        'dtlRecrContUrl':
+            'https://www.work24.go.kr/wk/a/b/1570/empDetailView.do?wantedAuthNo=K180022607080038',
+        'isBookmarked': false,
+      });
+
+      expect(
+        job.externalPostingUrl,
+        'https://m.work24.go.kr/wk/a/b/1500/empDetailAuthView.do?infoTypeCd=VALIDATION&infoTypeGroup=tb_workinfoworknet&wantedAuthNo=K180022607080038',
+      );
+    });
+
+    test('does not treat lookalike Work24 host as Work24', () {
+      final job = JobPosting(
+        id: 9,
+        sourceType: JobSourceType.saramin,
+        postingUrl:
+            'https://notwork24.go.kr/wk/a/b/1570/empDetailView.do?wantedAuthNo=K150012607090001',
+      );
+
+      expect(job.externalPostingUrl, job.postingUrl);
+    });
+
+    test('blocks unsupported external posting URL schemes', () {
+      final job = JobPosting(
+        id: 10,
+        sourceType: JobSourceType.saramin,
+        postingUrl: 'intent://job-detail#Intent;scheme=https;end',
+      );
+
+      expect(job.externalPostingUrl, isEmpty);
+      expect(job.externalPostingUri, isNull);
+    });
+
+    test('blocks web posting URLs without a host', () {
+      final job = JobPosting(
+        id: 11,
+        sourceType: JobSourceType.saramin,
+        postingUrl: 'https:example.com/job-detail',
+      );
+
+      expect(job.externalPostingUrl, isEmpty);
+      expect(job.externalPostingUri, isNull);
+    });
+
+    test('keeps non-Work24 external posting URL unchanged', () {
+      const url = 'https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=1';
+      final job = JobPosting(
+        id: 8,
+        sourceType: JobSourceType.saramin,
+        postingUrl: url,
+      );
+
+      expect(job.externalPostingUrl, url);
     });
 
     test('distinguishes ongoing close text from on-hire close text', () {

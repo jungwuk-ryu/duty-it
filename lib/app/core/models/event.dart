@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 // To parse this JSON data, do
 //
 //     final event = eventFromJson(jsonString);
@@ -26,8 +28,9 @@ abstract class Event with _$Event {
     DateTime? recruitmentEndAt,
     @Default("") String uri,
     @Default("") String thumbnail,
-    // ignore: invalid_annotation_target
-    @JsonKey(unknownEnumValue: EventType.ETC) @Default(EventType.ETC) EventType eventType,
+    @JsonKey(unknownEnumValue: EventType.ETC)
+    @Default(EventType.ETC)
+    EventType eventType,
     @Default(Host(id: 0)) Host host,
     @Default(false) bool isBookmarked,
   }) = _Event;
