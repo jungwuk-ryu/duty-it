@@ -63,8 +63,7 @@ void main() async {
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.main,
           brightness: Brightness.light,
-          background: AppColors.main,
-        ).copyWith(surface: Colors.white, background: Colors.white),
+        ).copyWith(surface: Colors.white),
         primaryColor: AppColors.main,
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: AppColors.white,
