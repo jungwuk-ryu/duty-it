@@ -82,6 +82,7 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
                   backgroundColor: AppColors.transparent,
                   textColor: AppColors.g05,
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,

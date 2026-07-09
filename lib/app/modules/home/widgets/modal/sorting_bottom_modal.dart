@@ -35,12 +35,12 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
     List<EventSortingType> types = EventSortingType.values;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const AppBottomSheetHandle(),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
@@ -53,40 +53,43 @@ class _SortingBottomModalState extends State<SortingBottomModal> {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           ...List<Widget>.generate(types.length, (i) {
             EventSortingType type = types[i];
+            void select() {
+              FocusManager.instance.primaryFocus?.unfocus();
+              controller.selectTypeAndClose(type);
+              HapticFeedback.selectionClick();
+            }
 
-            return Listener(
+            return GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onPointerDown: (_) {
-                controller.selectTypeAndClose(type);
-                HapticFeedback.selectionClick();
-              },
+              onTap: select,
               child: Padding(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
                     Text(
                       type.displayName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
                         height: 1.20,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     AppRadioButtom(
                       checked: controller.selectedType == type,
-                      onTap: () {},
+                      tapSize: 24,
+                      onTap: select,
                     ),
                   ],
                 ),
               ),
             );
           }),
-          SizedBox(height: 80),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 32),
         ],
       ),
     );

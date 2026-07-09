@@ -68,16 +68,19 @@ class _SortingContent<T> extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          ...types.map(
-            (type) => Listener(
+          ...types.map((type) {
+            void select() {
+              FocusManager.instance.primaryFocus?.unfocus();
+              onSelect(type);
+              HapticFeedback.selectionClick();
+              Get.back();
+            }
+
+            return GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onPointerDown: (_) {
-                onSelect(type);
-                HapticFeedback.selectionClick();
-                Get.back();
-              },
+              onTap: select,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
                     Text(
@@ -90,13 +93,17 @@ class _SortingContent<T> extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    AppRadioButtom(checked: selectedType == type, onTap: () {}),
+                    AppRadioButtom(
+                      checked: selectedType == type,
+                      tapSize: 24,
+                      onTap: select,
+                    ),
                   ],
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 80),
+            );
+          }),
+          SizedBox(height: MediaQuery.paddingOf(context).bottom + 32),
         ],
       ),
     );

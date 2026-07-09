@@ -353,6 +353,7 @@ class JobViewController extends GetxController {
   }
 
   void showSortingBottomModal() {
+    FocusManager.instance.primaryFocus?.unfocus();
     showModalBottomSheet(
       context: Get.context!,
       isScrollControlled: true,
