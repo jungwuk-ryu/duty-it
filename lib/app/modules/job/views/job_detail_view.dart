@@ -129,7 +129,7 @@ class _JobDetailViewState extends State<JobDetailView> {
         () => JobDetailBottomBar(
           jobRx: controller.jobRx,
           onApplyTap: controller.openPostingUrl,
-          isApplyEnabled: controller.job.postingUrl.isNotEmpty,
+          isApplyEnabled: controller.job.externalPostingUrl.isNotEmpty,
         ),
       ),
     );
@@ -206,7 +206,13 @@ class _JobDetailViewState extends State<JobDetailView> {
         _row('임금 조건', job.salaryText),
         _row('근무 형태', job.workTypeText),
         _row('퇴직 급여', job.retirePayText),
-        _row('근무 예정지', job.locationText),
+        _row(
+          '근무 예정지',
+          job.locationText,
+          onTap: job.mapSearchAddress.isEmpty
+              ? null
+              : controller.openWorkLocationMap,
+        ),
       ],
       children: [
         if (_optionalRow('인근 전철역', job.nearLineText) case final row?)
@@ -261,11 +267,17 @@ class _JobDetailViewState extends State<JobDetailView> {
     );
   }
 
-  JobDetailInfoRowData _row(String label, String? value, {Color? valueColor}) {
+  JobDetailInfoRowData _row(
+    String label,
+    String? value, {
+    Color? valueColor,
+    VoidCallback? onTap,
+  }) {
     return JobDetailInfoRowData(
       label: label,
       value: value == null || value.isEmpty ? '-' : value,
       valueColor: valueColor,
+      onTap: onTap,
     );
   }
 
@@ -273,12 +285,14 @@ class _JobDetailViewState extends State<JobDetailView> {
     String label,
     String? value, {
     Color? valueColor,
+    VoidCallback? onTap,
   }) {
     if (value == null || value.isEmpty) return null;
     return JobDetailInfoRowData(
       label: label,
       value: value,
       valueColor: valueColor,
+      onTap: onTap,
     );
   }
 
