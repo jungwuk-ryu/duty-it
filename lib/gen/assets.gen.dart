@@ -117,6 +117,9 @@ class $AssetsIconsGen {
   AssetGenImage get hamburger =>
       const AssetGenImage('assets/icons/hamburger.png');
 
+  /// File path: assets/icons/job.png
+  AssetGenImage get job => const AssetGenImage('assets/icons/job.png');
+
   /// File path: assets/icons/kakao.png
   AssetGenImage get kakao => const AssetGenImage('assets/icons/kakao.png');
 
@@ -140,6 +143,9 @@ class $AssetsIconsGen {
   AssetGenImage get textdelete =>
       const AssetGenImage('assets/icons/textdelete.png');
 
+  /// File path: assets/icons/work24.png
+  AssetGenImage get work24 => const AssetGenImage('assets/icons/work24.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     appIcon,
@@ -159,6 +165,7 @@ class $AssetsIconsGen {
     go,
     google,
     hamburger,
+    job,
     kakao,
     logo,
     nurseCap,
@@ -166,6 +173,7 @@ class $AssetsIconsGen {
     pen,
     search,
     textdelete,
+    work24,
   ];
 }
 

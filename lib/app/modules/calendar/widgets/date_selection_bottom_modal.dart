@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
+import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,8 @@ class DateSelectionBottomModal extends StatefulWidget {
   const DateSelectionBottomModal({super.key});
 
   @override
-  State<DateSelectionBottomModal> createState() => _DateSelectionBottomModalState();
+  State<DateSelectionBottomModal> createState() =>
+      _DateSelectionBottomModalState();
 }
 
 class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
@@ -42,7 +44,7 @@ class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 16),
+          const AppBottomSheetHandle(),
           Stack(
             alignment: Alignment.center,
             children: [

@@ -53,14 +53,7 @@ void main() async {
   }
 
   /* App Links & Universal Links */
-  final appLinks = AppLinks();
-  appLinks.getInitialLink().then((uri) {
-    if (uri != null) _handleUri(uri);
-  });
-
-  appLinks.uriLinkStream.listen((uri) {
-    _handleUri(uri);
-  });
+  _initDeepLinks();
 
   runApp(
     GetMaterialApp(
@@ -70,8 +63,7 @@ void main() async {
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.main,
           brightness: Brightness.light,
-          background: AppColors.main,
-        ).copyWith(surface: Colors.white, background: Colors.white),
+        ).copyWith(surface: Colors.white),
         primaryColor: AppColors.main,
         bottomSheetTheme: BottomSheetThemeData(
           backgroundColor: AppColors.white,
@@ -92,12 +84,46 @@ void main() async {
   );
 }
 
+Future<void> _initDeepLinks() async {
+  final appLinks = AppLinks();
+
+  final initial = await appLinks.getInitialLink();
+  final initialStr = initial?.toString();
+  if (initial != null) _handleUri(initial);
+
+  final DateTime initTime = DateTime.now();
+  bool skipped = false;
+
+  appLinks.uriLinkStream.listen((uri) {
+    final s = uri.toString();
+
+    // Dedupe
+    if (initialStr != null &&
+        initialStr == s &&
+        !skipped &&
+        DateTime.now().difference(initTime) < const Duration(seconds: 5)) {
+      skipped = true;
+      return;
+    }
+
+    _handleUri(uri);
+  });
+}
+
 void _handleUri(Uri uri) {
   // https://www.dutyit.net/visitEvent/123
-  if (uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'visitEvent') {
+  if (uri.scheme == 'https' &&
+      uri.host.toLowerCase() == 'www.dutyit.net' &&
+      uri.pathSegments.isNotEmpty &&
+      uri.pathSegments.first == 'visitEvent') {
     final id = uri.pathSegments.length > 1 ? uri.pathSegments[1] : null;
-    if (id != null) {
+    if (id != null && id.isNotEmpty) {
       launchUrl(uri);
+
+      FirebaseAnalytics.instance.logEvent(
+        name: 'deep_link_visitEvent',
+        parameters: {'id': id},
+      );
       return;
     }
   }
@@ -144,7 +170,7 @@ Future<void> initPlatformState() async {
       requiresStorageNotLow: false,
       requiresDeviceIdle: false,
       requiredNetworkType: NetworkType.ANY,
-      startOnBoot: true
+      startOnBoot: true,
     ),
     (String taskId) async {
       try {

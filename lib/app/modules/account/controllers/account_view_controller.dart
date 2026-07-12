@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AccountViewController extends GetxController {
-  AuthService get _authService => Get.find<AuthService>();
+  final AuthService _authService = Get.find<AuthService>();
   String get providerName => _authService.getLastUsedProvider().displayName;
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:duty_it/app/api_client.dart';
@@ -37,9 +38,21 @@ class AuthService extends GetxService {
   static const String _appUserKey = 'app_user';
   static const String _lastUsedProviderKey = 'last_used_provider';
 
+  AuthService({
+    Future<RequestResult<AppUser>> Function()? currentUserLoader,
+    bool Function()? loggedInChecker,
+    GetStorage Function(String boxName)? storageFactory,
+  }) : _currentUserLoader = currentUserLoader,
+       _loggedInChecker = loggedInChecker,
+       _storageFactory = storageFactory ?? GetStorage.new;
+
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};
   final Rxn<AppUser> _appUser = Rxn();
   late final GetStorage _box;
+  Future<AppUser?>? _appUserLoadFuture;
+  final Future<RequestResult<AppUser>> Function()? _currentUserLoader;
+  final bool Function()? _loggedInChecker;
+  final GetStorage Function(String boxName) _storageFactory;
 
   AppUser? get appUser => _appUser.value;
   set appUser(AppUser? user) {
@@ -59,7 +72,7 @@ class AuthService extends GetxService {
     super.onInit();
     _initStrategies();
 
-    _box = GetStorage(storageBoxName);
+    _box = _storageFactory(storageBoxName);
     _loadCachedAppUser();
   }
 
@@ -109,6 +122,8 @@ class AuthService extends GetxService {
   }
 
   Future<void> logout() async {
+    await _unregisterDeviceSafely();
+
     // Firebase
     var logoutWaiter = _awaitFirebaseLogout();
     await FirebaseAuth.instance.signOut();
@@ -138,9 +153,7 @@ class AuthService extends GetxService {
     }
 
     // Firebase
-    var logoutWaiter = _awaitFirebaseLogout();
-    await FirebaseAuth.instance.currentUser!.delete();
-    await logoutWaiter;
+    await _deleteFirebaseUserSafely();
 
     // Social
     await _currentStrategy?.logout();
@@ -149,6 +162,30 @@ class AuthService extends GetxService {
     await _doPostLogoutJob();
 
     return true;
+  }
+
+  Future<AppUser?> ensureAppUserLoaded() {
+    final currentUser = appUser;
+    if (currentUser != null) return Future.value(currentUser);
+    if (!isLoggined()) return Future.value(null);
+    if (_appUserLoadFuture != null) return _appUserLoadFuture!;
+
+    final future = (() async {
+      try {
+        final RequestResult<AppUser> reqResult = await _loadCurrentUser();
+        if (reqResult is RequestSuccess<AppUser>) {
+          appUser = reqResult.data;
+          return reqResult.data;
+        }
+      } catch (e, st) {
+        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      }
+
+      return appUser;
+    })().whenComplete(() => _appUserLoadFuture = null);
+
+    _appUserLoadFuture = future;
+    return future;
   }
 
   Future<void> _doPostLogoutJob() async {
@@ -162,12 +199,71 @@ class AuthService extends GetxService {
     }
   }
 
+  Future<void> _unregisterDeviceSafely() async {
+    if (!isLoggined() || !Get.isRegistered<ApiClient>()) return;
+
+    try {
+      final result = await Get.find<ApiClient>().unregisterDevice().timeout(
+        const Duration(seconds: 3),
+      );
+      if (result is RequestFail) {
+        FirebaseCrashlytics.instance.recordError(
+          result.serverFail ?? 'Failed to unregister device token',
+          null,
+          fatal: false,
+          reason: '디바이스 토큰 삭제 실패',
+        );
+      }
+    } on TimeoutException catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        st,
+        fatal: false,
+        reason: '디바이스 토큰 삭제 시간 초과',
+      );
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+    }
+  }
+
   Future<void> _awaitFirebaseLogout() async {
     await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u == null);
   }
 
+  Future<void> _deleteFirebaseUserSafely() async {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
+    if (currentUser == null) {
+      await _safeFirebaseSignOut();
+      return;
+    }
+
+    try {
+      await currentUser.delete();
+      await _awaitFirebaseLogout();
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      await _safeFirebaseSignOut();
+    }
+  }
+
+  Future<void> _safeFirebaseSignOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+    }
+  }
+
   bool isLoggined() {
+    if (_loggedInChecker != null) return _loggedInChecker();
+
     User? user = FirebaseAuth.instance.currentUser;
     return user != null;
+  }
+
+  Future<RequestResult<AppUser>> _loadCurrentUser() {
+    if (_currentUserLoader != null) return _currentUserLoader();
+    return Get.find<ApiClient>().getCurrentUser();
   }
 }

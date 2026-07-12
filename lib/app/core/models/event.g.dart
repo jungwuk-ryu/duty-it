@@ -58,5 +58,6 @@ const _$EventTypeEnumMap = {
   EventType.EDUCATION: 'EDUCATION',
   EventType.VOLUNTEER: 'VOLUNTEER',
   EventType.TRAINING: 'TRAINING',
+  EventType.SUPPORTERS: 'SUPPORTERS',
   EventType.ETC: 'ETC',
 };
