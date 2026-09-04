@@ -1,11 +1,5 @@
 # Agent Guidelines
 
-## Sub-Agent Review
-
-- For every non-trivial task, request a review from exactly one sub-agent before finalizing the work.
-- Ask the sub-agent to review security risks, performance risks, and improvement opportunities.
-- Address actionable findings before finishing, or clearly document why a finding was deferred.
-
 ## Commits
 
 - After every task that changes files, create a commit before finalizing the response unless the user explicitly asks not to commit or a blocking condition prevents committing.
