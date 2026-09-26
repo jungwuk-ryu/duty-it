@@ -292,12 +292,12 @@ class ApiClient extends GetConnect {
   }
 
   Future<RequestResult<AppUser>> updateUserSettings(
-    bool autoAddBookmarkToCalendar,
     AlarmSettings alarmSettings,
   ) {
     return _send(
       () async => await patch('/v1/users/settings', {
-        'autoAddBookmarkToCalendar': autoAddBookmarkToCalendar,
+        // Kept for compatibility with the settings API; device saves are manual.
+        'autoAddBookmarkToCalendar': false,
         'alarmSettings': alarmSettings.toJson(),
       }),
       map: (rp) {

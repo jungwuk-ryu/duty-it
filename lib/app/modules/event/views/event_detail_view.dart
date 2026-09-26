@@ -8,6 +8,7 @@ import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/event_detail.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/services/event_content_service.dart';
+import 'package:duty_it/app/modules/event/widgets/event_actions_menu.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -172,6 +173,15 @@ class _EventDetailViewState extends State<EventDetailView> {
             fontWeight: FontWeight.w700,
           ),
         ),
+        actions: [
+          Obx(
+            () => EventActionsMenu(
+              event: widget.eventRx.value,
+              bookmarkBusy: _bookmarkBusy,
+              onBookmarkTap: _toggleBookmark,
+            ),
+          ),
+        ],
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1),
           child: Divider(height: 1, color: AppColors.border),
