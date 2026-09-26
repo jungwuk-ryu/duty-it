@@ -6,6 +6,7 @@ import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:duty_it/app/modules/home/widgets/home_header.dart';
 import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.dart';
 import 'package:duty_it/app/modules/home/widgets/no_search_item_indicator.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/app/widgets/list_page_intro.dart';
 import 'package:flutter/material.dart';
@@ -34,27 +35,38 @@ class HomeView extends GetView<HomeViewController> {
       controller: controller.scrollController,
       slivers: [
         SliverAppBar(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
+          backgroundColor: AppColors.white,
+          surfaceTintColor: AppColors.white,
           elevation: 0,
           floating: true,
           snap: true,
           automaticallyImplyLeading: false,
           actions: <Widget>[Container()],
           leading: SizedBox.shrink(),
-          flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
+          flexibleSpace: FlexibleSpaceBar(
+            background: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: HomeAppBar(),
+            ),
+          ),
         ),
 
         const SliverToBoxAdapter(
-          child: ListPageIntro(
-            title: '행사 목록',
-            description: '관심 분야와 일정에 맞는 행사를 찾아보세요.',
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ListPageIntro(
+              title: '행사 목록',
+              description: '관심 분야와 일정에 맞는 행사를 찾아보세요.',
+            ),
           ),
         ),
 
         AdaptiveHeightSliverPersistentHeader(
           pinned: true,
-          child: HomeHeader(controller: controller),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: HomeHeader(controller: controller),
+          ),
         ),
 
         if (useCupertinoRefreshControl)
@@ -98,81 +110,81 @@ class HomeView extends GetView<HomeViewController> {
         if (useCupertinoRefreshControl)
           const SliverToBoxAdapter(child: SizedBox(height: _listTopSpacing)),
 
-        Obx(() {
-          final isPullToRefreshing = controller.isPullToRefreshing;
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: Obx(() {
+            final isPullToRefreshing = controller.isPullToRefreshing;
 
-          return PagedSliverGrid<String?, EventCard>(
-            state: controller.pagingState,
-            fetchNextPage: controller.fetchNextPage,
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 220,
-              mainAxisExtent: 255,
-              mainAxisSpacing: 24,
-              crossAxisSpacing: 16,
-            ),
-            builderDelegate: PagedChildBuilderDelegate<EventCard>(
-              animateTransitions: true,
-              transitionDuration: Duration(milliseconds: 100),
-              itemBuilder: (context, item, index) => item,
-              firstPageProgressIndicatorBuilder: (_) => isPullToRefreshing
-                  ? const SizedBox.shrink()
-                  : Center(child: CircularProgressIndicator.adaptive()),
-              newPageProgressIndicatorBuilder: (_) => isPullToRefreshing
-                  ? const SizedBox.shrink()
-                  : Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-                    ),
-              noItemsFoundIndicatorBuilder: (_) {
-                HomeTab tab = controller.selectedTab;
-                if (tab == HomeTab.bookmark) {
-                  return NoBookmarkedItemIndicator();
-                }
-
-                return NoSearchItemIndicator();
-              },
-              firstPageErrorIndicatorBuilder: (_) => Center(
-                child: EventsFirstPageErrorIndicator(controller: controller),
+            return PagedSliverGrid<String?, EventCard>(
+              state: controller.pagingState,
+              fetchNextPage: controller.fetchNextPage,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 220,
+                mainAxisExtent: 255,
+                mainAxisSpacing: 24,
+                crossAxisSpacing: 16,
               ),
-              newPageErrorIndicatorBuilder: (_) => Center(
-                child: Padding(
-                  padding: EdgeInsetsGeometry.symmetric(
-                    vertical: 5,
-                    horizontal: 10,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 200),
-                    child: AppNormalButton(
-                      text: '재시도',
-                      onTap: () async {
-                        await controller.fetchNextPage();
-                      },
+              builderDelegate: PagedChildBuilderDelegate<EventCard>(
+                animateTransitions: true,
+                transitionDuration: Duration(milliseconds: 100),
+                itemBuilder: (context, item, index) => item,
+                firstPageProgressIndicatorBuilder: (_) => isPullToRefreshing
+                    ? const SizedBox.shrink()
+                    : Center(child: CircularProgressIndicator.adaptive()),
+                newPageProgressIndicatorBuilder: (_) => isPullToRefreshing
+                    ? const SizedBox.shrink()
+                    : Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
+                noItemsFoundIndicatorBuilder: (_) {
+                  HomeTab tab = controller.selectedTab;
+                  if (tab == HomeTab.bookmark) {
+                    return NoBookmarkedItemIndicator();
+                  }
+
+                  return NoSearchItemIndicator();
+                },
+                firstPageErrorIndicatorBuilder: (_) => Center(
+                  child: EventsFirstPageErrorIndicator(controller: controller),
+                ),
+                newPageErrorIndicatorBuilder: (_) => Center(
+                  child: Padding(
+                    padding: EdgeInsetsGeometry.symmetric(
+                      vertical: 5,
+                      horizontal: 10,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: 200),
+                      child: AppNormalButton(
+                        text: '재시도',
+                        onTap: () async {
+                          await controller.fetchNextPage();
+                        },
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ],
     );
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: useCupertinoRefreshControl
-          ? scrollView
-          : RefreshIndicator.noSpinner(
-              onStatusChange: controller.updateRefreshIndicatorStatus,
-              onRefresh: controller.onPullToRefresh,
-              child: NotificationListener<ScrollNotification>(
-                onNotification: controller.onPullToRefreshScrollNotification,
-                child: scrollView,
-              ),
+    return useCupertinoRefreshControl
+        ? scrollView
+        : RefreshIndicator.noSpinner(
+            onStatusChange: controller.updateRefreshIndicatorStatus,
+            onRefresh: controller.onPullToRefresh,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: controller.onPullToRefreshScrollNotification,
+              child: scrollView,
             ),
-    );
+          );
   }
 }

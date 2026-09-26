@@ -13,24 +13,27 @@ class MainView extends GetView<MainViewController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: controller.scaffoldKey,
-      backgroundColor: AppColors.canvas,
+      backgroundColor: AppColors.white,
       body: SafeArea(
-        child: Obx(
-          () => AnimatedSwitcher(
-            duration: const Duration(milliseconds: 150),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: ScaleTransition(
-                  scale: Tween<double>(
-                    begin: 0.99,
-                    end: 1.0,
-                  ).animate(animation),
-                  child: child,
-                ),
-              );
-            },
-            child: controller.pages[controller.pageIndex.value],
+        child: ColoredBox(
+          color: AppColors.canvas,
+          child: Obx(
+            () => AnimatedSwitcher(
+              duration: const Duration(milliseconds: 150),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: Tween<double>(
+                      begin: 0.99,
+                      end: 1.0,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                );
+              },
+              child: controller.pages[controller.pageIndex.value],
+            ),
           ),
         ),
       ),
