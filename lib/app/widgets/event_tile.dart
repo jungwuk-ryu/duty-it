@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/models/event.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
@@ -26,15 +27,9 @@ class EventTile extends StatelessWidget {
     final start = event.startAt;
     final daysUntilStart = start == null
         ? null
-        : DateUtils.dateOnly(
-            start,
-          ).difference(DateUtils.dateOnly(DateTime.now())).inDays;
+        : AppUtils.daysUntilKstDate(start);
     final lastDay = event.endAt ?? start;
-    final ended =
-        lastDay != null &&
-        DateUtils.dateOnly(
-          lastDay,
-        ).isBefore(DateUtils.dateOnly(DateTime.now()));
+    final ended = lastDay != null && AppUtils.daysUntilKstDate(lastDay) < 0;
 
     return Semantics(
       button: true,
@@ -59,24 +54,32 @@ class EventTile extends StatelessWidget {
                         border: Border.all(color: AppColors.border),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: CachedNetworkImage(
-                        imageUrl: event.thumbnail,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => Center(
-                          child: Image.asset(
-                            Assets.icons.nurseCap.path,
-                            width: 42,
-                            height: 42,
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => Center(
-                          child: Image.asset(
-                            Assets.icons.nurseCap.path,
-                            width: 42,
-                            height: 42,
-                          ),
-                        ),
-                      ),
+                      child: AppUtils.isHttpUrl(event.thumbnail)
+                          ? CachedNetworkImage(
+                              imageUrl: event.thumbnail,
+                              fit: BoxFit.cover,
+                              placeholder: (_, __) => Center(
+                                child: Image.asset(
+                                  Assets.icons.nurseCap.path,
+                                  width: 42,
+                                  height: 42,
+                                ),
+                              ),
+                              errorWidget: (_, __, ___) => Center(
+                                child: Image.asset(
+                                  Assets.icons.nurseCap.path,
+                                  width: 42,
+                                  height: 42,
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: Image.asset(
+                                Assets.icons.nurseCap.path,
+                                width: 42,
+                                height: 42,
+                              ),
+                            ),
                     ),
                   ),
                   if (ended)
@@ -141,7 +144,9 @@ class EventTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (daysUntilStart != null && !ended) ...[
+                if (daysUntilStart != null &&
+                    daysUntilStart >= 0 &&
+                    !ended) ...[
                   const SizedBox(width: 7),
                   Container(width: 1, height: 12, color: AppColors.border),
                   const SizedBox(width: 7),

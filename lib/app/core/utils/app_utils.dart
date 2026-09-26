@@ -20,6 +20,23 @@ class AppUtils {
     return DateTime(date.year, date.month + 1, 0);
   }
 
+  /// Compare an API event date (stored as a Seoul wall-clock time) to today in KST.
+  static int daysUntilKstDate(DateTime date, {DateTime? now}) {
+    final kstNow = (now ?? DateTime.now()).toUtc().add(
+      const Duration(hours: 9),
+    );
+    final targetDay = DateTime.utc(date.year, date.month, date.day);
+    final today = DateTime.utc(kstNow.year, kstNow.month, kstNow.day);
+    return targetDay.difference(today).inDays;
+  }
+
+  static bool isHttpUrl(String value) {
+    final uri = Uri.tryParse(value);
+    return uri != null &&
+        uri.hasAuthority &&
+        (uri.scheme == 'https' || uri.scheme == 'http');
+  }
+
   /// 2025년 00월 00일(일) 형태
   static String formatDateTime(DateTime dt) {
     final mm = dt.month.toString().padLeft(2, '0');
