@@ -15,33 +15,26 @@ class HomeTabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Duration animationDuration = Duration(milliseconds: 100);
+    const animationDuration = Duration(milliseconds: 150);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+    return InkWell(
       onTap: onTap,
-      child: SizedBox(
-        width: 148,
-        child: Column(
-          children: [
-            AnimatedDefaultTextStyle(
-              style: TextStyle(
-                color: isSelected ? AppColors.black : AppColors.g04,
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                height: 1.20,
-              ),
-              duration: animationDuration,
-              child: Text(title),
-            ),
-            SizedBox(height: 8),
-            AnimatedContainer(
-              height: 4,
-              width: 148,
-              color: isSelected ? AppColors.main : Colors.transparent,
-              duration: animationDuration,
-            ),
-          ],
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: animationDuration,
+        height: 38,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.main : AppColors.g02,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? AppColors.white : AppColors.g07,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );

@@ -33,14 +33,14 @@ class CategoryTag extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: onTap,
       child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: 32),
+        constraints: BoxConstraints(minHeight: 36),
         child: Container(
           decoration: BoxDecoration(
             color: effectiveBackgroundColor,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 6),
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 15, vertical: 7),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +64,7 @@ class CategoryTag extends StatelessWidget {
                   name,
                   style: TextStyle(
                     color: effectiveTextColor,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w300,
+                    fontWeight: FontWeight.w600,
                     height: 1.60,
                     fontSize: 13,
                   ),

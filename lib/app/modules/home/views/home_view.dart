@@ -7,6 +7,7 @@ import 'package:duty_it/app/modules/home/widgets/home_header.dart';
 import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.dart';
 import 'package:duty_it/app/modules/home/widgets/no_search_item_indicator.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/list_page_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -42,6 +43,13 @@ class HomeView extends GetView<HomeViewController> {
           actions: <Widget>[Container()],
           leading: SizedBox.shrink(),
           flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
+        ),
+
+        const SliverToBoxAdapter(
+          child: ListPageIntro(
+            title: '행사 목록',
+            description: '관심 분야와 일정에 맞는 행사를 찾아보세요.',
+          ),
         ),
 
         AdaptiveHeightSliverPersistentHeader(
@@ -93,9 +101,15 @@ class HomeView extends GetView<HomeViewController> {
         Obx(() {
           final isPullToRefreshing = controller.isPullToRefreshing;
 
-          return PagedSliverList<String?, EventCard>(
+          return PagedSliverGrid<String?, EventCard>(
             state: controller.pagingState,
             fetchNextPage: controller.fetchNextPage,
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 220,
+              mainAxisExtent: 255,
+              mainAxisSpacing: 24,
+              crossAxisSpacing: 16,
+            ),
             builderDelegate: PagedChildBuilderDelegate<EventCard>(
               animateTransitions: true,
               transitionDuration: Duration(milliseconds: 100),

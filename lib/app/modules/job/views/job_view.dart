@@ -10,6 +10,7 @@ import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.da
 import 'package:duty_it/app/modules/home/widgets/no_search_item_indicator.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/list_page_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -45,6 +46,12 @@ class JobView extends GetView<JobViewController> {
           actions: const <Widget>[SizedBox.shrink()],
           leading: const SizedBox.shrink(),
           flexibleSpace: const FlexibleSpaceBar(background: JobAppBar()),
+        ),
+        const SliverToBoxAdapter(
+          child: ListPageIntro(
+            title: '간호 채용 공고',
+            description: '간호 분야의 새로운 일자리를 한눈에 확인해보세요.',
+          ),
         ),
         AdaptiveHeightSliverPersistentHeader(
           pinned: true,

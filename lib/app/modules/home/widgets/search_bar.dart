@@ -20,10 +20,11 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40,
+      height: 48,
       decoration: BoxDecoration(
-        color: AppColors.g02,
-        borderRadius: BorderRadius.circular(8),
+        color: AppColors.white,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(11),
       ),
       child: Center(
         child: Row(
@@ -34,7 +35,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
               Assets.icons.search.path,
               height: 16,
               width: 16,
-              color: AppColors.g05,
+              color: AppColors.g06,
             ),
             SizedBox(width: 8),
             Expanded(
@@ -47,7 +48,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                   hintText: widget.hintText,
                   hintStyle: TextStyle(
                     color: AppColors.g05,
-                    fontSize: 15,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
                   border: InputBorder.none,

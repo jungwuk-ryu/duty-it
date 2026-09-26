@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
@@ -16,7 +17,17 @@ class CalendarView extends GetView<CalendarViewController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 15),
+        const Padding(
+          padding: EdgeInsets.only(left: 16, top: 24, bottom: 8),
+          child: Text(
+            '나의 캘린더',
+            style: TextStyle(
+              color: AppColors.black,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
         Padding(
           padding: EdgeInsetsGeometry.only(left: 16),
           child: GestureDetector(
@@ -29,8 +40,8 @@ class CalendarView extends GetView<CalendarViewController> {
         ),
         Container(
           width: double.infinity,
-          height: 8,
-          decoration: BoxDecoration(color: const Color(0xFFEEEEEE)),
+          height: 1,
+          decoration: const BoxDecoration(color: AppColors.border),
         ),
         SizedBox(height: 16),
         Expanded(
