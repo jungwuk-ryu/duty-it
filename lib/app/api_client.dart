@@ -11,6 +11,7 @@ import 'package:duty_it/app/modules/settings/models/notification_subscription.da
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/event.dart';
+import 'package:duty_it/app/core/models/event_detail.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/enums/job_employment_type.dart';
 import 'package:duty_it/app/core/models/host.dart';
@@ -401,6 +402,16 @@ class ApiClient extends GetConnect {
 
         return rep;
       },
+    );
+  }
+
+  /// 행사 상세 조회 (/v2/events/{eventId}) - GET
+  Future<RequestResult<EventDetail>> getEventDetail(int eventId) async {
+    return _send(
+      () => get('/v2/events/$eventId'),
+      map: (rp) => EventDetail.fromJson(
+        json.decode(rp.bodyString!) as Map<String, dynamic>,
+      ),
     );
   }
 
