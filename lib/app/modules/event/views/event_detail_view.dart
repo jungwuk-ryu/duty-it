@@ -7,6 +7,7 @@ import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/event_detail.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/services/event_content_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,12 +29,14 @@ class EventDetailView extends StatefulWidget {
 }
 
 class _EventDetailViewState extends State<EventDetailView> {
+  final EventContentService _contentService = EventContentService();
   bool _loading = true;
   bool _loadFailed = false;
   bool _bookmarkBusy = false;
   bool _bookmarkTouched = false;
   String? _status;
   int? _viewCount;
+  EventContentResult? _contentResult;
 
   @override
   void initState() {
@@ -47,6 +50,19 @@ class _EventDetailViewState extends State<EventDetailView> {
       ),
     );
     unawaited(_loadDetail());
+    unawaited(_loadContent(eventId));
+  }
+
+  @override
+  void dispose() {
+    _contentService.close();
+    super.dispose();
+  }
+
+  Future<void> _loadContent(int eventId) async {
+    setState(() => _contentResult = null);
+    final result = await _contentService.fetch(eventId);
+    if (mounted) setState(() => _contentResult = result);
   }
 
   Future<void> _recordView(int eventId) async {
@@ -240,45 +256,15 @@ class _EventDetailViewState extends State<EventDetailView> {
                           ? null
                           : '신청 시작 · ${_dateTime(event.recruitmentStartAt!)}',
                     ),
-                    const SizedBox(height: 28),
-                    const Divider(height: 1, color: AppColors.border),
-                    const SizedBox(height: 23),
-                    _sectionHeading('행사 내용'),
-                    const SizedBox(height: 12),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: AppColors.sub,
-                        border: Border.all(color: AppColors.main.withAlpha(45)),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '웹에서 정리한 행사 내용을 확인해 보세요.',
-                            style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 14,
-                              height: 1.6,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          TextButton.icon(
-                            onPressed: () => _openUrl(
-                              'https://www.dutyit.net/events/${event.id}',
-                              inApp: true,
-                            ),
-                            icon: const Icon(
-                              Icons.open_in_new_rounded,
-                              size: 17,
-                            ),
-                            label: const Text('행사 내용 보기'),
-                          ),
-                        ],
-                      ),
-                    ),
+                    if (_contentResult?.availability !=
+                        EventContentAvailability.unavailable) ...[
+                      const SizedBox(height: 28),
+                      const Divider(height: 1, color: AppColors.border),
+                      const SizedBox(height: 23),
+                      _sectionHeading('행사 내용'),
+                      const SizedBox(height: 12),
+                      _contentCard(event.id),
+                    ],
                     const SizedBox(height: 28),
                     const Divider(height: 1, color: AppColors.border),
                     const SizedBox(height: 23),
@@ -374,6 +360,97 @@ class _EventDetailViewState extends State<EventDetailView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _contentCard(int eventId) {
+    final result = _contentResult;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.sub,
+        border: Border.all(color: AppColors.main.withAlpha(45)),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: result == null
+          ? const Row(
+              children: [
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                SizedBox(width: 12),
+                Text('행사 내용을 불러오는 중이에요.'),
+              ],
+            )
+          : result.availability == EventContentAvailability.available
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 16,
+                      color: AppColors.main,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      'AI로 정리했어요',
+                      style: TextStyle(
+                        color: AppColors.main,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                SelectableText(
+                  result.body!,
+                  style: const TextStyle(
+                    color: AppColors.black,
+                    fontSize: 14,
+                    height: 1.75,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                const Text(
+                  'AI가 행사 자료를 바탕으로 정리한 내용으로, 일부 정보가 정확하지 않을 수 있어요. 신청 전 주최 페이지에서 확인해 주세요.',
+                  style: TextStyle(
+                    color: AppColors.g05,
+                    fontSize: 12,
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('행사 내용을 불러오지 못했어요.'),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    TextButton(
+                      onPressed: () => _loadContent(eventId),
+                      child: const Text('다시 시도'),
+                    ),
+                    TextButton.icon(
+                      onPressed: () => _openUrl(
+                        'https://www.dutyit.net/events/$eventId',
+                        inApp: true,
+                      ),
+                      icon: const Icon(Icons.open_in_new_rounded, size: 17),
+                      label: const Text('웹에서 보기'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
     );
   }
 
