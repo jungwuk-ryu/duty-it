@@ -84,6 +84,10 @@
 - develop: 개발 단계의 브랜치로, 일반적인 수정사항은 이 브랜치에 커밋해야합니다.
 - feat/*: 큰 규모의 기능 개발일 경우, 브랜치를 만들어 작업합니다.
 
+### 행사 내용 조회
+
+앱은 `https://surfer.dutyit.net/api/v1/public/duit-events/{eventId}/content`에서 행사 내용을 직접 읽습니다. 앱에 API 비밀 키를 넣지 않습니다. Surfer는 저장된 내용과 듀잇 공개 API의 현재 행사 상태를 확인한 뒤 `ACTIVE`·`FINISHED` 행사 내용만 반환합니다. 미공개·삭제·철회된 행사와 내용이 없는 행사는 섹션을 숨기며, 조회 오류에는 다시 시도를 제공합니다.
+
 ### Android Google 로그인 설정
 
 디버그 APK에 서명한 키의 SHA-1을 Firebase 프로젝트의 Android 앱(`com.dutyit.app`)에 등록해야 Google 로그인이 됩니다. 개발 PC마다 디버그 키가 다를 수 있습니다. 다음 명령으로 `~/.android/debug.keystore`의 SHA-1을 확인한 뒤 Firebase Console의 **프로젝트 설정 → 내 앱 → SHA 인증서 디지털 지문**에 추가하세요.

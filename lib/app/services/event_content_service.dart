@@ -27,24 +27,39 @@ class EventContentService {
   EventContentService({http.Client? client, Uri? baseUri})
     : _client = client ?? http.Client(),
       _ownsClient = client == null,
-      _baseUri = baseUri ?? Uri.parse('https://www.dutyit.net');
+      _baseUri = baseUri ?? Uri.parse('https://surfer.dutyit.net');
 
   Future<EventContentResult> fetch(int eventId) async {
+    if (eventId <= 0) return const EventContentResult.failed();
+
     try {
       final response = await _client
           .get(
-            _baseUri.resolve('/api/events/$eventId/content'),
+            _baseUri.resolve('/api/v1/public/duit-events/$eventId/content'),
             headers: const {'Accept': 'application/json'},
           )
           .timeout(const Duration(seconds: 10));
       if (response.statusCode != 200) return const EventContentResult.failed();
 
-      final payload = jsonDecode(response.body);
-      if (payload is! Map<String, dynamic> || !payload.containsKey('body')) {
+      final payload = jsonDecode(utf8.decode(response.bodyBytes));
+      if (payload is! Map<String, dynamic> ||
+          payload['schemaVersion'] != 'duit-event-content-api.v1' ||
+          payload['eventId'] != eventId.toString()) {
         return const EventContentResult.failed();
       }
-      final body = payload['body'];
-      if (body == null) return const EventContentResult.unavailable();
+
+      final content = payload['content'];
+      if (payload['availability'] == 'unavailable' && content == null) {
+        return const EventContentResult.unavailable();
+      }
+      if (payload['availability'] != 'available' ||
+          content is! Map<String, dynamic> ||
+          content['format'] != 'text/plain' ||
+          content['language'] != 'ko') {
+        return const EventContentResult.failed();
+      }
+
+      final body = content['body'];
       if (body is! String || body.trim().isEmpty) {
         return const EventContentResult.failed();
       }
