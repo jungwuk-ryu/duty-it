@@ -10,6 +10,10 @@ import 'package:duty_it/app/core/models/event_detail.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/services/event_content_service.dart';
 import 'package:duty_it/app/modules/event/widgets/event_actions_menu.dart';
+import 'package:duty_it/app/modules/event/widgets/event_host_card.dart';
+import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
+import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -604,46 +608,17 @@ class _EventDetailViewState extends State<EventDetailView> {
   }
 
   Widget _hostCard(Event event) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: AppColors.canvas,
-              border: Border.all(color: AppColors.border),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: !AppUtils.isHttpUrl(event.host.thumbnail)
-                ? const Icon(Icons.business_outlined, color: AppColors.g06)
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: event.host.thumbnail,
-                      fit: BoxFit.contain,
-                      errorWidget: (_, __, ___) => const Icon(
-                        Icons.business_outlined,
-                        color: AppColors.g06,
-                      ),
-                    ),
-                  ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              event.host.name,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
+    return EventHostCard(
+      host: event.host,
+      onTap: event.host.id > 0
+          ? () {
+              Get.find<HomeViewController>().showHostEvents(event.host);
+              Get.find<MainViewController>().changeTab(0);
+              Get.until(
+                (route) => route.settings.name == Routes.MAIN || route.isFirst,
+              );
+            }
+          : null,
     );
   }
 
