@@ -28,7 +28,7 @@ class JobPostingTile extends StatelessWidget {
     final deadline = job.closeLabel.replaceFirst(RegExp(r'^D\s*-\s*'), 'D-');
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Material(
         color: AppColors.white,
         shape: RoundedRectangleBorder(
@@ -39,22 +39,38 @@ class JobPostingTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(11),
           child: Padding(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
-                        deadline,
-                        style: TextStyle(
-                          color: deadline.startsWith('D-')
-                              ? AppColors.main
-                              : AppColors.g05,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            deadline,
+                            style: TextStyle(
+                              color: deadline.startsWith('D-')
+                                  ? AppColors.main
+                                  : AppColors.g05,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            job.companyName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: AppColors.g05,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     IconButton(
@@ -77,14 +93,7 @@ class JobPostingTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 7),
-                Text(
-                  job.companyName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.g05, fontSize: 13),
-                ),
-                const SizedBox(height: 5),
+                const SizedBox(height: 4),
                 Text(
                   job.title,
                   maxLines: 2,
@@ -97,7 +106,7 @@ class JobPostingTile extends StatelessWidget {
                   ),
                 ),
                 if (facts.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Text(
                     facts.join('  ·  '),
                     maxLines: 2,
