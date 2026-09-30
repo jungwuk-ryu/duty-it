@@ -28,7 +28,7 @@ class JobPostingTile extends StatelessWidget {
     final deadline = job.closeLabel.replaceFirst(RegExp(r'^D\s*-\s*'), 'D-');
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Material(
         color: AppColors.white,
         shape: RoundedRectangleBorder(
@@ -39,7 +39,7 @@ class JobPostingTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(11),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -60,7 +60,7 @@ class JobPostingTile extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 10),
                           Text(
                             job.companyName,
                             maxLines: 1,
@@ -93,7 +93,7 @@ class JobPostingTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 10),
                 Text(
                   job.title,
                   maxLines: 2,
@@ -106,7 +106,7 @@ class JobPostingTile extends StatelessWidget {
                   ),
                 ),
                 if (facts.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   Text(
                     facts.join('  ·  '),
                     maxLines: 2,
