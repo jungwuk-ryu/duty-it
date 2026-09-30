@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/api_client.dart';
@@ -361,13 +362,68 @@ class _EventDetailViewState extends State<EventDetailView> {
               Positioned(
                 right: 12,
                 bottom: 12,
-                child: FilledButton.tonalIcon(
-                  onPressed: () => _showPoster(event),
-                  icon: const Icon(Icons.open_in_full_rounded, size: 15),
-                  label: const Text('포스터 전체 보기'),
-                ),
+                child: _posterExpandButton(event),
               ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _posterExpandButton(Event event) {
+    final highContrast = MediaQuery.highContrastOf(context);
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(24),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: highContrast ? 0 : 12,
+            sigmaY: highContrast ? 0 : 12,
+          ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: highContrast
+                    ? [Colors.white, Colors.white]
+                    : [
+                        Colors.white.withAlpha(150),
+                        Colors.white.withAlpha(58),
+                        Colors.white.withAlpha(96),
+                      ],
+              ),
+              border: Border.all(
+                color: Colors.white.withAlpha(190),
+                width: 0.8,
+              ),
+            ),
+            child: Material(
+              type: MaterialType.transparency,
+              child: IconButton(
+                tooltip: '포스터 전체 보기',
+                onPressed: () => _showPoster(event),
+                style: IconButton.styleFrom(
+                  foregroundColor: AppColors.black,
+                  overlayColor: Colors.white.withAlpha(90),
+                  shape: const CircleBorder(),
+                ),
+                icon: const Icon(Icons.open_in_full_rounded, size: 20),
+              ),
+            ),
+          ),
         ),
       ),
     );
