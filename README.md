@@ -84,6 +84,20 @@
 - develop: 개발 단계의 브랜치로, 일반적인 수정사항은 이 브랜치에 커밋해야합니다.
 - feat/*: 큰 규모의 기능 개발일 경우, 브랜치를 만들어 작업합니다.
 
+### 행사 내용 조회
+
+앱은 `https://surfer.dutyit.net/api/v1/public/duit-events/{eventId}/content`에서 행사 내용을 직접 읽습니다. 앱에 API 비밀 키를 넣지 않습니다. Surfer는 저장된 내용과 듀잇 공개 API의 현재 행사 상태를 확인한 뒤 `ACTIVE`·`FINISHED` 행사 내용만 반환합니다. 미공개·삭제·철회된 행사와 내용이 없는 행사는 섹션을 숨기며, 조회 오류에는 다시 시도를 제공합니다.
+
+### Android Google 로그인 설정
+
+디버그 APK에 서명한 키의 SHA-1을 Firebase 프로젝트의 Android 앱(`com.dutyit.app`)에 등록해야 Google 로그인이 됩니다. 개발 PC마다 디버그 키가 다를 수 있습니다. 다음 명령으로 `~/.android/debug.keystore`의 SHA-1을 확인한 뒤 Firebase Console의 **프로젝트 설정 → 내 앱 → SHA 인증서 디지털 지문**에 추가하세요.
+
+```powershell
+keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -storepass android -alias androiddebugkey
+```
+
+등록 후 최신 `google-services.json`을 받아 `android/app/google-services.json`에 두고 앱을 다시 빌드하세요. 이 파일은 Git에서 제외됩니다. 계정 선택 직후 `로그인 취소됨`이 반복되면 실행한 APK의 서명 SHA-1과 Firebase 등록값이 일치하는지 먼저 확인하세요.
+
 ## 여담
 시대를 따라가기 위해 Agent와 함께 듀잇을 개발하게 되었습니다.  
 AI 및 AI Agent가 생성한 코드가 거의 없는 코드는 [39ecb8a5a3c50eecfeea7221b80ef6f04338f33a](https://github.com/jungwuk-ryu/duty-it/tree/39ecb8a5a3c50eecfeea7221b80ef6f04338f33a) 커밋까지입니다.

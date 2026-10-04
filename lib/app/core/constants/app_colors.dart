@@ -4,7 +4,7 @@ class AppColors {
   AppColors._();
 
   static const Color transparent = Color(0x00000000);
-  static const Color black = Color(0xFF333333);
+  static const Color black = Color(0xFF242323);
   static const Color main = Color(0xFFC63C33);
   static const Color red = Color(0xFFBB0000);
   static const Color white = Color(0xFFFFFFFF);
@@ -13,13 +13,15 @@ class AppColors {
   static const Color cal3 = Color(0xFFE1F0FF);
   static const Color bg = Color(0x66333333);
   static const Color bgCard = Color(0xCC333333);
-  static const Color g01 = Color(0xFFF6F6F6);
-  static const Color g02 = Color(0xFFEEEEEF);
-  static const Color g03 = Color(0xFFD1D1D1);
-  static const Color g04 = Color(0xFFADADAD);
-  static const Color g05 = Color(0xFF949494);
-  static const Color g06 = Color(0xFF707070);
-  static const Color g07 = Color(0xFF595959);
+  static const Color canvas = Color(0xFFF8F9FA);
+  static const Color border = Color(0xFFE5E7EB);
+  static const Color g01 = Color(0xFFF8F9FA);
+  static const Color g02 = Color(0xFFF3F4F6);
+  static const Color g03 = Color(0xFFE5E7EB);
+  static const Color g04 = Color(0xFF9CA3AF);
+  static const Color g05 = Color(0xFF74716F);
+  static const Color g06 = Color(0xFF626C7A);
+  static const Color g07 = Color(0xFF4B5563);
   static const Color linkBlue = Color(0xFF395ADD);
-  static const Color sub = Color(0xFFFFEEF0);
+  static const Color sub = Color(0xFFFCF5F2);
 }

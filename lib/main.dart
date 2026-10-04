@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:app_links/app_links.dart';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
+import 'package:duty_it/app/core/utils/event_deep_link.dart';
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/event_deep_link_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -53,7 +57,8 @@ void main() async {
   }
 
   /* App Links & Universal Links */
-  _initDeepLinks();
+  EventDeepLinkService.ensureRegistered();
+  unawaited(_initDeepLinks());
 
   runApp(
     GetMaterialApp(
@@ -111,6 +116,18 @@ Future<void> _initDeepLinks() async {
 }
 
 void _handleUri(Uri uri) {
+  final eventId = eventIdFromDeepLink(uri);
+  if (eventId != null) {
+    unawaited(EventDeepLinkService.ensureRegistered().openEvent(eventId));
+    unawaited(
+      FirebaseAnalytics.instance.logEvent(
+        name: 'deep_link_event_detail',
+        parameters: {'id': eventId.toString()},
+      ),
+    );
+    return;
+  }
+
   // https://www.dutyit.net/visitEvent/123
   if (uri.scheme == 'https' &&
       uri.host.toLowerCase() == 'www.dutyit.net' &&

@@ -33,7 +33,7 @@ class JobDetailBottomBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 12, 16, 12),
+          padding: const EdgeInsets.fromLTRB(32, 12, 32, 12),
           child: Row(
             children: [
               JobBookmarkButton(jobRx: jobRx),

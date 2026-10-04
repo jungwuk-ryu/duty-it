@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:duty_it/app/modules/calendar/controllers/calendar_view_controller.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/models/app_setting.dart';
+import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:get/get.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
@@ -16,6 +17,7 @@ class CustomCalendarController {
   final AppSetting _includeDeviceEventsSetting =
       Get.find<AppSettingsService>().includeDeviceEvents;
   StreamSubscription<dynamic>? _includeDeviceEventsSubscription;
+  StreamSubscription<int>? _deviceCalendarSubscription;
 
   RxList<CalendarEvent> get events => _events;
   set events(List<CalendarEvent> events) => _events.value = events;
@@ -34,19 +36,28 @@ class CustomCalendarController {
 
   void init() {
     _loadCalendarEvents();
-    _includeDeviceEventsSubscription = _includeDeviceEventsSetting.rxValue.listen((_) {
+    _deviceCalendarSubscription = Get.find<CalendarService>().revision.listen((
+      _,
+    ) {
       _loadCalendarEvents();
     });
+    _includeDeviceEventsSubscription = _includeDeviceEventsSetting.rxValue
+        .listen((_) {
+          _loadCalendarEvents();
+        });
   }
 
   void dispose() {
     _includeDeviceEventsSubscription?.cancel();
+    _deviceCalendarSubscription?.cancel();
   }
 
   Future _loadCalendarEvents() async {
     events.clear();
     var calController = Get.find<CalendarViewController>();
-    await for (var newEvents in calController.getCalendarEvents(currentDateTime)) {
+    await for (var newEvents in calController.getCalendarEvents(
+      currentDateTime,
+    )) {
       events = newEvents;
     }
   }

@@ -20,10 +20,6 @@ class SettingsViewController extends GetxController {
   // 북마크 알림
   bool get bookmarkNoti => settings?.bookmark ?? false;
 
-  // 캘린더 행사 자동 추가
-  bool get calendarAutoAdd =>
-      authService.appUser?.autoAddBookmarkToCalendar ?? true;
-
   // 캘린더 알림
   bool get calendarNoti => settings?.calendar ?? false;
 
@@ -44,19 +40,6 @@ class SettingsViewController extends GetxController {
     _initialize();
   }
 
-  Future toggleAutoAdd() async {
-    HapticFeedback.mediumImpact();
-    final user = await _ensureAppUserLoaded();
-    if (user == null) return;
-
-    await _settingUpdateLock.synchronized(() async {
-      await api.updateUserSettings(
-        !user.autoAddBookmarkToCalendar,
-        user.alarmSettings,
-      );
-    });
-  }
-
   Future toggleBookmarkNoti() async {
     HapticFeedback.mediumImpact();
     final user = await _ensureAppUserLoaded();
@@ -64,7 +47,6 @@ class SettingsViewController extends GetxController {
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        user.autoAddBookmarkToCalendar,
         user.alarmSettings.copyWith(bookmark: !user.alarmSettings.bookmark),
       );
     });
@@ -77,7 +59,6 @@ class SettingsViewController extends GetxController {
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        user.autoAddBookmarkToCalendar,
         user.alarmSettings.copyWith(calendar: !user.alarmSettings.calendar),
       );
     });
@@ -90,7 +71,6 @@ class SettingsViewController extends GetxController {
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        user.autoAddBookmarkToCalendar,
         user.alarmSettings.copyWith(marketing: !user.alarmSettings.marketing),
       );
     });
@@ -136,7 +116,6 @@ class SettingsViewController extends GetxController {
 
     await _settingUpdateLock.synchronized(() async {
       await api.updateUserSettings(
-        user.autoAddBookmarkToCalendar,
         user.alarmSettings.copyWith(push: !user.alarmSettings.push),
       );
     });

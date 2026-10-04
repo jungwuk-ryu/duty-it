@@ -52,6 +52,20 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
       }
       rethrow;
     } on GoogleSignInException catch (e, st) {
+      // Android Credential Manager can report account reauthentication failures
+      // as "canceled" even after the user selects an account.
+      final accountReauthFailed =
+          e.description?.toLowerCase().contains('account reauth failed') ??
+          false;
+      if (e.code == GoogleSignInExceptionCode.canceled &&
+          !accountReauthFailed) {
+        FirebaseAnalytics.instance.logEvent(
+          name: 'login_cancelled',
+          parameters: {'provider': 'google'},
+        );
+        return SocialLoginFail(reason: '로그인 취소됨');
+      }
+
       FirebaseCrashlytics.instance.recordError(
         e,
         st,
@@ -61,16 +75,6 @@ class GoogleLoginStrategy extends SocialLoginStrategy {
           'google_sign_in_description: ${e.description ?? 'null'}',
         ],
       );
-
-      if (e.code == GoogleSignInExceptionCode.canceled) {
-        // 모바일 사용자 취소
-        FirebaseAnalytics.instance.logEvent(
-          name: 'login_cancelled',
-          parameters: {'provider': 'google'},
-        );
-        return SocialLoginFail(reason: '로그인 취소됨');
-      }
-
       return SocialLoginFail(reason: '로그인 실패');
     } catch (e, st) {
       if (kDebugMode) {

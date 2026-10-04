@@ -12,6 +12,7 @@ import 'package:duty_it/app/modules/job/widgets/job_filter_empty_indicator.dart'
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/list_page_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -37,22 +38,69 @@ class BookmarkView extends GetView<BookmarkViewController> {
           automaticallyImplyLeading: false,
           actions: <Widget>[SizedBox.shrink()],
           leading: SizedBox.shrink(),
-          flexibleSpace: FlexibleSpaceBar(background: BookmarkAppBar()),
+          flexibleSpace: FlexibleSpaceBar(
+            background: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: BookmarkAppBar(),
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ListPageIntro(
+              title: '내 북마크',
+              description: '다시 보고 싶은 행사와 채용 공고를 모아보세요.',
+            ),
+          ),
         ),
         const AdaptiveHeightSliverPersistentHeader(
           pinned: true,
-          child: BookmarkHeader(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: BookmarkHeader(),
+          ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: _listTopSpacing)),
-        Obx(() {
-          if (controller.isEventTab) {
-            return PagedSliverList<String?, Rx<Event>>(
-              state: controller.eventPagingState,
-              fetchNextPage: controller.fetchNextEventPage,
-              builderDelegate: PagedChildBuilderDelegate<Rx<Event>>(
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: Obx(() {
+            if (controller.isEventTab) {
+              return PagedSliverGrid<String?, Rx<Event>>(
+                state: controller.eventPagingState,
+                fetchNextPage: controller.fetchNextEventPage,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 220,
+                  mainAxisExtent: 255,
+                  mainAxisSpacing: 24,
+                  crossAxisSpacing: 16,
+                ),
+                builderDelegate: PagedChildBuilderDelegate<Rx<Event>>(
+                  animateTransitions: true,
+                  transitionDuration: const Duration(milliseconds: 100),
+                  itemBuilder: (_, item, _) => BookmarkEventCard(eventRx: item),
+                  firstPageProgressIndicatorBuilder: (_) =>
+                      const Center(child: CircularProgressIndicator.adaptive()),
+                  newPageProgressIndicatorBuilder: (_) =>
+                      const _NewPageProgressIndicator(),
+                  noItemsFoundIndicatorBuilder: (_) =>
+                      _NoBookmarkItems(tab: controller.selectedTab),
+                  firstPageErrorIndicatorBuilder: (_) => _RetryButton(
+                    onTap: () => controller.fetchNextEventPage(clearPage: true),
+                  ),
+                  newPageErrorIndicatorBuilder: (_) =>
+                      _RetryButton(onTap: controller.fetchNextEventPage),
+                ),
+              );
+            }
+
+            return PagedSliverList<String?, Rx<JobPosting>>(
+              state: controller.jobPagingState,
+              fetchNextPage: controller.fetchNextJobPage,
+              builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
                 animateTransitions: true,
                 transitionDuration: const Duration(milliseconds: 100),
-                itemBuilder: (_, item, _) => BookmarkEventCard(eventRx: item),
+                itemBuilder: (_, item, _) => BookmarkJobCard(jobRx: item),
                 firstPageProgressIndicatorBuilder: (_) =>
                     const Center(child: CircularProgressIndicator.adaptive()),
                 newPageProgressIndicatorBuilder: (_) =>
@@ -60,44 +108,20 @@ class BookmarkView extends GetView<BookmarkViewController> {
                 noItemsFoundIndicatorBuilder: (_) =>
                     _NoBookmarkItems(tab: controller.selectedTab),
                 firstPageErrorIndicatorBuilder: (_) => _RetryButton(
-                  onTap: () => controller.fetchNextEventPage(clearPage: true),
+                  onTap: () => controller.fetchNextJobPage(clearPage: true),
                 ),
                 newPageErrorIndicatorBuilder: (_) =>
-                    _RetryButton(onTap: controller.fetchNextEventPage),
+                    _RetryButton(onTap: controller.fetchNextJobPage),
               ),
             );
-          }
-
-          return PagedSliverList<String?, Rx<JobPosting>>(
-            state: controller.jobPagingState,
-            fetchNextPage: controller.fetchNextJobPage,
-            builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
-              animateTransitions: true,
-              transitionDuration: const Duration(milliseconds: 100),
-              itemBuilder: (_, item, _) => BookmarkJobCard(jobRx: item),
-              firstPageProgressIndicatorBuilder: (_) =>
-                  const Center(child: CircularProgressIndicator.adaptive()),
-              newPageProgressIndicatorBuilder: (_) =>
-                  const _NewPageProgressIndicator(),
-              noItemsFoundIndicatorBuilder: (_) =>
-                  _NoBookmarkItems(tab: controller.selectedTab),
-              firstPageErrorIndicatorBuilder: (_) => _RetryButton(
-                onTap: () => controller.fetchNextJobPage(clearPage: true),
-              ),
-              newPageErrorIndicatorBuilder: (_) =>
-                  _RetryButton(onTap: controller.fetchNextJobPage),
-            ),
-          );
-        }),
+          }),
+        ),
       ],
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: RefreshIndicator(
-        onRefresh: controller.onPullToRefresh,
-        child: scrollView,
-      ),
+    return RefreshIndicator(
+      onRefresh: controller.onPullToRefresh,
+      child: scrollView,
     );
   }
 }

@@ -7,8 +7,12 @@ class SortingModalController extends GetxController {
 
   EventSortingType get selectedType => _homeController.sortingType;
 
-  void selectTypeAndClose(EventSortingType type) {
+  void selectType(EventSortingType type) {
     _homeController.sortingType = type;
+  }
+
+  void selectTypeAndClose(EventSortingType type) {
+    selectType(type);
     Get.back();
   }
 }

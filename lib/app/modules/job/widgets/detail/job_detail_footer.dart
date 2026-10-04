@@ -18,7 +18,7 @@ class JobDetailFooter extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: AppColors.g01,
-      padding: const EdgeInsets.fromLTRB(24, 11, 24, 15),
+      padding: const EdgeInsets.fromLTRB(28, 11, 28, 22),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

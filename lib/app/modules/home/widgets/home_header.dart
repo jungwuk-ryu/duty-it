@@ -5,7 +5,7 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:duty_it/gen/assets.gen.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
@@ -17,7 +17,7 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: AppColors.white,
+      color: AppColors.canvas,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -64,6 +64,26 @@ class HomeHeader extends StatelessWidget {
                   ),
                 ),
               ],
+            );
+          }),
+
+          Obx(() {
+            final service = Get.find<SearchFilterService>();
+            final host = service.filter.host;
+            if (host == null) return const SizedBox.shrink();
+
+            return Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: InputChip(
+                  avatar: const Icon(Icons.business_outlined, size: 18),
+                  label: Text(host.name, overflow: TextOverflow.ellipsis),
+                  deleteButtonTooltipMessage: '주최 필터 해제',
+                  onDeleted: () =>
+                      service.updateFilter(service.filter.copyWith(host: null)),
+                ),
+              ),
             );
           }),
 

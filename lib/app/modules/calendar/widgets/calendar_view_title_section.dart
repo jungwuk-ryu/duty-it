@@ -16,7 +16,7 @@ class CalendarViewTitleSection extends StatelessWidget {
           "${dt.month}월",
           style: TextStyle(
             color: AppColors.black,
-            fontSize: 32,
+            fontSize: 28,
             fontWeight: FontWeight.w700,
             height: 1.60,
           ),
@@ -30,8 +30,8 @@ class CalendarViewTitleSection extends StatelessWidget {
                 Text(
                   '${dt.year}',
                   style: TextStyle(
-                    color: const Color(0xFF949494),
-                    fontSize: 15,
+                    color: AppColors.g05,
+                    fontSize: 14,
                     fontFamily: 'Pretendard',
                     fontWeight: FontWeight.w700,
                     height: 1.60,

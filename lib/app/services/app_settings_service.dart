@@ -4,7 +4,6 @@ import 'package:get_storage/get_storage.dart';
 
 class AppSettingsService extends GetxService {
   static const String storageBoxName = 'appSettings';
-  static const String _dontShowAutoAddModalKey = 'dont_show_auto_add_modal';
 
   late final GetStorage _box = GetStorage(storageBoxName);
   late final AppSetting<bool> includeDeviceEvents;
@@ -14,7 +13,6 @@ class AppSettingsService extends GetxService {
   @override
   void onInit() async {
     super.onInit();
-    _box.remove(_dontShowAutoAddModalKey);
     includeDeviceEvents = AppSetting(
       key: 'include_device_events',
       box: _box,

@@ -76,7 +76,7 @@ extension JobPostingX on JobPosting {
         return '마감';
       }
 
-      return 'D - ${diff.toString().padLeft(2, '0')}';
+      return diff == 0 ? 'D-Day' : 'D - ${diff.toString().padLeft(2, '0')}';
     }
 
     switch (closeType) {
@@ -98,7 +98,7 @@ extension JobPostingX on JobPosting {
           return '마감';
         }
 
-        return 'D - ${diff.toString().padLeft(2, '0')}';
+        return diff == 0 ? 'D-Day' : 'D - ${diff.toString().padLeft(2, '0')}';
     }
   }
 
