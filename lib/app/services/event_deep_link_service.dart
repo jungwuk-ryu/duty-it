@@ -25,6 +25,12 @@ class EventDeepLinkService extends GetxService {
   int? _loadingEventId;
   int _request = 0;
 
+  // Auth resets force-delete Get services without restarting the app-link stream.
+  static EventDeepLinkService ensureRegistered() =>
+      Get.isRegistered<EventDeepLinkService>()
+      ? Get.find<EventDeepLinkService>()
+      : Get.put(EventDeepLinkService(), permanent: true);
+
   void markNavigationReady() {
     _navigationReady = true;
     final eventId = _pendingEventId;
@@ -37,9 +43,12 @@ class EventDeepLinkService extends GetxService {
       _pendingEventId = eventId;
       return;
     }
-    if (_loadingEventId == eventId || Get.currentRoute == '/events/$eventId') {
+    if (Get.currentRoute == '/events/$eventId') {
+      _request++;
+      _loadingEventId = null;
       return;
     }
+    if (_loadingEventId == eventId) return;
     final request = ++_request;
     _loadingEventId = eventId;
     try {
@@ -76,6 +85,7 @@ class EventDeepLinkService extends GetxService {
     Get.to(
       () => EventDetailView(
         eventRx: eventRx,
+        initialDetail: detail,
         onBookmarkTap: () =>
             Get.find<HomeViewController>().onBookmarkButtonClick(eventRx),
       ),

@@ -57,7 +57,7 @@ void main() async {
   }
 
   /* App Links & Universal Links */
-  Get.put(EventDeepLinkService(), permanent: true);
+  EventDeepLinkService.ensureRegistered();
   unawaited(_initDeepLinks());
 
   runApp(
@@ -118,7 +118,7 @@ Future<void> _initDeepLinks() async {
 void _handleUri(Uri uri) {
   final eventId = eventIdFromDeepLink(uri);
   if (eventId != null) {
-    unawaited(Get.find<EventDeepLinkService>().openEvent(eventId));
+    unawaited(EventDeepLinkService.ensureRegistered().openEvent(eventId));
     unawaited(
       FirebaseAnalytics.instance.logEvent(
         name: 'deep_link_event_detail',

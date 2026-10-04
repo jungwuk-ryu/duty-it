@@ -17,6 +17,20 @@ void main() {
   tearDown(Get.reset);
 
   test(
+    'restores app-link handling after an auth reset force-deletes services',
+    () async {
+      final original = EventDeepLinkService.ensureRegistered();
+      expect(EventDeepLinkService.ensureRegistered(), same(original));
+      await Get.deleteAll(force: true);
+      expect(Get.isRegistered<EventDeepLinkService>(), isFalse);
+      final restored = EventDeepLinkService.ensureRegistered();
+      expect(Get.isRegistered<EventDeepLinkService>(), isTrue);
+      expect(restored, isNot(same(original)));
+      expect(Get.find<EventDeepLinkService>(), same(restored));
+    },
+  );
+
+  test(
     'holds the cold-start link until main navigation and services are ready',
     () async {
       final fetched = <int>[];

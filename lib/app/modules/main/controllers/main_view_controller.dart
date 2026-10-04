@@ -53,9 +53,7 @@ class MainViewController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    if (Get.isRegistered<EventDeepLinkService>()) {
-      Get.find<EventDeepLinkService>().markNavigationReady();
-    }
+    EventDeepLinkService.ensureRegistered().markNavigationReady();
   }
 
   @override

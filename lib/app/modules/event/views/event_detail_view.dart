@@ -22,11 +22,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailView extends StatefulWidget {
   final Rx<Event> eventRx;
+  final EventDetail? initialDetail;
   final Future<void> Function() onBookmarkTap;
 
   const EventDetailView({
     super.key,
     required this.eventRx,
+    this.initialDetail,
     required this.onBookmarkTap,
   });
 
@@ -55,7 +57,14 @@ class _EventDetailViewState extends State<EventDetailView> {
         itemId: eventId.toString(),
       ),
     );
-    unawaited(_loadDetail());
+    final initialDetail = widget.initialDetail;
+    if (initialDetail != null) {
+      _status = initialDetail.status;
+      _viewCount = initialDetail.viewCount;
+      _loading = false;
+    } else {
+      unawaited(_loadDetail());
+    }
     unawaited(_loadContent(eventId));
   }
 
