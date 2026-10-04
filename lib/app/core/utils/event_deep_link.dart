@@ -1,5 +1,5 @@
 /// Event detail links shared by the website, iOS, and Android.
-/// Legacy /visitEvent links retain their organizer-page behavior in main.dart.
+/// Unmarked /visitEvent links retain their organizer-page behavior in main.dart.
 int? eventIdFromDeepLink(Uri uri) {
   if (uri.userInfo.isNotEmpty) return null;
   final segments = uri.pathSegments.toList();
@@ -10,7 +10,10 @@ int? eventIdFromDeepLink(Uri uri) {
       uri.host.toLowerCase() == 'www.dutyit.net' &&
       (!uri.hasPort || uri.port == 443) &&
       segments.length == 2 &&
-      segments.first == 'events') {
+      (segments.first == 'events' ||
+          (segments.first == 'visitEvent' &&
+              uri.queryParametersAll['openIn']?.length == 1 &&
+              uri.queryParameters['openIn'] == 'app'))) {
     value = segments[1];
   } else if (uri.scheme == 'dutyit' &&
       uri.host == 'events' &&
