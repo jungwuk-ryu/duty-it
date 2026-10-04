@@ -2,6 +2,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
+import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -17,17 +18,17 @@ class CalendarView extends GetView<CalendarViewController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 16, top: 24, bottom: 8),
-          child: Text(
-            '나의 캘린더',
-            style: TextStyle(
-              color: AppColors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+        const SizedBox(
+          height: kToolbarHeight,
+          child: ColoredBox(
+            color: AppColors.white,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: HomeAppBar(),
             ),
           ),
         ),
+        const SizedBox(height: 15),
         Padding(
           padding: EdgeInsetsGeometry.only(left: 16),
           child: GestureDetector(
