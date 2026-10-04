@@ -1,3 +1,5 @@
+import 'dart:ui' show CheckedState, SemanticsAction;
+
 import 'package:duty_it/app/widgets/app_normal_button.dart';
 import 'package:duty_it/app/widgets/app_sorting_bottom_modal_content.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,42 @@ import 'package:get/get.dart';
 
 void main() {
   tearDown(Get.reset);
+
+  testWidgets('screen-reader activation changes the selected sort option', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    try {
+      await tester.pumpWidget(
+        GetMaterialApp(
+          home: Scaffold(
+            body: AppSortingBottomModalContent<String>(
+              selectedType: '최신 등록순',
+              types: const ['최신 등록순', '인기순'],
+              displayNameOf: (type) => type,
+              onApply: (_) {},
+            ),
+          ),
+        ),
+      );
+      final option = tester.getSemantics(find.bySemanticsLabel('인기순'));
+      expect(option.flagsCollection.isChecked, CheckedState.isFalse);
+      tester.binding.renderViews.single.owner!.semanticsOwner!.performAction(
+        option.id,
+        SemanticsAction.tap,
+      );
+      await tester.pump();
+      expect(
+        tester
+            .getSemantics(find.bySemanticsLabel('인기순'))
+            .flagsCollection
+            .isChecked,
+        CheckedState.isTrue,
+      );
+    } finally {
+      semantics.dispose();
+    }
+  });
 
   testWidgets('matches the Figma sort modal spacing for event sorting', (
     tester,

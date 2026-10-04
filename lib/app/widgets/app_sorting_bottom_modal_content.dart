@@ -63,38 +63,45 @@ class _AppSortingBottomModalContentState<T>
 
   Widget _buildOption(T type) {
     final isSelected = _selectedType == type;
+    void select() {
+      FocusManager.instance.primaryFocus?.unfocus();
+      setState(() => _selectedType = type);
+      HapticFeedback.selectionClick();
+    }
 
-    return Listener(
-      behavior: HitTestBehavior.translucent,
-      onPointerDown: (_) {
-        FocusManager.instance.primaryFocus?.unfocus();
-        setState(() => _selectedType = type);
-        HapticFeedback.selectionClick();
-      },
-      child: SizedBox(
-        height: 56,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 7),
-          child: Row(
-            children: [
-              Text(
-                widget.displayNameOf(type),
-                style: const TextStyle(
-                  color: AppColors.black,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  height: 1.20,
-                ),
+    return Semantics(
+      label: widget.displayNameOf(type),
+      checked: isSelected,
+      inMutuallyExclusiveGroup: true,
+      child: InkWell(
+        onTap: select,
+        child: ExcludeSemantics(
+          child: SizedBox(
+            height: 56,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 7),
+              child: Row(
+                children: [
+                  Text(
+                    widget.displayNameOf(type),
+                    style: const TextStyle(
+                      color: AppColors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                      height: 1.20,
+                    ),
+                  ),
+                  const Spacer(),
+                  AppRadioButtom(
+                    checked: isSelected,
+                    tapSize: 40,
+                    visualSize: 22,
+                    selectedSize: 12,
+                    onTap: select,
+                  ),
+                ],
               ),
-              const Spacer(),
-              AppRadioButtom(
-                checked: isSelected,
-                tapSize: 40,
-                visualSize: 22,
-                selectedSize: 12,
-                onTap: () {},
-              ),
-            ],
+            ),
           ),
         ),
       ),
