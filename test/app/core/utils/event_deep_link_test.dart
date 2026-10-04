@@ -17,6 +17,18 @@ void main() {
     },
   );
 
+  test(
+    'opens marked detail links through the already associated visitEvent path',
+    () {
+      for (final value in [
+        'https://www.dutyit.net/visitEvent/811?openIn=app',
+        'https://www.dutyit.net/visitEvent/811/?openIn=app&utm_source=share',
+      ]) {
+        expect(eventIdFromDeepLink(Uri.parse(value)), 811, reason: value);
+      }
+    },
+  );
+
   test('ignores unrelated routes, malformed IDs, and untrusted hosts', () {
     for (final value in [
       'https://www.dutyit.net/events',
@@ -26,6 +38,12 @@ void main() {
       'https://www.dutyit.net/events/811/extra',
       'https://www.dutyit.net/events/9007199254740992',
       'https://www.dutyit.net/visitEvent/811',
+      'https://www.dutyit.net/visitEvent/811?openIn=web',
+      'https://www.dutyit.net/visitEvent/811?openIn=app&openIn=web',
+      'https://www.dutyit.net/visitEvent/811?openIn=app&openIn=app',
+      'https://www.dutyit.net/visitEvent/0?openIn=app',
+      'https://www.dutyit.net/visitEvent/811/extra?openIn=app',
+      'https://example.com/visitEvent/811?openIn=app',
       'https://www.dutyit.net/jobs/811',
       'http://www.dutyit.net/events/811',
       'https://example.com/events/811',

@@ -100,7 +100,7 @@ void main() {
     expect(find.text('공유'), findsOneWidget);
     await tester.tap(find.text('링크 복사'));
     await tester.pumpAndSettle();
-    expect(copied, 'https://www.dutyit.net/events/42');
+    expect(copied, 'https://www.dutyit.net/visitEvent/42?openIn=app');
     await tester.pump(const Duration(seconds: 7));
     await tester.pumpAndSettle();
     await openMenu(tester);

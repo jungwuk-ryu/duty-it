@@ -1,10 +1,20 @@
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/core/utils/event_actions.dart';
+import 'package:duty_it/app/core/utils/event_deep_link.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('calendar uses Seoul API time and the canonical event link', () {
+  test(
+    'shared links reopen the same native event using the associated path',
+    () {
+      final url = eventShareUrl(811);
+      expect(url, 'https://www.dutyit.net/visitEvent/811?openIn=app');
+      expect(eventIdFromDeepLink(Uri.parse(url)), 811);
+    },
+  );
+
+  test('calendar uses Seoul API time and the shared event link', () {
     final draft = EventCalendarDraft.fromEvent(
       Event(
         id: 42,
@@ -18,7 +28,7 @@ void main() {
     expect(draft.end, DateTime.utc(2026, 10, 2, 9));
     expect(
       draft.description,
-      '주최: 간호협회\n행사 상세: https://www.dutyit.net/events/42',
+      '주최: 간호협회\n행사 상세: https://www.dutyit.net/visitEvent/42?openIn=app',
     );
   });
 

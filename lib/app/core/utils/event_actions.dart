@@ -1,6 +1,9 @@
 import 'package:duty_it/app/core/models/event.dart';
 
-String eventShareUrl(int eventId) => 'https://www.dutyit.net/events/$eventId';
+// /visitEvent is already present in Apple's cached domain association file.
+// Only marked links open the native detail; existing organizer links stay intact.
+String eventShareUrl(int eventId) =>
+    'https://www.dutyit.net/visitEvent/$eventId?openIn=app';
 
 class EventCalendarDraft {
   final String title;

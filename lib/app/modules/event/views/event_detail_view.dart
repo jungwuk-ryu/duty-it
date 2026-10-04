@@ -520,7 +520,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                     ),
                     TextButton.icon(
                       onPressed: () => _openUrl(
-                        'https://www.dutyit.net/events/$eventId',
+                        'https://www.dutyit.net/events/$eventId?openIn=web',
                         inApp: true,
                       ),
                       icon: const Icon(Icons.open_in_new_rounded, size: 17),
