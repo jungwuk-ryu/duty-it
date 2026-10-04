@@ -17,6 +17,25 @@ void main() {
   tearDown(Get.reset);
 
   test(
+    'reselecting the displayed event cancels a slower link to another event',
+    () async {
+      Get.routing.current = '/events/811';
+      addTearDown(() => Get.routing.current = '');
+      final response = Completer<RequestResult<EventDetail>>();
+      final opened = <int>[];
+      final service = EventDeepLinkService(
+        fetchDetail: (_) => response.future,
+        showDetail: (detail) => opened.add(detail.event.id),
+      )..markNavigationReady();
+      final pending = service.openEvent(812);
+      await service.openEvent(811);
+      response.complete(RequestSuccess(_detail(812)));
+      await pending;
+      expect(opened, isEmpty);
+    },
+  );
+
+  test(
     'restores app-link handling after an auth reset force-deletes services',
     () async {
       final original = EventDeepLinkService.ensureRegistered();
