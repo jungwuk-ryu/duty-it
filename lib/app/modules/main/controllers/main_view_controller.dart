@@ -10,6 +10,7 @@ import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
 import 'package:duty_it/app/modules/job/views/job_view.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/services/event_deep_link_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,14 @@ class MainViewController extends GetxController {
 
         return RequestFail(null);
       });
+    }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    if (Get.isRegistered<EventDeepLinkService>()) {
+      Get.find<EventDeepLinkService>().markNavigationReady();
     }
   }
 
