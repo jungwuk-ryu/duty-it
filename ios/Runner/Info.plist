@@ -16,11 +16,11 @@
 		<string>간호사</string>
 	</array>
 	<key>NSCalendarsUsageDescription</key>
-	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<string>선택한 행사를 기기 캘린더에 저장하고, 기기 일정을 듀잇에서 보여드리기 위해 접근이 필요해요.</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
-	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<string>선택한 행사를 기기 캘린더에 저장하기 위해 접근이 필요해요.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 전체 접근이 필요해요.</string>
+	<string>저장할 캘린더를 선택하고, 기기 일정을 듀잇에서 보여드리기 위해 접근이 필요해요.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -105,6 +105,16 @@
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Viewer</string>
+		<key>CFBundleURLName</key>
+		<string>com.dutyit.app.events</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>dutyit</string>
+		</array>
+	</dict>
 	<dict>
 		<key>CFBundleTypeRole</key>
 		<string>Editor</string>

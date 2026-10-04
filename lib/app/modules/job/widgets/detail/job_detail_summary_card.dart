@@ -112,7 +112,7 @@ class _SummarySectionWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 56,
+                    width: _labelWidth(row.label),
                     child: Text(
                       row.label,
                       style: const TextStyle(
@@ -140,5 +140,9 @@ class _SummarySectionWidget extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  double _labelWidth(String label) {
+    return label.length <= 2 ? 42 : 64;
   }
 }

@@ -28,7 +28,7 @@ class JobDetailInfoRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 118,
+          width: 108,
           child: Text(
             row.label,
             style: const TextStyle(
@@ -56,7 +56,7 @@ class JobDetailInfoRow extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 16),
       child: isInteractive
           ? Semantics(
               button: true,

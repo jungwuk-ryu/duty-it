@@ -12,6 +12,7 @@ class JobDetailTabBar extends StatelessWidget {
   });
 
   static const tabs = ['모집요강', '근무조건', '우대사항', '복리후생'];
+  static const double _height = 40;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class JobDetailTabBar extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 onTap: () => onTap(index),
                 child: SizedBox(
-                  height: 48,
+                  height: _height,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -52,7 +53,7 @@ class JobDetailTabBar extends StatelessWidget {
                         bottom: 0,
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 160),
-                          height: 2,
+                          height: 4,
                           color: isSelected
                               ? AppColors.main
                               : AppColors.transparent,
@@ -80,10 +81,10 @@ class JobDetailTabHeaderDelegate extends SliverPersistentHeaderDelegate {
   });
 
   @override
-  double get minExtent => 48;
+  double get minExtent => JobDetailTabBar._height;
 
   @override
-  double get maxExtent => 48;
+  double get maxExtent => JobDetailTabBar._height;
 
   @override
   Widget build(

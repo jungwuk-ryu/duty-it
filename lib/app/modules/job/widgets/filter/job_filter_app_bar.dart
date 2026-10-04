@@ -37,20 +37,23 @@ class JobFilterAppBar extends GetView<JobFilterViewController> {
             ),
           ),
         ),
-        GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: controller.onResetSettingsButtonClicked,
-          child: const SizedBox(
-            width: 48,
-            height: 48,
-            child: Center(
-              child: Text(
-                '초기화',
-                style: TextStyle(
-                  color: AppColors.g04,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 1.60,
+        Padding(
+          padding: const EdgeInsets.only(right: 13),
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: controller.onResetSettingsButtonClicked,
+            child: const SizedBox(
+              width: 48,
+              height: 48,
+              child: Center(
+                child: Text(
+                  '초기화',
+                  style: TextStyle(
+                    color: AppColors.g04,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 1.60,
+                  ),
                 ),
               ),
             ),

@@ -19,16 +19,16 @@ class DuitTopAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
           Image.asset(Assets.icons.logo.path, width: 16, height: 16),
-          const SizedBox(width: 8),
+          const SizedBox(width: 7),
           const Text(
-            '듀잇 - Du it!',
+            '듀잇',
             style: TextStyle(
               color: AppColors.black,
-              fontSize: 15,
+              fontSize: 18,
               fontWeight: FontWeight.w700,
               height: 1.60,
             ),

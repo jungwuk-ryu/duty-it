@@ -35,15 +35,6 @@ class SettingsView extends GetView<SettingsViewController> {
                     const SizedBox(height: 28),
                     Obx(
                       () => _SettingsToggleRow(
-                        title: '북마크한 공고를 기본 캘린더 앱에 추가하기',
-                        subtitle: '북마크한 공고를 휴대폰 기본 캘린더 앱에서도 확인할 수 있어요',
-                        checked: controller.calendarAutoAdd,
-                        onToggleTap: controller.toggleAutoAdd,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Obx(
-                      () => _SettingsToggleRow(
                         title: '기본 캘린더 일정을 듀잇 캘린더에서 보기',
                         subtitle: '휴대폰 기본 캘린더의 일정을 듀잇 캘린더에 가져올 수 있어요',
                         checked: controller.includeDeviceEvents,

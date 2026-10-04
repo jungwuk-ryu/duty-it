@@ -10,6 +10,7 @@ import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.da
 import 'package:duty_it/app/modules/home/widgets/no_search_item_indicator.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/list_page_intro.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -44,11 +45,28 @@ class JobView extends GetView<JobViewController> {
           automaticallyImplyLeading: false,
           actions: const <Widget>[SizedBox.shrink()],
           leading: const SizedBox.shrink(),
-          flexibleSpace: const FlexibleSpaceBar(background: JobAppBar()),
+          flexibleSpace: const FlexibleSpaceBar(
+            background: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: JobAppBar(),
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ListPageIntro(
+              title: '간호 채용 공고',
+              description: '간호 분야의 새로운 일자리를 한눈에 확인해보세요.',
+            ),
+          ),
         ),
         AdaptiveHeightSliverPersistentHeader(
           pinned: true,
-          child: JobHeader(controller: controller),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: JobHeader(controller: controller),
+          ),
         ),
         if (useCupertinoRefreshControl)
           CupertinoSliverRefreshControl(
@@ -89,101 +107,102 @@ class JobView extends GetView<JobViewController> {
           }),
         if (useCupertinoRefreshControl)
           const SliverToBoxAdapter(child: SizedBox(height: _listTopSpacing)),
-        Obx(() {
-          final isPullToRefreshing = controller.isPullToRefreshing;
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: Obx(() {
+            final isPullToRefreshing = controller.isPullToRefreshing;
 
-          return PagedSliverList<String?, Rx<JobPosting>>(
-            state: controller.pagingState,
-            fetchNextPage: controller.fetchNextPage,
-            builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
-              animateTransitions: true,
-              transitionDuration: const Duration(milliseconds: 100),
-              itemBuilder: (_, item, _) => JobCard(
-                jobRx: item,
-                onTap: () => controller.openJobDetail(item),
-              ),
-              firstPageProgressIndicatorBuilder: (_) => isPullToRefreshing
-                  ? const SizedBox.shrink()
-                  : const Center(child: CircularProgressIndicator.adaptive()),
-              newPageProgressIndicatorBuilder: (_) => isPullToRefreshing
-                  ? const SizedBox.shrink()
-                  : const Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-                    ),
-              noItemsFoundIndicatorBuilder: (_) {
-                final hasSearchQuery = controller.searchQuery.value.isNotEmpty;
-                final hasFilterChanges = Get.find<JobFilterService>()
-                    .hasFilterChanges();
-
-                if (controller.selectedTab == JobTab.bookmark &&
-                    !hasSearchQuery &&
-                    !hasFilterChanges) {
-                  return const NoBookmarkedItemIndicator(
-                    text: '북마크된 채용공고가 없습니다.\n채용 리스트에서 북마크를 추가해보세요.',
-                  );
-                }
-
-                if (hasSearchQuery) {
-                  return const NoSearchItemIndicator();
-                }
-
-                if (hasFilterChanges) {
-                  return const JobFilterEmptyIndicator();
-                }
-
-                return const NoSearchItemIndicator();
-              },
-              firstPageErrorIndicatorBuilder: (_) => Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 200),
-                  child: AppNormalButton(
-                    text: '재시도',
-                    onTap: () async {
-                      await controller.fetchNextPage(clearPage: true);
-                    },
-                  ),
+            return PagedSliverList<String?, Rx<JobPosting>>(
+              state: controller.pagingState,
+              fetchNextPage: controller.fetchNextPage,
+              builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
+                animateTransitions: true,
+                transitionDuration: const Duration(milliseconds: 100),
+                itemBuilder: (_, item, _) => JobCard(
+                  jobRx: item,
+                  onTap: () => controller.openJobDetail(item),
                 ),
-              ),
-              newPageErrorIndicatorBuilder: (_) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 5,
-                    horizontal: 10,
-                  ),
+                firstPageProgressIndicatorBuilder: (_) => isPullToRefreshing
+                    ? const SizedBox.shrink()
+                    : const Center(child: CircularProgressIndicator.adaptive()),
+                newPageProgressIndicatorBuilder: (_) => isPullToRefreshing
+                    ? const SizedBox.shrink()
+                    : const Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
+                noItemsFoundIndicatorBuilder: (_) {
+                  final hasSearchQuery =
+                      controller.searchQuery.value.isNotEmpty;
+                  final hasFilterChanges = Get.find<JobFilterService>()
+                      .hasFilterChanges();
+
+                  if (controller.selectedTab == JobTab.bookmark &&
+                      !hasSearchQuery &&
+                      !hasFilterChanges) {
+                    return const NoBookmarkedItemIndicator(
+                      text: '북마크된 채용공고가 없습니다.\n채용 리스트에서 북마크를 추가해보세요.',
+                    );
+                  }
+
+                  if (hasSearchQuery) {
+                    return const NoSearchItemIndicator();
+                  }
+
+                  if (hasFilterChanges) {
+                    return const JobFilterEmptyIndicator();
+                  }
+
+                  return const NoSearchItemIndicator();
+                },
+                firstPageErrorIndicatorBuilder: (_) => Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 200),
                     child: AppNormalButton(
                       text: '재시도',
                       onTap: () async {
-                        await controller.fetchNextPage();
+                        await controller.fetchNextPage(clearPage: true);
                       },
                     ),
                   ),
                 ),
+                newPageErrorIndicatorBuilder: (_) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 5,
+                      horizontal: 10,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 200),
+                      child: AppNormalButton(
+                        text: '재시도',
+                        onTap: () async {
+                          await controller.fetchNextPage();
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ],
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: useCupertinoRefreshControl
-          ? scrollView
-          : RefreshIndicator.noSpinner(
-              onStatusChange: controller.updateRefreshIndicatorStatus,
-              onRefresh: controller.onPullToRefresh,
-              child: NotificationListener<ScrollNotification>(
-                onNotification: controller.onPullToRefreshScrollNotification,
-                child: scrollView,
-              ),
+    return useCupertinoRefreshControl
+        ? scrollView
+        : RefreshIndicator.noSpinner(
+            onStatusChange: controller.updateRefreshIndicatorStatus,
+            onRefresh: controller.onPullToRefresh,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: controller.onPullToRefreshScrollNotification,
+              child: scrollView,
             ),
-    );
+          );
   }
 }

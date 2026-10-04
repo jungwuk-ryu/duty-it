@@ -11,11 +11,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class FakeApiClient extends ApiClient {
-  FakeApiClient({
-    required this.onUpdateUserSettings,
-  });
+  FakeApiClient({required this.onUpdateUserSettings});
 
-  final Future<RequestResult<AppUser>> Function(bool, AlarmSettings)
+  final Future<RequestResult<AppUser>> Function(AlarmSettings)
   onUpdateUserSettings;
 
   @override
@@ -23,10 +21,9 @@ class FakeApiClient extends ApiClient {
 
   @override
   Future<RequestResult<AppUser>> updateUserSettings(
-    bool autoAddBookmarkToCalendar,
     AlarmSettings alarmSettings,
   ) {
-    return onUpdateUserSettings(autoAddBookmarkToCalendar, alarmSettings);
+    return onUpdateUserSettings(alarmSettings);
   }
 }
 
@@ -38,19 +35,19 @@ void main() {
   setUpAll(() async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(pathProviderChannel, (methodCall) async {
-      if (methodCall.method == 'getApplicationDocumentsDirectory') {
-        return Directory.systemTemp.path;
-      }
-      return null;
-    });
+          if (methodCall.method == 'getApplicationDocumentsDirectory') {
+            return Directory.systemTemp.path;
+          }
+          return null;
+        });
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform, (methodCall) async {
-      if (methodCall.method == 'HapticFeedback.vibrate') {
-        return null;
-      }
-      return null;
-    });
+          if (methodCall.method == 'HapticFeedback.vibrate') {
+            return null;
+          }
+          return null;
+        });
 
     await GetStorage.init(authBoxName);
   });
@@ -69,85 +66,38 @@ void main() {
         .setMockMethodCallHandler(SystemChannels.platform, null);
   });
 
-  test('toggleAutoAdd hydrates missing user before updating settings', () async {
-    bool? capturedAutoAdd;
-    AlarmSettings? capturedAlarmSettings;
+  test(
+    'toggleBookmarkNoti hydrates missing user before updating settings',
+    () async {
+      AlarmSettings? capturedAlarmSettings;
 
-    Get.put(
-      AuthService(
-        loggedInChecker: () => true,
-        currentUserLoader: () async => RequestSuccess(
-          const AppUser(
-            id: 1,
-            autoAddBookmarkToCalendar: false,
-            alarmSettings: AlarmSettings(bookmark: true),
-          ),
-        ),
-        storageFactory: (_) => GetStorage(authBoxName),
-      ),
-    );
-    Get.put<ApiClient>(
-      FakeApiClient(
-        onUpdateUserSettings: (autoAdd, alarmSettings) async {
-          capturedAutoAdd = autoAdd;
-          capturedAlarmSettings = alarmSettings;
-          return RequestSuccess(
-            AppUser(
-              id: 1,
-              autoAddBookmarkToCalendar: autoAdd,
-              alarmSettings: alarmSettings,
-            ),
-          );
-        },
-      ),
-    );
-
-    final controller = SettingsViewController();
-
-    await controller.toggleAutoAdd();
-
-    expect(capturedAutoAdd, isTrue);
-    expect(capturedAlarmSettings?.bookmark, isTrue);
-  });
-
-  test('toggleBookmarkNoti hydrates missing user before updating settings', () async {
-    bool? capturedAutoAdd;
-    AlarmSettings? capturedAlarmSettings;
-
-    Get.put(
-      AuthService(
-        loggedInChecker: () => true,
-        currentUserLoader: () async => RequestSuccess(
-          const AppUser(
-            id: 3,
-            autoAddBookmarkToCalendar: true,
-            alarmSettings: AlarmSettings(bookmark: false),
-          ),
-        ),
-        storageFactory: (_) => GetStorage(authBoxName),
-      ),
-    );
-    Get.put<ApiClient>(
-      FakeApiClient(
-        onUpdateUserSettings: (autoAdd, alarmSettings) async {
-          capturedAutoAdd = autoAdd;
-          capturedAlarmSettings = alarmSettings;
-          return RequestSuccess(
-            AppUser(
+      Get.put(
+        AuthService(
+          loggedInChecker: () => true,
+          currentUserLoader: () async => RequestSuccess(
+            const AppUser(
               id: 3,
-              autoAddBookmarkToCalendar: autoAdd,
-              alarmSettings: alarmSettings,
+              autoAddBookmarkToCalendar: true,
+              alarmSettings: AlarmSettings(bookmark: false),
             ),
-          );
-        },
-      ),
-    );
+          ),
+          storageFactory: (_) => GetStorage(authBoxName),
+        ),
+      );
+      Get.put<ApiClient>(
+        FakeApiClient(
+          onUpdateUserSettings: (alarmSettings) async {
+            capturedAlarmSettings = alarmSettings;
+            return RequestSuccess(AppUser(id: 3, alarmSettings: alarmSettings));
+          },
+        ),
+      );
 
-    final controller = SettingsViewController();
+      final controller = SettingsViewController();
 
-    await controller.toggleBookmarkNoti();
+      await controller.toggleBookmarkNoti();
 
-    expect(capturedAutoAdd, isTrue);
-    expect(capturedAlarmSettings?.bookmark, isTrue);
-  });
+      expect(capturedAlarmSettings?.bookmark, isTrue);
+    },
+  );
 }

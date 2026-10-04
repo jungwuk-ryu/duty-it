@@ -7,8 +7,12 @@ class JobSortingModalController extends GetxController {
 
   JobSortingType get selectedType => _jobController.sortingType;
 
-  void selectTypeAndClose(JobSortingType type) {
+  void selectType(JobSortingType type) {
     _jobController.sortingType = type;
+  }
+
+  void selectTypeAndClose(JobSortingType type) {
+    selectType(type);
     Get.back();
   }
 }

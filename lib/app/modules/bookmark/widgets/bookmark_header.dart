@@ -16,7 +16,7 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: AppColors.white,
+      color: AppColors.canvas,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -31,21 +31,25 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
           ),
           const SizedBox(height: 18),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Obx(
-                () => HomeTabButton(
-                  isSelected: controller.isEventTab,
-                  onTap: () =>
-                      controller.selectedTab = BookmarkContentTab.event,
-                  title: '행사',
+              Expanded(
+                child: Obx(
+                  () => HomeTabButton(
+                    isSelected: controller.isEventTab,
+                    onTap: () =>
+                        controller.selectedTab = BookmarkContentTab.event,
+                    title: '행사',
+                  ),
                 ),
               ),
-              Obx(
-                () => HomeTabButton(
-                  isSelected: controller.isJobTab,
-                  onTap: () => controller.selectedTab = BookmarkContentTab.job,
-                  title: '채용',
+              const SizedBox(width: 8),
+              Expanded(
+                child: Obx(
+                  () => HomeTabButton(
+                    isSelected: controller.isJobTab,
+                    onTap: () => controller.selectedTab = BookmarkContentTab.job,
+                    title: '채용',
+                  ),
                 ),
               ),
             ],

@@ -13,37 +13,42 @@ class MainView extends GetView<MainViewController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: controller.scaffoldKey,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
-        child: Obx(
-          () => AnimatedSwitcher(
-            duration: const Duration(milliseconds: 150),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: ScaleTransition(
-                  scale: Tween<double>(
-                    begin: 0.99,
-                    end: 1.0,
-                  ).animate(animation),
-                  child: child,
-                ),
-              );
-            },
-            child: controller.pages[controller.pageIndex.value],
+        child: ColoredBox(
+          color: AppColors.canvas,
+          child: Obx(
+            () => AnimatedSwitcher(
+              duration: const Duration(milliseconds: 150),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: Tween<double>(
+                      begin: 0.99,
+                      end: 1.0,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                );
+              },
+              child: controller.pages[controller.pageIndex.value],
+            ),
           ),
         ),
       ),
       bottomNavigationBar: Obx(
         () => BottomNavigationBar(
-          elevation: 50,
+          backgroundColor: AppColors.white,
+          elevation: 4,
           type: BottomNavigationBarType.fixed,
           currentIndex: controller.pageIndex.value,
           onTap: controller.changeTab,
-          selectedFontSize: 10,
-          selectedItemColor: AppColors.black,
-          unselectedFontSize: 10,
-          unselectedItemColor: AppColors.g04,
+          selectedFontSize: 11,
+          selectedItemColor: AppColors.main,
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700),
+          unselectedFontSize: 11,
+          unselectedItemColor: AppColors.g05,
           items: [
             BottomNavigationBarItem(
               icon: Image.asset(
@@ -51,8 +56,8 @@ class MainView extends GetView<MainViewController> {
                 width: 20,
                 height: 20,
                 color: controller.pageIndex.value == 0
-                    ? AppColors.black
-                    : AppColors.g04,
+                    ? AppColors.main
+                    : AppColors.g05,
               ),
               label: '행사',
             ),
@@ -62,8 +67,8 @@ class MainView extends GetView<MainViewController> {
                 width: 20,
                 height: 20,
                 color: controller.pageIndex.value == 1
-                    ? AppColors.black
-                    : AppColors.g04,
+                    ? AppColors.main
+                    : AppColors.g05,
               ),
               label: '채용',
             ),
@@ -73,8 +78,8 @@ class MainView extends GetView<MainViewController> {
                 width: 20,
                 height: 20,
                 color: controller.pageIndex.value == 2
-                    ? AppColors.black
-                    : AppColors.g04,
+                    ? AppColors.main
+                    : AppColors.g05,
               ),
               label: '북마크',
             ),
@@ -84,8 +89,8 @@ class MainView extends GetView<MainViewController> {
                 width: 20,
                 height: 20,
                 color: controller.pageIndex.value == 3
-                    ? AppColors.black
-                    : AppColors.g04,
+                    ? AppColors.main
+                    : AppColors.g05,
               ),
               label: '캘린더',
             ),

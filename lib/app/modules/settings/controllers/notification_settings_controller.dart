@@ -185,10 +185,7 @@ class NotificationSettingsController extends GetxController {
       final user = await _ensureAppUserLoaded();
       if (user == null) return;
 
-      final result = await api.updateUserSettings(
-        user.autoAddBookmarkToCalendar,
-        update(user),
-      );
+      final result = await api.updateUserSettings(update(user));
 
       if (result is RequestFail) {
         AppUtils.showSnackBar(

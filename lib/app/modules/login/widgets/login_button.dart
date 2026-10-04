@@ -30,6 +30,8 @@ class _LoginButtonState extends State<LoginButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isLight = (widget.buttonColor?.computeLuminance() ?? 1) > 0.5;
+
     return InkWell(
       onTap: () async {
         if (isLogining.value) return;
@@ -43,19 +45,11 @@ class _LoginButtonState extends State<LoginButton> {
         }
       },
       child: Container(
-        width: 328,
-        height: 45,
+        width: double.infinity,
+        height: 48,
         decoration: BoxDecoration(
-          //border: Border.all(color: AppColors.g07, width: 3),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.g04,
-              blurRadius: 4,
-              spreadRadius: 0,
-              offset: Offset(0, 0),
-            ),
-          ],
-          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isLight ? AppColors.border : Colors.black),
+          borderRadius: BorderRadius.circular(10),
           color: widget.buttonColor ?? AppColors.white,
         ),
         child: Center(
@@ -78,10 +72,7 @@ class _LoginButtonState extends State<LoginButton> {
                       "${widget.providerName}로 계속하기",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color:
-                            (widget.buttonColor?.computeLuminance() ?? 1) > 0.5
-                            ? AppColors.black
-                            : AppColors.white,
+                        color: isLight ? AppColors.black : AppColors.white,
                       ),
                     ),
                     child: Lottie.asset(

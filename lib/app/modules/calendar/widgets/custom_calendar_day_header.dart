@@ -33,7 +33,7 @@ class DayHeader extends StatelessWidget {
             height: 16,
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppColors.black
+                  ? AppColors.main
                   : (isToday ? AppColors.g03 : AppColors.transparent),
               shape: BoxShape.circle,
             ),

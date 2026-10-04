@@ -100,12 +100,15 @@ Object? _readSourceType(Map json, String key) {
 }
 
 Object? _readTitle(Map json, String key) {
-  return _decodeHtmlEntities(_firstJsonValue(json, [key, 'wantedTitle']));
+  return _cleanJsonString(
+    _decodeHtmlEntities(_firstJsonValue(json, [key, 'wantedTitle'])),
+  );
 }
 
 Object? _readCompanyName(Map json, String key) {
-  return _firstJsonValue(json, [key]) ??
-      _nestedJsonValue(json, 'company', 'corpNm');
+  return _cleanJsonString(
+    _firstJsonValue(json, [key]) ?? _nestedJsonValue(json, 'company', 'corpNm'),
+  );
 }
 
 Object? _readCompanyAddress(Map json, String key) {
@@ -217,6 +220,11 @@ const Map<String, String> _htmlEntityNames = {
 final RegExp _htmlEntityPattern = RegExp(
   r'&(#(?:[xX][0-9a-fA-F]+|[0-9]+)|[a-zA-Z][a-zA-Z0-9]+);',
 );
+
+Object? _cleanJsonString(Object? value) {
+  if (value is String) return value.trim();
+  return value;
+}
 
 const Set<String> _workRegionCodes = {
   'SEOUL',
