@@ -244,10 +244,11 @@ class ApiClient extends GetConnect {
     }
 
     var future = Future<RequestResult<LoginResult>>(() async {
+      final firebaseUser = FirebaseAuth.instance.currentUser;
       String? fbToken;
 
       try {
-        fbToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+        fbToken = await firebaseUser?.getIdToken();
       } catch (ex, st) {
         FirebaseCrashlytics.instance.recordError(ex, st);
       }
@@ -256,19 +257,20 @@ class ApiClient extends GetConnect {
         return RequestFail(null);
       }
 
-      return await _send(
+      final result = await _send<LoginResult>(
         () async => await post('/v1/auth/social', "$fbToken"),
-        map: (rp) {
-          LoginResult result = LoginResult.fromJson(
-            json.decode(rp.bodyString!),
-          );
-          _token = result.accessToken;
-
-          Get.find<AuthService>().appUser = result.user;
-
-          return result;
-        },
+        map: (rp) => LoginResult.fromJson(json.decode(rp.bodyString!)),
       );
+      if (FirebaseAuth.instance.currentUser?.uid != firebaseUser?.uid) {
+        return RequestFail(null);
+      }
+      if (result is RequestSuccess<LoginResult>) {
+        _token = result.data.accessToken;
+        final auth = Get.find<AuthService>();
+        auth.appUser = result.data.user;
+        await auth.syncAnalyticsUserId();
+      }
+      return result;
     }).whenComplete(() => _loginFuture = null);
 
     _loginFuture = future;
@@ -279,35 +281,41 @@ class ApiClient extends GetConnect {
 
   /// 현재 사용자 정보 조회 (/users/me) - GET
   Future<RequestResult<AppUser>> getCurrentUser() async {
-    return _send(
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final result = await _send<AppUser>(
       () async => await get('/v1/users/me'),
-      map: (rp) {
-        AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
-
-        Get.find<AuthService>().appUser = user;
-
-        return user;
-      },
+      map: (rp) => AppUser.fromJson(json.decode(rp.bodyString!)),
     );
+    await _applyCurrentUser(result, uid);
+    return result;
   }
 
   Future<RequestResult<AppUser>> updateUserSettings(
     AlarmSettings alarmSettings,
-  ) {
-    return _send(
+  ) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final result = await _send<AppUser>(
       () async => await patch('/v1/users/settings', {
         // Kept for compatibility with the settings API; device saves are manual.
         'autoAddBookmarkToCalendar': false,
         'alarmSettings': alarmSettings.toJson(),
       }),
-      map: (rp) {
-        AppUser user = AppUser.fromJson(json.decode(rp.bodyString!));
-
-        Get.find<AuthService>().appUser = user;
-
-        return user;
-      },
+      map: (rp) => AppUser.fromJson(json.decode(rp.bodyString!)),
     );
+    await _applyCurrentUser(result, uid);
+    return result;
+  }
+
+  Future<void> _applyCurrentUser(
+    RequestResult<AppUser> result,
+    String? uid,
+  ) async {
+    if (uid == null || FirebaseAuth.instance.currentUser?.uid != uid) return;
+    if (result is RequestSuccess<AppUser>) {
+      final auth = Get.find<AuthService>();
+      auth.appUser = result.data;
+      await auth.syncAnalyticsUserId();
+    }
   }
 
   /// 닉네임 중복 확인 (/users/check-nickname?nickname=) - GET

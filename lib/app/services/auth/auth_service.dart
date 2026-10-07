@@ -10,6 +10,7 @@ import 'package:duty_it/app/services/auth/strategies/apple_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/google_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -42,9 +43,11 @@ class AuthService extends GetxService {
     Future<RequestResult<AppUser>> Function()? currentUserLoader,
     bool Function()? loggedInChecker,
     GetStorage Function(String boxName)? storageFactory,
+    Future<void> Function(String? userId)? analyticsUserIdSetter,
   }) : _currentUserLoader = currentUserLoader,
        _loggedInChecker = loggedInChecker,
-       _storageFactory = storageFactory ?? GetStorage.new;
+       _storageFactory = storageFactory ?? GetStorage.new,
+       _analyticsUserIdSetter = analyticsUserIdSetter ?? _setAnalyticsUserId;
 
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};
   final Rxn<AppUser> _appUser = Rxn();
@@ -53,9 +56,15 @@ class AuthService extends GetxService {
   final Future<RequestResult<AppUser>> Function()? _currentUserLoader;
   final bool Function()? _loggedInChecker;
   final GetStorage Function(String boxName) _storageFactory;
+  final Future<void> Function(String? userId) _analyticsUserIdSetter;
+  Future<void> _analyticsUpdate = Future.value();
+  String? _analyticsUserId;
+  bool _analyticsIdentityInitialized = false;
+  int _userRevision = 0;
 
   AppUser? get appUser => _appUser.value;
   set appUser(AppUser? user) {
+    _userRevision++;
     _appUser.value = user;
 
     if (user != null) {
@@ -63,6 +72,31 @@ class AuthService extends GetxService {
     } else {
       _box.remove(_appUserKey);
     }
+    unawaited(syncAnalyticsUserId());
+  }
+
+  static Future<void> _setAnalyticsUserId(String? userId) {
+    return FirebaseAnalytics.instance.setUserId(id: userId);
+  }
+
+  Future<void> syncAnalyticsUserId() {
+    // Match the web's backend member ID, rather than email or Firebase UID.
+    final userId = appUser?.id.toString();
+    if (_analyticsIdentityInitialized && userId == _analyticsUserId) {
+      return _analyticsUpdate;
+    }
+    _analyticsIdentityInitialized = true;
+    _analyticsUserId = userId;
+    // Serialize native SDK calls so a slow previous account cannot win later.
+    _analyticsUpdate = _analyticsUpdate.then((_) async {
+      try {
+        await _analyticsUserIdSetter(userId);
+      } catch (e, st) {
+        if (_analyticsUserId == userId) _analyticsIdentityInitialized = false;
+        log('Failed to update Analytics user ID', error: e, stackTrace: st);
+      }
+    });
+    return _analyticsUpdate;
   }
 
   SocialLoginStrategy? _currentStrategy;
@@ -74,9 +108,11 @@ class AuthService extends GetxService {
 
     _box = _storageFactory(storageBoxName);
     _loadCachedAppUser();
+    unawaited(syncAnalyticsUserId());
   }
 
   void _loadCachedAppUser() {
+    if (!isLoggined()) return;
     Map<String, dynamic>? jsonObj = _box.read(_appUserKey);
     if (jsonObj == null) return;
 
@@ -130,10 +166,11 @@ class AuthService extends GetxService {
     await logoutWaiter;
 
     // Social
-    await _currentStrategy?.logout();
-
-    // finalizing
-    await _doPostLogoutJob();
+    try {
+      await _currentStrategy?.logout();
+    } finally {
+      await _doPostLogoutJob();
+    }
   }
 
   Future<bool> withdraw() async {
@@ -156,33 +193,54 @@ class AuthService extends GetxService {
     await _deleteFirebaseUserSafely();
 
     // Social
-    await _currentStrategy?.logout();
-
-    // finalizing
-    await _doPostLogoutJob();
+    try {
+      await _currentStrategy?.logout();
+    } finally {
+      await _doPostLogoutJob();
+    }
 
     return true;
   }
 
   Future<AppUser?> ensureAppUserLoaded() {
+    if (!isLoggined()) {
+      appUser = null;
+      return syncAnalyticsUserId().then((_) => null);
+    }
     final currentUser = appUser;
-    if (currentUser != null) return Future.value(currentUser);
-    if (!isLoggined()) return Future.value(null);
+    if (currentUser != null) {
+      return syncAnalyticsUserId().then((_) => currentUser);
+    }
     if (_appUserLoadFuture != null) return _appUserLoadFuture!;
 
-    final future = (() async {
-      try {
-        final RequestResult<AppUser> reqResult = await _loadCurrentUser();
-        if (reqResult is RequestSuccess<AppUser>) {
-          appUser = reqResult.data;
-          return reqResult.data;
-        }
-      } catch (e, st) {
-        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-      }
+    final revision = _userRevision;
+    late final Future<AppUser?> future;
+    future =
+        (() async {
+          try {
+            final RequestResult<AppUser> reqResult = await _loadCurrentUser();
+            if (revision != _userRevision) {
+              await syncAnalyticsUserId();
+              return appUser;
+            }
+            if (!isLoggined()) {
+              appUser = null;
+              await syncAnalyticsUserId();
+              return null;
+            }
+            if (reqResult is RequestSuccess<AppUser>) {
+              appUser = reqResult.data;
+              await syncAnalyticsUserId();
+              return reqResult.data;
+            }
+          } catch (e, st) {
+            FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+          }
 
-      return appUser;
-    })().whenComplete(() => _appUserLoadFuture = null);
+          return appUser;
+        })().whenComplete(() {
+          if (identical(_appUserLoadFuture, future)) _appUserLoadFuture = null;
+        });
 
     _appUserLoadFuture = future;
     return future;
@@ -191,6 +249,8 @@ class AuthService extends GetxService {
   Future<void> _doPostLogoutJob() async {
     appUser = null;
     _currentStrategy = null;
+    _appUserLoadFuture = null;
+    await syncAnalyticsUserId();
 
     if (Get.isRegistered<CalendarViewController>()) {
       Get.find<CalendarViewController>().clearCache().catchError((e, st) {

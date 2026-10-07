@@ -9,7 +9,9 @@ class SplashBinding extends Bindings {
   @override
   void dependencies() {
     EventDeepLinkService.ensureRegistered();
-    Get.put(AuthService(), permanent: true);
+    if (!Get.isRegistered<AuthService>()) {
+      Get.put(AuthService(), permanent: true);
+    }
     Get.put(ApiClient(), permanent: true);
     Get.put<SplashViewController>(SplashViewController());
   }
