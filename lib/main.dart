@@ -51,6 +51,10 @@ void main() async {
   /* Firebase init end */
   await Future.wait([dotenvFuture]);
 
+  await GetStorage.init(AuthService.storageBoxName);
+  final auth = Get.put(AuthService(), permanent: true);
+  await auth.syncAnalyticsUserId();
+
   if (kIsWeb == false) {
     BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
     initPlatformState();

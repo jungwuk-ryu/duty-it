@@ -73,6 +73,10 @@
 |[jungwuk-ryu](https://github.com/jungwuk-ryu)|[klaus9267](https://github.com/klaus9267/duit_server)|🤫|🤫|
 
 ## 개발 (Development)
+
+### Analytics 사용자 연결
+앱과 웹은 `duty-it` Firebase 프로젝트에서 서버 회원 번호의 문자열(예: `42`)을 동일한 `user_id`로 사용합니다. `AuthService`가 로그인 복원과 회원 정보 변경 시 ID를 설정하고, 로그아웃·회원 탈퇴 시 `null`로 지웁니다. 로그인 성공 이벤트와 첫 화면 이동 전에 ID 설정을 기다리며, Analytics 오류는 로그인을 중단시키지 않습니다. 이메일·닉네임·Firebase UID를 ID로 쓰지 않습니다. 이 변경이 포함된 앱 버전을 설치한 뒤부터 웹의 로그인 활동과 연결됩니다.
+
 ### 기술 스택
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-%2300B4AB.svg?style=for-the-badge&logo=Dart&logoColor=white)
