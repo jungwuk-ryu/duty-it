@@ -15,10 +15,11 @@ class AppSettingsService extends GetxService {
   void onInit() async {
     super.onInit();
     _box.remove(_dontShowAutoAddModalKey);
+    // 기기 캘린더 일정은 사용자가 직접 켠 경우에만 읽는다.
     includeDeviceEvents = AppSetting(
       key: 'include_device_events',
       box: _box,
-      defaultValue: true,
+      defaultValue: false,
     );
     eventSortingType = AppSetting(
       key: 'event_sorting_type',

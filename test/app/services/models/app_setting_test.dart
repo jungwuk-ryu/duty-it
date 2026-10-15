@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/models/app_setting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 void main() {
@@ -20,11 +22,16 @@ void main() {
     });
 
     await GetStorage.init(boxName);
+    await GetStorage.init(AppSettingsService.storageBoxName);
   });
 
   setUp(() async {
+    Get.reset();
     await GetStorage(boxName).erase();
+    await GetStorage(AppSettingsService.storageBoxName).erase();
   });
+
+  tearDown(Get.reset);
 
   tearDownAll(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -51,10 +58,26 @@ void main() {
     final setting = AppSetting<bool>(
       key: 'include_device_events',
       box: box,
-      defaultValue: true,
+      defaultValue: false,
     );
 
-    expect(setting.value, isTrue);
+    expect(setting.value, isFalse);
     expect(box.read('include_device_events'), isNull);
+  });
+
+  test('does not include device calendar events by default', () {
+    final service = Get.put(AppSettingsService());
+
+    expect(service.includeDeviceEvents.value, isFalse);
+  });
+
+  test('keeps an explicitly stored device calendar choice', () async {
+    await GetStorage(
+      AppSettingsService.storageBoxName,
+    ).write('include_device_events', true);
+
+    final service = Get.put(AppSettingsService());
+
+    expect(service.includeDeviceEvents.value, isTrue);
   });
 }
