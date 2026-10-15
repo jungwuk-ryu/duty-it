@@ -10,6 +10,7 @@ import 'package:duty_it/app/modules/home/widgets/no_bookmarked_item_indicator.da
 import 'package:duty_it/app/modules/home/widgets/no_search_item_indicator.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/job_info_registration_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -89,6 +90,12 @@ class JobView extends GetView<JobViewController> {
           }),
         if (useCupertinoRefreshControl)
           const SliverToBoxAdapter(child: SizedBox(height: _listTopSpacing)),
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: JobInfoRegistrationText(textAlign: TextAlign.start),
+          ),
+        ),
         Obx(() {
           final isPullToRefreshing = controller.isPullToRefreshing;
 
