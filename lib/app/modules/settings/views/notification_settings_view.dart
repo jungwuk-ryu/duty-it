@@ -44,7 +44,7 @@ class NotificationSettingsView extends GetView<NotificationSettingsController> {
                         title: '광고성 정보 수신 동의 (선택)',
                         subtitle:
                             '이벤트·혜택 등 광고성 정보를 앱 푸시로 받아요. 동의하지 않아도 서비스를 이용할 수 있어요.',
-                        subtitleMaxLines: 2,
+                        wrapText: true,
                         checked: controller.marketingNoti,
                         onToggleTap: controller.toggleMarketingNoti,
                       ),
@@ -139,14 +139,15 @@ class _SectionHeader extends StatelessWidget {
 class _SettingsToggleRow extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final int subtitleMaxLines;
+  // 법적 안내 문구처럼 잘리면 안 되는 텍스트는 줄바꿈해서 모두 보여준다.
+  final bool wrapText;
   final bool checked;
   final Future<void> Function() onToggleTap;
 
   const _SettingsToggleRow({
     required this.title,
     this.subtitle,
-    this.subtitleMaxLines = 1,
+    this.wrapText = false,
     required this.checked,
     required this.onToggleTap,
   });
@@ -162,16 +163,16 @@ class _SettingsToggleRow extends StatelessWidget {
             children: [
               Text(
                 title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: wrapText ? null : 1,
+                overflow: wrapText ? null : TextOverflow.ellipsis,
                 style: _NotificationStyles.primary,
               ),
               if (subtitle != null) ...[
                 const SizedBox(height: 2),
                 Text(
                   subtitle!,
-                  maxLines: subtitleMaxLines,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: wrapText ? null : 1,
+                  overflow: wrapText ? null : TextOverflow.ellipsis,
                   style: _NotificationStyles.secondary,
                 ),
               ],
