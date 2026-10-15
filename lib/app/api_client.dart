@@ -237,9 +237,16 @@ class ApiClient extends GetConnect {
   // ---------- Auth ----------
 
   /// 소셜 로그인 (auth/social)
-  Future<RequestResult<LoginResult>> loginAndRefreshToken() {
+  /// [agreedTermsVersion]은 로그인 화면에서 약관에 동의했을 때만 보내며,
+  /// 서버는 이 값으로 약관 동의 버전과 시각을 기록한다.
+  Future<RequestResult<LoginResult>> loginAndRefreshToken({
+    String? agreedTermsVersion,
+  }) async {
     if (_loginFuture != null) {
-      return _loginFuture!;
+      if (agreedTermsVersion == null) return _loginFuture!;
+
+      // 진행 중인 토큰 갱신 요청에는 동의 버전이 실리지 않으므로 끝난 뒤 다시 보낸다.
+      await _loginFuture;
     }
 
     var future = Future<RequestResult<LoginResult>>(() async {
@@ -255,8 +262,12 @@ class ApiClient extends GetConnect {
         return RequestFail(null);
       }
 
+      final Object body = agreedTermsVersion == null
+          ? fbToken
+          : {'idToken': fbToken, 'agreedTermsVersion': agreedTermsVersion};
+
       return await _send(
-        () async => await post('/v1/auth/social', "$fbToken"),
+        () async => await post('/v1/auth/social', body),
         map: (rp) {
           LoginResult result = LoginResult.fromJson(
             json.decode(rp.bodyString!),

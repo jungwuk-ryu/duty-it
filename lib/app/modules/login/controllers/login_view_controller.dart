@@ -1,4 +1,5 @@
 import 'package:duty_it/app/api_client.dart';
+import 'package:duty_it/app/core/constants/app_legal.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/login/models/login_result.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
@@ -16,6 +17,10 @@ class LoginViewController extends GetxController {
   bool get isLogining => _isLogining.value;
   set isLogining(v) => _isLogining.value = v;
 
+  // 간주동의를 막기 위해 사용자가 직접 체크해야만 로그인할 수 있다.
+  final RxBool _termsAgreed = RxBool(false);
+  bool get termsAgreed => _termsAgreed.value;
+
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   @override
@@ -27,7 +32,17 @@ class LoginViewController extends GetxController {
     AssetLottie(Assets.lottie.loadingDots).load();
   }
 
+  void toggleTermsAgreed() => _termsAgreed.toggle();
+
+  void openTerms() => AppUtils.openWebUrl(AppLegal.termsUrl);
+
+  void openPrivacyPolicy() => AppUtils.openWebUrl(AppLegal.privacyPolicyUrl);
+
   Future<void> onLoginButtonTap(SocialProvider provider) async {
+    if (!termsAgreed) {
+      AppUtils.showSnackBar('이용약관에 동의하면 로그인할 수 있어요.');
+      return;
+    }
     if (isLogining) return;
     isLogining = true;
 
@@ -41,7 +56,7 @@ class LoginViewController extends GetxController {
         case SocialLoginSuccess():
           var apiClient = Get.find<ApiClient>();
           RequestResult<LoginResult> rp = await apiClient
-              .loginAndRefreshToken();
+              .loginAndRefreshToken(agreedTermsVersion: AppLegal.termsVersion);
 
           if (rp is RequestSuccess) {
             AppUtils.resetApp();
