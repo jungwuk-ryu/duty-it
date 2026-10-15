@@ -49,22 +49,27 @@ class LoginViewController extends GetxController {
 
     _analytics.logLogin(loginMethod: provider.displayName);
 
+    // Firebase 로그인은 됐지만 서버에 약관 동의가 기록되지 않은 상태
+    var consentPending = false;
+
     try {
       var service = Get.find<AuthService>();
       var result = await service.socialLogin(provider);
 
       switch (result) {
         case SocialLoginSuccess():
+          consentPending = true;
           var apiClient = Get.find<ApiClient>();
           RequestResult<LoginResult> rp = await apiClient
               .loginAndRefreshToken(agreedTermsVersion: AppLegal.termsVersion);
 
           if (rp is RequestSuccess) {
+            consentPending = false;
             AppUtils.resetApp();
             _analytics.logEvent(name: "login_success", parameters: {'provider': provider.displayName});
           } else {
-            // 약관 동의가 서버에 기록되지 않은 채 로그인 상태로 남지 않도록 되돌린다.
-            await FirebaseAuth.instance.signOut();
+            consentPending = false;
+            await _revertFirebaseSignIn();
 
             var fail = rp as RequestFail;
             AppUtils.showSnackBar(fail.serverFail?.message ?? "null");
@@ -74,6 +79,8 @@ class LoginViewController extends GetxController {
           AppUtils.showSnackBar(r.reason);
       }
     } catch (e, s) {
+      if (consentPending) await _revertFirebaseSignIn();
+
       AppUtils.showSnackBar("로그인 중 오류가 발생하였습니다.");
       
       if (kDebugMode) {
@@ -91,6 +98,16 @@ class LoginViewController extends GetxController {
       _analytics.logEvent(name: "login_error", parameters: {'provider': provider.displayName, 'error': e.toString()});
     } finally {
       isLogining = false;
+    }
+  }
+
+  // 약관 동의가 서버에 기록되지 않은 채 로그인 상태로 남지 않도록 되돌린다.
+  // AuthService.logout()은 서버 요청 중 동의 없이 재로그인할 수 있어 쓰지 않는다.
+  Future<void> _revertFirebaseSignIn() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e, s) {
+      FirebaseCrashlytics.instance.recordError(e, s, fatal: false);
     }
   }
 }
