@@ -23,107 +23,129 @@ class LoginView extends GetView<LoginViewController> {
             children: [
               SimpleAppBar(title: '로그인'),
               Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 50, left: 16, right: 16),
-                  child: Column(
-                    children: [
-                      Spacer(),
-                      Column(
-                        spacing: 10,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.w900,
-                                color: AppColors.black
-                              ),
+                // 큰 글씨 설정에서도 동의 항목과 로그인 버튼이 화면 밖으로 밀려나지 않도록 스크롤을 허용한다.
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: 50,
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: Column(
+                          // 남는 공간을 제목 위와 아래에 똑같이 나눠 기존 배치를 유지한다.
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox.shrink(),
+                            Column(
+                              spacing: 10,
                               children: [
-                                TextSpan(
-                                  text: "듀잇",
-                                  style: TextStyle(color: AppColors.main),
+                                RichText(
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w900,
+                                      color: AppColors.black
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: "듀잇",
+                                        style: TextStyle(color: AppColors.main),
+                                      ),
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: Hero(
+                                          tag: SplashView.heroKey,
+                                          child: Image.asset(
+                                            Assets.icons.logo.path,
+                                            width: 29,
+                                            height: 25,
+                                          ),
+                                        ),
+                                      ),
+                                      TextSpan(text: "과 함께,\n모든 간호 행사를 한눈에!"),
+                                    ],
+                                  ),
                                 ),
-                                WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: Hero(
-                                    tag: SplashView.heroKey,
-                                    child: Image.asset(
-                                      Assets.icons.logo.path,
-                                      width: 29,
-                                      height: 25,
+                                Text(
+                                  '10초만에 로그인하고 모든 기능을 이용해보세요.',
+                                  style: TextStyle(
+                                    color: AppColors.g07,
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(maxWidth: 328),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Obx(
+                                        () => _TermsAgreementRow(
+                                          checked: controller.termsAgreed,
+                                          onToggle: controller.toggleTermsAgreed,
+                                          onTermsTap: controller.openTerms,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      _PrivacyPolicyNotice(
+                                        onTap: controller.openPrivacyPolicy,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                Obx(
+                                  () => Opacity(
+                                    // 약관 동의 전에는 버튼을 흐리게 보여주고, 눌러도 동의 안내만 띄운다.
+                                    opacity: controller.termsAgreed ? 1 : 0.45,
+                                    child: Column(
+                                      spacing: 16,
+                                      children: [
+                                        /*LoginButton(
+                              iconPath: Assets.icons.kakao.path,
+                              providerName: "Kakao",
+                              buttonColor: Color(0xFFFEE500),
+                              onTap: () async =>
+                                  controller.onLoginButtonTap(SocialProvider.kakao),
+                            ),*/
+                                        LoginButton(
+                                          iconPath: Assets.icons.appleWhite.path,
+                                          buttonColor: Color(0xFF000000),
+                                          providerName: "Apple",
+                                          onTap: () async =>
+                                              controller.onLoginButtonTap(
+                                                SocialProvider.apple,
+                                              ),
+                                        ),
+                                        LoginButton(
+                                          iconPath: Assets.icons.google.path,
+                                          buttonColor: Color(0xFFF2F2F2),
+                                          providerName: "Google",
+                                          onTap: () async =>
+                                              controller.onLoginButtonTap(
+                                                SocialProvider.google,
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                TextSpan(text: "과 함께,\n모든 간호 행사를 한눈에!"),
                               ],
-                            ),
-                          ),
-                          Text(
-                            '10초만에 로그인하고 모든 기능을 이용해보세요.',
-                            style: TextStyle(
-                              color: AppColors.g07,
-                              fontWeight: FontWeight.w300,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Spacer(),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: 328),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Obx(
-                              () => _TermsAgreementRow(
-                                checked: controller.termsAgreed,
-                                onToggle: controller.toggleTermsAgreed,
-                                onTermsTap: controller.openTerms,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            _PrivacyPolicyNotice(
-                              onTap: controller.openPrivacyPolicy,
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Obx(
-                        () => Opacity(
-                          // 약관 동의 전에는 버튼을 흐리게 보여주고, 눌러도 동의 안내만 띄운다.
-                          opacity: controller.termsAgreed ? 1 : 0.45,
-                          child: Column(
-                            spacing: 16,
-                            children: [
-                              /*LoginButton(
-                    iconPath: Assets.icons.kakao.path,
-                    providerName: "Kakao",
-                    buttonColor: Color(0xFFFEE500),
-                    onTap: () async =>
-                        controller.onLoginButtonTap(SocialProvider.kakao),
-                  ),*/
-                              LoginButton(
-                                iconPath: Assets.icons.appleWhite.path,
-                                buttonColor: Color(0xFF000000),
-                                providerName: "Apple",
-                                onTap: () async => controller.onLoginButtonTap(
-                                  SocialProvider.apple,
-                                ),
-                              ),
-                              LoginButton(
-                                iconPath: Assets.icons.google.path,
-                                buttonColor: Color(0xFFF2F2F2),
-                                providerName: "Google",
-                                onTap: () async => controller.onLoginButtonTap(
-                                  SocialProvider.google,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
