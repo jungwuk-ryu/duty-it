@@ -189,8 +189,11 @@ class _TermsAgreementRow extends StatelessWidget {
           side: const BorderSide(color: AppColors.g05, width: 1.5),
         ),
         Expanded(
+          // 스크린 리더에는 체크박스가 문구와 선택 상태를 한 번에 읽어 주고,
+          // 문구에서는 이용약관 링크만 별도 항목으로 남긴다.
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
+            excludeFromSemantics: true,
             onTap: onToggle,
             child: Text.rich(
               TextSpan(
@@ -198,11 +201,15 @@ class _TermsAgreementRow extends StatelessWidget {
                 children: [
                   const TextSpan(
                     text: '[필수] ',
+                    semanticsLabel: '',
                     style: TextStyle(color: AppColors.main),
                   ),
-                  const TextSpan(text: '만 14세 이상이며, 듀잇 '),
+                  const TextSpan(
+                    text: '만 14세 이상이며, 듀잇 ',
+                    semanticsLabel: '',
+                  ),
                   _linkSpan('이용약관', onTermsTap, textStyle),
-                  const TextSpan(text: '에 동의합니다'),
+                  const TextSpan(text: '에 동의합니다', semanticsLabel: ''),
                 ],
               ),
             ),
