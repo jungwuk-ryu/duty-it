@@ -76,10 +76,14 @@ class AppUtils {
     return setDuitUtmSource(Uri.parse(uri)).toString();
   }
 
-  static void showSnackBar(String content, {Widget? mainButton}) {
+  static void showSnackBar(
+    String content, {
+    Widget? mainButton,
+    Duration duration = const Duration(seconds: 2),
+  }) {
     Get.showSnackbar(
       GetSnackBar(
-        duration: const Duration(seconds: 2),
+        duration: duration,
         backgroundColor: AppColors.g07.withAlpha(165),
         barBlur: 2,
         borderRadius: 8,

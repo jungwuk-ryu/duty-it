@@ -109,10 +109,26 @@ class NotificationSettingsController extends GetxController {
   Future<void> toggleMarketingNoti() async {
     HapticFeedback.mediumImpact();
 
-    await _updateAlarmSettings(
+    final user = await _updateAlarmSettings(
       (user) =>
           user.alarmSettings.copyWith(marketing: !user.alarmSettings.marketing),
     );
+    if (user == null) return;
+
+    // 정보통신망법 제50조: 수신 동의·거부 처리 결과를 전송자와 날짜를 포함해 알린다.
+    AppUtils.showSnackBar(
+      marketingConsentResultMessage(
+        user.alarmSettings.marketing,
+        DateTime.now(),
+      ),
+      duration: const Duration(seconds: 4),
+    );
+  }
+
+  static String marketingConsentResultMessage(bool agreed, DateTime date) {
+    final result = agreed ? '수신 동의' : '수신 거부';
+    return '듀잇 광고성 정보 $result가 '
+        '${date.year}년 ${date.month}월 ${date.day}일에 처리되었어요.';
   }
 
   Future<void> toggleEventCustomNoti() async {
@@ -178,12 +194,13 @@ class NotificationSettingsController extends GetxController {
     );
   }
 
-  Future<void> _updateAlarmSettings(
+  /// 변경에 성공하면 갱신된 사용자 정보를 반환한다.
+  Future<AppUser?> _updateAlarmSettings(
     AlarmSettings Function(AppUser user) update,
   ) async {
-    await _settingUpdateLock.synchronized(() async {
+    return _settingUpdateLock.synchronized(() async {
       final user = await _ensureAppUserLoaded();
-      if (user == null) return;
+      if (user == null) return null;
 
       final result = await api.updateUserSettings(
         user.autoAddBookmarkToCalendar,
@@ -194,7 +211,10 @@ class NotificationSettingsController extends GetxController {
         AppUtils.showSnackBar(
           result.serverFail?.message ?? '알림 설정을 변경하지 못했어요.',
         );
+        return null;
       }
+
+      return (result as RequestSuccess<AppUser>).data;
     });
   }
 

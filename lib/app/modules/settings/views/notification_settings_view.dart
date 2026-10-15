@@ -41,8 +41,10 @@ class NotificationSettingsView extends GetView<NotificationSettingsController> {
                       ),
                       const SizedBox(height: 14),
                       _SettingsToggleRow(
-                        title: '혜택 및 소식 알림',
-                        subtitle: '서비스 소식과 혜택 정보를 받아볼 수 있어요',
+                        title: '광고성 정보 수신 동의 (선택)',
+                        subtitle:
+                            '이벤트·혜택 등 광고성 정보를 앱 푸시로 받아요. 동의하지 않아도 서비스를 이용할 수 있어요.',
+                        subtitleMaxLines: 2,
                         checked: controller.marketingNoti,
                         onToggleTap: controller.toggleMarketingNoti,
                       ),
@@ -137,12 +139,14 @@ class _SectionHeader extends StatelessWidget {
 class _SettingsToggleRow extends StatelessWidget {
   final String title;
   final String? subtitle;
+  final int subtitleMaxLines;
   final bool checked;
   final Future<void> Function() onToggleTap;
 
   const _SettingsToggleRow({
     required this.title,
     this.subtitle,
+    this.subtitleMaxLines = 1,
     required this.checked,
     required this.onToggleTap,
   });
@@ -166,7 +170,7 @@ class _SettingsToggleRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   subtitle!,
-                  maxLines: 1,
+                  maxLines: subtitleMaxLines,
                   overflow: TextOverflow.ellipsis,
                   style: _NotificationStyles.secondary,
                 ),
