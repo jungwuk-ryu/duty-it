@@ -96,9 +96,8 @@ class CalendarViewController extends GetxController {
     List<dcp.Event> deviceEvents = [];
 
     final calService = Get.find<CalendarService>();
-    final calPermission = await calService.checkPermission();
-    if (calPermission &&
-        Get.find<AppSettingsService>().includeDeviceEvents.value) {
+    if (Get.find<AppSettingsService>().includeDeviceEvents.value &&
+        await calService.checkPermission()) {
       deviceEvents = await calService.retrieveEvents(
         AppUtils.startOfMonth(date),
         AppUtils.endOfMonth(date),

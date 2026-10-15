@@ -20,6 +20,8 @@ class CalendarService extends GetxService {
     return status == CalendarPermissionStatus.granted;
   }
 
+  /// OS 권한 요청을 바로 띄운다. 화면에서는 접근 권한 안내를 먼저 보여주는
+  /// CalendarPermissionNoticeDialog.requestPermission()을 사용해야 한다.
   Future<bool> requestPermission() async {
     if (kIsWeb) {
       if (kDebugMode) {

@@ -476,7 +476,10 @@ class HomeViewController extends GetxController {
     var calendarService = Get.find<CalendarService>();
     if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
       var result = await CalendarPermissionNoticeDialog.requestPermission();
-      if (result == null) return;
+      if (result == null) {
+        AppUtils.showSnackBar('캘린더에 추가하지 않았어요. 자동 추가는 앱 설정에서 끌 수 있어요.');
+        return;
+      }
       if (!result) {
         AppUtils.showSnackBar(
           "권한이 없어서 캘린더에 추가하지 못했어요.",
