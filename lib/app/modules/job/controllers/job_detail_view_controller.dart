@@ -2,6 +2,7 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -40,6 +41,9 @@ class JobDetailViewController extends GetxController {
       final result = await Get.find<ApiClient>().getJobPostingDetail(job.id);
       if (result is RequestSuccess<JobPosting>) {
         jobRx.value = result.data;
+      } else if (result is RequestFail &&
+          result.response?.status.isNotFound == true) {
+        _closeWithdrawnPosting();
       } else if (result is RequestFail && kDebugMode) {
         AppUtils.showSnackBar(
           result.serverFail?.message ?? '채용 정보를 불러오지 못했습니다.',
@@ -48,6 +52,16 @@ class JobDetailViewController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // 삭제되었거나 최저임금 미달 등으로 내려간 공고는 목록에 남은 정보로 보여주지 않는다.
+  void _closeWithdrawnPosting() {
+    if (isClosed || Get.currentRoute != Routes.JOB_DETAIL) return;
+
+    // Get.back()은 스낵바가 열려 있으면 화면 대신 스낵바만 닫으므로,
+    // 오버레이까지 닫아 화면을 확실히 닫은 뒤 안내한다.
+    Get.back(closeOverlays: true);
+    AppUtils.showSnackBar('더 이상 볼 수 없는 공고예요.');
   }
 
   Future<void> openPostingUrl() async {
