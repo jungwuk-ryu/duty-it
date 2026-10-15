@@ -1,5 +1,8 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/constants/app_legal.dart';
+import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/widgets/app_toggle_button.dart';
+import 'package:duty_it/app/widgets/job_info_registration_text.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,9 +12,6 @@ import '../controllers/settings_view_controller.dart';
 
 class SettingsView extends GetView<SettingsViewController> {
   const SettingsView({super.key});
-
-  static const _registrationNumber =
-      '직업정보제공사업 신고번호: J1205020260001(서울북부 제2026-1호)';
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,22 @@ class SettingsView extends GetView<SettingsViewController> {
                       ),
                     ),
                     const SizedBox(height: 36),
-                    const _SettingsTextRow(title: '개인 정보 처리 방침'),
+                    _SettingsTextRow(
+                      title: '이용약관',
+                      onTap: () => AppUtils.openWebUrl(AppLegal.termsUrl),
+                    ),
+                    const SizedBox(height: 26),
+                    _SettingsTextRow(
+                      title: '개인정보 처리방침',
+                      emphasized: true,
+                      onTap: () =>
+                          AppUtils.openWebUrl(AppLegal.privacyPolicyUrl),
+                    ),
+                    const SizedBox(height: 26),
+                    _SettingsTextRow(
+                      title: '권리침해 신고',
+                      onTap: () => AppUtils.openWebUrl(AppLegal.reportUrl),
+                    ),
                     const SizedBox(height: 26),
                     _SettingsTextRow(
                       title: '오픈소스 라이선스',
@@ -68,18 +83,7 @@ class SettingsView extends GetView<SettingsViewController> {
             ),
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 8, 20, 18),
-              child: Center(
-                child: Text(
-                  _registrationNumber,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.g04,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    height: 1.35,
-                  ),
-                ),
-              ),
+              child: Center(child: JobInfoRegistrationText()),
             ),
           ],
         ),
@@ -161,18 +165,29 @@ class _SettingsToggleRow extends StatelessWidget {
 class _SettingsTextRow extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
+  final bool emphasized;
 
-  const _SettingsTextRow({required this.title, this.onTap});
+  const _SettingsTextRow({
+    required this.title,
+    this.onTap,
+    this.emphasized = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final text = Text(title, style: _SettingsStyles.muted);
+    final text = Text(
+      title,
+      style: emphasized ? _SettingsStyles.emphasized : _SettingsStyles.muted,
+    );
     if (onTap == null) return text;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: text,
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: text,
+      ),
     );
   }
 }
@@ -196,6 +211,14 @@ class _SettingsStyles {
     color: AppColors.g05,
     fontSize: 15,
     fontWeight: FontWeight.w600,
+    height: 1.60,
+  );
+
+  // 개인정보 처리방침은 다른 항목보다 눈에 띄게 표시한다.
+  static const emphasized = TextStyle(
+    color: AppColors.black,
+    fontSize: 15,
+    fontWeight: FontWeight.w800,
     height: 1.60,
   );
 }

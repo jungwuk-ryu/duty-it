@@ -2,6 +2,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppUtils {
   AppUtils._();
@@ -46,6 +47,18 @@ class AppUtils {
 
   static bool isSameDay(DateTime dt1, DateTime dt2) {
     return dt1.day == dt2.day && dt1.month == dt2.month && dt1.year == dt2.year;
+  }
+
+  /// 웹 페이지를 인앱 브라우저로 열고, 실패하면 안내 메시지를 보여준다.
+  static Future<bool> openWebUrl(String url) async {
+    try {
+      if (await launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView)) {
+        return true;
+      }
+    } catch (_) {}
+
+    showSnackBar('링크를 열지 못했어요.');
+    return false;
   }
 
   static Future<void> resetApp() async {
