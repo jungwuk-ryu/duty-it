@@ -44,8 +44,13 @@ class AppSettingsService extends GetxService {
   }
 
   Future<void> setAnalyticsCollectionEnabled(bool enabled) async {
+    final wasEnabled = analyticsCollectionEnabled.value;
     analyticsCollectionEnabled.value = enabled;
-    await applyAnalyticsCollection(enabled);
+    // 다시 켤 때도 꺼져 있던 동안 쌓인 오류 보고는 보내지 않는다.
+    await applyAnalyticsCollection(
+      enabled,
+      discardUnsentReports: !enabled || !wasEnabled,
+    );
   }
 
   /// 저장된 이용 통계 수집 설정을 Firebase에 반영한다.
@@ -54,19 +59,24 @@ class AppSettingsService extends GetxService {
     try {
       await GetStorage.init(storageBoxName);
       final stored = GetStorage(storageBoxName).read(_analyticsCollectionKey);
-      await applyAnalyticsCollection(stored is bool ? stored : true);
+      final enabled = stored is bool ? stored : true;
+      await applyAnalyticsCollection(enabled, discardUnsentReports: !enabled);
     } catch (e) {
       debugPrint('이용 통계 수집 설정을 적용하지 못했습니다: $e');
     }
   }
 
-  static Future<void> applyAnalyticsCollection(bool enabled) async {
+  /// [discardUnsentReports]가 true이면 수집을 끈 동안 기기에 쌓인 오류 보고를
+  /// 전송하지 않도록 먼저 지운다.
+  static Future<void> applyAnalyticsCollection(
+    bool enabled, {
+    bool discardUnsentReports = false,
+  }) async {
     await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(enabled);
     if (kIsWeb) return;
 
     final crashlytics = FirebaseCrashlytics.instance;
+    if (discardUnsentReports) await crashlytics.deleteUnsentReports();
     await crashlytics.setCrashlyticsCollectionEnabled(enabled);
-    // 수집을 끈 동안 기기에 쌓인 오류 보고가 나중에 전송되지 않도록 지운다.
-    if (!enabled) await crashlytics.deleteUnsentReports();
   }
 }
