@@ -50,6 +50,18 @@ class SettingsView extends GetView<SettingsViewController> {
                         onToggleTap: controller.toggleIncludeDeviceEvents,
                       ),
                     ),
+                    const SizedBox(height: 20),
+                    // 개인정보 처리방침에서 안내한 '앱 설정 → 이용 통계 수집' 위치.
+                    Obx(
+                      () => _SettingsToggleRow(
+                        title: '이용 통계 수집',
+                        subtitle:
+                            '서비스 개선을 위한 이용 통계와 오류 정보를 보내요. 끄면 수집이 중단돼요.',
+                        wrapText: true,
+                        checked: controller.analyticsCollectionEnabled,
+                        onToggleTap: controller.toggleAnalyticsCollection,
+                      ),
+                    ),
                     const SizedBox(height: 36),
                     _SettingsTextRow(
                       title: '이용약관',
@@ -120,12 +132,15 @@ class _SettingsNavigationRow extends StatelessWidget {
 class _SettingsToggleRow extends StatelessWidget {
   final String title;
   final String subtitle;
+  // 잘리면 안 되는 안내 문구는 줄바꿈해서 모두 보여준다.
+  final bool wrapText;
   final bool checked;
   final Future<void> Function() onToggleTap;
 
   const _SettingsToggleRow({
     required this.title,
     required this.subtitle,
+    this.wrapText = false,
     required this.checked,
     required this.onToggleTap,
   });
@@ -141,15 +156,15 @@ class _SettingsToggleRow extends StatelessWidget {
             children: [
               Text(
                 title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: wrapText ? null : 1,
+                overflow: wrapText ? null : TextOverflow.ellipsis,
                 style: _SettingsStyles.primary,
               ),
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: wrapText ? null : 1,
+                overflow: wrapText ? null : TextOverflow.ellipsis,
                 style: _SettingsStyles.secondary,
               ),
             ],

@@ -31,6 +31,10 @@ class SettingsViewController extends GetxController {
   // 캘린더 - 기기 행사 포함
   bool get includeDeviceEvents => appSettingsService.includeDeviceEvents.value;
 
+  // 이용 통계 수집
+  bool get analyticsCollectionEnabled =>
+      appSettingsService.analyticsCollectionEnabled.value;
+
   // 마케팅 알림
   bool get marketingNoti => settings?.marketing ?? false;
 
@@ -116,6 +120,13 @@ class SettingsViewController extends GetxController {
     }
 
     appSettingsService.includeDeviceEvents.value = !includeDeviceEvents;
+  }
+
+  Future toggleAnalyticsCollection() async {
+    HapticFeedback.mediumImpact();
+    await appSettingsService.setAnalyticsCollectionEnabled(
+      !analyticsCollectionEnabled,
+    );
   }
 
   Future togglePushNoti() async {
