@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_accout_section.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/drawer_category_section.dart';
+import 'package:duty_it/app/modules/main/widgets/drawer/drawer_legal_section.dart';
 
 class EndDrawer extends StatelessWidget {
   const EndDrawer({super.key});
@@ -33,6 +34,14 @@ class EndDrawer extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: DrawerCategorySection(),
+            ),
+
+            SizedBox(height: 38),
+            SectionDivider(),
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
+              child: DrawerLegalSection(),
             ),
           ],
         ),
