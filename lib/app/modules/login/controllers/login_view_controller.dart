@@ -7,6 +7,7 @@ import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -62,6 +63,9 @@ class LoginViewController extends GetxController {
             AppUtils.resetApp();
             _analytics.logEvent(name: "login_success", parameters: {'provider': provider.displayName});
           } else {
+            // 약관 동의가 서버에 기록되지 않은 채 로그인 상태로 남지 않도록 되돌린다.
+            await FirebaseAuth.instance.signOut();
+
             var fail = rp as RequestFail;
             AppUtils.showSnackBar(fail.serverFail?.message ?? "null");
             _analytics.logEvent(name: "login_fail", parameters: {'provider': provider.displayName});

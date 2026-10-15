@@ -242,10 +242,12 @@ class ApiClient extends GetConnect {
   Future<RequestResult<LoginResult>> loginAndRefreshToken({
     String? agreedTermsVersion,
   }) async {
-    if (_loginFuture != null) {
-      if (agreedTermsVersion == null) return _loginFuture!;
+    if (_loginFuture != null && agreedTermsVersion == null) {
+      return _loginFuture!;
+    }
 
-      // 진행 중인 토큰 갱신 요청에는 동의 버전이 실리지 않으므로 끝난 뒤 다시 보낸다.
+    // 진행 중인 토큰 갱신 요청에는 동의 버전이 실리지 않으므로 끝난 뒤 다시 보낸다.
+    while (_loginFuture != null) {
       await _loginFuture;
     }
 
