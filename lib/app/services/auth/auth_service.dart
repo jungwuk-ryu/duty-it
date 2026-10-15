@@ -38,6 +38,13 @@ class AuthService extends GetxService {
   static const String _appUserKey = 'app_user';
   static const String _lastUsedProviderKey = 'last_used_provider';
 
+  // 서버에서 이미 Firebase 계정을 지웠거나 재인증이 필요해 앱에서 지울 수 없는 경우
+  static const _expectedDeleteErrorCodes = {
+    'user-not-found',
+    'user-token-expired',
+    'requires-recent-login',
+  };
+
   AuthService({
     Future<RequestResult<AppUser>> Function()? currentUserLoader,
     bool Function()? loggedInChecker,
@@ -238,9 +245,15 @@ class AuthService extends GetxService {
       return;
     }
 
+    // 서버가 탈퇴 처리 중 Firebase 계정도 지우므로, 여기서는 서버 삭제가 실패했을 때를 위한 보완이다.
     try {
       await currentUser.delete();
       await _awaitFirebaseLogout();
+    } on FirebaseAuthException catch (e, st) {
+      if (!_expectedDeleteErrorCodes.contains(e.code)) {
+        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+      }
+      await _safeFirebaseSignOut();
     } catch (e, st) {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       await _safeFirebaseSignOut();
