@@ -205,5 +205,61 @@ void main() {
       expect(onHireJob.closeLabel, '채용시 마감');
       expect(onHireJob.expiresAtText, '채용시 마감');
     });
+
+    test('parses wage defaulter status from the company object', () {
+      final job = JobPosting.fromJson({
+        'id': 13,
+        'company': {
+          'corpNm': '듀잇병원',
+          'wageDefaulter': true,
+          'wageDefaulterCheckedAt': '2026-10-15T09:00:00',
+        },
+        'isBookmarked': false,
+      });
+
+      expect(job.wageDefaulter, isTrue);
+      expect(job.wageDefaulterCheckedAt, DateTime(2026, 10, 15, 9));
+    });
+
+    test('keeps wage defaulter status unknown when it is missing', () {
+      final job = JobPosting.fromJson({
+        'id': 14,
+        'company': {'corpNm': '듀잇병원'},
+        'isBookmarked': false,
+      });
+
+      expect(job.wageDefaulter, isNull);
+      expect(job.wageDefaulterCheckedAt, isNull);
+    });
+
+    test('ignores malformed wage defaulter values', () {
+      final job = JobPosting.fromJson({
+        'id': 15,
+        'company': {
+          'wageDefaulter': 'Y',
+          'wageDefaulterCheckedAt': 'not-a-date',
+        },
+        'isBookmarked': false,
+      });
+
+      expect(job.wageDefaulter, isNull);
+      expect(job.wageDefaulterCheckedAt, isNull);
+    });
+
+    test('round-trips wage defaulter status through json', () {
+      final job = JobPosting.fromJson({
+        'id': 16,
+        'company': {
+          'wageDefaulter': false,
+          'wageDefaulterCheckedAt': '2026-10-15T09:00:00',
+        },
+        'isBookmarked': false,
+      });
+
+      final restored = JobPosting.fromJson(job.toJson());
+
+      expect(restored.wageDefaulter, isFalse);
+      expect(restored.wageDefaulterCheckedAt, job.wageDefaulterCheckedAt);
+    });
   });
 }

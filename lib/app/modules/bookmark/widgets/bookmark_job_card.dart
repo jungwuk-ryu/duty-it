@@ -2,6 +2,7 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/extensions/job_posting_x.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:duty_it/app/modules/bookmark/controllers/bookmark_view_controller.dart';
+import 'package:duty_it/app/modules/job/widgets/job_wage_defaulter_chip.dart';
 import 'package:duty_it/app/widgets/tap_scale.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -72,6 +73,7 @@ class BookmarkJobCard extends GetView<BookmarkViewController> {
                   spacing: 8,
                   runSpacing: 4,
                   children: [
+                    if (job.wageDefaulter == true) const JobWageDefaulterChip(),
                     Text(
                       job.closeLabel,
                       style: const TextStyle(

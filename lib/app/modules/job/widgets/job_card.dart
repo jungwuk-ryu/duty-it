@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'job_bookmark_button.dart';
+import 'job_wage_defaulter_chip.dart';
 
 class JobCard extends StatelessWidget {
   final Rx<JobPosting> jobRx;
@@ -64,6 +65,7 @@ class JobCard extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 4,
                 children: [
+                  if (job.wageDefaulter == true) const JobWageDefaulterChip(),
                   Text(
                     job.closeLabel,
                     style: const TextStyle(

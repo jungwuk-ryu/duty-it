@@ -36,6 +36,10 @@ abstract class JobPosting with _$JobPosting {
     @JsonKey(readValue: _readCompanyBusiness)
     @Default('')
     String companyBusiness,
+    // 고용노동부 임금체불 명단공개 사업주 여부. 확인 전이면 null이다.
+    @JsonKey(readValue: _readWageDefaulter) bool? wageDefaulter,
+    @JsonKey(readValue: _readWageDefaulterCheckedAt)
+    DateTime? wageDefaulterCheckedAt,
     @JsonKey(readValue: _readJobCategory) @Default('') String jobCategory,
     @Default('') String relJobsNm,
     @Default('') String jobCont,
@@ -116,6 +120,17 @@ Object? _readCompanyAddress(Map json, String key) {
 Object? _readCompanyBusiness(Map json, String key) {
   return _firstJsonValue(json, [key]) ??
       _nestedJsonValue(json, 'company', 'busiCont');
+}
+
+Object? _readWageDefaulter(Map json, String key) {
+  final value = json[key] ?? _nestedJsonValue(json, 'company', key);
+  return value is bool ? value : null;
+}
+
+Object? _readWageDefaulterCheckedAt(Map json, String key) {
+  final value = json[key] ?? _nestedJsonValue(json, 'company', key);
+  if (value is! String || DateTime.tryParse(value) == null) return null;
+  return value;
 }
 
 Object? _readJobCategory(Map json, String key) {

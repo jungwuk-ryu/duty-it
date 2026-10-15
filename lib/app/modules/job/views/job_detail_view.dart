@@ -10,6 +10,7 @@ import 'package:duty_it/app/modules/job/widgets/detail/job_detail_media.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_section.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_summary_card.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_tab_bar.dart';
+import 'package:duty_it/app/modules/job/widgets/detail/job_wage_defaulter_notice.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -375,6 +376,14 @@ class _HeaderContent extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: JobDetailSummaryCard(job: job),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: JobWageDefaulterNotice(
+              wageDefaulter: job.wageDefaulter,
+              checkedAt: job.wageDefaulterCheckedAt,
+            ),
           ),
         ],
       ),
