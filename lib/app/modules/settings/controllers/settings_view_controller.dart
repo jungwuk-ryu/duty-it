@@ -5,6 +5,7 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
+import 'package:duty_it/app/widgets/calendar_permission_notice_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -105,8 +106,9 @@ class SettingsViewController extends GetxController {
   Future toggleIncludeDeviceEvents() async {
     HapticFeedback.mediumImpact();
     if (!includeDeviceEvents) {
-      var calService = Get.find<CalendarService>();
-      var hasPermission = await calService.requestPermission();
+      var hasPermission =
+          await CalendarPermissionNoticeDialog.requestPermission();
+      if (hasPermission == null) return;
       if (!hasPermission) {
         openAppSettings();
         return;

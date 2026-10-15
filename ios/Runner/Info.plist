@@ -16,11 +16,11 @@
 		<string>간호사</string>
 	</array>
 	<key>NSCalendarsUsageDescription</key>
-	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<string>북마크한 행사를 기본 캘린더에 추가하고, 기본 캘린더 일정을 듀잇 캘린더에서 함께 보여주기 위해 캘린더 접근이 필요해요.</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
-	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 접근이 필요해요.</string>
+	<string>북마크한 행사를 기본 캘린더에 추가하기 위해 캘린더 접근이 필요해요.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>듀잇에서 북마크한 행사를 캘린더에 추가하고 수정하기 위해 전체 접근이 필요해요.</string>
+	<string>북마크한 행사를 기본 캘린더에 추가하고, 기본 캘린더 일정을 듀잇 캘린더에서 함께 보여주기 위해 캘린더 접근이 필요해요.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

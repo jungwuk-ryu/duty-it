@@ -20,6 +20,7 @@ import 'package:duty_it/app/services/event/app_event_service.dart';
 import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/calendar_permission_notice_dialog.dart';
 import 'package:duty_it/app/widgets/no_calendar_permission_modal.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -474,7 +475,8 @@ class HomeViewController extends GetxController {
     if (user == null) return;
     var calendarService = Get.find<CalendarService>();
     if (eventRx.value.isBookmarked && user.autoAddBookmarkToCalendar) {
-      var result = await calendarService.requestPermission();
+      var result = await CalendarPermissionNoticeDialog.requestPermission();
+      if (result == null) return;
       if (!result) {
         AppUtils.showSnackBar(
           "권한이 없어서 캘린더에 추가하지 못했어요.",
