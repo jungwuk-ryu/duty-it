@@ -246,6 +246,20 @@ void main() {
       expect(job.wageDefaulterCheckedAt, isNull);
     });
 
+    test(
+      'falls back to company wage defaulter status when top-level is invalid',
+      () {
+        final job = JobPosting.fromJson({
+          'id': 17,
+          'wageDefaulter': 'Y',
+          'company': {'wageDefaulter': true},
+          'isBookmarked': false,
+        });
+
+        expect(job.wageDefaulter, isTrue);
+      },
+    );
+
     test('round-trips wage defaulter status through json', () {
       final job = JobPosting.fromJson({
         'id': 16,

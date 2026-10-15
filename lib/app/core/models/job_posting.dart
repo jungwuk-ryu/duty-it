@@ -123,14 +123,17 @@ Object? _readCompanyBusiness(Map json, String key) {
 }
 
 Object? _readWageDefaulter(Map json, String key) {
-  final value = json[key] ?? _nestedJsonValue(json, 'company', key);
-  return value is bool ? value : null;
+  for (final value in [json[key], _nestedJsonValue(json, 'company', key)]) {
+    if (value is bool) return value;
+  }
+  return null;
 }
 
 Object? _readWageDefaulterCheckedAt(Map json, String key) {
-  final value = json[key] ?? _nestedJsonValue(json, 'company', key);
-  if (value is! String || DateTime.tryParse(value) == null) return null;
-  return value;
+  for (final value in [json[key], _nestedJsonValue(json, 'company', key)]) {
+    if (value is String && DateTime.tryParse(value) != null) return value;
+  }
+  return null;
 }
 
 Object? _readJobCategory(Map json, String key) {
