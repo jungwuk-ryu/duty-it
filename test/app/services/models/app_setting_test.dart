@@ -15,11 +15,11 @@ void main() {
   setUpAll(() async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(pathProviderChannel, (methodCall) async {
-      if (methodCall.method == 'getApplicationDocumentsDirectory') {
-        return Directory.systemTemp.path;
-      }
-      return null;
-    });
+          if (methodCall.method == 'getApplicationDocumentsDirectory') {
+            return Directory.systemTemp.path;
+          }
+          return null;
+        });
 
     await GetStorage.init(boxName);
     await GetStorage.init(AppSettingsService.storageBoxName);
@@ -51,19 +51,22 @@ void main() {
     expect(setting.value, 'popular');
   });
 
-  test('falls back to default when the persisted type does not match', () async {
-    final box = GetStorage(boxName);
-    await box.write('include_device_events', 'true');
+  test(
+    'falls back to default when the persisted type does not match',
+    () async {
+      final box = GetStorage(boxName);
+      await box.write('include_device_events', 'true');
 
-    final setting = AppSetting<bool>(
-      key: 'include_device_events',
-      box: box,
-      defaultValue: false,
-    );
+      final setting = AppSetting<bool>(
+        key: 'include_device_events',
+        box: box,
+        defaultValue: false,
+      );
 
-    expect(setting.value, isFalse);
-    expect(box.read('include_device_events'), isNull);
-  });
+      expect(setting.value, isFalse);
+      expect(box.read('include_device_events'), isNull);
+    },
+  );
 
   test('does not include device calendar events by default', () {
     final service = Get.put(AppSettingsService());
@@ -79,5 +82,21 @@ void main() {
     final service = Get.put(AppSettingsService());
 
     expect(service.includeDeviceEvents.value, isTrue);
+  });
+
+  test('collects usage analytics until the user opts out', () async {
+    expect(
+      Get.put(AppSettingsService()).analyticsCollectionEnabled.value,
+      isTrue,
+    );
+
+    Get.reset();
+    await GetStorage(
+      AppSettingsService.storageBoxName,
+    ).write('analytics_collection_enabled', false);
+
+    final service = Get.put(AppSettingsService());
+
+    expect(service.analyticsCollectionEnabled.value, isFalse);
   });
 }

@@ -4,6 +4,7 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
+import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
@@ -131,6 +132,8 @@ void _handleUri(Uri uri) {
 
 Future<void> _initFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // 이용 통계·오류 수집을 끈 사용자는 어떤 로그도 남기기 전에 수집을 중단한다.
+  await AppSettingsService.applyStoredAnalyticsCollection();
 
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
