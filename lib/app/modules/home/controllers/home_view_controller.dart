@@ -9,7 +9,6 @@ import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
-import 'package:duty_it/app/modules/home/widgets/modal/sorting_bottom_modal.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
@@ -453,18 +452,6 @@ class HomeViewController extends GetxController {
         pagingState = pagingState.copyWith(isLoading: false);
       }
     }
-  }
-
-  void showSortingBottomModal() {
-    FocusManager.instance.primaryFocus?.unfocus();
-    showModalBottomSheet(
-      context: Get.context!,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => SortingBottomModal(),
-    );
   }
 
   Future<void> onBookmarkButtonClick(Rx<Event> eventRx) async {

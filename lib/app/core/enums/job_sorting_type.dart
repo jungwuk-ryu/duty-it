@@ -1,9 +1,13 @@
-enum JobSortingType {
+import 'sort_option.dart';
+
+enum JobSortingType implements SortOption {
   latest('최신 등록순', '최신순', 'CREATED_AT'),
   closingSoon('마감 임박순', '마감순', 'EXPIRES_AT'),
   salary('급여순', '급여순', 'SALARY');
 
+  @override
   final String displayName;
+  @override
   final String shortName;
   final String field;
 
@@ -11,7 +15,9 @@ enum JobSortingType {
 
   static JobSortingType fromName(String name) {
     try {
-      return JobSortingType.values.firstWhere((element) => element.name == name);
+      return JobSortingType.values.firstWhere(
+        (element) => element.name == name,
+      );
     } catch (_) {
       return JobSortingType.latest;
     }

@@ -1,3 +1,5 @@
+import 'package:duty_it/app/core/enums/event_sorting_type.dart';
+import 'package:duty_it/app/widgets/sort_menu.dart';
 import 'package:duty_it/app/widgets/adaptive_filter_row.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
@@ -51,17 +53,10 @@ class HomeHeader extends StatelessWidget {
                     Get.toNamed(Routes.SEARCH_FILTER);
                   },
                 ),
-                Obx(
-                  () => CategoryTag(
-                    name: controller.sortingType.shortName,
-                    isSelected: false,
-                    imageAsset: Assets.icons.filterSort.path,
-                    backgroundColor: AppColors.transparent,
-                    textColor: AppColors.g05,
-                    onTap: () {
-                      controller.showSortingBottomModal();
-                    },
-                  ),
+                SortMenu(
+                  selected: controller.sortingType,
+                  options: EventSortingType.values,
+                  onSelected: (type) => controller.sortingType = type,
                 ),
               ],
             );

@@ -6,7 +6,6 @@ import 'package:duty_it/app/core/models/app_user.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:duty_it/app/core/models/job_postings_response.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/app/modules/job/widgets/job_sorting_bottom_modal.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
@@ -350,18 +349,6 @@ class JobViewController extends GetxController {
 
       pagingState = pagingState.copyWith(isLoading: false);
     }
-  }
-
-  void showSortingBottomModal() {
-    FocusManager.instance.primaryFocus?.unfocus();
-    showModalBottomSheet(
-      context: Get.context!,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) => const JobSortingBottomModal(),
-    );
   }
 
   Future<void> onBookmarkButtonClick(Rx<JobPosting> jobRx) async {
