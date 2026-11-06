@@ -75,15 +75,14 @@ class NotificationsView extends GetView<NotificationsViewController> {
                             hasScrollBody: false,
                             child: _InitialLoadingIndicator(),
                           )
-                        else if (controller.hasFirstPageError)
+                        else if (items.isEmpty && controller.pageError != null)
                           SliverFillRemaining(
                             hasScrollBody: false,
                             child: _ErrorIndicator(
                               onRetry: controller.retryNotificationList,
                             ),
                           )
-                        else if (items.isEmpty &&
-                            controller.isResolvingFilteredTab.value)
+                        else if (items.isEmpty && controller.isLoadingMore)
                           const SliverFillRemaining(
                             hasScrollBody: false,
                             child: _ResolvingFilteredTabIndicator(),
@@ -99,11 +98,11 @@ class NotificationsView extends GetView<NotificationsViewController> {
                             itemBuilder: (_, index) =>
                                 NotificationItem(items[index]),
                           ),
-                        if (controller.isLoadingMore)
+                        if (items.isNotEmpty && controller.isLoadingMore)
                           const SliverToBoxAdapter(
                             child: _NextPageLoadingIndicator(),
                           ),
-                        if (controller.hasNextPageError)
+                        if (items.isNotEmpty && controller.pageError != null)
                           SliverToBoxAdapter(
                             child: _NextPageErrorIndicator(
                               onRetry: controller.retryNotificationList,
