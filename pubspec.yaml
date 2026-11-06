@@ -19,7 +19,8 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.7.0+1
 
 environment:
-  sdk: ^3.8.0-278.1.beta
+  sdk: ">=3.11.0 <4.0.0"
+  flutter: ">=3.41.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -59,6 +60,8 @@ dependencies:
   background_fetch: ^1.5.0
   device_calendar_plus: ^0.3.3
   app_links: ^7.0.0
+  # Pin the renderer API compatible with Flutter 3.41; 1.x needs Flutter 3.47.
+  liquid_glass_renderer: 0.2.0-dev.4
 
 dev_dependencies:
   flutter_test:
