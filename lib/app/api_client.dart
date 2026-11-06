@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:duty_it/app/core/models/events_response.dart';
@@ -28,12 +27,28 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
 class ApiClient extends GetConnect {
-  Future<RequestResult<LoginResult>>? _loginFuture;
-  String? _token;
-  bool _background = false;
+  ApiClient({bool background = false, User? Function()? currentFirebaseUser})
+    : _background = background,
+      _currentUser = currentFirebaseUser ?? _firebaseUser;
 
-  ApiClient({bool background = false}) {
-    _background = background;
+  static User? _firebaseUser() => FirebaseAuth.instance.currentUser;
+  final User? Function() _currentUser;
+  final bool _background;
+  final _requestSessionKey = Object();
+  int _generation = 0;
+  int _loginAttempt = 0;
+  (String?, int) get _session => (_currentUser()?.uid, _generation);
+  String? _loginUid;
+  Future<RequestResult<LoginResult>>? _loginFuture;
+  String? _tokenUid;
+  String? _token;
+
+  // GetConnect recreates the request on a 401. Keep both attempts bound to
+  // the account that initiated the operation, including anonymous requests.
+  String? _requestUid() {
+    final session = Zone.current[_requestSessionKey] as (String?, int)?;
+    if (session != _session) throw const _SessionChanged();
+    return session?.$1;
   }
 
   @override
@@ -50,29 +65,41 @@ class ApiClient extends GetConnect {
       final isAuthPath = path.contains('/v1/auth/');
       if (isAuthPath) return request;
 
-      await _loginFuture;
-      if (_token != null) {
+      final uid = _requestUid();
+      if (_loginUid == uid) await _loginFuture;
+      _requestUid();
+      request.headers.remove('Authorization');
+      if (uid != null && uid == _tokenUid && _token != null) {
         request.headers['Authorization'] = 'Bearer $_token';
       }
-
       return request;
     });
 
     httpClient.addAuthenticator<void>((request) async {
-      final path = request.url.path;
-      if (path.contains('/v1/auth/')) return request;
-
-      await loginAndRefreshToken();
-      if (_token == null || _token!.isEmpty) return request;
-
-      request.headers['Authorization'] = 'Bearer $_token';
-      if (kDebugMode) log(request.toString());
+      if (!request.url.path.contains('/v1/auth/') && _requestUid() != null) {
+        await loginAndRefreshToken();
+      }
       return request;
     });
 
     httpClient.maxAuthRetries = 1;
 
     loginAndRefreshToken();
+  }
+
+  void invalidateSession() {
+    _generation++;
+    _loginAttempt++;
+    _loginUid = null;
+    _loginFuture = null;
+    _tokenUid = null;
+    _token = null;
+  }
+
+  @override
+  void onClose() {
+    invalidateSession();
+    super.onClose();
   }
 
   String buildUserAgent() {
@@ -131,8 +158,15 @@ class ApiClient extends GetConnect {
     T Function(Response rp)? map,
   }) async {
     try {
-      final rp = await reqFn();
+      final session = _session;
+      final rp = await runZoned(
+        reqFn,
+        zoneValues: {_requestSessionKey: session},
+      );
+      if (_session != session) return RequestFail(null);
       return _wrap<T>(rp, map);
+    } on _SessionChanged {
+      return RequestFail(null);
     } on TimeoutException {
       return RequestFail(
         Response(
@@ -239,49 +273,52 @@ class ApiClient extends GetConnect {
 
   /// 소셜 로그인 (auth/social)
   Future<RequestResult<LoginResult>> loginAndRefreshToken() {
-    if (_loginFuture != null) {
-      return _loginFuture!;
+    final firebaseUser = _currentUser();
+    final uid = firebaseUser?.uid;
+    if (_tokenUid != uid) {
+      _tokenUid = null;
+      _token = null;
+    }
+    if (_loginUid == uid && _loginFuture != null) return _loginFuture!;
+    _loginUid = uid;
+    final attempt = ++_loginAttempt;
+    return _loginFuture = _login(firebaseUser, attempt).whenComplete(() {
+      if (_loginAttempt == attempt) _loginFuture = null;
+    });
+  }
+
+  Future<RequestResult<LoginResult>> _login(User? user, int attempt) async {
+    if (user == null) return RequestFail(null);
+    String? fbToken;
+    try {
+      fbToken = await user.getIdToken().timeout(const Duration(seconds: 15));
+    } catch (ex, st) {
+      FirebaseCrashlytics.instance.recordError(ex, st);
     }
 
-    var future = Future<RequestResult<LoginResult>>(() async {
-      final firebaseUser = FirebaseAuth.instance.currentUser;
-      String? fbToken;
-
-      try {
-        fbToken = await firebaseUser?.getIdToken();
-      } catch (ex, st) {
-        FirebaseCrashlytics.instance.recordError(ex, st);
-      }
-
-      if (fbToken == null) {
-        return RequestFail(null);
-      }
-
-      final result = await _send<LoginResult>(
-        () async => await post('/v1/auth/social', "$fbToken"),
-        map: (rp) => LoginResult.fromJson(json.decode(rp.bodyString!)),
-      );
-      if (FirebaseAuth.instance.currentUser?.uid != firebaseUser?.uid) {
-        return RequestFail(null);
-      }
-      if (result is RequestSuccess<LoginResult>) {
-        _token = result.data.accessToken;
-        final auth = Get.find<AuthService>();
-        auth.appUser = result.data.user;
-        await auth.syncAnalyticsUserId();
-      }
-      return result;
-    }).whenComplete(() => _loginFuture = null);
-
-    _loginFuture = future;
-    return future;
+    bool active() =>
+        _currentUser()?.uid == user.uid && _loginAttempt == attempt;
+    if (fbToken == null || !active()) return RequestFail(null);
+    final result = await _send<LoginResult>(
+      () => post('/v1/auth/social', fbToken),
+      map: (rp) => LoginResult.fromJson(json.decode(rp.bodyString!)),
+    );
+    if (!active()) return RequestFail(null);
+    if (result is RequestSuccess<LoginResult>) {
+      _tokenUid = user.uid;
+      _token = result.data.accessToken;
+      final auth = Get.find<AuthService>();
+      auth.appUser = result.data.user;
+      await auth.syncAnalyticsUserId();
+    }
+    return result;
   }
 
   // ---------- User ----------
 
   /// 현재 사용자 정보 조회 (/users/me) - GET
   Future<RequestResult<AppUser>> getCurrentUser() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final uid = _currentUser()?.uid;
     final result = await _send<AppUser>(
       () async => await get('/v1/users/me'),
       map: (rp) => AppUser.fromJson(json.decode(rp.bodyString!)),
@@ -293,7 +330,7 @@ class ApiClient extends GetConnect {
   Future<RequestResult<AppUser>> updateUserSettings(
     AlarmSettings alarmSettings,
   ) async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final uid = _currentUser()?.uid;
     final result = await _send<AppUser>(
       () async => await patch('/v1/users/settings', {
         // Kept for compatibility with the settings API; device saves are manual.
@@ -310,7 +347,7 @@ class ApiClient extends GetConnect {
     RequestResult<AppUser> result,
     String? uid,
   ) async {
-    if (uid == null || FirebaseAuth.instance.currentUser?.uid != uid) return;
+    if (uid == null || _currentUser()?.uid != uid) return;
     if (result is RequestSuccess<AppUser>) {
       final auth = Get.find<AuthService>();
       auth.appUser = result.data;
@@ -607,8 +644,12 @@ class ApiClient extends GetConnect {
 
   /// 조회수 증가 (/views/{eventId}) - PATCH (204)
   Future<void> increaseViewCount(int eventId) async {
-    await patch('/v1/views/$eventId', null);
+    await _send(() => patch('/v1/views/$eventId', null), map: (_) => true);
   }
+}
+
+class _SessionChanged implements Exception {
+  const _SessionChanged();
 }
 
 sealed class RequestResult<T> {}

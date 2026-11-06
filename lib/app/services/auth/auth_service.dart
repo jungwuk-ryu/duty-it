@@ -159,6 +159,9 @@ class AuthService extends GetxService {
 
   Future<void> logout() async {
     await _unregisterDeviceSafely();
+    if (Get.isRegistered<ApiClient>()) {
+      Get.find<ApiClient>().invalidateSession();
+    }
 
     // Firebase
     var logoutWaiter = _awaitFirebaseLogout();
@@ -190,6 +193,7 @@ class AuthService extends GetxService {
     }
 
     // Firebase
+    Get.find<ApiClient>().invalidateSession();
     await _deleteFirebaseUserSafely();
 
     // Social
