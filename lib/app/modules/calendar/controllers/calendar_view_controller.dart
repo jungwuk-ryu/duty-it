@@ -232,7 +232,13 @@ class CalendarViewController extends GetxController {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (_) => DateSelectionBottomModal(),
+      builder: (_) => SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          primary: false,
+          child: const DateSelectionBottomModal(),
+        ),
+      ),
     );
   }
 
