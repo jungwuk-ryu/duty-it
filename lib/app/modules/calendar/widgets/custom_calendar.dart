@@ -13,13 +13,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 
 class CustomCalendar extends StatefulWidget {
   final DateTime date;
-  final CustomCalendarController controller;
-
-  const CustomCalendar({
-    super.key,
-    required this.date,
-    required this.controller,
-  });
+  const CustomCalendar({super.key, required this.date});
 
   @override
   State<CustomCalendar> createState() => _CustomCalendarState();
@@ -34,6 +28,13 @@ class _CustomCalendarState extends State<CustomCalendar> {
   static const double _inlineEventsThreshold = 0.35;
 
   bool _showInlineEvents = true;
+  late final CustomCalendarController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = CustomCalendarController(widget.date)..init();
+  }
 
   DateTime _startOfWeekSunday(DateTime date) {
     final int offset = date.weekday % 7;
@@ -57,7 +58,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   @override
   void dispose() {
-    widget.controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -109,7 +110,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 child: SingleChildScrollView(
                   physics: const NeverScrollableScrollPhysics(),
                   child: Obx(() {
-                    final calendarEvents = widget.controller.events.toList();
+                    final calendarEvents = _controller.events.toList();
 
                     return Column(
                       children: [
@@ -120,7 +121,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                             date: weekStarts[i],
                             calendarMonth: widget.date.month,
                             events: calendarEvents,
-                            controller: widget.controller,
+                            controller: _controller,
                             showInlineEvents: _showInlineEvents,
                           );
                         }),
@@ -151,7 +152,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 snapAnimationDuration: const Duration(milliseconds: 200),
                 builder: (_, scrollController) {
                   return _CalendarEventSheet(
-                    controller: widget.controller,
+                    controller: _controller,
                     scrollController: scrollController,
                   );
                 },

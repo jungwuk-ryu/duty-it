@@ -19,6 +19,11 @@ class CustomCalendarController {
   StreamSubscription<dynamic>? _includeDeviceEventsSubscription;
   StreamSubscription<int>? _deviceCalendarSubscription;
 
+  StreamSubscription<List<CalendarEvent>>? _eventsSubscription;
+  StreamSubscription<int>? _sessionSubscription;
+  late final CalendarViewController _calendar =
+      Get.find<CalendarViewController>();
+
   RxList<CalendarEvent> get events => _events;
   set events(List<CalendarEvent> events) => _events.value = events;
 
@@ -36,6 +41,9 @@ class CustomCalendarController {
 
   void init() {
     _loadCalendarEvents();
+    _sessionSubscription = _calendar.sessionChanges.listen(
+      (_) => _loadCalendarEvents(),
+    );
     _deviceCalendarSubscription = Get.find<CalendarService>().revision.listen((
       _,
     ) {
@@ -48,17 +56,19 @@ class CustomCalendarController {
   }
 
   void dispose() {
+    _eventsSubscription?.cancel();
+    _sessionSubscription?.cancel();
     _includeDeviceEventsSubscription?.cancel();
     _deviceCalendarSubscription?.cancel();
   }
 
-  Future _loadCalendarEvents() async {
+  void _loadCalendarEvents() {
+    _eventsSubscription?.cancel();
     events.clear();
-    var calController = Get.find<CalendarViewController>();
-    await for (var newEvents in calController.getCalendarEvents(
-      currentDateTime,
-    )) {
-      events = newEvents;
-    }
+    _eventsSubscription = _calendar.getCalendarEvents(currentDateTime).listen((
+      updated,
+    ) {
+      events = updated;
+    });
   }
 }

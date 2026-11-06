@@ -253,7 +253,7 @@ class AuthService extends GetxService {
     await syncAnalyticsUserId();
 
     if (Get.isRegistered<CalendarViewController>()) {
-      Get.find<CalendarViewController>().clearCache().catchError((e, st) {
+      await Get.find<CalendarViewController>().clearCache().catchError((e, st) {
         FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       });
     }

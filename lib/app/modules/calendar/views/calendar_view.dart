@@ -1,5 +1,4 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
 import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
@@ -58,12 +57,9 @@ class CalendarView extends GetView<CalendarViewController> {
               DateTime month = now.copyWith(
                 month: now.month + i - CalendarViewController.initPage,
               );
-              var calendarController = CustomCalendarController(month);
-              calendarController.init();
-
               return CustomCalendar(
+                key: ValueKey((month.year, month.month)),
                 date: month,
-                controller: calendarController,
               );
             },
           ),
