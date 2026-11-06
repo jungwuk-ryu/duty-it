@@ -32,8 +32,6 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-
-        manifestPlaceholders["NATIVE_APP_KEY"] = "5b75899fba79dc8e1651fa8c98ba12f8"
     }
 
     signingConfigs {
