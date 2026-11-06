@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/end_drawer.dart';
-import 'package:duty_it/gen/assets.gen.dart';
+import 'package:duty_it/app/modules/main/widgets/main_tab_bar.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:duty_it/app/modules/job/widgets/job_app_bar.dart';
@@ -67,7 +67,11 @@ class MainView extends GetView<MainViewController> {
                     child: DuoPostureTransition(
                       child: Obx(
                         () => AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 150),
+                          duration:
+                              media.disableAnimations ||
+                                  media.accessibleNavigation
+                              ? Duration.zero
+                              : const Duration(milliseconds: 150),
                           transitionBuilder: (child, animation) {
                             return FadeTransition(
                               opacity: animation,
@@ -112,67 +116,9 @@ class MainView extends GetView<MainViewController> {
                 top: false,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
-                  child: DuitGlass(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(28),
-                      child: BottomNavigationBar(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        type: BottomNavigationBarType.fixed,
-                        currentIndex: controller.pageIndex.value,
-                        onTap: controller.changeTab,
-                        selectedFontSize: 11,
-                        selectedItemColor: AppColors.main,
-                        unselectedFontSize: 11,
-                        unselectedItemColor: AppColors.g05,
-                        items: [
-                          BottomNavigationBarItem(
-                            icon: Image.asset(
-                              Assets.icons.paper.path,
-                              width: 20,
-                              height: 20,
-                              color: controller.pageIndex.value == 0
-                                  ? AppColors.main
-                                  : AppColors.g05,
-                            ),
-                            label: '행사',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Image.asset(
-                              Assets.icons.job.path,
-                              width: 20,
-                              height: 20,
-                              color: controller.pageIndex.value == 1
-                                  ? AppColors.main
-                                  : AppColors.g05,
-                            ),
-                            label: '채용',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Image.asset(
-                              Assets.icons.bookmark.path,
-                              width: 20,
-                              height: 20,
-                              color: controller.pageIndex.value == 2
-                                  ? AppColors.main
-                                  : AppColors.g05,
-                            ),
-                            label: '북마크',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Image.asset(
-                              Assets.icons.calendar.path,
-                              width: 20,
-                              height: 20,
-                              color: controller.pageIndex.value == 3
-                                  ? AppColors.main
-                                  : AppColors.g05,
-                            ),
-                            label: '캘린더',
-                          ),
-                        ],
-                      ),
-                    ),
+                  child: MainTabBar(
+                    selectedIndex: controller.pageIndex.value,
+                    onSelected: controller.changeTab,
                   ),
                 ),
               ),
@@ -182,13 +128,6 @@ class MainView extends GetView<MainViewController> {
   }
 
   Widget _sideNavigation(double width, double top) {
-    final icons = [
-      Assets.icons.paper.path,
-      Assets.icons.job.path,
-      Assets.icons.bookmark.path,
-      Assets.icons.calendar.path,
-    ];
-    const labels = ['행사', '채용', '북마크', '캘린더'];
     return SizedBox(
       width: width,
       child: Padding(
@@ -216,7 +155,7 @@ class MainView extends GetView<MainViewController> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            for (var i = 0; i < labels.length; i++)
+                            for (var i = 0; i < mainTabs.length; i++)
                               Obx(() {
                                 final selected =
                                     controller.pageIndex.value == i;
@@ -238,7 +177,7 @@ class MainView extends GetView<MainViewController> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Image.asset(
-                                            icons[i],
+                                            mainTabs[i].icon,
                                             width: 20,
                                             height: 20,
                                             color: selected
@@ -247,7 +186,7 @@ class MainView extends GetView<MainViewController> {
                                           ),
                                           const SizedBox(height: 4),
                                           Text(
-                                            labels[i],
+                                            mainTabs[i].label,
                                             style: TextStyle(
                                               fontSize: 11,
                                               color: selected
