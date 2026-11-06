@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -22,10 +23,9 @@ class AppUtils {
 
   /// Compare an API event date (stored as a Seoul wall-clock time) to today in KST.
   static int daysUntilKstDate(DateTime date, {DateTime? now}) {
-    final kstNow = (now ?? DateTime.now()).toUtc().add(
-      const Duration(hours: 9),
-    );
-    final targetDay = DateTime.utc(date.year, date.month, date.day);
+    final kstNow = (now ?? DateTime.now()).toUtc().seoulWallTime;
+    final kstDate = date.seoulWallTime;
+    final targetDay = DateTime.utc(kstDate.year, kstDate.month, kstDate.day);
     final today = DateTime.utc(kstNow.year, kstNow.month, kstNow.day);
     return targetDay.difference(today).inDays;
   }

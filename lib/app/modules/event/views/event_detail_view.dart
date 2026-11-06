@@ -7,6 +7,7 @@ import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/event_detail.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/services/event_content_service.dart';
 import 'package:duty_it/app/modules/event/widgets/event_actions_menu.dart';
 import 'package:duty_it/app/modules/event/widgets/event_host_card.dart';
@@ -284,10 +285,10 @@ class _EventDetailViewState extends State<EventDetailView> {
                         '신청 마감',
                         event.recruitmentEndAt == null
                             ? '주최 페이지에서 확인해 주세요'
-                            : '${_dateTime(event.recruitmentEndAt!)}까지',
+                            : '${_dateTime(event.recruitmentEndAt!.seoulWallTime)}까지',
                         note: event.recruitmentStartAt == null
                             ? null
-                            : '신청 시작 · ${_dateTime(event.recruitmentStartAt!)}',
+                            : '신청 시작 · ${_dateTime(event.recruitmentStartAt!.seoulWallTime)}',
                       ),
                       if (_contentResult?.availability !=
                           EventContentAvailability.unavailable) ...[
@@ -679,8 +680,8 @@ class _EventDetailViewState extends State<EventDetailView> {
   }
 
   String _eventPeriod(Event event) {
-    final start = event.startAt;
-    final end = event.endAt;
+    final start = event.startAt?.seoulWallTime;
+    final end = event.endAt?.seoulWallTime;
     if (start == null && end == null) return '주최 페이지에서 확인해 주세요';
     if (start == null) return '${_dateTime(end!)}까지';
     if (end == null || start.isAtSameMomentAs(end)) return _dateTime(start);
