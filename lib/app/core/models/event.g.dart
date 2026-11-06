@@ -9,16 +9,12 @@ part of 'event.dart';
 _Event _$EventFromJson(Map<String, dynamic> json) => _Event(
   id: (json['id'] as num).toInt(),
   title: json['title'] as String? ?? "?",
-  startAt: json['startAt'] == null
-      ? null
-      : DateTime.parse(json['startAt'] as String),
-  endAt: json['endAt'] == null ? null : DateTime.parse(json['endAt'] as String),
-  recruitmentStartAt: json['recruitmentStartAt'] == null
-      ? null
-      : DateTime.parse(json['recruitmentStartAt'] as String),
-  recruitmentEndAt: json['recruitmentEndAt'] == null
-      ? null
-      : DateTime.parse(json['recruitmentEndAt'] as String),
+  startAt: parseEventTimestamp(json['startAt'] as String?),
+  endAt: parseEventTimestamp(json['endAt'] as String?),
+  recruitmentStartAt: parseEventTimestamp(
+    json['recruitmentStartAt'] as String?,
+  ),
+  recruitmentEndAt: parseEventTimestamp(json['recruitmentEndAt'] as String?),
   uri: json['uri'] as String? ?? "",
   thumbnail: json['thumbnail'] as String? ?? "",
   eventType:

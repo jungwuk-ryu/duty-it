@@ -50,6 +50,21 @@ void main() {
     },
   );
 
+  test(
+    'offset-free event time survives device DST gaps and cache round trips',
+    () {
+      // 02:30 does not exist in Los Angeles on this day; it does in Seoul.
+      final event = Event.fromJson({
+        'id': 1,
+        'startAt': '2026-03-08T02:30:00',
+        'endAt': '2026-03-09',
+      });
+      expect(event.startAt, DateTime.utc(2026, 3, 7, 17, 30));
+      expect(event.endAt, DateTime.utc(2026, 3, 8, 15));
+      expect(Event.fromJson(event.toJson()), event);
+    },
+  );
+
   test('image URLs require an HTTP host', () {
     expect(AppUtils.isHttpUrl(''), isFalse);
     expect(AppUtils.isHttpUrl('/uploads/poster.png'), isFalse);
