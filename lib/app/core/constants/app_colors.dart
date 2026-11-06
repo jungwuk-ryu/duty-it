@@ -13,7 +13,7 @@ class AppColors {
   static const Color cal3 = Color(0xFFE1F0FF);
   static const Color bg = Color(0x66333333);
   static const Color bgCard = Color(0xCC333333);
-  static const Color canvas = Color(0xFFF8F9FA);
+  static const Color canvas = white;
   static const Color border = Color(0xFFE5E7EB);
   static const Color g01 = Color(0xFFF8F9FA);
   static const Color g02 = Color(0xFFF3F4F6);

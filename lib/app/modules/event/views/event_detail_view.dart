@@ -217,7 +217,7 @@ class _EventDetailViewState extends State<EventDetailView> {
               if (_loadFailed)
                 MaterialBanner(
                   content: const Text('최신 행사 정보를 불러오지 못했어요.'),
-                  backgroundColor: AppColors.canvas,
+                  backgroundColor: AppColors.g01,
                   actions: [
                     TextButton(
                       onPressed: _loadDetail,
@@ -328,7 +328,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: AppColors.canvas,
+                          color: AppColors.g01,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Text(
@@ -361,7 +361,7 @@ class _EventDetailViewState extends State<EventDetailView> {
           fit: StackFit.expand,
           children: [
             ColoredBox(
-              color: AppColors.canvas,
+              color: AppColors.g01,
               child: hasImage
                   ? CachedNetworkImage(
                       imageUrl: event.thumbnail,
