@@ -12,7 +12,8 @@ class AdaptiveLayout extends StatelessWidget {
       builder: (_, constraints) {
         double width = constraints.maxWidth;
 
-        if (width < 600) return phone;
+        final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
+        if (width < 600 * (textScale > 1 ? textScale : 1)) return phone;
         return tablet;
       },
     );

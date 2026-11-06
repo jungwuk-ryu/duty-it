@@ -5,12 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class BookmarkAppBar extends GetView<BookmarkViewController> {
-  const BookmarkAppBar({super.key});
+  const BookmarkAppBar({super.key, this.actionsOnly = false});
+  final bool actionsOnly;
 
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => DuitTopAppBar(
+        actionsOnly: actionsOnly,
         showNotifications: true,
         hasNewNotification: controller.hasNewNotification,
         onNotificationsTap: controller.openNotificationsPage,

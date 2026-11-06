@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/adaptive_filter_row.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
@@ -29,7 +30,7 @@ class HomeHeader extends StatelessWidget {
             var service = Get.find<SearchFilterService>();
             bool filterApplied = service.hasFilterChanges();
 
-            return Row(
+            return AdaptiveFilterRow(
               children: [
                 CategoryTag(
                   name: '전체',
@@ -50,7 +51,6 @@ class HomeHeader extends StatelessWidget {
                     Get.toNamed(Routes.SEARCH_FILTER);
                   },
                 ),
-                Spacer(),
                 Obx(
                   () => CategoryTag(
                     name: controller.sortingType.shortName,

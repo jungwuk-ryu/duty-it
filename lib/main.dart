@@ -11,6 +11,7 @@ import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event_deep_link_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -84,7 +85,11 @@ void main() async {
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       builder: (context, child) {
-        return Overlay(initialEntries: [OverlayEntry(builder: (_) => child!)]);
+        return DuoLayout(
+          child: Overlay(
+            initialEntries: [OverlayEntry(builder: (_) => child!)],
+          ),
+        );
       },
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),

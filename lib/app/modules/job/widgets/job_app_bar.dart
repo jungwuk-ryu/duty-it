@@ -9,7 +9,8 @@ import 'package:get/get.dart';
 class JobAppBar extends StatelessWidget {
   JobViewController get controller => Get.find<JobViewController>();
 
-  const JobAppBar({super.key});
+  const JobAppBar({super.key, this.actionsOnly = false});
+  final bool actionsOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +19,7 @@ class JobAppBar extends StatelessWidget {
       final hasNewNotification = controller.hasNewNotification;
 
       return DuitTopAppBar(
+        actionsOnly: actionsOnly,
         showNotifications: true,
         hasNewNotification: isLoggedIn && hasNewNotification,
         onNotificationsTap: () {

@@ -1,3 +1,5 @@
+import 'package:duty_it/app/widgets/adaptive_paged_sliver.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
@@ -48,9 +50,11 @@ class BookmarkView extends GetView<BookmarkViewController> {
         const SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ListPageIntro(
-              title: '내 북마크',
-              description: '다시 보고 싶은 행사와 채용 공고를 모아보세요.',
+            child: FoldSafeHeader(
+              child: ListPageIntro(
+                title: '내 북마크',
+                description: '다시 보고 싶은 행사와 채용 공고를 모아보세요.',
+              ),
             ),
           ),
         ),
@@ -58,7 +62,7 @@ class BookmarkView extends GetView<BookmarkViewController> {
           pinned: true,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: BookmarkHeader(),
+            child: FoldSafeHeader(child: BookmarkHeader()),
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: _listTopSpacing)),
@@ -66,15 +70,10 @@ class BookmarkView extends GetView<BookmarkViewController> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: Obx(() {
             if (controller.isEventTab) {
-              return PagedSliverGrid<String?, Rx<Event>>(
+              return AdaptivePagedSliver<String?, Rx<Event>>(
                 state: controller.eventPagingState,
                 fetchNextPage: controller.fetchNextEventPage,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 220,
-                  mainAxisExtent: 255,
-                  mainAxisSpacing: 24,
-                  crossAxisSpacing: 16,
-                ),
+                eventTiles: true,
                 builderDelegate: PagedChildBuilderDelegate<Rx<Event>>(
                   animateTransitions: true,
                   transitionDuration: const Duration(milliseconds: 100),
@@ -94,7 +93,7 @@ class BookmarkView extends GetView<BookmarkViewController> {
               );
             }
 
-            return PagedSliverList<String?, Rx<JobPosting>>(
+            return AdaptivePagedSliver<String?, Rx<JobPosting>>(
               state: controller.jobPagingState,
               fetchNextPage: controller.fetchNextJobPage,
               builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
@@ -115,6 +114,9 @@ class BookmarkView extends GetView<BookmarkViewController> {
               ),
             );
           }),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
         ),
       ],
     );

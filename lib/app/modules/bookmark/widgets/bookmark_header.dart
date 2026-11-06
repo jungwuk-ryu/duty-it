@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/adaptive_filter_row.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/bookmark/controllers/bookmark_view_controller.dart';
 import 'package:duty_it/app/modules/bookmark/widgets/bookmark_sorting_bottom_modal.dart';
@@ -63,7 +64,7 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
                 ? controller.eventSortingType.shortName
                 : controller.jobSortingType.shortName;
 
-            return Row(
+            return AdaptiveFilterRow(
               children: [
                 CategoryTag(
                   name: '전체',
@@ -78,7 +79,6 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
                   imageColor: filterApplied ? AppColors.white : null,
                   onTap: controller.openCurrentFilterPage,
                 ),
-                const Spacer(),
                 CategoryTag(
                   name: sortingName,
                   isSelected: false,
