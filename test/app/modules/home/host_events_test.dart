@@ -15,6 +15,7 @@ import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,6 +29,17 @@ class _Analytics extends Fake implements FirebaseAnalytics {
     Map<String, Object>? parameters,
     AnalyticsCallOptions? callOptions,
   }) async {}
+}
+
+class _FirebaseAuth extends Fake implements FirebaseAuth {
+  @override
+  User? currentUser;
+}
+
+class _FirebaseUser extends Fake implements User {
+  _FirebaseUser(this.uid);
+  @override
+  final String uid;
 }
 
 class _Auth extends AuthService {
@@ -101,6 +113,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const pathProvider = MethodChannel('plugins.flutter.io/path_provider');
   late HomeViewController controller;
+  late _FirebaseAuth firebaseAuth;
   late _Api api;
   late SearchFilterService filters;
 
@@ -124,7 +137,11 @@ void main() {
     filters = Get.put(SearchFilterService());
     api = _Api();
     Get.put<ApiClient>(api);
-    controller = HomeViewController(analytics: _Analytics());
+    firebaseAuth = _FirebaseAuth();
+    controller = HomeViewController(
+      analytics: _Analytics(),
+      auth: firebaseAuth,
+    );
     controller.loadEventListFromCache = false;
   });
 
@@ -204,6 +221,84 @@ void main() {
         host,
       );
       expect(controller.pagingState.isLoading, isFalse);
+    },
+  );
+
+  test(
+    'guest and next account never render a previous owner’s cached bookmarks',
+    () async {
+      final owner = _FirebaseUser('owner-A');
+      final cache = HomeViewCache();
+      const privatePage = EventsResponse(
+        events: [Event(id: 42, isBookmarked: true)],
+        pageInfo: EventsPageInfo(hasNext: false, nextCursor: null, pageSize: 5),
+        reqUrl: 'https://example.test/api/v2/events?hostId=7',
+      );
+      await cache.saveEvents(owner.uid, privatePage);
+      expect(cache.getEvents(owner.uid)?.events.single.isBookmarked, isTrue);
+      for (final user in [null, _FirebaseUser('owner-B')]) {
+        firebaseAuth.currentUser = user;
+        controller.loadEventListFromCache = true;
+        final load = controller.fetchNextPage(clearPage: true);
+        await pumpEventQueue();
+        expect(controller.pagingState.pages, isNull);
+        expect(cache.getEventsPath(user?.uid), isNull);
+        // Change account while the request is still pending.
+        firebaseAuth.currentUser = owner;
+        api.complete(api.responses.length - 1, [
+          const Event(id: 33, isBookmarked: true),
+        ]);
+        await load;
+        expect(controller.pagingState.pages, isNull);
+        expect(cache.getEvents(user?.uid), isNull);
+      }
+      expect(cache.getEvents(owner.uid)?.events.single.id, 42);
+    },
+  );
+
+  test(
+    'background refresh replays only the current owner’s query and drops stale results',
+    () async {
+      final storage = GetStorage(HomeViewCache.boxName);
+      final cache = HomeViewCache();
+      const page = EventsResponse(
+        events: [Event(id: 7, isBookmarked: true)],
+        pageInfo: EventsPageInfo(hasNext: false, nextCursor: null, pageSize: 5),
+        reqUrl: 'https://example.test/api/v2/events?hostId=7',
+      );
+      await storage.write('event_list', page.toJson());
+      await storage.write('last_update', DateTime.now().millisecondsSinceEpoch);
+      await storage.write('request_url', page.reqUrl);
+      for (final uid in ['A', 'B', null]) {
+        expect(cache.getEvents(uid), isNull);
+        expect(cache.getEventsPath(uid), isNull);
+      }
+
+      await cache.saveEvents('A', page);
+      expect(cache.getEventsPath('A'), '/v2/events?hostId=7');
+      final response = Completer<EventsResponse>();
+      var activeUid = 'A';
+      final refresh = cache.refresh(
+        uid: activeUid,
+        isCurrent: () => activeUid == 'A',
+        load: (path) {
+          expect(path, '/v2/events?hostId=7');
+          return response.future;
+        },
+      );
+      activeUid = 'B';
+      response.complete(page.copyWith(events: [const Event(id: 1)]));
+      await refresh;
+      expect(cache.getEvents('A')?.events.single.id, 7);
+      expect(cache.getEvents('B'), isNull);
+
+      await cache.refresh(
+        uid: 'A',
+        isCurrent: () => true,
+        load: (_) async => page.copyWith(events: [const Event(id: 2)]),
+      );
+      expect(cache.getEvents('A')?.events.single.id, 2);
+      expect(storage.hasData('event_list'), isFalse);
     },
   );
 

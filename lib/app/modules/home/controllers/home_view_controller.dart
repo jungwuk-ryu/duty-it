@@ -18,6 +18,7 @@ import 'package:duty_it/app/services/event/events/event_bookmark_event.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
 import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +35,13 @@ class HomeViewController extends GetxController {
   final HomeViewCache _cache = HomeViewCache();
   final FirebaseAnalytics analytics;
 
-  HomeViewController({FirebaseAnalytics? analytics})
-    : analytics = analytics ?? FirebaseAnalytics.instance;
+  HomeViewController({FirebaseAnalytics? analytics, FirebaseAuth? auth})
+    : analytics = analytics ?? FirebaseAnalytics.instance,
+      _firebaseAuth = auth;
+
+  final FirebaseAuth? _firebaseAuth;
+  FirebaseAuth get _auth => _firebaseAuth ?? FirebaseAuth.instance;
+  StreamSubscription<User?>? _authSubscription;
   final ScrollController scrollController = ScrollController();
   final Set<int> _bookmarkRequests = {};
 
@@ -109,7 +115,6 @@ class HomeViewController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     _sortingType.value = EventSortingType.fromName(
       _settingsService.eventSortingType.value,
     );
@@ -135,6 +140,21 @@ class HomeViewController extends GetxController {
 
     ever(_sortingType, (v) => fetchNextPage(clearPage: true));
 
+    var lastUid = _auth.currentUser?.uid;
+    _authSubscription = _auth.authStateChanges().listen((user) {
+      if (isClosed || lastUid == user?.uid) return;
+      lastUid = user?.uid;
+      loadEventListFromCache = true;
+      pagingState = PagingState<String?, EventCard>(isLoading: true);
+      _hasNewNotification.value = false;
+      if (selectedTab == HomeTab.bookmark) {
+        selectedTab = HomeTab.event;
+      } else {
+        fetchNextPage(clearPage: true);
+      }
+      checkNewNotification();
+    });
+
     checkNewNotification();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchNextPage(clearPage: true);
@@ -143,6 +163,7 @@ class HomeViewController extends GetxController {
 
   @override
   void onClose() {
+    _authSubscription?.cancel();
     searchTextEditingController.dispose();
     scrollController.dispose();
     super.onClose();
@@ -232,7 +253,8 @@ class HomeViewController extends GetxController {
   }
 
   Future<void> checkNewNotification() async {
-    if (!Get.find<AuthService>().isLoggined()) {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) {
       _hasNewNotification.value = false;
       return;
     }
@@ -242,7 +264,9 @@ class HomeViewController extends GetxController {
       0,
       size: 1,
     );
-    if (result is RequestFail) return;
+    if (isClosed || _auth.currentUser?.uid != uid || result is RequestFail) {
+      return;
+    }
 
     List<AppNotification> notiList = (result as RequestSuccess).data;
     if (notiList.isEmpty) {
@@ -282,17 +306,24 @@ class HomeViewController extends GetxController {
   }
 
   Future<void> fetchNextPage({bool clearPage = false}) async {
-    if (!clearPage && pagingState.isLoading) return;
+    if (isClosed || (!clearPage && pagingState.isLoading)) return;
+    final uid = _auth.currentUser?.uid;
     final revision = clearPage ? ++_pageRequestRevision : _pageRequestRevision;
     await _pageFetchLock.synchronized(() async {
-      if (revision != _pageRequestRevision) return;
-      await _fetchNextPage(clearPage: clearPage, revision: revision);
+      if (!_isCurrentRequest(uid, revision)) return;
+      await _fetchNextPage(clearPage: clearPage, revision: revision, uid: uid);
     });
   }
+
+  bool _isCurrentRequest(String? uid, int revision) =>
+      !isClosed &&
+      revision == _pageRequestRevision &&
+      _auth.currentUser?.uid == uid;
 
   Future<void> _fetchNextPage({
     required bool clearPage,
     required int revision,
+    required String? uid,
   }) async {
     final loadCache = loadEventListFromCache;
     loadEventListFromCache = false;
@@ -344,7 +375,7 @@ class HomeViewController extends GetxController {
 
     if (loadCache) {
       try {
-        var cachedResponse = _cache.getEvents();
+        var cachedResponse = _cache.getEvents(uid);
         if (cachedResponse != null) {
           pagingState = pagingState.copyWith(
             keys: [
@@ -385,7 +416,7 @@ class HomeViewController extends GetxController {
         types: types,
       );
       // A host/filter change can happen while the previous request is pending.
-      if (revision != _pageRequestRevision) return;
+      if (!_isCurrentRequest(uid, revision)) return;
       if (reqResult is RequestSuccess) {
         EventsResponse response =
             (reqResult as RequestSuccess<EventsResponse>).data;
@@ -418,7 +449,11 @@ class HomeViewController extends GetxController {
         if (clearPage &&
             searchQuery.isEmpty &&
             _selectedTab.value == HomeTab.event) {
-          _cache.saveEvents(response);
+          try {
+            await _cache.saveEvents(uid, response);
+          } catch (e, st) {
+            FirebaseCrashlytics.instance.recordError(e, st);
+          }
         }
       } else {
         hasError = true;
@@ -435,7 +470,7 @@ class HomeViewController extends GetxController {
       }
       FirebaseCrashlytics.instance.recordError(ex, st);
     } finally {
-      if (revision == _pageRequestRevision) {
+      if (_isCurrentRequest(uid, revision)) {
         if (hasError) {
           if (preserveVisibleItems) {
             pagingState = previousPagingState.copyWith(
