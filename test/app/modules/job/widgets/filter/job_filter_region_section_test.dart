@@ -1,54 +1,19 @@
-import 'dart:io';
-
 import 'package:duty_it/app/core/enums/work_region.dart';
 import 'package:duty_it/app/modules/job/controllers/job_filter_view_controller.dart';
 import 'package:duty_it/app/modules/job/widgets/filter/job_filter_region_section.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
 import 'package:duty_it/app/services/job_filter/models/job_filter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-  const pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
-
-  late Directory storageDirectory;
-  setUpAll(() async {
-    storageDirectory = await Directory.systemTemp.createTemp(
-      'duit_job_region_',
-    );
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(pathProviderChannel, (methodCall) async {
-          if (methodCall.method == 'getApplicationDocumentsDirectory') {
-            return storageDirectory.path;
-          }
-          return null;
-        });
-
-    await GetStorage.init(JobFilterService.storageBoxName);
-  });
-
-  setUp(() async {
-    Get.reset();
-    await GetStorage(JobFilterService.storageBoxName).erase();
-  });
-
   tearDown(Get.reset);
-
-  tearDownAll(() async {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(pathProviderChannel, null);
-    await storageDirectory.delete(recursive: true);
-  });
 
   testWidgets('renders region row without all-label summary by default', (
     tester,
   ) async {
-    Get.put(JobFilterService());
-    Get.put(JobFilterViewController());
+    _registerController();
 
     await tester.pumpWidget(_buildSubject());
 
@@ -79,18 +44,11 @@ void main() {
   });
 
   testWidgets('renders selected region summary in the row', (tester) async {
-    await GetStorage(JobFilterService.storageBoxName).write(
-      'filter',
-      const JobFilter(
-        workRegions: {
-          WorkRegion.seoul,
-          WorkRegion.gyeonggi,
-          WorkRegion.incheon,
-        },
-      ).toJson(),
-    );
-    Get.put(JobFilterService());
-    Get.put(JobFilterViewController());
+    _registerController({
+      WorkRegion.seoul,
+      WorkRegion.gyeonggi,
+      WorkRegion.incheon,
+    });
 
     await tester.pumpWidget(_buildSubject());
 
@@ -105,12 +63,7 @@ void main() {
   testWidgets('anchors selected summary and chevron to the trailing edge', (
     tester,
   ) async {
-    await GetStorage(JobFilterService.storageBoxName).write(
-      'filter',
-      const JobFilter(workRegions: {WorkRegion.incheon}).toJson(),
-    );
-    Get.put(JobFilterService());
-    Get.put(JobFilterViewController());
+    _registerController({WorkRegion.incheon});
 
     await tester.pumpWidget(_buildSubject());
 
@@ -125,6 +78,19 @@ void main() {
     expect(chevronRect.right, closeTo(scaffoldWidth - 16, 0.1));
     expect(chevronRect.left - summaryRect.right, closeTo(12, 0.1));
   });
+}
+
+// These layout tests exercise the real filter state without starting disk
+// persistence. The service tests cover reading and normalizing saved filters.
+class _RegionController extends JobFilterViewController {
+  @override
+  final service = JobFilterService();
+}
+
+void _registerController([Set<WorkRegion> regions = const {}]) {
+  final controller = _RegionController();
+  controller.service.updateFilter(JobFilter(workRegions: regions));
+  Get.put<JobFilterViewController>(controller);
 }
 
 Widget _buildSubject() {
