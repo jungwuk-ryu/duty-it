@@ -74,6 +74,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
     with SingleTickerProviderStateMixin {
   final _transform = TransformationController();
   final _viewport = GlobalKey();
+  final _poster = GlobalKey();
   late final AnimationController _animation;
   late Matrix4Tween _zoomTween;
   Offset _tap = Offset.zero;
@@ -100,10 +101,21 @@ class _EventPosterViewerState extends State<EventPosterViewer>
     const scale = 2.5;
     final target = Matrix4.identity();
     if (!_zoomed) {
+      final viewport =
+          _viewport.currentContext!.findRenderObject()! as RenderBox;
+      final poster = _poster.currentContext!.findRenderObject()! as RenderBox;
+      final bounds = MatrixUtils.transformRect(
+        poster.getTransformTo(viewport),
+        Offset.zero & poster.size,
+      );
+      final focus = Offset(
+        focalPoint.dx.clamp(bounds.left, bounds.right),
+        focalPoint.dy.clamp(bounds.top, bounds.bottom),
+      );
       target
         ..translateByDouble(
-          (1 - scale) * focalPoint.dx,
-          (1 - scale) * focalPoint.dy,
+          (1 - scale) * focus.dx,
+          (1 - scale) * focus.dy,
           0,
           1,
         )
@@ -200,18 +212,24 @@ class _EventPosterViewerState extends State<EventPosterViewer>
                           ),
                         );
                       }
-                      return _gallery(image);
+                      return LayoutBuilder(
+                        builder: (_, constraints) =>
+                            _gallery(image, constraints.maxHeight),
+                      );
                     },
                     errorBuilder: (_, _, _) => Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('포스터를 불러오지 못했어요.'),
-                          TextButton(
-                            onPressed: _retrying ? null : _retry,
-                            child: const Text('다시 시도'),
-                          ),
-                        ],
+                      child: SingleChildScrollView(
+                        primary: false,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('포스터를 불러오지 못했어요.'),
+                            TextButton(
+                              onPressed: _retrying ? null : _retry,
+                              child: const Text('다시 시도'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -224,7 +242,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
     );
   }
 
-  Widget _gallery(Widget image) => Column(
+  Widget _gallery(Widget image, double availableHeight) => Column(
     children: [
       Expanded(
         child: GestureDetector(
@@ -244,6 +262,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
                   vertical: 8,
                 ),
                 child: DecoratedBox(
+                  key: _poster,
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
@@ -261,63 +280,71 @@ class _EventPosterViewerState extends State<EventPosterViewer>
           ),
         ),
       ),
-      Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 16, 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (widget.host.trim().isNotEmpty)
-                    Text(
-                      widget.host,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.g06,
-                      ),
-                    ),
+      ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: availableHeight * .4),
+        child: _caption(),
+      ),
+    ],
+  );
+
+  Widget _caption() => Padding(
+    padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 16, 12),
+    child: Row(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            primary: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (widget.host.trim().isNotEmpty)
                   Text(
-                    widget.title,
-                    maxLines: 2,
+                    widget.host,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 18,
-                      height: 1.3,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.black,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.g06,
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            DuitGlass(
-              radius: 24,
-              showShadow: false,
-              child: ValueListenableBuilder<Matrix4>(
-                valueListenable: _transform,
-                builder: (context, _, _) => IconButton(
-                  tooltip: _zoomed ? '전체 맞춤' : '포스터 확대',
-                  onPressed: () {
-                    final size = _viewport.currentContext?.size;
-                    if (size != null) _toggleZoom(size.center(Offset.zero));
-                  },
-                  icon: Icon(
-                    _zoomed ? Icons.zoom_out_rounded : Icons.zoom_in_rounded,
-                    size: 24,
+                Text(
+                  widget.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    height: 1.3,
+                    fontWeight: FontWeight.w700,
                     color: AppColors.black,
                   ),
                 ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        DuitGlass(
+          radius: 24,
+          showShadow: false,
+          child: ValueListenableBuilder<Matrix4>(
+            valueListenable: _transform,
+            builder: (context, _, _) => IconButton(
+              tooltip: _zoomed ? '전체 맞춤' : '포스터 확대',
+              onPressed: () {
+                final size = _viewport.currentContext?.size;
+                if (size != null) _toggleZoom(size.center(Offset.zero));
+              },
+              icon: Icon(
+                _zoomed ? Icons.zoom_out_rounded : Icons.zoom_in_rounded,
+                size: 24,
+                color: AppColors.black,
               ),
             ),
-          ],
+          ),
         ),
-      ),
-    ],
+      ],
+    ),
   );
 }

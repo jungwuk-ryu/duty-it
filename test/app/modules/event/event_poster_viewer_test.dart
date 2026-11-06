@@ -33,7 +33,9 @@ void main() {
       final transform = tester
           .widget<InteractiveViewer>(viewer)
           .transformationController!;
-      final focal = tester.getRect(viewer).center + const Offset(32, -20);
+      final poster = tester.getRect(find.byType(RawImage));
+      final focal =
+          poster.center + Offset(poster.width / 4, -poster.height / 4);
       final local = focal - tester.getTopLeft(viewer);
       await tester.tapAt(focal);
       await tester.pump(const Duration(milliseconds: 80));
@@ -48,6 +50,46 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('열기'), findsOneWidget);
       expect(viewer, findsNothing);
+    },
+  );
+  testWidgets('zoom from the letterbox keeps a wide poster visible', (
+    tester,
+  ) async {
+    await _openWidePoster(tester, const Size(390, 844));
+    final viewer = find.byType(InteractiveViewer);
+    final viewport = tester.getRect(viewer);
+    final poster = find.byType(RawImage);
+    final original = tester.getRect(poster);
+    final tap = viewport.topCenter + const Offset(0, 8);
+    expect(tap.dy, lessThan(original.top));
+    await tester.tapAt(tap);
+    await tester.pump(const Duration(milliseconds: 80));
+    await tester.tapAt(tap);
+    await tester.pumpAndSettle();
+    final zoomed = tester.getRect(poster);
+    expect(zoomed.width, closeTo(original.width * 2.5, .01));
+    expect(zoomed.top, closeTo(original.top, .01));
+    expect(viewport.overlaps(zoomed), isTrue);
+  });
+  testWidgets(
+    'a short pane keeps the poster and its controls usable at large type',
+    (tester) async {
+      await _openWidePoster(tester, const Size(670, 230), textScale: 3.2);
+      expect(tester.takeException(), isNull);
+      final viewer = find.byType(InteractiveViewer);
+      expect(tester.getSize(viewer).height, greaterThan(90));
+      expect(tester.getSize(find.byType(RawImage)).height, greaterThan(0));
+      final caption = find.byType(SingleChildScrollView);
+      final scrollable = tester.state<ScrollableState>(
+        find.descendant(of: caption, matching: find.byType(Scrollable)),
+      );
+      await tester.drag(caption, const Offset(0, -40));
+      await tester.pumpAndSettle();
+      expect(scrollable.position.pixels, greaterThan(0));
+      await tester.tap(find.byTooltip('포스터 확대'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('전체 맞춤'), findsOneWidget);
+      expect(find.byTooltip('닫기').hitTestable(), findsOneWidget);
     },
   );
   testWidgets('failed load can retry and zoom with reduced motion', (
@@ -130,6 +172,37 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+}
+
+Future<void> _openWidePoster(
+  WidgetTester tester,
+  Size size, {
+  double textScale = 1,
+}) async {
+  await tester.binding.setSurfaceSize(size);
+  addTearDown(() => tester.binding.setSurfaceSize(null));
+  final pixels = (await tester.runAsync(
+    () => createTestImage(width: 1200, height: 400),
+  ))!;
+  addTearDown(pixels.dispose);
+  await tester.pumpWidget(
+    MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(
+          size: size,
+          textScaler: TextScaler.linear(textScale),
+        ),
+        child: EventPosterViewer(
+          image: _TestPoster(
+            () => SynchronousFuture(ImageInfo(image: pixels.clone())),
+          ),
+          title: '대한중앙의료봉사회 농촌 의료 왕진버스 자원봉사자 모집 - 대구 군위군 의흥면',
+          host: '대한중앙의료봉사회',
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
 }
 
 class _TestPoster extends ImageProvider<_TestPoster> {
