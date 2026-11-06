@@ -15,11 +15,15 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   const pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
 
+  late Directory storageDirectory;
   setUpAll(() async {
+    storageDirectory = await Directory.systemTemp.createTemp(
+      'duit_job_region_',
+    );
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(pathProviderChannel, (methodCall) async {
           if (methodCall.method == 'getApplicationDocumentsDirectory') {
-            return Directory.systemTemp.path;
+            return storageDirectory.path;
           }
           return null;
         });
@@ -34,9 +38,10 @@ void main() {
 
   tearDown(Get.reset);
 
-  tearDownAll(() {
+  tearDownAll(() async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(pathProviderChannel, null);
+    await storageDirectory.delete(recursive: true);
   });
 
   testWidgets('renders region row without all-label summary by default', (
