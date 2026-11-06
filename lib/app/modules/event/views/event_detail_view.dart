@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui' show ImageFilter;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/api_client.dart';
@@ -15,6 +14,8 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/modules/event/widgets/event_detail_layout.dart';
+import 'package:duty_it/app/modules/event/views/event_poster_viewer.dart';
+import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -357,93 +358,42 @@ class _EventDetailViewState extends State<EventDetailView> {
       aspectRatio: 4 / 3,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            ColoredBox(
-              color: AppColors.g01,
-              child: hasImage
-                  ? CachedNetworkImage(
-                      imageUrl: event.thumbnail,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.topCenter,
-                      errorWidget: (_, __, ___) => const Icon(
-                        Icons.event_note_rounded,
-                        size: 64,
-                        color: AppColors.g04,
-                      ),
-                    )
-                  : const Icon(
-                      Icons.event_note_rounded,
-                      size: 64,
-                      color: AppColors.g04,
-                    ),
-            ),
-            if (hasImage)
-              Positioned(
-                right: 12,
-                bottom: 12,
-                child: _posterExpandButton(event),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _posterExpandButton(Event event) {
-    final highContrast = MediaQuery.highContrastOf(context);
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(24),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipOval(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: highContrast ? 0 : 12,
-            sigmaY: highContrast ? 0 : 12,
-          ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: highContrast
-                    ? [Colors.white, Colors.white]
-                    : [
-                        Colors.white.withAlpha(150),
-                        Colors.white.withAlpha(58),
-                        Colors.white.withAlpha(96),
-                      ],
-              ),
-              border: Border.all(
-                color: Colors.white.withAlpha(190),
-                width: 0.8,
-              ),
-            ),
-            child: Material(
-              type: MaterialType.transparency,
-              child: IconButton(
-                tooltip: '포스터 전체 보기',
-                onPressed: () => _showPoster(event),
-                style: IconButton.styleFrom(
-                  foregroundColor: AppColors.black,
-                  overlayColor: Colors.white.withAlpha(90),
-                  shape: const CircleBorder(),
+        child: Builder(
+          builder: (source) => Stack(
+            fit: StackFit.expand,
+            children: [
+              if (hasImage) ...[
+                GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () => _showPoster(source, event),
+                  child: CachedNetworkImage(
+                    imageUrl: event.thumbnail,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                    placeholder: (_, _) =>
+                        const ColoredBox(color: AppColors.g01),
+                    errorWidget: (_, _, _) => const _PosterPlaceholder(),
+                  ),
                 ),
-                icon: const Icon(Icons.open_in_full_rounded, size: 20),
-              ),
-            ),
+                PositionedDirectional(
+                  end: 12,
+                  bottom: 12,
+                  child: DuitGlass(
+                    radius: 24,
+                    child: IconButton(
+                      tooltip: '포스터 전체 보기',
+                      onPressed: () => _showPoster(source, event),
+                      icon: const Icon(
+                        Icons.open_in_full_rounded,
+                        size: 20,
+                        color: AppColors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ] else
+                const _PosterPlaceholder(),
+            ],
           ),
         ),
       ),
@@ -541,35 +491,12 @@ class _EventDetailViewState extends State<EventDetailView> {
     );
   }
 
-  void _showPoster(Event event) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => Dialog.fullscreen(
-        child: Scaffold(
-          backgroundColor: AppColors.white,
-          appBar: AppBar(
-            title: const Text('행사 포스터'),
-            backgroundColor: AppColors.white,
-            leading: IconButton(
-              tooltip: '닫기',
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              icon: const Icon(Icons.close_rounded),
-            ),
-          ),
-          body: InteractiveViewer(
-            minScale: 1,
-            maxScale: 4,
-            child: Center(
-              child: CachedNetworkImage(
-                imageUrl: event.thumbnail,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  void _showPoster(BuildContext source, Event event) => EventPosterViewer.show(
+    source,
+    image: CachedNetworkImageProvider(event.thumbnail),
+    title: event.title,
+    host: event.host.name,
+  );
 
   Widget _bottomBar(Event event) {
     return SafeArea(
@@ -762,4 +689,13 @@ class _EventDetailViewState extends State<EventDetailView> {
     }
     return '${_dateTime(start)} – ${_dateTime(end)}';
   }
+}
+
+class _PosterPlaceholder extends StatelessWidget {
+  const _PosterPlaceholder();
+  @override
+  Widget build(BuildContext context) => const ColoredBox(
+    color: AppColors.g01,
+    child: Icon(Icons.event_note_rounded, size: 64, color: AppColors.g04),
+  );
 }
