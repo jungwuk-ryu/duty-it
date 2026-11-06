@@ -9,30 +9,12 @@ import 'package:duty_it/app/modules/calendar/controllers/calendar_view_controlle
 import 'package:duty_it/app/modules/calendar/controllers/custom_calendar_controller.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-class _User extends Fake implements User {
-  _User(this.uid);
-  @override
-  final String uid;
-}
-
-class _Auth extends Fake implements FirebaseAuth {
-  final changes = StreamController<User?>.broadcast(sync: true);
-  @override
-  User? currentUser;
-  void signInAs(String? uid) {
-    currentUser = uid == null ? null : _User(uid);
-    changes.add(currentUser);
-  }
-
-  @override
-  Stream<User?> authStateChanges() => changes.stream;
-}
+import '../../../helpers/fake_firebase_auth.dart';
 
 class _Calendar extends CalendarService {
   bool granted = false;
@@ -71,7 +53,7 @@ void main() {
   final directory = Directory.systemTemp.createTempSync('duit-calendar-test-');
   final month = DateTime(2026, 11);
   const aOnly = Event(id: 1, title: 'A 전용 행사');
-  late _Auth auth;
+  late FakeFirebaseAuth auth;
   late _Api api;
 
   setUpAll(() async {
@@ -88,7 +70,7 @@ void main() {
 
   setUp(() async {
     await GetStorage('calendarCache').erase();
-    auth = _Auth()..signInAs('A');
+    auth = FakeFirebaseAuth()..signInAs('A');
     Get.put(AppSettingsService());
     Get.put<CalendarService>(_Calendar());
     api = _Api();

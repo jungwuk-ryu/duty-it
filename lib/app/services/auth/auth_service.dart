@@ -42,11 +42,11 @@ class AuthService extends GetxService {
 
   AuthService({
     Future<RequestResult<AppUser>> Function()? currentUserLoader,
-    bool Function()? loggedInChecker,
+    FirebaseAuth? firebaseAuth,
     GetStorage Function(String boxName)? storageFactory,
     Future<void> Function(String? userId)? analyticsUserIdSetter,
   }) : _currentUserLoader = currentUserLoader,
-       _loggedInChecker = loggedInChecker,
+       _firebaseAuth = firebaseAuth,
        _storageFactory = storageFactory ?? GetStorage.new,
        _analyticsUserIdSetter = analyticsUserIdSetter ?? _setAnalyticsUserId;
 
@@ -55,7 +55,10 @@ class AuthService extends GetxService {
   late final GetStorage _box;
   Future<AppUser?>? _appUserLoadFuture;
   final Future<RequestResult<AppUser>> Function()? _currentUserLoader;
-  final bool Function()? _loggedInChecker;
+  final FirebaseAuth? _firebaseAuth;
+  FirebaseAuth get _auth => _firebaseAuth ?? FirebaseAuth.instance;
+  StreamSubscription<User?>? _authSubscription;
+  String? _profileUid;
   final GetStorage Function(String boxName) _storageFactory;
   final Future<void> Function(String? userId) _analyticsUserIdSetter;
   Future<void> _analyticsUpdate = Future.value();
@@ -63,13 +66,22 @@ class AuthService extends GetxService {
   bool _analyticsIdentityInitialized = false;
   int _userRevision = 0;
 
-  AppUser? get appUser => _appUser.value;
-  set appUser(AppUser? user) {
-    _userRevision++;
-    _appUser.value = user;
+  AppUser? get appUser {
+    final profile = _appUser.value;
+    return profile != null && !isClosed && _profileUid == _auth.currentUser?.uid
+        ? profile
+        : null;
+  }
 
-    if (user != null) {
-      _box.write(_appUserKey, user.toJson());
+  set appUser(AppUser? user) {
+    if (isClosed) return;
+    final uid = _auth.currentUser?.uid;
+    _selectProfile(uid);
+    _userRevision++;
+    _appUser.value = uid == null ? null : user;
+
+    if (user != null && uid != null) {
+      _box.write(_appUserKey, {'uid': uid, 'profile': user.toJson()});
     } else {
       _box.remove(_appUserKey);
     }
@@ -82,6 +94,7 @@ class AuthService extends GetxService {
 
   Future<void> syncAnalyticsUserId() {
     // Match the web's backend member ID, rather than email or Firebase UID.
+    final uid = _auth.currentUser?.uid;
     final userId = appUser?.id.toString();
     if (_analyticsIdentityInitialized && userId == _analyticsUserId) {
       return _analyticsUpdate;
@@ -90,6 +103,7 @@ class AuthService extends GetxService {
     _analyticsUserId = userId;
     // Serialize native SDK calls so a slow previous account cannot win later.
     _analyticsUpdate = _analyticsUpdate.then((_) async {
+      if (isClosed || (userId != null && _auth.currentUser?.uid != uid)) return;
       try {
         await _analyticsUserIdSetter(userId);
       } catch (e, st) {
@@ -108,17 +122,53 @@ class AuthService extends GetxService {
     _initStrategies();
 
     _box = _storageFactory(storageBoxName);
-    _loadCachedAppUser();
+    _profileUid = _auth.currentUser?.uid;
+    _loadCachedAppUser(_profileUid);
+    unawaited(syncAnalyticsUserId());
+    _authSubscription = _auth.authStateChanges().listen((user) {
+      // A delayed signal must not select a user who has already signed out.
+      if (user?.uid == _auth.currentUser?.uid) _selectProfile(user?.uid);
+    });
+  }
+
+  @override
+  void onClose() {
+    _authSubscription?.cancel();
+    super.onClose();
+  }
+
+  void _selectProfile(String? uid) {
+    if (_profileUid == uid) return;
+    _profileUid = uid;
+    _userRevision++;
+    _appUserLoadFuture = null;
+    _appUser.value = null;
+    if (uid == null) {
+      _box.remove(_appUserKey);
+    } else {
+      _loadCachedAppUser(uid);
+    }
     unawaited(syncAnalyticsUserId());
   }
 
-  void _loadCachedAppUser() {
-    if (!isLoggined()) return;
-    Map<String, dynamic>? jsonObj = _box.read(_appUserKey);
-    if (jsonObj == null) return;
+  void _loadCachedAppUser(String? uid) {
+    final cached = _box.read(_appUserKey);
+    if (cached == null) return;
+    if (cached is! Map ||
+        cached['uid'] is! String ||
+        cached['profile'] is! Map<String, dynamic>) {
+      // Older versions stored a bare profile whose owner cannot be verified.
+      _box.remove(_appUserKey);
+      return;
+    }
+    if (uid == null) return;
+    if (cached['uid'] != uid) {
+      _box.remove(_appUserKey);
+      return;
+    }
 
     try {
-      _appUser.value = AppUser.fromJson(jsonObj);
+      _appUser.value = AppUser.fromJson(cached['profile']);
     } catch (e, st) {
       if (kDebugMode) {
         log('Failed to load app user!', error: e, stackTrace: st);
@@ -166,7 +216,7 @@ class AuthService extends GetxService {
 
     // Firebase
     try {
-      await FirebaseAuth.instance.signOut();
+      await _auth.signOut();
       await _awaitFirebaseLogout();
     } catch (_) {
       _resumePushSync();
@@ -219,13 +269,12 @@ class AuthService extends GetxService {
   }
 
   Future<AppUser?> ensureAppUserLoaded() {
-    if (!isLoggined()) {
-      appUser = null;
-      return syncAnalyticsUserId().then((_) => null);
-    }
-    final currentUser = appUser;
-    if (currentUser != null) {
-      return syncAnalyticsUserId().then((_) => currentUser);
+    final uid = _auth.currentUser?.uid;
+    _selectProfile(uid);
+    AppUser? profileForCaller() =>
+        _auth.currentUser?.uid == uid ? appUser : null;
+    if (uid == null || appUser != null) {
+      return syncAnalyticsUserId().then((_) => profileForCaller());
     }
     if (_appUserLoadFuture != null) return _appUserLoadFuture!;
 
@@ -234,26 +283,19 @@ class AuthService extends GetxService {
     future =
         (() async {
           try {
-            final RequestResult<AppUser> reqResult = await _loadCurrentUser();
-            if (revision != _userRevision) {
-              await syncAnalyticsUserId();
-              return appUser;
+            final result = await _loadCurrentUser();
+            if (isClosed) return null;
+            _selectProfile(_auth.currentUser?.uid);
+            if (_profileUid == uid &&
+                revision == _userRevision &&
+                result is RequestSuccess<AppUser>) {
+              appUser = result.data;
             }
-            if (!isLoggined()) {
-              appUser = null;
-              await syncAnalyticsUserId();
-              return null;
-            }
-            if (reqResult is RequestSuccess<AppUser>) {
-              appUser = reqResult.data;
-              await syncAnalyticsUserId();
-              return reqResult.data;
-            }
+            await syncAnalyticsUserId();
           } catch (e, st) {
             FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
           }
-
-          return appUser;
+          return profileForCaller();
         })().whenComplete(() {
           if (identical(_appUserLoadFuture, future)) _appUserLoadFuture = null;
         });
@@ -299,11 +341,11 @@ class AuthService extends GetxService {
   }
 
   Future<void> _awaitFirebaseLogout() async {
-    await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u == null);
+    await _auth.authStateChanges().firstWhere((u) => u == null);
   }
 
   Future<void> _deleteFirebaseUserSafely() async {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
+    final User? currentUser = _auth.currentUser;
 
     if (currentUser == null) {
       await _safeFirebaseSignOut();
@@ -321,18 +363,13 @@ class AuthService extends GetxService {
 
   Future<void> _safeFirebaseSignOut() async {
     try {
-      await FirebaseAuth.instance.signOut();
+      await _auth.signOut();
     } catch (e, st) {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
   }
 
-  bool isLoggined() {
-    if (_loggedInChecker != null) return _loggedInChecker();
-
-    User? user = FirebaseAuth.instance.currentUser;
-    return user != null;
-  }
+  bool isLoggined() => _auth.currentUser != null;
 
   Future<RequestResult<AppUser>> _loadCurrentUser() {
     if (_currentUserLoader != null) return _currentUserLoader();
