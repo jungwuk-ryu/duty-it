@@ -38,7 +38,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   DateTime _startOfWeekSunday(DateTime date) {
     final int offset = date.weekday % 7;
-    return AppUtils.dateTime2Date(date.subtract(Duration(days: offset)));
+    return AppUtils.calendarDay(date).subtract(Duration(days: offset));
   }
 
   List<DateTime> _getWeekStartsInMonth(DateTime monthDate) {

@@ -12,8 +12,6 @@ class CalendarView extends GetView<CalendarViewController> {
   const CalendarView({super.key});
   @override
   Widget build(BuildContext context) {
-    final DateTime now = DateTime.now();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -49,18 +47,11 @@ class CalendarView extends GetView<CalendarViewController> {
             controller: controller.pageController,
             scrollDirection: Axis.horizontal,
             onPageChanged: (i) {
-              controller.currentDate = now.copyWith(
-                month: now.month + i - CalendarViewController.initPage,
-              );
+              controller.currentDate = controller.monthForPage(i);
             },
             itemBuilder: (_, i) {
-              DateTime month = now.copyWith(
-                month: now.month + i - CalendarViewController.initPage,
-              );
-              return CustomCalendar(
-                key: ValueKey((month.year, month.month)),
-                date: month,
-              );
+              final month = controller.monthForPage(i);
+              return CustomCalendar(key: ValueKey(month), date: month);
             },
           ),
         ),

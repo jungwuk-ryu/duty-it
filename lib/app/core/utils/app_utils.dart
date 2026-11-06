@@ -7,15 +7,9 @@ import 'package:get/get.dart';
 class AppUtils {
   AppUtils._();
 
-  static DateTime dateTime2Date(DateTime dt) {
-    return dt.copyWith(
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-      microsecond: 0,
-    );
-  }
+  /// A date on the calendar, without a device offset or a daylight-saving shift.
+  static DateTime calendarDay(DateTime date) =>
+      DateTime.utc(date.year, date.month, date.day);
 
   static DateTime endOfMonth(DateTime date) {
     return DateTime(date.year, date.month + 1, 0);
@@ -42,23 +36,6 @@ class AppUtils {
     final mm = dt.month.toString().padLeft(2, '0');
     final dd = dt.day.toString().padLeft(2, '0');
     return '${dt.year}년 $mm월 $dd일(${weekDay2Text(dt.weekday)})';
-  }
-
-  static bool hasTime(DateTime dt) {
-    return dt.microsecond != 0 ||
-        dt.millisecond != 0 ||
-        dt.second != 0 ||
-        dt.minute != 0 ||
-        dt.hour != 0;
-  }
-
-  static bool isDateWithin(DateTime target, DateTime start, DateTime end) {
-    if (hasTime(target)) target = dateTime2Date(target);
-    if (hasTime(start)) start = dateTime2Date(start);
-    if (hasTime(end)) end = dateTime2Date(end);
-
-    return (start.isBefore(target) || AppUtils.isSameDay(start, target)) &&
-        !end.isBefore(target);
   }
 
   static bool isSameDay(DateTime dt1, DateTime dt2) {

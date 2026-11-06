@@ -5,13 +5,15 @@ import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/models/app_setting.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 
 class CustomCalendarController {
   final Rx<DateTime> _currentDateTime = DateTime.now().obs;
-  get currentDateTime => _currentDateTime.value;
-  set currentDateTime(value) => _currentDateTime.value = value;
+  final DateTime calendarMonth;
+  DateTime get currentDateTime => _currentDateTime.value;
+  set currentDateTime(DateTime value) => _currentDateTime.value = value;
 
   final RxList<CalendarEvent> _events = RxList();
   final AppSetting _includeDeviceEventsSetting =
@@ -27,16 +29,15 @@ class CustomCalendarController {
   RxList<CalendarEvent> get events => _events;
   set events(List<CalendarEvent> events) => _events.value = events;
 
-  CustomCalendarController(DateTime calendarDate) {
-    if (currentDateTime.month != calendarDate.month) {
-      currentDateTime = AppUtils.dateTime2Date(calendarDate).copyWith(day: 1);
+  CustomCalendarController(this.calendarMonth) {
+    if (!DateUtils.isSameMonth(currentDateTime, calendarMonth)) {
+      currentDateTime = DateUtils.dateOnly(calendarMonth).copyWith(day: 1);
     }
   }
 
   List<CalendarEvent> getEventsByDay(DateTime date) {
-    return events
-        .where((e) => AppUtils.isDateWithin(date, e.startDate, e.endDate))
-        .toList();
+    final day = AppUtils.calendarDay(date);
+    return events.where((event) => event.includesDay(day)).toList();
   }
 
   void init() {
@@ -65,7 +66,7 @@ class CustomCalendarController {
   void _loadCalendarEvents() {
     _eventsSubscription?.cancel();
     events.clear();
-    _eventsSubscription = _calendar.getCalendarEvents(currentDateTime).listen((
+    _eventsSubscription = _calendar.getCalendarEvents(calendarMonth).listen((
       updated,
     ) {
       events = updated;

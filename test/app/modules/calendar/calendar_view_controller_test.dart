@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:device_calendar_plus/device_calendar_plus.dart' as dcp;
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/models/event.dart';
@@ -34,21 +35,34 @@ class _Auth extends Fake implements FirebaseAuth {
 }
 
 class _Calendar extends CalendarService {
+  bool granted = false;
+  final queries = <(DateTime, DateTime)>[];
+
   @override
-  Future<bool> checkPermission() async => false;
+  Future<bool> checkPermission() async => granted;
+
+  @override
+  Future<List<dcp.Event>> retrieveEvents(DateTime start, DateTime end) async {
+    queries.add((start, end));
+    return [];
+  }
 }
 
 class _Api extends ApiClient {
   @override
   void onInit() {}
 
+  final requests = <(int, int)>[];
   Future<List<Event>> Function() load = () async => [];
   @override
   Future<RequestResult<List<Event>>> getEventsForCalendar({
     required int year,
     required int month,
     EventType? type,
-  }) async => RequestSuccess(await load());
+  }) async {
+    requests.add((year, month));
+    return RequestSuccess(await load());
+  }
 }
 
 void main() {
@@ -90,6 +104,65 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(methodChannel, null);
   });
+
+  test(
+    'swiping from January 31 opens February and includes its final day',
+    () async {
+      final calendar = Get.put(
+        CalendarViewController(auth: auth, initialDate: DateTime(2027, 1, 31)),
+      );
+      final february = calendar.monthForPage(
+        CalendarViewController.initPage + 1,
+      );
+      expect(february, DateTime(2027, 2));
+      final device = Get.find<CalendarService>() as _Calendar;
+      device.granted = true;
+      await calendar.getCalendarEvents(february).drain<void>();
+      expect(device.queries.single, (DateTime(2027, 2), DateTime(2027, 3)));
+      expect(api.requests.single, (2027, 2));
+    },
+  );
+
+  test(
+    'the same month next year loads that page even after selecting a spillover day',
+    () async {
+      Get.put(CalendarViewController(auth: auth));
+      final today = DateTime.now();
+      final month = DateTime(today.year + 1, today.month);
+      final page = CustomCalendarController(month);
+      expect(page.currentDateTime, month);
+      page.currentDateTime = month.subtract(const Duration(days: 1));
+      final loaded = Completer<void>();
+      api.load = () async {
+        loaded.complete();
+        return [];
+      };
+      page.init();
+      addTearDown(page.dispose);
+      await loaded.future;
+      expect(api.requests.single, (month.year, month.month));
+    },
+  );
+
+  test(
+    'bookmarked events near midnight appear on their Seoul calendar day',
+    () {
+      final calendar = Get.put(CalendarViewController(auth: auth));
+      final page = CustomCalendarController(month);
+      final event = Event.fromJson({
+        'id': 3,
+        'startAt': '2026-11-07T00:30:00+09:00',
+        'endAt': '2026-11-07T12:00:00',
+      });
+      page.events = calendar.events2CalendarEvents([event]);
+      expect(page.getEventsByDay(DateTime(2026, 11, 6)), isEmpty);
+      final shown = page.getEventsByDay(DateTime(2026, 11, 7)).single;
+      expect(shown.startDate.hour, 0);
+      expect(shown.startDate.minute, 30);
+      expect(shown.endDate.hour, 12);
+      expect(page.getEventsByDay(DateTime(2026, 11, 8)), isEmpty);
+    },
+  );
 
   test(
     'only the cache owner sees their bookmarks, even before logout cleanup',
@@ -140,8 +213,9 @@ void main() {
       final page = CustomCalendarController(month);
       final shown = Completer<void>();
       final listener = page.events.listen((events) {
-        if (events.any((e) => e.title == aOnly.title) && !shown.isCompleted)
+        if (events.any((e) => e.title == aOnly.title) && !shown.isCompleted) {
           shown.complete();
+        }
       });
       page.init();
       addTearDown(page.dispose);

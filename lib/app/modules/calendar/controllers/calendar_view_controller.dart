@@ -5,6 +5,7 @@ import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
@@ -22,8 +23,9 @@ class CalendarViewController extends GetxController {
   static const String deviceEventScheme = "device_event://";
   static const String _cacheStorageName = "calendarCache";
 
-  CalendarViewController({FirebaseAuth? auth})
-    : _auth = auth ?? FirebaseAuth.instance;
+  CalendarViewController({FirebaseAuth? auth, DateTime? initialDate})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _initialDate = initialDate ?? DateTime.now();
 
   final FirebaseAuth _auth;
   final RxInt _sessionRevision = 0.obs;
@@ -31,13 +33,17 @@ class CalendarViewController extends GetxController {
   StreamSubscription<User?>? _authSubscription;
 
   static const int initPage = 2000;
-  final Rx<DateTime> _currentDate = DateTime.now().obs;
-  PageController pageController = PageController(initialPage: initPage);
+  final DateTime _initialDate;
+  late final Rx<DateTime> _currentDate = _initialDate.obs;
+  final PageController pageController = PageController(initialPage: initPage);
 
   late Future<GetStorage> _cacheStorageFuture;
   DateTime get currentDate => _currentDate.value;
 
-  set currentDate(value) => _currentDate.value = value;
+  set currentDate(DateTime value) => _currentDate.value = value;
+
+  DateTime monthForPage(int page) =>
+      DateUtils.addMonthsToMonthDate(_initialDate, page - initPage);
 
   Future<void> clearCache() async {
     _sessionRevision.value++;
@@ -76,19 +82,19 @@ class CalendarViewController extends GetxController {
 
     return events.map((event) {
       final color = colorMap[event.eventType] ?? colors[0];
-      final fallbackDate = DateTime.now();
       final startDate =
-          event.startAt ??
+          (event.startAt ??
+                  event.endAt ??
+                  event.recruitmentStartAt ??
+                  event.recruitmentEndAt ??
+                  DateTime.now().toUtc())
+              .seoulWallTime;
+      final end =
           event.endAt ??
-          event.recruitmentStartAt ??
-          event.recruitmentEndAt ??
-          fallbackDate;
-      var endDate =
-          event.endAt ??
           event.startAt ??
           event.recruitmentEndAt ??
-          event.recruitmentStartAt ??
-          startDate;
+          event.recruitmentStartAt;
+      var endDate = end?.seoulWallTime ?? startDate;
       if (endDate.isBefore(startDate)) {
         endDate = startDate;
       }
@@ -119,7 +125,7 @@ class CalendarViewController extends GetxController {
         Get.find<AppSettingsService>().includeDeviceEvents.value) {
       deviceEvents = await calService.retrieveEvents(
         AppUtils.startOfMonth(date),
-        AppUtils.endOfMonth(date),
+        DateUtils.addMonthsToMonthDate(date, 1),
       );
     }
 
