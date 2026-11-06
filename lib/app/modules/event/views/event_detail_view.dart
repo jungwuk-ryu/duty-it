@@ -14,6 +14,7 @@ import 'package:duty_it/app/modules/event/widgets/event_host_card.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
+import 'package:duty_it/app/modules/event/widgets/event_detail_layout.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -201,145 +202,152 @@ class _EventDetailViewState extends State<EventDetailView> {
           child: Divider(height: 1, color: AppColors.border),
         ),
       ),
-      body: Obx(() {
-        final event = widget.eventRx.value;
-        return Column(
-          children: [
-            if (_loading)
-              const LinearProgressIndicator(
-                minHeight: 2,
-                color: AppColors.main,
-              ),
-            if (_loadFailed)
-              MaterialBanner(
-                content: const Text('최신 행사 정보를 불러오지 못했어요.'),
-                backgroundColor: AppColors.canvas,
-                actions: [
-                  TextButton(
-                    onPressed: _loadDetail,
-                    child: const Text('다시 시도'),
-                  ),
-                ],
-              ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _poster(event),
-                    const SizedBox(height: 24),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _tag(_category(event), AppColors.g02, AppColors.black),
-                        _tag(
-                          _statusLabel(event),
-                          AppColors.sub,
-                          AppColors.main,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      event.title,
-                      style: const TextStyle(
-                        color: AppColors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        height: 1.45,
-                      ),
-                    ),
-                    const SizedBox(height: 9),
-                    Text(
-                      event.host.name,
-                      style: const TextStyle(
-                        color: AppColors.g05,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    const Divider(height: 1, color: AppColors.border),
-                    const SizedBox(height: 23),
-                    _sectionHeading('일정 안내', trailing: '한국 시간 (KST)'),
-                    const SizedBox(height: 20),
-                    _scheduleRow(
-                      Icons.event_outlined,
-                      '행사 일시',
-                      _eventPeriod(event),
-                    ),
-                    const SizedBox(height: 22),
-                    _scheduleRow(
-                      Icons.schedule_outlined,
-                      '신청 마감',
-                      event.recruitmentEndAt == null
-                          ? '주최 페이지에서 확인해 주세요'
-                          : '${_dateTime(event.recruitmentEndAt!)}까지',
-                      note: event.recruitmentStartAt == null
-                          ? null
-                          : '신청 시작 · ${_dateTime(event.recruitmentStartAt!)}',
-                    ),
-                    if (_contentResult?.availability !=
-                        EventContentAvailability.unavailable) ...[
-                      const SizedBox(height: 28),
-                      const Divider(height: 1, color: AppColors.border),
-                      const SizedBox(height: 23),
-                      _sectionHeading('행사 내용'),
-                      const SizedBox(height: 12),
-                      _contentCard(event.id),
-                    ],
-                    const SizedBox(height: 28),
-                    const Divider(height: 1, color: AppColors.border),
-                    const SizedBox(height: 23),
-                    _sectionHeading('주최 안내'),
-                    const SizedBox(height: 14),
-                    _hostCard(event),
-                    if (_viewCount != null) ...[
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.visibility_outlined,
-                            size: 16,
-                            color: AppColors.g05,
-                          ),
-                          const SizedBox(width: 7),
-                          Text(
-                            '조회 $_viewCount',
-                            style: const TextStyle(
-                              color: AppColors.g05,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                    const SizedBox(height: 20),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: AppColors.canvas,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Text(
-                        '자세한 내용과 신청은 주최 페이지에서 확인해 주세요.',
-                        style: TextStyle(
-                          color: AppColors.g05,
-                          fontSize: 12,
-                          height: 1.7,
-                        ),
-                      ),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: Obx(() {
+          final event = widget.eventRx.value;
+          return Column(
+            children: [
+              if (_loading)
+                const LinearProgressIndicator(
+                  minHeight: 2,
+                  color: AppColors.main,
+                ),
+              if (_loadFailed)
+                MaterialBanner(
+                  content: const Text('최신 행사 정보를 불러오지 못했어요.'),
+                  backgroundColor: AppColors.canvas,
+                  actions: [
+                    TextButton(
+                      onPressed: _loadDetail,
+                      child: const Text('다시 시도'),
                     ),
                   ],
                 ),
+              Expanded(
+                child: EventDetailLayout(
+                  safeLeft: MediaQuery.paddingOf(context).left,
+                  poster: _poster(event),
+                  actions: _bottomBar(event),
+                  information: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          _tag(
+                            _category(event),
+                            AppColors.g02,
+                            AppColors.black,
+                          ),
+                          _tag(
+                            _statusLabel(event),
+                            AppColors.sub,
+                            AppColors.main,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        event.title,
+                        style: const TextStyle(
+                          color: AppColors.black,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          height: 1.45,
+                        ),
+                      ),
+                      const SizedBox(height: 9),
+                      Text(
+                        event.host.name,
+                        style: const TextStyle(
+                          color: AppColors.g05,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      const Divider(height: 1, color: AppColors.border),
+                      const SizedBox(height: 23),
+                      _sectionHeading('일정 안내', trailing: '한국 시간 (KST)'),
+                      const SizedBox(height: 20),
+                      _scheduleRow(
+                        Icons.event_outlined,
+                        '행사 일시',
+                        _eventPeriod(event),
+                      ),
+                      const SizedBox(height: 22),
+                      _scheduleRow(
+                        Icons.schedule_outlined,
+                        '신청 마감',
+                        event.recruitmentEndAt == null
+                            ? '주최 페이지에서 확인해 주세요'
+                            : '${_dateTime(event.recruitmentEndAt!)}까지',
+                        note: event.recruitmentStartAt == null
+                            ? null
+                            : '신청 시작 · ${_dateTime(event.recruitmentStartAt!)}',
+                      ),
+                      if (_contentResult?.availability !=
+                          EventContentAvailability.unavailable) ...[
+                        const SizedBox(height: 28),
+                        const Divider(height: 1, color: AppColors.border),
+                        const SizedBox(height: 23),
+                        _sectionHeading('행사 내용'),
+                        const SizedBox(height: 12),
+                        _contentCard(event.id),
+                      ],
+                      const SizedBox(height: 28),
+                      const Divider(height: 1, color: AppColors.border),
+                      const SizedBox(height: 23),
+                      _sectionHeading('주최 안내'),
+                      const SizedBox(height: 14),
+                      _hostCard(event),
+                      if (_viewCount != null) ...[
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.visibility_outlined,
+                              size: 16,
+                              color: AppColors.g05,
+                            ),
+                            const SizedBox(width: 7),
+                            Text(
+                              '조회 $_viewCount',
+                              style: const TextStyle(
+                                color: AppColors.g05,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: AppColors.canvas,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Text(
+                          '자세한 내용과 신청은 주최 페이지에서 확인해 주세요.',
+                          style: TextStyle(
+                            color: AppColors.g05,
+                            fontSize: 12,
+                            height: 1.7,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            _bottomBar(event),
-          ],
-        );
-      }),
+            ],
+          );
+        }),
+      ),
     );
   }
 
@@ -461,7 +469,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
                 SizedBox(width: 12),
-                Text('행사 내용을 불러오는 중이에요.'),
+                Flexible(child: Text('행사 내용을 불러오는 중이에요.')),
               ],
             )
           : result.availability == EventContentAvailability.available
@@ -566,12 +574,8 @@ class _EventDetailViewState extends State<EventDetailView> {
   Widget _bottomBar(Event event) {
     return SafeArea(
       top: false,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          border: Border(top: BorderSide(color: AppColors.border)),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
             OutlinedButton(
@@ -631,7 +635,9 @@ class _EventDetailViewState extends State<EventDetailView> {
     );
   }
 
-  Widget _sectionHeading(String title, {String? trailing}) => Row(
+  Widget _sectionHeading(String title, {String? trailing}) => OverflowBar(
+    alignment: MainAxisAlignment.spaceBetween,
+    overflowAlignment: OverflowBarAlignment.start,
     children: [
       Text(
         title,
@@ -641,7 +647,6 @@ class _EventDetailViewState extends State<EventDetailView> {
           fontWeight: FontWeight.w700,
         ),
       ),
-      const Spacer(),
       if (trailing != null)
         Text(
           trailing,
