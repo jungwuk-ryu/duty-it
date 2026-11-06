@@ -35,6 +35,7 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
   @override
   Widget build(BuildContext context) {
     final layout = DuoLayoutData.of(context);
+    final highContrast = MediaQuery.highContrastOf(context);
     final bounds = layout.contentBounds;
     // FoldSafeHeader places these controls in the leading pane.
     final insets = MediaQuery.viewPaddingOf(context);
@@ -52,14 +53,20 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
       consumeOutsideTap: true,
       crossAxisUnconstrained: false,
       alignmentOffset: Offset(-width, 4),
-      style: const MenuStyle(
+      style: MenuStyle(
         alignment: AlignmentDirectional.bottomEnd,
-        padding: WidgetStatePropertyAll(EdgeInsets.zero),
-        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-        surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
-        elevation: WidgetStatePropertyAll(8),
-        shadowColor: WidgetStatePropertyAll(Color(0x42000000)),
-        shape: WidgetStatePropertyAll(
+        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+        backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+        elevation: const WidgetStatePropertyAll(6),
+        shadowColor: const WidgetStatePropertyAll(Color(0x4D19212A)),
+        side: WidgetStatePropertyAll(
+          BorderSide(
+            color: highContrast ? AppColors.g06 : const Color(0x46757C84),
+            width: highContrast ? 1 : 0.75,
+          ),
+        ),
+        shape: const WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
