@@ -21,7 +21,6 @@ import 'package:duty_it/app/core/enums/sort_direction.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -66,8 +65,17 @@ class ApiClient extends GetConnect {
       if (isAuthPath) return request;
 
       final uid = _requestUid();
-      if (_loginUid == uid) await _loginFuture;
+      final deviceRequest = path.contains('/v1/users/device/');
+      if (deviceRequest && uid != null && uid != _tokenUid) {
+        await loginAndRefreshToken();
+      } else if (_loginUid == uid) {
+        await _loginFuture;
+      }
       _requestUid();
+      if (deviceRequest &&
+          (uid == null || uid != _tokenUid || _token == null)) {
+        throw const _SessionChanged();
+      }
       request.headers.remove('Authorization');
       if (uid != null && uid == _tokenUid && _token != null) {
         request.headers['Authorization'] = 'Bearer $_token';
@@ -381,29 +389,17 @@ class ApiClient extends GetConnect {
   }
 
   /// 알림 - 사용자 기기 등록 (/users/device/{token}) - PATCH
-  Future<RequestResult<void>> registerDevice() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token == null) {
-      return RequestFail(null);
-    }
-
-    final encodedToken = Uri.encodeComponent(token);
+  Future<RequestResult<void>> registerDevice(String token) {
     return _send(
-      () async => await patch('/v1/users/device/$encodedToken', {}),
+      () => patch('/v1/users/device/${Uri.encodeComponent(token)}', {}),
       map: (_) => true,
     );
   }
 
   /// 알림 - 사용자 기기 삭제 (/users/device/{token}) - DELETE
-  Future<RequestResult<void>> unregisterDevice() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    if (token == null) {
-      return RequestFail(null);
-    }
-
-    final encodedToken = Uri.encodeComponent(token);
+  Future<RequestResult<void>> unregisterDevice(String token) {
     return _send(
-      () async => await delete('/v1/users/device/$encodedToken'),
+      () => delete('/v1/users/device/${Uri.encodeComponent(token)}'),
       map: (_) => true,
     );
   }

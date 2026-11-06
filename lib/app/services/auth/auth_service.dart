@@ -9,6 +9,7 @@ import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/apple_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/google_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
+import 'package:duty_it/app/services/push_token_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -164,9 +165,13 @@ class AuthService extends GetxService {
     }
 
     // Firebase
-    var logoutWaiter = _awaitFirebaseLogout();
-    await FirebaseAuth.instance.signOut();
-    await logoutWaiter;
+    try {
+      await FirebaseAuth.instance.signOut();
+      await _awaitFirebaseLogout();
+    } catch (_) {
+      _resumePushSync();
+      rethrow;
+    }
 
     // Social
     try {
@@ -182,9 +187,17 @@ class AuthService extends GetxService {
       return false;
     }
 
-    // Server
-    var reqResult = await Get.find<ApiClient>().withdrawUser();
+    final api = Get.find<ApiClient>();
+    await _unregisterDeviceSafely();
+    final RequestResult<void> reqResult;
+    try {
+      reqResult = await api.withdrawUser();
+    } catch (_) {
+      _resumePushSync();
+      rethrow;
+    }
     if (reqResult is RequestFail) {
+      _resumePushSync();
       AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
       if (reqResult.serverFail != null) {
         AppUtils.showSnackBar(reqResult.serverFail!.message);
@@ -192,8 +205,7 @@ class AuthService extends GetxService {
       return false;
     }
 
-    // Firebase
-    Get.find<ApiClient>().invalidateSession();
+    api.invalidateSession();
     await _deleteFirebaseUserSafely();
 
     // Social
@@ -263,28 +275,24 @@ class AuthService extends GetxService {
     }
   }
 
+  void _resumePushSync() {
+    if (Get.isRegistered<PushTokenService>()) {
+      Get.find<PushTokenService>().resumeAfterFailedLogout();
+    }
+  }
+
   Future<void> _unregisterDeviceSafely() async {
-    if (!isLoggined() || !Get.isRegistered<ApiClient>()) return;
+    if (!isLoggined() || !Get.isRegistered<PushTokenService>()) return;
 
     try {
-      final result = await Get.find<ApiClient>().unregisterDevice().timeout(
-        const Duration(seconds: 3),
-      );
-      if (result is RequestFail) {
+      if (!await Get.find<PushTokenService>().unregisterForLogout()) {
         FirebaseCrashlytics.instance.recordError(
-          result.serverFail ?? 'Failed to unregister device token',
+          'Failed to unregister device token',
           null,
           fatal: false,
           reason: '디바이스 토큰 삭제 실패',
         );
       }
-    } on TimeoutException catch (e, st) {
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        st,
-        fatal: false,
-        reason: '디바이스 토큰 삭제 시간 초과',
-      );
     } catch (e, st) {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
