@@ -1,5 +1,6 @@
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
@@ -77,6 +78,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
   late Matrix4Tween _zoomTween;
   Offset _tap = Offset.zero;
   int _attempt = 0;
+  bool _retrying = false;
 
   @override
   void initState() {
@@ -117,10 +119,28 @@ class _EventPosterViewerState extends State<EventPosterViewer>
   }
 
   Future<void> _retry() async {
-    await widget.image.evict(
-      configuration: createLocalImageConfiguration(context),
-    );
-    if (mounted) setState(() => _attempt++);
+    if (_retrying) return;
+    setState(() => _retrying = true);
+    final image = widget.image;
+    final configuration = createLocalImageConfiguration(context);
+    try {
+      if (image is CachedNetworkImageProvider) {
+        final cache =
+            image.cacheManager ??
+            CachedNetworkImageProvider.defaultCacheManager;
+        await cache.removeFile(image.cacheKey ?? image.url);
+      }
+      await image.evict(configuration: configuration);
+    } on Exception {
+      // A temporarily unavailable cache must still allow another load attempt.
+    } finally {
+      if (mounted) {
+        setState(() {
+          _retrying = false;
+          _attempt++;
+        });
+      }
+    }
   }
 
   @override
@@ -188,7 +208,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
                         children: [
                           const Text('포스터를 불러오지 못했어요.'),
                           TextButton(
-                            onPressed: _retry,
+                            onPressed: _retrying ? null : _retry,
                             child: const Text('다시 시도'),
                           ),
                         ],

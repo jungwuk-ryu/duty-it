@@ -66,6 +66,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  file: ^7.0.1
+  flutter_cache_manager: ^3.4.1
   build_runner: ^2.6.0
   flutter_gen_runner:
   flutter_lints: ^5.0.0
