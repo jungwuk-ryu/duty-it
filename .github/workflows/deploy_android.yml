@@ -21,6 +21,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: actions/setup-java@v6.2.0
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - name: Read Flutter version
         id: sdk
         run: echo "version=$(cat .flutter-version)" >> "$GITHUB_OUTPUT"
@@ -29,6 +34,9 @@ jobs:
         with:
           channel: stable
           flutter-version: ${{ steps.sdk.outputs.version }}
+
+      - name: Select the Flutter JDK
+        run: flutter config --jdk-dir="$JAVA_HOME"
 
       - name: Restore app configuration
         env:
