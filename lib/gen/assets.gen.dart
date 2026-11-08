@@ -187,9 +187,7 @@ class $AssetsLottieGen {
   List<String> get values => [loadingDots];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const String aEnv = '.env';
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();

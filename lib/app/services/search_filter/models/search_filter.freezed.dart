@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'search_filter.dart';
@@ -9,6 +9,7 @@ part of 'search_filter.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -27,23 +28,29 @@ $SearchFilterCopyWith<SearchFilter> get copyWith => _$SearchFilterCopyWithImpl<S
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  final _this = this as SearchFilter;
   properties
     ..add(DiagnosticsProperty('type', 'SearchFilter'))
-    ..add(DiagnosticsProperty('categories', categories))..add(DiagnosticsProperty('host', host))..add(DiagnosticsProperty('showEnded', showEnded));
+    ..add(DiagnosticsProperty('categories', _this.categories))..add(DiagnosticsProperty('host', _this.host))..add(DiagnosticsProperty('showEnded', _this.showEnded));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchFilter&&const DeepCollectionEquality().equals(other.categories, categories)&&(identical(other.host, host) || other.host == host)&&(identical(other.showEnded, showEnded) || other.showEnded == showEnded));
+  final _this = this as SearchFilter;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SearchFilter&&const DeepCollectionEquality().equals(other.categories, _this.categories)&&(identical(other.host, _this.host) || other.host == _this.host)&&(identical(other.showEnded, _this.showEnded) || other.showEnded == _this.showEnded));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(categories),host,showEnded);
+int get hashCode {
+  final _this = this as SearchFilter;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.categories),_this.host,_this.showEnded);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SearchFilter(categories: $categories, host: $host, showEnded: $showEnded)';
+  final _this = this as SearchFilter;
+  return 'SearchFilter(categories: ${_this.categories}, host: ${_this.host}, showEnded: ${_this.showEnded})';
 }
 
 
@@ -72,7 +79,7 @@ class _$SearchFilterCopyWithImpl<$Res>
 /// Create a copy of SearchFilter
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? categories = null,Object? host = freezed,Object? showEnded = null,}) {
-  return _then(_self.copyWith(
+  return _then(SearchFilter(
 categories: null == categories ? _self.categories : categories // ignore: cast_nullable_to_non_nullable
 as Set<String>,host: freezed == host ? _self.host : host // ignore: cast_nullable_to_non_nullable
 as Host?,showEnded: null == showEnded ? _self.showEnded : showEnded // ignore: cast_nullable_to_non_nullable
@@ -229,7 +236,7 @@ return $default(_that.categories,_that.host,_that.showEnded);case _:
 @JsonSerializable()
 
 class _SearchFilter with DiagnosticableTreeMixin implements SearchFilter {
-  const _SearchFilter({final  Set<String> categories = const <String>{}, this.host, this.showEnded = true}): _categories = categories;
+  const _SearchFilter({ Set<String> categories = const <String>{}, this.host, this.showEnded = true}): _categories = categories;
   factory _SearchFilter.fromJson(Map<String, dynamic> json) => _$SearchFilterFromJson(json);
 
  final  Set<String> _categories;
@@ -254,23 +261,25 @@ Map<String, dynamic> toJson() {
 }
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
+    properties
     ..add(DiagnosticsProperty('type', 'SearchFilter'))
     ..add(DiagnosticsProperty('categories', categories))..add(DiagnosticsProperty('host', host))..add(DiagnosticsProperty('showEnded', showEnded));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchFilter&&const DeepCollectionEquality().equals(other._categories, _categories)&&(identical(other.host, host) || other.host == host)&&(identical(other.showEnded, showEnded) || other.showEnded == showEnded));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SearchFilter&&const DeepCollectionEquality().equals(other.categories, _categories)&&(identical(other.host, host) || other.host == host)&&(identical(other.showEnded, showEnded) || other.showEnded == showEnded));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_categories),host,showEnded);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_categories),host,showEnded);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'SearchFilter(categories: $categories, host: $host, showEnded: $showEnded)';
+    return 'SearchFilter(categories: $categories, host: $host, showEnded: $showEnded)';
 }
 
 

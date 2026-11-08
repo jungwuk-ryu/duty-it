@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'login_result.dart';
@@ -9,6 +9,7 @@ part of 'login_result.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $LoginResultCopyWith<LoginResult> get copyWith => _$LoginResultCopyWithImpl<Logi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginResult&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.user, user) || other.user == user)&&(identical(other.isNewUser, isNewUser) || other.isNewUser == isNewUser));
+  final _this = this as LoginResult;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginResult&&(identical(other.accessToken, _this.accessToken) || other.accessToken == _this.accessToken)&&(identical(other.tokenType, _this.tokenType) || other.tokenType == _this.tokenType)&&(identical(other.user, _this.user) || other.user == _this.user)&&(identical(other.isNewUser, _this.isNewUser) || other.isNewUser == _this.isNewUser));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,accessToken,tokenType,user,isNewUser);
+int get hashCode {
+  final _this = this as LoginResult;
+  return Object.hash(runtimeType,_this.accessToken,_this.tokenType,_this.user,_this.isNewUser);
+}
 
 @override
 String toString() {
-  return 'LoginResult(accessToken: $accessToken, tokenType: $tokenType, user: $user, isNewUser: $isNewUser)';
+  final _this = this as LoginResult;
+  return 'LoginResult(accessToken: ${_this.accessToken}, tokenType: ${_this.tokenType}, user: ${_this.user}, isNewUser: ${_this.isNewUser})';
 }
 
 
@@ -66,7 +72,7 @@ class _$LoginResultCopyWithImpl<$Res>
 /// Create a copy of LoginResult
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? accessToken = null,Object? tokenType = null,Object? user = null,Object? isNewUser = null,}) {
-  return _then(_self.copyWith(
+  return _then(LoginResult(
 accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,tokenType: null == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
 as String,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
@@ -242,16 +248,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginResult&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.user, user) || other.user == user)&&(identical(other.isNewUser, isNewUser) || other.isNewUser == isNewUser));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginResult&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.user, user) || other.user == user)&&(identical(other.isNewUser, isNewUser) || other.isNewUser == isNewUser));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,accessToken,tokenType,user,isNewUser);
+int get hashCode {
+    return Object.hash(runtimeType,accessToken,tokenType,user,isNewUser);
+}
 
 @override
 String toString() {
-  return 'LoginResult(accessToken: $accessToken, tokenType: $tokenType, user: $user, isNewUser: $isNewUser)';
+    return 'LoginResult(accessToken: $accessToken, tokenType: $tokenType, user: $user, isNewUser: $isNewUser)';
 }
 
 

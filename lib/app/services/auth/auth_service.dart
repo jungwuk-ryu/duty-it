@@ -41,13 +41,11 @@ class AuthService extends GetxService {
   static const String _lastUsedProviderKey = 'last_used_provider';
 
   AuthService({
-    Future<RequestResult<AppUser>> Function()? currentUserLoader,
-    FirebaseAuth? firebaseAuth,
+    this._currentUserLoader,
+    this._firebaseAuth,
     GetStorage Function(String boxName)? storageFactory,
     Future<void> Function(String? userId)? analyticsUserIdSetter,
-  }) : _currentUserLoader = currentUserLoader,
-       _firebaseAuth = firebaseAuth,
-       _storageFactory = storageFactory ?? GetStorage.new,
+  }) : _storageFactory = storageFactory ?? GetStorage.new,
        _analyticsUserIdSetter = analyticsUserIdSetter ?? _setAnalyticsUserId;
 
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};

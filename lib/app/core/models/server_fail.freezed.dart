@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'server_fail.dart';
@@ -9,6 +9,7 @@ part of 'server_fail.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ServerFailCopyWith<ServerFail> get copyWith => _$ServerFailCopyWithImpl<ServerF
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ServerFail&&(identical(other.code, code) || other.code == code)&&(identical(other.message, message) || other.message == message)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
+  final _this = this as ServerFail;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ServerFail&&(identical(other.code, _this.code) || other.code == _this.code)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.timestamp, _this.timestamp) || other.timestamp == _this.timestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,code,message,timestamp);
+int get hashCode {
+  final _this = this as ServerFail;
+  return Object.hash(runtimeType,_this.code,_this.message,_this.timestamp);
+}
 
 @override
 String toString() {
-  return 'ServerFail(code: $code, message: $message, timestamp: $timestamp)';
+  final _this = this as ServerFail;
+  return 'ServerFail(code: ${_this.code}, message: ${_this.message}, timestamp: ${_this.timestamp})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ServerFailCopyWithImpl<$Res>
 /// Create a copy of ServerFail
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? code = null,Object? message = null,Object? timestamp = null,}) {
-  return _then(_self.copyWith(
+  return _then(ServerFail(
 code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServerFail&&(identical(other.code, code) || other.code == code)&&(identical(other.message, message) || other.message == message)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServerFail&&(identical(other.code, code) || other.code == code)&&(identical(other.message, message) || other.message == message)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,code,message,timestamp);
+int get hashCode {
+    return Object.hash(runtimeType,code,message,timestamp);
+}
 
 @override
 String toString() {
-  return 'ServerFail(code: $code, message: $message, timestamp: $timestamp)';
+    return 'ServerFail(code: $code, message: $message, timestamp: $timestamp)';
 }
 
 

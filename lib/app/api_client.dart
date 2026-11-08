@@ -26,9 +26,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
 class ApiClient extends GetConnect {
-  ApiClient({bool background = false, User? Function()? currentFirebaseUser})
-    : _background = background,
-      _currentUser = currentFirebaseUser ?? _firebaseUser;
+  ApiClient({this._background = false, User? Function()? currentFirebaseUser})
+    : _currentUser = currentFirebaseUser ?? _firebaseUser;
 
   static User? _firebaseUser() => FirebaseAuth.instance.currentUser;
   final User? Function() _currentUser;
