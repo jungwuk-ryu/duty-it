@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/modules/bookmark/widgets/bookmark_event_card.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
+import 'package:duty_it/app/modules/event/views/event_poster_viewer.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/widgets/event_poster_image.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,129 @@ void main() {
       );
     });
     addTearDown(() => tester.binding.imageCache.clear());
+  }
+
+  for (final duo in [false, true]) {
+    testWidgets('detail poster flies into the viewer and back (Duo $duo)', (
+      tester,
+    ) async {
+      tester.view.physicalSize = duo
+          ? const Size(1000, 700)
+          : const Size(402, 874);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final pixels = (await tester.runAsync(
+        () => createTestImage(width: 600, height: 900),
+      ))!;
+      tester.binding.imageCache.putIfAbsent(
+        const CachedNetworkImageProvider(_url),
+        () => OneFrameImageStreamCompleter(
+          Future.value(ImageInfo(image: pixels)),
+        ),
+      );
+      addTearDown(tester.binding.imageCache.clear);
+      const tag = 'detail-poster';
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (_, child) => DuoLayoutScope(
+            data: DuoLayoutData(
+              isDuo: duo,
+              divisions: duo
+                  ? const [Rect.fromLTWH(480, 0, 24, 700)]
+                  : const [],
+            ),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: Stack(
+              children: [
+                Positioned(
+                  left: 20,
+                  top: 180,
+                  width: 260,
+                  height: 195,
+                  child: Builder(
+                    builder: (source) => InkWell(
+                      onTap: () => EventPosterViewer.show(
+                        source,
+                        image: const CachedNetworkImageProvider(_url),
+                        title: '행사',
+                        host: '주최',
+                        heroTag: tag,
+                      ),
+                      child: const EventPosterImage(
+                        imageUrl: _url,
+                        heroTag: tag,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final source = tester.getRect(find.byType(Hero));
+      await tester.tap(find.byType(EventPosterImage));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      final flightImage = find
+          .byWidgetPredicate(
+            (widget) =>
+                widget is Image &&
+                widget.image == const CachedNetworkImageProvider(_url),
+          )
+          .last;
+      final outward = tester.getRect(flightImage);
+      expect(outward.width, greaterThan(source.width));
+      await tester.pumpAndSettle();
+      final target = tester.getRect(
+        find.descendant(
+          of: find.byType(EventPosterViewer),
+          matching: find.byType(Hero),
+        ),
+      );
+      expect(outward.width, lessThan(target.width));
+      if (duo) expect(target.right, lessThanOrEqualTo(480));
+
+      await tester.tap(find.byTooltip('닫기'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      final inward = tester.getRect(flightImage);
+      expect(inward.width, greaterThan(source.width));
+      expect(inward.width, lessThan(target.width));
+      await tester.pumpAndSettle();
+      expect(find.byType(EventPosterViewer), findsNothing);
+      expect(tester.getRect(find.byType(Hero)), source);
+      expect(tester.takeException(), isNull);
+
+      // Closing a zoomed poster must also return cleanly to its detail image.
+      await tester.tap(find.byType(EventPosterImage));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('포스터 확대'));
+      await tester.pumpAndSettle();
+      if (duo) {
+        await tester.binding.handlePopRoute();
+      } else {
+        await tester.tap(find.byTooltip('닫기'));
+      }
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 120));
+      final fromZoom = tester.getRect(flightImage);
+      expect(fromZoom.width, lessThanOrEqualTo(target.width));
+      expect(fromZoom.height, lessThanOrEqualTo(target.height));
+      expect(fromZoom.left, greaterThanOrEqualTo(0));
+      expect(fromZoom.right, lessThanOrEqualTo(duo ? 480 : 402));
+      expect(fromZoom.top, greaterThanOrEqualTo(0));
+      expect(fromZoom.bottom, lessThanOrEqualTo(duo ? 700 : 874));
+      await tester.pumpAndSettle();
+      expect(find.byType(EventPosterViewer), findsNothing);
+      expect(tester.getRect(find.byType(Hero)), source);
+      expect(tester.takeException(), isNull);
+    });
   }
 
   for (final size in [const Size(402, 874), const Size(1000, 700)]) {

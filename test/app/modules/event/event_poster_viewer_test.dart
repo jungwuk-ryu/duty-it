@@ -108,7 +108,12 @@ void main() {
       MaterialApp(
         home: MediaQuery(
           data: const MediaQueryData(disableAnimations: true),
-          child: EventPosterViewer(image: image, title: '행사', host: ''),
+          child: EventPosterViewer(
+            image: image,
+            title: '행사',
+            host: '',
+            heroTag: 'poster',
+          ),
         ),
       ),
     );
@@ -122,6 +127,7 @@ void main() {
         .widget<InteractiveViewer>(find.byType(InteractiveViewer))
         .transformationController!;
     expect(transform.value.getMaxScaleOnAxis(), 2.5);
+    expect(find.byType(Hero), findsNothing);
     expect(find.byTooltip('전체 맞춤'), findsOneWidget);
   });
   testWidgets(

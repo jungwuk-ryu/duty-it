@@ -17,7 +17,6 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/modules/event/widgets/event_detail_layout.dart';
 import 'package:duty_it/app/modules/event/widgets/event_image_backdrop.dart';
 import 'package:duty_it/app/modules/event/views/event_poster_viewer.dart';
-import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duit_detail_scaffold.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/widgets/event_poster_image.dart';
@@ -102,6 +101,8 @@ class _EventDetailViewState extends State<_EventDetailContent> {
   final EventContentService _contentService = EventContentService();
   // Preserve in-flight actions when folding moves the menu between toolbars.
   final _actionsKey = GlobalKey();
+  final _fallbackPosterHeroTag = Object();
+  Object get _posterHeroTag => widget.posterHeroTag ?? _fallbackPosterHeroTag;
   bool _loading = true;
   bool _loadFailed = false;
   bool _bookmarkBusy = false;
@@ -411,35 +412,20 @@ class _EventDetailViewState extends State<_EventDetailContent> {
     return AspectRatio(
       aspectRatio: 4 / 3,
       child: Builder(
-        builder: (source) => Stack(
-          fit: StackFit.expand,
-          children: [
-            GestureDetector(
-              excludeFromSemantics: true,
-              onTap: hasImage ? () => _showPoster(source, event) : null,
-              child: EventPosterImage(
-                imageUrl: event.thumbnail,
-                heroTag: widget.posterHeroTag,
-              ),
+        builder: (source) => Semantics(
+          button: hasImage,
+          label: hasImage ? '${event.title} 포스터 전체 보기' : '행사 포스터 없음',
+          excludeSemantics: true,
+          onTap: hasImage ? () => _showPoster(source, event) : null,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            excludeFromSemantics: true,
+            onTap: hasImage ? () => _showPoster(source, event) : null,
+            child: EventPosterImage(
+              imageUrl: event.thumbnail,
+              heroTag: _posterHeroTag,
             ),
-            if (hasImage)
-              PositionedDirectional(
-                end: 12,
-                bottom: 12,
-                child: DuitGlass(
-                  radius: 24,
-                  child: IconButton(
-                    tooltip: '포스터 전체 보기',
-                    onPressed: () => _showPoster(source, event),
-                    icon: Icon(
-                      Icons.open_in_full_rounded,
-                      size: 20,
-                      color: context.colors.text,
-                    ),
-                  ),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );
@@ -541,6 +527,7 @@ class _EventDetailViewState extends State<_EventDetailContent> {
     image: CachedNetworkImageProvider(event.thumbnail),
     title: event.title,
     host: event.host.name,
+    heroTag: _posterHeroTag,
   );
 
   Widget _bottomBar(Event event) {

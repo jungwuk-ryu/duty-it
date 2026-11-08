@@ -15,57 +15,70 @@ class EventPosterViewer extends StatefulWidget {
     required this.image,
     required this.title,
     required this.host,
+    this.heroTag,
   });
 
   final ImageProvider image;
   final String title;
   final String host;
+  final Object? heroTag;
 
   static Future<void> show(
     BuildContext source, {
     required ImageProvider image,
     required String title,
     required String host,
+    Object? heroTag,
   }) {
+    if (ModalRoute.of(source)?.isCurrent == false) return Future.value();
     final box = source.findRenderObject()! as RenderBox;
     final anchor = box.localToGlobal(box.size.center(Offset.zero));
-    return showDialog<void>(
-      // Keep this overlay on the live app theme, outside detail-only styling.
-      context: Navigator.of(source, rootNavigator: true).context,
-      anchorPoint: anchor,
-      useSafeArea: false,
-      fullscreenDialog: true,
-      routeSettings: const RouteSettings(name: '/event/poster'),
-      animationStyle: DuoMotion.durationOf(source) == Duration.zero
-          ? AnimationStyle.noAnimation
-          : null,
-      builder: (context) {
-        final viewer = LayoutBuilder(
-          builder: (_, constraints) => EventPosterViewer(
-            // Refit the poster when rotation or folding changes its viewport.
-            key: ValueKey(constraints.biggest),
-            image: image,
-            title: title,
-            host: host,
-          ),
-        );
-        // UIKit reports Duo folds through the native layout bridge.
-        final layout = DuoLayoutData.of(context);
-        if (!layout.isDuo || layout.divisions.isEmpty) return viewer;
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            displayFeatures: [
-              for (final fold in layout.divisions)
-                DisplayFeature(
-                  bounds: fold,
-                  type: DisplayFeatureType.hinge,
-                  state: DisplayFeatureState.postureHalfOpened,
-                ),
-            ],
-          ),
-          child: DisplayFeatureSubScreen(anchorPoint: anchor, child: viewer),
-        );
-      },
+    final duration = DuoMotion.durationOf(source);
+    return Navigator.of(source, rootNavigator: true).push<void>(
+      PageRouteBuilder<void>(
+        // A PageRoute lets HeroController connect the two poster images. Build
+        // above the detail's local styling to keep the live application theme.
+        fullscreenDialog: true,
+        opaque: false,
+        barrierDismissible: true,
+        barrierColor: Colors.black54,
+        barrierLabel: MaterialLocalizations.of(source).modalBarrierDismissLabel,
+        settings: const RouteSettings(name: '/event/poster'),
+        transitionDuration: duration,
+        reverseTransitionDuration: duration,
+        transitionsBuilder: (_, animation, _, child) =>
+            FadeTransition(opacity: animation, child: child),
+        pageBuilder: (context, _, _) {
+          final viewer = LayoutBuilder(
+            builder: (_, constraints) => EventPosterViewer(
+              // Refit the poster when rotation or folding changes its viewport.
+              key: ValueKey(constraints.biggest),
+              image: image,
+              title: title,
+              host: host,
+              heroTag: duration == Duration.zero ? null : heroTag,
+            ),
+          );
+          // UIKit reports Duo folds through the native layout bridge.
+          final layout = DuoLayoutData.of(context);
+          final media = MediaQuery.of(context);
+          return MediaQuery(
+            data: !layout.isDuo || layout.divisions.isEmpty
+                ? media
+                : media.copyWith(
+                    displayFeatures: [
+                      for (final fold in layout.divisions)
+                        DisplayFeature(
+                          bounds: fold,
+                          type: DisplayFeatureType.hinge,
+                          state: DisplayFeatureState.postureHalfOpened,
+                        ),
+                    ],
+                  ),
+            child: DisplayFeatureSubScreen(anchorPoint: anchor, child: viewer),
+          );
+        },
+      ),
     );
   }
 
@@ -83,6 +96,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
   Offset _tap = Offset.zero;
   int _attempt = 0;
   bool _retrying = false;
+  bool _closing = false;
 
   @override
   void initState() {
@@ -99,6 +113,19 @@ class _EventPosterViewerState extends State<EventPosterViewer>
   }
 
   bool get _zoomed => _transform.value.getMaxScaleOnAxis() > 1.01;
+
+  Future<void> _close() async {
+    if (!mounted || _closing) return;
+    _closing = true;
+    _animation.stop();
+    if (!_transform.value.isIdentity()) {
+      _transform.value = Matrix4.identity();
+      // Hero measures the painted image after the fit transform is applied.
+      // A zoomed image would otherwise escape the viewport in the overlay.
+      await WidgetsBinding.instance.endOfFrame;
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
 
   void _toggleZoom(Offset focalPoint) {
     const scale = 2.5;
@@ -167,87 +194,97 @@ class _EventPosterViewerState extends State<EventPosterViewer>
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppTheme.overlayStyle(Theme.of(context).brightness),
-      child: Material(
-        color: context.colors.subtleSurface,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: Theme.of(context).brightness == Brightness.dark
-                  ? const [
-                      Color(0xFF111318),
-                      Color(0xFF1B1E24),
-                      Color(0xFF15181D),
-                    ]
-                  : const [
-                      Color(0xFFF8F8F7),
-                      Color(0xFFEFEEEC),
-                      Color(0xFFFAFAF9),
-                    ],
+    return ValueListenableBuilder<Matrix4>(
+      valueListenable: _transform,
+      builder: (_, transform, child) => PopScope(
+        canPop: transform.isIdentity(),
+        onPopInvokedWithResult: (popped, _) {
+          if (!popped) _close();
+        },
+        child: child!,
+      ),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: AppTheme.overlayStyle(Theme.of(context).brightness),
+        child: Material(
+          color: context.colors.subtleSurface,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: Theme.of(context).brightness == Brightness.dark
+                    ? const [
+                        Color(0xFF111318),
+                        Color(0xFF1B1E24),
+                        Color(0xFF15181D),
+                      ]
+                    : const [
+                        Color(0xFFF8F8F7),
+                        Color(0xFFEFEEEC),
+                        Color(0xFFFAFAF9),
+                      ],
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(16, 6, 16, 4),
-                  child: Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: DuitGlass(
-                      radius: 24,
-                      showShadow: false,
-                      child: IconButton(
-                        tooltip: '닫기',
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: Icon(
-                          Icons.close_rounded,
-                          size: 22,
-                          color: context.colors.text,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Image(
-                    key: ValueKey(_attempt),
-                    image: widget.image,
-                    fit: BoxFit.contain,
-                    semanticLabel: '${widget.title} 포스터',
-                    frameBuilder: (context, image, frame, loaded) {
-                      if (!loaded && frame == null) {
-                        return const Center(
-                          child: CircularProgressIndicator.adaptive(
-                            semanticsLabel: '포스터 불러오는 중',
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(16, 6, 16, 4),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: DuitGlass(
+                        radius: 24,
+                        showShadow: false,
+                        child: IconButton(
+                          tooltip: '닫기',
+                          onPressed: _close,
+                          icon: Icon(
+                            Icons.close_rounded,
+                            size: 22,
+                            color: context.colors.text,
                           ),
-                        );
-                      }
-                      return LayoutBuilder(
-                        builder: (_, constraints) =>
-                            _gallery(image, constraints.maxHeight),
-                      );
-                    },
-                    errorBuilder: (_, _, _) => Center(
-                      child: SingleChildScrollView(
-                        primary: false,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('포스터를 불러오지 못했어요.'),
-                            TextButton(
-                              onPressed: _retrying ? null : _retry,
-                              child: const Text('다시 시도'),
-                            ),
-                          ],
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Image(
+                      key: ValueKey(_attempt),
+                      image: widget.image,
+                      fit: BoxFit.contain,
+                      semanticLabel: '${widget.title} 포스터',
+                      frameBuilder: (context, image, frame, loaded) {
+                        if (!loaded && frame == null) {
+                          return const Center(
+                            child: CircularProgressIndicator.adaptive(
+                              semanticsLabel: '포스터 불러오는 중',
+                            ),
+                          );
+                        }
+                        return LayoutBuilder(
+                          builder: (_, constraints) =>
+                              _gallery(image, constraints.maxHeight),
+                        );
+                      },
+                      errorBuilder: (_, _, _) => Center(
+                        child: SingleChildScrollView(
+                          primary: false,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('포스터를 불러오지 못했어요.'),
+                              TextButton(
+                                onPressed: _retrying ? null : _retry,
+                                child: const Text('다시 시도'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -286,7 +323,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
                       ),
                     ],
                   ),
-                  child: image,
+                  child: _hero(image),
                 ),
               ),
             ),
@@ -299,6 +336,34 @@ class _EventPosterViewerState extends State<EventPosterViewer>
       ),
     ],
   );
+
+  Widget _hero(Widget image) {
+    if (widget.heroTag == null ||
+        DuoMotion.durationOf(context) == Duration.zero) {
+      return image;
+    }
+    return Hero(
+      tag: widget.heroTag!,
+      curve: Curves.easeOutCubic,
+      createRectTween: (begin, end) => RectTween(begin: begin, end: end),
+      flightShuttleBuilder: (_, animation, _, _, _) => AnimatedBuilder(
+        animation: animation,
+        child: Image(
+          image: widget.image,
+          fit: BoxFit.cover,
+          alignment: Alignment.topCenter,
+          excludeFromSemantics: true,
+        ),
+        builder: (_, child) => ClipRRect(
+          // Cover matches the detail crop and reveals the full poster as its
+          // bounding rectangle grows to the image's natural aspect ratio.
+          borderRadius: BorderRadius.circular(16 * (1 - animation.value)),
+          child: child,
+        ),
+      ),
+      child: image,
+    );
+  }
 
   Widget _caption() => Padding(
     padding: const EdgeInsetsDirectional.fromSTEB(20, 10, 16, 12),
