@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/api_client.dart';
@@ -19,7 +18,7 @@ import 'package:duty_it/app/modules/event/widgets/event_detail_layout.dart';
 import 'package:duty_it/app/modules/event/widgets/event_image_backdrop.dart';
 import 'package:duty_it/app/modules/event/views/event_poster_viewer.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
-import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
+import 'package:duty_it/app/widgets/duit_detail_scaffold.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/widgets/event_poster_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -241,10 +240,6 @@ class _EventDetailViewState extends State<_EventDetailContent> {
       left: edge == 'left' ? sideWidth : media.padding.left,
       right: edge == 'right' ? sideWidth : media.padding.right,
     );
-    const toolbarHeight = 64.0;
-    const sideActionExtent = 48.0;
-    final sideActionInset = (sideWidth - sideActionExtent) / 2;
-    final bodyTop = media.padding.top + toolbarHeight;
     final menu = Obx(
       () => EventActionsMenu(
         key: _actionsKey,
@@ -253,223 +248,160 @@ class _EventDetailViewState extends State<_EventDetailContent> {
         onBookmarkTap: _toggleBookmark,
       ),
     );
-    return Scaffold(
-      backgroundColor: context.colors.canvas,
-      appBar: AppBar(
-        backgroundColor: context.colors.canvas,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        toolbarHeight: toolbarHeight,
-        leadingWidth: 80,
-        centerTitle: true,
-        titleSpacing: 0,
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: DuitAppBarActions(
+    return DuitDetailScaffold(
+      title: Obx(() => Text(widget.eventRx.value.title)),
+      actions: menu,
+      onBack: Get.back,
+      body: MediaQuery.removePadding(
+        context: context,
+        removeLeft: true,
+        removeRight: true,
+        child: Obx(() {
+          final event = widget.eventRx.value;
+          return Column(
             children: [
-              IconButton(
-                tooltip: '뒤로 가기',
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: context.colors.text,
-                  size: 22,
+              if (_loading)
+                LinearProgressIndicator(
+                  minHeight: 2,
+                  color: context.colors.accent,
                 ),
-                style: IconButton.styleFrom(
-                  minimumSize: const Size.square(44),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              if (_loadFailed)
+                Padding(
+                  padding: contentInsets,
+                  child: MaterialBanner(
+                    content: const Text('최신 행사 정보를 불러오지 못했어요.'),
+                    backgroundColor: context.colors.subtleSurface,
+                    actions: [
+                      TextButton(
+                        onPressed: _loadDetail,
+                        child: const Text('다시 시도'),
+                      ),
+                    ],
+                  ),
                 ),
-                onPressed: Get.back,
-              ),
-            ],
-          ),
-        ),
-        title: Obx(
-          () => Text(
-            widget.eventRx.value.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: context.colors.text,
-              fontSize: 17,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        actions: [
-          if (edge == null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: DuitAppBarActions(children: [menu]),
-            )
-          else
-            const SizedBox(width: 80),
-        ],
-      ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          MediaQuery.removePadding(
-            context: context,
-            removeLeft: true,
-            removeRight: true,
-            child: Obx(() {
-              final event = widget.eventRx.value;
-              return Column(
-                children: [
-                  if (_loading)
-                    LinearProgressIndicator(
-                      minHeight: 2,
-                      color: context.colors.accent,
-                    ),
-                  if (_loadFailed)
-                    Padding(
-                      padding: contentInsets,
-                      child: MaterialBanner(
-                        content: const Text('최신 행사 정보를 불러오지 못했어요.'),
-                        backgroundColor: context.colors.subtleSurface,
-                        actions: [
-                          TextButton(
-                            onPressed: _loadDetail,
-                            child: const Text('다시 시도'),
+              Expanded(
+                child: EventDetailLayout(
+                  contentInsets: contentInsets,
+                  safeLeft: edge == 'left' ? sideWidth : media.padding.left,
+                  poster: _poster(event),
+                  actions: _bottomBar(event),
+                  information: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          _tag(
+                            _category(event),
+                            context.colors.mutedSurface,
+                            context.colors.text,
+                          ),
+                          _tag(
+                            _statusLabel(event),
+                            context.colors.accentSurface,
+                            context.colors.accent,
                           ),
                         ],
                       ),
-                    ),
-                  Expanded(
-                    child: EventDetailLayout(
-                      contentInsets: contentInsets,
-                      safeLeft: edge == 'left' ? sideWidth : media.padding.left,
-                      poster: _poster(event),
-                      actions: _bottomBar(event),
-                      information: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              _tag(
-                                _category(event),
-                                context.colors.mutedSurface,
-                                context.colors.text,
-                              ),
-                              _tag(
-                                _statusLabel(event),
-                                context.colors.accentSurface,
-                                context.colors.accent,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-                          Text(
-                            event.title,
-                            style: TextStyle(
-                              color: context.colors.text,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              height: 1.45,
-                            ),
-                          ),
-                          const SizedBox(height: 9),
-                          Text(
-                            event.host.name,
-                            style: TextStyle(
+                      const SizedBox(height: 15),
+                      Text(
+                        event.title,
+                        style: TextStyle(
+                          color: context.colors.text,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          height: 1.45,
+                        ),
+                      ),
+                      const SizedBox(height: 9),
+                      Text(
+                        event.host.name,
+                        style: TextStyle(
+                          color: context.colors.muted,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      Divider(height: 1, color: context.colors.border),
+                      const SizedBox(height: 23),
+                      _sectionHeading('일정 안내', trailing: '한국 시간 (KST)'),
+                      const SizedBox(height: 20),
+                      _scheduleRow(
+                        Icons.event_outlined,
+                        '행사 일시',
+                        _eventPeriod(event),
+                      ),
+                      const SizedBox(height: 22),
+                      _scheduleRow(
+                        Icons.schedule_outlined,
+                        '신청 마감',
+                        event.recruitmentEndAt == null
+                            ? '주최 페이지에서 확인해 주세요'
+                            : '${_dateTime(event.recruitmentEndAt!.seoulWallTime)}까지',
+                        note: event.recruitmentStartAt == null
+                            ? null
+                            : '신청 시작 · ${_dateTime(event.recruitmentStartAt!.seoulWallTime)}',
+                      ),
+                      if (_contentResult?.availability !=
+                          EventContentAvailability.unavailable) ...[
+                        const SizedBox(height: 28),
+                        Divider(height: 1, color: context.colors.border),
+                        const SizedBox(height: 23),
+                        _sectionHeading('행사 내용'),
+                        const SizedBox(height: 12),
+                        _contentCard(event.id),
+                      ],
+                      const SizedBox(height: 28),
+                      Divider(height: 1, color: context.colors.border),
+                      const SizedBox(height: 23),
+                      _sectionHeading('주최 안내'),
+                      const SizedBox(height: 14),
+                      _hostCard(event),
+                      if (_viewCount != null) ...[
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.visibility_outlined,
+                              size: 16,
                               color: context.colors.muted,
-                              fontSize: 14,
                             ),
-                          ),
-                          const SizedBox(height: 28),
-                          Divider(height: 1, color: context.colors.border),
-                          const SizedBox(height: 23),
-                          _sectionHeading('일정 안내', trailing: '한국 시간 (KST)'),
-                          const SizedBox(height: 20),
-                          _scheduleRow(
-                            Icons.event_outlined,
-                            '행사 일시',
-                            _eventPeriod(event),
-                          ),
-                          const SizedBox(height: 22),
-                          _scheduleRow(
-                            Icons.schedule_outlined,
-                            '신청 마감',
-                            event.recruitmentEndAt == null
-                                ? '주최 페이지에서 확인해 주세요'
-                                : '${_dateTime(event.recruitmentEndAt!.seoulWallTime)}까지',
-                            note: event.recruitmentStartAt == null
-                                ? null
-                                : '신청 시작 · ${_dateTime(event.recruitmentStartAt!.seoulWallTime)}',
-                          ),
-                          if (_contentResult?.availability !=
-                              EventContentAvailability.unavailable) ...[
-                            const SizedBox(height: 28),
-                            Divider(height: 1, color: context.colors.border),
-                            const SizedBox(height: 23),
-                            _sectionHeading('행사 내용'),
-                            const SizedBox(height: 12),
-                            _contentCard(event.id),
-                          ],
-                          const SizedBox(height: 28),
-                          Divider(height: 1, color: context.colors.border),
-                          const SizedBox(height: 23),
-                          _sectionHeading('주최 안내'),
-                          const SizedBox(height: 14),
-                          _hostCard(event),
-                          if (_viewCount != null) ...[
-                            const SizedBox(height: 24),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.visibility_outlined,
-                                  size: 16,
-                                  color: context.colors.muted,
-                                ),
-                                const SizedBox(width: 7),
-                                Text(
-                                  '조회 $_viewCount',
-                                  style: TextStyle(
-                                    color: context.colors.muted,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                          const SizedBox(height: 20),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: context.colors.subtleSurface,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '자세한 내용과 신청은 주최 페이지에서 확인해 주세요.',
+                            const SizedBox(width: 7),
+                            Text(
+                              '조회 $_viewCount',
                               style: TextStyle(
                                 color: context.colors.muted,
                                 fontSize: 12,
-                                height: 1.7,
                               ),
                             ),
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: context.colors.subtleSurface,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          '자세한 내용과 신청은 주최 페이지에서 확인해 주세요.',
+                          style: TextStyle(
+                            color: context.colors.muted,
+                            fontSize: 12,
+                            height: 1.7,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              );
-            }),
-          ),
-          if (edge != null)
-            Positioned(
-              left: edge == 'left' ? sideActionInset : null,
-              right: edge == 'right' ? sideActionInset : null,
-              top: math.max(0.0, layout.sideControlsTop(media) - bodyTop) + 8,
-              width: sideActionExtent,
-              height: sideActionExtent,
-              child: DuitAppBarActions(vertical: true, children: [menu]),
-            ),
-        ],
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
