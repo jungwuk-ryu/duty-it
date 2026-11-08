@@ -15,6 +15,7 @@ class DuoLayoutData {
     this.obstructions = const [],
     this.reduceTransparency = false,
     this.contentBounds = Rect.zero,
+    this.layoutMargins = EdgeInsets.zero,
   });
 
   final bool isDuo;
@@ -23,6 +24,7 @@ class DuoLayoutData {
   final List<Rect> obstructions;
   final bool reduceTransparency;
   final Rect contentBounds;
+  final EdgeInsets layoutMargins;
 
   DuoLayoutData withContentBounds(Rect bounds) => DuoLayoutData(
     isDuo: isDuo,
@@ -31,7 +33,30 @@ class DuoLayoutData {
     obstructions: obstructions,
     reduceTransparency: reduceTransparency,
     contentBounds: bounds,
+    layoutMargins: layoutMargins,
   );
+
+  /// UIKit margins include safe areas and can differ on either side of Duo.
+  /// Existing pages already inset content by 16pt and top controls by 8pt;
+  /// reserve only the remainder so margins are never added twice.
+  EdgeInsets foregroundPadding(MediaQueryData media) {
+    if (!isDuo) return media.padding;
+    final freeEdgeMargin = math.max(
+      16.0,
+      verticalBarEdge == 'left'
+          ? layoutMargins.right - media.viewPadding.right
+          : layoutMargins.left - media.viewPadding.left,
+    );
+    return media.padding.copyWith(
+      left: math.max(media.padding.left, layoutMargins.left - 16),
+      right: math.max(media.padding.right, layoutMargins.right - 16),
+      // Match our top controls to the system margin on the unobstructed edge.
+      top: math.max(
+        media.padding.top,
+        math.max(layoutMargins.top, freeEdgeMargin - 8),
+      ),
+    );
+  }
 
   double sideBarWidth(MediaQueryData media) => verticalBarEdge == null
       ? 0
@@ -126,6 +151,9 @@ class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
                         ),
                       )
                       .toList(growable: false);
+              final margins = event['layoutMargins'] as Map?;
+              double margin(String edge) =>
+                  (margins?[edge] as num?)?.toDouble() ?? 0;
               setState(() {
                 _data = DuoLayoutData(
                   isDuo: event['isDuo'] == true,
@@ -133,6 +161,12 @@ class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
                   divisions: regions('divisions'),
                   obstructions: regions('obstructions'),
                   reduceTransparency: event['reduceTransparency'] == true,
+                  layoutMargins: EdgeInsets.fromLTRB(
+                    margin('left'),
+                    margin('top'),
+                    margin('right'),
+                    margin('bottom'),
+                  ),
                 );
               });
             },
@@ -204,7 +238,12 @@ class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
                 .map((f) => f.bounds)
                 .toList(growable: false),
           );
-    return DuoLayoutScope(data: data, child: widget.child);
+    return MediaQuery(
+      // Keep hardware viewPadding and the full-bleed canvas unchanged. Only
+      // foreground SafeArea consumers receive the additional layout spacing.
+      data: media.copyWith(padding: data.foregroundPadding(media)),
+      child: DuoLayoutScope(data: data, child: widget.child),
+    );
   }
 }
 

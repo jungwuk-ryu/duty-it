@@ -63,6 +63,11 @@ class DuitFlutterViewController: FlutterViewController, FlutterStreamHandler {
     sendLayout()
   }
 
+  override func viewLayoutMarginsDidChange() {
+    super.viewLayoutMarginsDidChange()
+    sendLayout()
+  }
+
   override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
     if #available(iOS 27.1, *), isDuo {
       return .allButUpsideDown
@@ -81,6 +86,11 @@ class DuitFlutterViewController: FlutterViewController, FlutterStreamHandler {
     var payload: [String: Any] = [
       "isDuo": false, "divisions": [],
       "reduceTransparency": UIAccessibility.isReduceTransparencyEnabled
+    ]
+    let margins = view.layoutMargins
+    payload["layoutMargins"] = [
+      "top": margins.top, "left": margins.left,
+      "bottom": margins.bottom, "right": margins.right
     ]
     if #available(iOS 27.1, *) {
       let geometryView = layoutProbe ?? view!

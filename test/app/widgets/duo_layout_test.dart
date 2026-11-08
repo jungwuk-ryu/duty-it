@@ -10,6 +10,59 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 void main() {
+  for (final edge in ['left', 'right']) {
+    test(
+      'UIKit margins preserve the $edge rail and existing bottom safe area',
+      () {
+        final safe = EdgeInsets.only(
+          left: edge == 'left' ? 84 : 0,
+          right: edge == 'right' ? 84 : 0,
+          bottom: 34,
+        );
+        final layout = DuoLayoutData(
+          isDuo: true,
+          verticalBarEdge: edge,
+          layoutMargins: safe.copyWith(
+            left: edge == 'left' ? 84 : 20,
+            right: edge == 'right' ? 84 : 20,
+          ),
+        );
+        final result = layout.foregroundPadding(
+          MediaQueryData(padding: safe, viewPadding: safe),
+        );
+        expect(result.left, edge == 'left' ? 84 : 4);
+        expect(result.right, edge == 'right' ? 84 : 4);
+        expect(result.top + 8, 20);
+        expect(result.bottom, 34);
+        expect(
+          layout
+              .withContentBounds(const Rect.fromLTWH(0, 0, 100, 100))
+              .layoutMargins,
+          layout.layoutMargins,
+        );
+      },
+    );
+  }
+
+  test(
+    'standard phones, top safe areas, and keyboard insets are preserved',
+    () {
+      const media = MediaQueryData(
+        padding: EdgeInsets.only(top: 62),
+        viewPadding: EdgeInsets.only(top: 62, bottom: 34),
+        viewInsets: EdgeInsets.only(bottom: 300),
+      );
+      expect(const DuoLayoutData().foregroundPadding(media), media.padding);
+      const closed = DuoLayoutData(
+        isDuo: true,
+        layoutMargins: EdgeInsets.fromLTRB(20, 62, 20, 34),
+      );
+      final padding = closed.foregroundPadding(media);
+      expect(padding.top, 62);
+      expect(padding.bottom, 0);
+    },
+  );
+
   test('side toolbar geometry ignores obstructions on the opposite edge', () {
     const media = MediaQueryData(
       size: Size(1000, 700),
