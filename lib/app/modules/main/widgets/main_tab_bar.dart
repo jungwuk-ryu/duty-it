@@ -34,10 +34,12 @@ class MainTabBar extends StatefulWidget {
     super.key,
     required this.selectedIndex,
     required this.onSelected,
+    this.axis = Axis.horizontal,
   });
 
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+  final Axis axis;
 
   @override
   State<MainTabBar> createState() => _MainTabBarState();
@@ -46,6 +48,15 @@ class MainTabBar extends StatefulWidget {
 class _MainTabBarState extends State<MainTabBar> {
   int? _pressed;
   double? _dragPosition;
+
+  @override
+  void didUpdateWidget(MainTabBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.axis != widget.axis) {
+      _pressed = null;
+      _dragPosition = null;
+    }
+  }
 
   void _clearTouch() {
     if (_pressed == null && _dragPosition == null) return;
@@ -62,6 +73,7 @@ class _MainTabBarState extends State<MainTabBar> {
 
   @override
   Widget build(BuildContext context) {
+    final vertical = widget.axis == Axis.vertical;
     final position =
         _dragPosition ?? (_pressed ?? widget.selectedIndex).toDouble();
     final touching = _dragPosition != null || _pressed != null;
@@ -71,7 +83,7 @@ class _MainTabBarState extends State<MainTabBar> {
         : const Duration(milliseconds: 120);
     final rtl = Directionality.of(context) == TextDirection.rtl;
 
-    return Semantics(
+    final bar = Semantics(
       role: SemanticsRole.tabBar,
       container: true,
       explicitChildNodes: true,
@@ -91,21 +103,29 @@ class _MainTabBarState extends State<MainTabBar> {
                 onPointerCancel: (_) => _clearTouch(),
                 child: GestureDetector(
                   excludeFromSemantics: true,
-                  onHorizontalDragStart: (e) => setState(() {
-                    _pressed = null;
-                    _dragPosition = slotAt(e.localPosition.dx);
-                  }),
-                  onHorizontalDragUpdate: (e) => setState(() {
-                    _dragPosition = slotAt(e.localPosition.dx);
-                  }),
-                  onHorizontalDragEnd: (_) {
-                    final index = _dragPosition?.round();
-                    _clearTouch();
-                    if (index != null && index != widget.selectedIndex) {
-                      widget.onSelected(index);
-                    }
-                  },
-                  onHorizontalDragCancel: _clearTouch,
+                  // Vertical rails remain scrollable when the keyboard reduces
+                  // their height. Taps share the same lens and press feedback.
+                  onHorizontalDragStart: vertical
+                      ? null
+                      : (e) => setState(() {
+                          _pressed = null;
+                          _dragPosition = slotAt(e.localPosition.dx);
+                        }),
+                  onHorizontalDragUpdate: vertical
+                      ? null
+                      : (e) => setState(() {
+                          _dragPosition = slotAt(e.localPosition.dx);
+                        }),
+                  onHorizontalDragEnd: vertical
+                      ? null
+                      : (_) {
+                          final index = _dragPosition?.round();
+                          _clearTouch();
+                          if (index != null && index != widget.selectedIndex) {
+                            widget.onSelected(index);
+                          }
+                        },
+                  onHorizontalDragCancel: vertical ? null : _clearTouch,
                   child: Stack(
                     children: [
                       Positioned.fill(
@@ -120,7 +140,11 @@ class _MainTabBarState extends State<MainTabBar> {
                       ),
                       Material(
                         type: MaterialType.transparency,
-                        child: Row(
+                        child: Flex(
+                          direction: widget.axis,
+                          crossAxisAlignment: vertical
+                              ? CrossAxisAlignment.stretch
+                              : CrossAxisAlignment.center,
                           children: [
                             for (var i = 0; i < mainTabs.length; i++)
                               Expanded(
@@ -144,6 +168,14 @@ class _MainTabBarState extends State<MainTabBar> {
         ),
       ),
     );
+    if (!vertical) return bar;
+    // A finite height also allows this bar inside the rail's IntrinsicHeight.
+    final slotHeight =
+        (20 + 3 + MediaQuery.textScalerOf(context).scale(11) * 1.2 + 16).clamp(
+          64.0,
+          double.infinity,
+        );
+    return SizedBox(height: slotHeight * mainTabs.length + 8, child: bar);
   }
 
   Widget _selectionLens({
@@ -154,13 +186,12 @@ class _MainTabBarState extends State<MainTabBar> {
   }) => AnimatedAlign(
     duration: travel,
     curve: Curves.easeOutCubic,
-    alignment: AlignmentDirectional(
-      2 * position / (mainTabs.length - 1) - 1,
-      0,
-    ),
+    alignment: widget.axis == Axis.vertical
+        ? Alignment(0, 2 * position / (mainTabs.length - 1) - 1)
+        : AlignmentDirectional(2 * position / (mainTabs.length - 1) - 1, 0),
     child: FractionallySizedBox(
-      widthFactor: 1 / mainTabs.length,
-      heightFactor: 1,
+      widthFactor: widget.axis == Axis.vertical ? 1 : 1 / mainTabs.length,
+      heightFactor: widget.axis == Axis.vertical ? 1 / mainTabs.length : 1,
       child: AnimatedScale(
         scale: touching && feedback != Duration.zero ? 1.035 : 1,
         duration: feedback,
@@ -193,7 +224,9 @@ class _MainTabBarState extends State<MainTabBar> {
         onTapCancel: () => setState(() => _pressed = null),
         onTap: () => _select(i),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 48),
+          constraints: BoxConstraints(
+            minHeight: widget.axis == Axis.vertical ? 64 : 48,
+          ),
           child: TweenAnimationBuilder<Color?>(
             duration: feedback,
             tween: ColorTween(

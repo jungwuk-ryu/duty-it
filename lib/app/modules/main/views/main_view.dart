@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/end_drawer.dart';
 import 'package:duty_it/app/modules/main/widgets/main_tab_bar.dart';
-import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:duty_it/app/modules/job/widgets/job_app_bar.dart';
 import 'package:duty_it/app/modules/bookmark/widgets/bookmark_app_bar.dart';
@@ -152,54 +151,11 @@ class MainView extends GetView<MainViewController> {
                       ),
                       const SizedBox(height: 16),
                       const Spacer(),
-                      DuitGlass(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            for (var i = 0; i < mainTabs.length; i++)
-                              Obx(() {
-                                final selected =
-                                    controller.pageIndex.value == i;
-                                return Semantics(
-                                  selected: selected,
-                                  child: InkWell(
-                                    onTap: () => controller.changeTab(i),
-                                    child: Container(
-                                      width: width - 16,
-                                      constraints: const BoxConstraints(
-                                        minHeight: 64,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 8,
-                                      ),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          MainTabIcon(
-                                            index: i,
-                                            color: selected
-                                                ? AppColors.main
-                                                : AppColors.g05,
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            mainTabs[i].label,
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: selected
-                                                  ? AppColors.main
-                                                  : AppColors.g05,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                          ],
+                      Obx(
+                        () => MainTabBar(
+                          axis: Axis.vertical,
+                          selectedIndex: controller.pageIndex.value,
+                          onSelected: controller.changeTab,
                         ),
                       ),
                     ],
