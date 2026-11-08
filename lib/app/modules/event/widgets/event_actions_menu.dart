@@ -117,12 +117,23 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
             }
             final box = context.findRenderObject()! as RenderBox;
             final x = box.localToGlobal(Offset.zero).dx;
-            final trailing = fromLeft ? x : x + box.size.width - width;
+            final trailing = switch (layout.verticalBarEdge) {
+              'left' => x + box.size.width + 8,
+              'right' => x - width - 8,
+              _ => fromLeft ? x : x + box.size.width - width,
+            };
             final menuLeft = trailing.clamp(
               left + 16,
               math.max(left + 16, right - 16 - width),
             );
-            menu.open(position: Offset(menuLeft - x, box.size.height + 4));
+            // Side controls open inward at the trigger's height. Reusing the
+            // top toolbar's below-button offset detaches the menu from its rail.
+            menu.open(
+              position: Offset(
+                menuLeft - x,
+                layout.verticalBarEdge == null ? box.size.height + 4 : 0,
+              ),
+            );
           },
         ),
       ),

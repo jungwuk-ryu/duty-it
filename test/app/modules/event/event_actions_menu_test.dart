@@ -65,17 +65,20 @@ void main() {
     );
     await tester.pumpWidget(
       GetMaterialApp(
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(
+        builder: (context, child) {
+          final media = MediaQuery.of(context).copyWith(
             padding: insets,
             viewPadding: insets,
             textScaler: textScaler,
-          ),
-          child: Directionality(
-            textDirection: direction,
-            child: DuoLayoutScope(data: layout, child: child!),
-          ),
-        ),
+          );
+          return MediaQuery(
+            data: media.copyWith(padding: layout.foregroundPadding(media)),
+            child: Directionality(
+              textDirection: direction,
+              child: DuoLayoutScope(data: layout, child: child!),
+            ),
+          );
+        },
         home: Scaffold(
           appBar: AppBar(actions: [if (!sideControls) menu]),
           body: Stack(
@@ -83,10 +86,11 @@ void main() {
             children: [
               if (sideControls)
                 Positioned(
-                  left: layout.verticalBarEdge == 'left' ? 8 : null,
-                  right: layout.verticalBarEdge == 'right' ? 8 : null,
+                  left: layout.verticalBarEdge == 'left' ? 12 : null,
+                  right: layout.verticalBarEdge == 'right' ? 12 : null,
                   top: 160,
-                  width: 56,
+                  width: 48,
+                  height: 48,
                   child: DuitAppBarActions(vertical: true, children: [menu]),
                 ),
               Center(
@@ -109,42 +113,66 @@ void main() {
 
   for (final edge in ['left', 'right']) {
     for (final direction in TextDirection.values) {
-      testWidgets(
-        'Duo $edge menu stays beside its hardware rail in $direction',
-        (tester) async {
-          tester.view.physicalSize = const Size(1000, 700);
-          tester.view.devicePixelRatio = 1;
-          addTearDown(tester.view.resetPhysicalSize);
-          addTearDown(tester.view.resetDevicePixelRatio);
-          const fold = Rect.fromLTWH(480, 0, 24, 700);
-          await mount(
-            tester,
-            sideControls: true,
-            layout: DuoLayoutData(
-              isDuo: true,
-              verticalBarEdge: edge,
-              divisions: const [fold],
-            ),
-            insets: EdgeInsets.only(
-              left: edge == 'left' ? 72 : 0,
-              right: edge == 'right' ? 72 : 0,
-            ),
-            direction: direction,
-            textScaler: const TextScaler.linear(1.5),
-          );
-          await openMenu(tester);
-          final menu = tester.getRect(find.byType(DuitGlass).last);
-          if (edge == 'left') {
-            expect(menu.left, greaterThanOrEqualTo(88));
-            expect(menu.right, lessThanOrEqualTo(fold.left - 16));
-          } else {
-            expect(menu.left, greaterThanOrEqualTo(fold.right + 16));
-            expect(menu.right, lessThanOrEqualTo(912));
-          }
-          expect(find.text('캘린더에 추가').hitTestable(), findsOneWidget);
-          expect(tester.takeException(), isNull);
-        },
-      );
+      for (final hasFold in [false, true]) {
+        testWidgets(
+          'Duo $edge menu stays beside its hardware rail in $direction (fold $hasFold)',
+          (tester) async {
+            tester.view.physicalSize = hasFold
+                ? const Size(1000, 700)
+                : const Size(466, 678);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            const fold = Rect.fromLTWH(480, 0, 24, 700);
+            await mount(
+              tester,
+              sideControls: true,
+              layout: DuoLayoutData(
+                isDuo: true,
+                verticalBarEdge: edge,
+                divisions: hasFold ? const [fold] : const [],
+                layoutMargins: const EdgeInsets.fromLTRB(20, 0, 20, 34),
+              ),
+              insets: EdgeInsets.only(
+                left: edge == 'left' ? 72 : 0,
+                right: edge == 'right' ? 72 : 0,
+              ),
+              direction: direction,
+              textScaler: const TextScaler.linear(1.5),
+            );
+            await openMenu(tester);
+            final menu = tester.getRect(find.byType(DuitGlass).last);
+            final trigger = tester.getRect(find.byTooltip('행사 더보기'));
+            expect(menu.top, closeTo(trigger.top, 1));
+            if (edge == 'left') {
+              expect(menu.left, greaterThanOrEqualTo(88));
+              expect(
+                menu.right,
+                lessThanOrEqualTo(
+                  hasFold
+                      ? fold.left - 16
+                      : tester.view.physicalSize.width - 16,
+                ),
+              );
+            } else {
+              expect(
+                menu.left,
+                greaterThanOrEqualTo(hasFold ? fold.right + 16 : 16),
+              );
+              expect(
+                menu.right,
+                lessThanOrEqualTo(tester.view.physicalSize.width - 88),
+              );
+            }
+            expect(
+              menu.bottom,
+              lessThanOrEqualTo(tester.view.physicalSize.height),
+            );
+            expect(find.text('캘린더에 추가').hitTestable(), findsOneWidget);
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
     }
   }
 
