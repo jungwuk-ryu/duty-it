@@ -16,6 +16,7 @@ import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/modules/event/widgets/event_detail_layout.dart';
+import 'package:duty_it/app/modules/event/widgets/event_image_backdrop.dart';
 import 'package:duty_it/app/modules/event/views/event_poster_viewer.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
@@ -26,7 +27,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EventDetailView extends StatefulWidget {
+class EventDetailView extends StatelessWidget {
   final Rx<Event> eventRx;
   final EventDetail? initialDetail;
   final Future<void> Function() onBookmarkTap;
@@ -39,10 +40,37 @@ class EventDetailView extends StatefulWidget {
   });
 
   @override
-  State<EventDetailView> createState() => _EventDetailViewState();
+  Widget build(BuildContext context) => Obx(() {
+    final thumbnail = eventRx.value.thumbnail.trim();
+    return EventImageBackdrop(
+      image: AppUtils.isHttpUrl(thumbnail)
+          ? CachedNetworkImageProvider(thumbnail)
+          : null,
+      child: _EventDetailContent(
+        eventRx: eventRx,
+        initialDetail: initialDetail,
+        onBookmarkTap: onBookmarkTap,
+      ),
+    );
+  });
 }
 
-class _EventDetailViewState extends State<EventDetailView> {
+class _EventDetailContent extends StatefulWidget {
+  const _EventDetailContent({
+    required this.eventRx,
+    required this.initialDetail,
+    required this.onBookmarkTap,
+  });
+
+  final Rx<Event> eventRx;
+  final EventDetail? initialDetail;
+  final Future<void> Function() onBookmarkTap;
+
+  @override
+  State<_EventDetailContent> createState() => _EventDetailViewState();
+}
+
+class _EventDetailViewState extends State<_EventDetailContent> {
   final EventContentService _contentService = EventContentService();
   // Preserve in-flight actions when folding moves the menu between toolbars.
   final _actionsKey = GlobalKey();

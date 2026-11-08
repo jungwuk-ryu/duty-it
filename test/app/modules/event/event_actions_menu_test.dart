@@ -1,5 +1,8 @@
 import 'package:device_calendar_plus/device_calendar_plus.dart' as device;
 import 'package:duty_it/app/core/models/event.dart';
+import 'package:duty_it/app/core/theme/app_theme.dart';
+import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/modules/event/widgets/event_image_backdrop.dart';
 import 'package:duty_it/app/modules/event/widgets/event_actions_menu.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
@@ -256,6 +259,47 @@ void main() {
     expect(bookmarks, 1);
     expect(find.text('휴대폰 기본 캘린더 연동'), findsNothing);
   });
+
+  testWidgets(
+    'calendar picker keeps the live opaque app theme above the ambient detail',
+    (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+      addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+      Get.put<CalendarService>(FakeCalendarService());
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: ThemeMode.system,
+          home: EventImageBackdrop(
+            image: const AssetImage('assets/icons/paper.png'),
+            child: Scaffold(
+              body: Align(
+                alignment: Alignment.topRight,
+                child: EventActionsMenu(
+                  event: Event(id: 42, startAt: DateTime(2026, 10, 1)),
+                  bookmarkBusy: false,
+                  onBookmarkTap: () async {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await openMenu(tester);
+      await tester.tap(find.text('캘린더에 추가'));
+      await tester.pumpAndSettle();
+      final title = find.text('저장할 캘린더');
+      expect(tester.element(title).colors.surface.a, 1);
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      await tester.pumpAndSettle();
+      expect(Theme.of(tester.element(title)).brightness, Brightness.dark);
+      expect(tester.element(title).colors.surface, AppPalette.dark.surface);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(title, findsNothing);
+    },
+  );
 
   testWidgets('saving requires calendar selection and explicit confirmation', (
     tester,

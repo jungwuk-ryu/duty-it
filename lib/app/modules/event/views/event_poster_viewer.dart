@@ -30,7 +30,8 @@ class EventPosterViewer extends StatefulWidget {
     final box = source.findRenderObject()! as RenderBox;
     final anchor = box.localToGlobal(box.size.center(Offset.zero));
     return showDialog<void>(
-      context: source,
+      // Keep this overlay on the live app theme, outside detail-only styling.
+      context: Navigator.of(source, rootNavigator: true).context,
       anchorPoint: anchor,
       useSafeArea: false,
       fullscreenDialog: true,

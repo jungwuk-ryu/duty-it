@@ -208,6 +208,9 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
     }
   }
 
+  BuildContext get _overlayContext =>
+      Navigator.of(context, rootNavigator: true).context;
+
   Future<void> _addToCalendar() async {
     if (_calendarBusy) return;
     final event = widget.event;
@@ -222,7 +225,7 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
       if (!await service.requestPermission()) {
         if (!mounted) return;
         final openSettings = await showDialog<bool>(
-          context: context,
+          context: _overlayContext,
           builder: (dialogContext) => AlertDialog(
             title: const Text('캘린더 접근을 허용해 주세요'),
             content: const Text('기기 캘린더에 행사를 저장하려면 캘린더 권한이 필요해요.'),
@@ -255,7 +258,7 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
       String? calendarId;
       if (calendars.isEmpty) {
         final create = await showDialog<bool>(
-          context: context,
+          context: _overlayContext,
           builder: (dialogContext) => AlertDialog(
             title: const Text('저장할 캘린더가 없어요'),
             content: const Text('이 기기에 ‘듀잇’ 캘린더를 만들고 행사를 추가할까요?'),
@@ -275,10 +278,10 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
         calendarId = await service.createLocalCalendar();
       } else {
         calendarId = await showModalBottomSheet<String>(
-          context: context,
+          context: _overlayContext,
           useSafeArea: true,
           isScrollControlled: true,
-          backgroundColor: context.colors.surface,
+          useRootNavigator: true,
           showDragHandle: true,
           builder: (_) => _CalendarPicker(calendars: calendars, draft: draft),
         );
