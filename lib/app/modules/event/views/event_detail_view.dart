@@ -21,6 +21,7 @@ import 'package:duty_it/app/modules/event/views/event_poster_viewer.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
+import 'package:duty_it/app/widgets/event_poster_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,13 +32,38 @@ class EventDetailView extends StatelessWidget {
   final Rx<Event> eventRx;
   final EventDetail? initialDetail;
   final Future<void> Function() onBookmarkTap;
+  final Object? posterHeroTag;
 
   const EventDetailView({
     super.key,
     required this.eventRx,
     this.initialDetail,
     required this.onBookmarkTap,
+    this.posterHeroTag,
   });
+
+  static Future<void>? open(
+    BuildContext context, {
+    required Rx<Event> eventRx,
+    required Future<void> Function() onBookmarkTap,
+    required Object posterHeroTag,
+  }) {
+    final duration = DuoMotion.durationOf(context);
+    return Get.to<void>(
+      () => EventDetailView(
+        eventRx: eventRx,
+        onBookmarkTap: onBookmarkTap,
+        posterHeroTag: posterHeroTag,
+      ),
+      routeName: '/events/${eventRx.value.id}',
+      transition: duration == Duration.zero
+          ? Transition.noTransition
+          : Transition.fadeIn,
+      duration: duration,
+      curve: Curves.easeOutCubic,
+      popGesture: Theme.of(context).platform == TargetPlatform.iOS,
+    );
+  }
 
   @override
   Widget build(BuildContext context) => Obx(() {
@@ -50,6 +76,7 @@ class EventDetailView extends StatelessWidget {
         eventRx: eventRx,
         initialDetail: initialDetail,
         onBookmarkTap: onBookmarkTap,
+        posterHeroTag: posterHeroTag,
       ),
     );
   });
@@ -60,11 +87,13 @@ class _EventDetailContent extends StatefulWidget {
     required this.eventRx,
     required this.initialDetail,
     required this.onBookmarkTap,
+    required this.posterHeroTag,
   });
 
   final Rx<Event> eventRx;
   final EventDetail? initialDetail;
   final Future<void> Function() onBookmarkTap;
+  final Object? posterHeroTag;
 
   @override
   State<_EventDetailContent> createState() => _EventDetailViewState();
@@ -449,45 +478,36 @@ class _EventDetailViewState extends State<_EventDetailContent> {
     final hasImage = AppUtils.isHttpUrl(event.thumbnail);
     return AspectRatio(
       aspectRatio: 4 / 3,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Builder(
-          builder: (source) => Stack(
-            fit: StackFit.expand,
-            children: [
-              if (hasImage) ...[
-                GestureDetector(
-                  excludeFromSemantics: true,
-                  onTap: () => _showPoster(source, event),
-                  child: CachedNetworkImage(
-                    imageUrl: event.thumbnail,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                    placeholder: (_, _) =>
-                        ColoredBox(color: context.colors.subtleSurface),
-                    errorWidget: (_, _, _) => const _PosterPlaceholder(),
-                  ),
-                ),
-                PositionedDirectional(
-                  end: 12,
-                  bottom: 12,
-                  child: DuitGlass(
-                    radius: 24,
-                    child: IconButton(
-                      tooltip: '포스터 전체 보기',
-                      onPressed: () => _showPoster(source, event),
-                      icon: Icon(
-                        Icons.open_in_full_rounded,
-                        size: 20,
-                        color: context.colors.text,
-                      ),
+      child: Builder(
+        builder: (source) => Stack(
+          fit: StackFit.expand,
+          children: [
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: hasImage ? () => _showPoster(source, event) : null,
+              child: EventPosterImage(
+                imageUrl: event.thumbnail,
+                heroTag: widget.posterHeroTag,
+              ),
+            ),
+            if (hasImage)
+              PositionedDirectional(
+                end: 12,
+                bottom: 12,
+                child: DuitGlass(
+                  radius: 24,
+                  child: IconButton(
+                    tooltip: '포스터 전체 보기',
+                    onPressed: () => _showPoster(source, event),
+                    icon: Icon(
+                      Icons.open_in_full_rounded,
+                      size: 20,
+                      color: context.colors.text,
                     ),
                   ),
                 ),
-              ] else
-                const _PosterPlaceholder(),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );
@@ -784,17 +804,4 @@ class _EventDetailViewState extends State<_EventDetailContent> {
     }
     return '${_dateTime(start)} – ${_dateTime(end)}';
   }
-}
-
-class _PosterPlaceholder extends StatelessWidget {
-  const _PosterPlaceholder();
-  @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: context.colors.subtleSurface,
-    child: Icon(
-      Icons.event_note_rounded,
-      size: 64,
-      color: context.colors.disabled,
-    ),
-  );
 }

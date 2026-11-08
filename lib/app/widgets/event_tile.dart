@@ -1,10 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
-import 'package:duty_it/gen/assets.gen.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
+import 'package:duty_it/app/widgets/event_poster_image.dart';
 import 'package:flutter/material.dart';
 
 /// The same compact event presentation used by the web's mobile list.
@@ -12,12 +11,14 @@ class EventTile extends StatelessWidget {
   final Event event;
   final VoidCallback onTap;
   final VoidCallback onBookmarkTap;
+  final Object? posterHeroTag;
 
   const EventTile({
     super.key,
     required this.event,
     required this.onTap,
     required this.onBookmarkTap,
+    this.posterHeroTag,
   });
 
   @override
@@ -47,45 +48,13 @@ class EventTile extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: context.colors.mutedSurface,
-                        border: Border.all(color: context.colors.border),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: AppUtils.isHttpUrl(event.thumbnail)
-                          ? CachedNetworkImage(
-                              imageUrl: event.thumbnail,
-                              fit: BoxFit.cover,
-                              placeholder: (_, __) => Center(
-                                child: Image.asset(
-                                  Assets.icons.nurseCap.path,
-                                  width: 42,
-                                  height: 42,
-                                ),
-                              ),
-                              errorWidget: (_, __, ___) => Center(
-                                child: Image.asset(
-                                  Assets.icons.nurseCap.path,
-                                  width: 42,
-                                  height: 42,
-                                ),
-                              ),
-                            )
-                          : Center(
-                              child: Image.asset(
-                                Assets.icons.nurseCap.path,
-                                width: 42,
-                                height: 42,
-                              ),
-                            ),
-                    ),
+                  EventPosterImage(
+                    imageUrl: event.thumbnail,
+                    heroTag: posterHeroTag,
                   ),
                   if (ended)
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(16),
                       child: ColoredBox(
                         color: const Color(0x88000000),
                         child: Center(

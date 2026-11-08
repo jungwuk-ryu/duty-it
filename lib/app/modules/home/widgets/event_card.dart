@@ -14,10 +14,13 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Identify this card instance, even if another list contains the same event.
+    final posterHeroTag = ('home', ObjectKey(eventRx));
     return Obx(
       () => EventTile(
         event: event,
-        onTap: _onTap,
+        posterHeroTag: posterHeroTag,
+        onTap: () => _onTap(context, posterHeroTag),
         onBookmarkTap: () async {
           HapticFeedback.mediumImpact();
           await Get.find<HomeViewController>().onBookmarkButtonClick(eventRx);
@@ -26,13 +29,13 @@ class EventCard extends StatelessWidget {
     );
   }
 
-  void _onTap() {
-    Get.to(
-      () => EventDetailView(
-        eventRx: eventRx,
-        onBookmarkTap: () =>
-            Get.find<HomeViewController>().onBookmarkButtonClick(eventRx),
-      ),
+  void _onTap(BuildContext context, Object posterHeroTag) {
+    EventDetailView.open(
+      context,
+      eventRx: eventRx,
+      posterHeroTag: posterHeroTag,
+      onBookmarkTap: () =>
+          Get.find<HomeViewController>().onBookmarkButtonClick(eventRx),
     );
   }
 }
