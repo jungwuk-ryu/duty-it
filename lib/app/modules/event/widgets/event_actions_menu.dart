@@ -1,9 +1,13 @@
+import 'dart:math' as math;
+
 import 'package:device_calendar_plus/device_calendar_plus.dart' as device;
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/utils/event_actions.dart';
 import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
+import 'package:duty_it/app/widgets/duit_glass_menu.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -29,8 +33,15 @@ class EventActionsMenu extends StatefulWidget {
 }
 
 class _EventActionsMenuState extends State<EventActionsMenu> {
+  final _triggerFocus = FocusNode();
   bool _calendarBusy = false;
   bool _shareBusy = false;
+
+  @override
+  void dispose() {
+    _triggerFocus.dispose();
+    super.dispose();
+  }
 
   void _message(String text, {SnackBarAction? action}) {
     final messenger = ScaffoldMessenger.of(context);
@@ -47,64 +58,108 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
   }
 
   @override
-  Widget build(BuildContext context) => PopupMenuButton<_EventAction>(
-    tooltip: '행사 더보기',
-    icon: const Icon(Icons.more_horiz_rounded, color: AppColors.black),
-    color: AppColors.white,
-    surfaceTintColor: AppColors.white,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-    onSelected: (action) async {
-      switch (action) {
-        case _EventAction.copy:
-          await _copyLink();
-        case _EventAction.share:
-          await _share();
-        case _EventAction.bookmark:
-          await widget.onBookmarkTap();
-        case _EventAction.calendar:
-          await _addToCalendar();
-      }
-    },
-    itemBuilder: (_) => [
-      _item(_EventAction.copy, Icons.link_rounded, '링크 복사'),
-      _item(
-        _EventAction.share,
-        Icons.ios_share_rounded,
-        '공유',
-        enabled: !_shareBusy,
+  Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    // AppBar consumes its horizontal insets before building action buttons.
+    // The overlay still needs the navigator's original safe area.
+    final insets = MediaQuery.viewPaddingOf(
+      Navigator.maybeOf(context)?.context ?? context,
+    );
+    final layout = DuoLayoutData.of(context);
+    final rtl = Directionality.of(context) == TextDirection.rtl;
+    final bounds = layout.contentBounds;
+    var left = math.max(insets.left, bounds.isEmpty ? 0.0 : bounds.left);
+    var right = math.min(
+      media.size.width - insets.right,
+      bounds.isEmpty ? media.size.width : bounds.right,
+    );
+    // AppBar actions live in the trailing pane, unlike the list's sort menu.
+    for (final fold in layout.divisions) {
+      if (fold.height <= fold.width) continue;
+      if (rtl && fold.left > left && fold.left < right) right = fold.left;
+      if (!rtl && fold.right > left && fold.right < right) left = fold.right;
+    }
+    final width = math.min(
+      math.max(0.0, right - left - 32),
+      60 + media.textScaler.scale(150),
+    );
+    return DuitGlassMenu(
+      width: width,
+      childFocusNode: _triggerFocus,
+      builder: (context, menu, _) => Semantics(
+        expanded: menu.isOpen,
+        child: IconButton(
+          focusNode: _triggerFocus,
+          tooltip: '행사 더보기',
+          icon: const Icon(Icons.more_horiz_rounded, color: AppColors.black),
+          style: IconButton.styleFrom(
+            backgroundColor: menu.isOpen ? AppColors.g02 : Colors.transparent,
+          ),
+          onPressed: () {
+            if (menu.isOpen) {
+              menu.close();
+              return;
+            }
+            final box = context.findRenderObject()! as RenderBox;
+            final x = box.localToGlobal(Offset.zero).dx;
+            final trailing = rtl ? x : x + box.size.width - width;
+            final menuLeft = trailing.clamp(
+              left + 16,
+              math.max(left + 16, right - 16 - width),
+            );
+            menu.open(position: Offset(menuLeft - x, box.size.height + 4));
+          },
+        ),
       ),
-      _item(
-        _EventAction.bookmark,
-        widget.event.isBookmarked
-            ? Icons.bookmark_rounded
-            : Icons.bookmark_border_rounded,
-        widget.event.isBookmarked ? '북마크 해제' : '북마크',
-        enabled: !widget.bookmarkBusy,
-      ),
-      _item(
-        _EventAction.calendar,
-        Icons.event_available_outlined,
-        _calendarBusy ? '캘린더 확인 중…' : '캘린더에 추가',
-        enabled: !_calendarBusy,
-      ),
-    ],
-  );
+      items: [
+        _item(_EventAction.copy, Icons.link_rounded, '링크 복사'),
+        _item(
+          _EventAction.share,
+          Icons.ios_share_rounded,
+          '공유',
+          enabled: !_shareBusy,
+        ),
+        _item(
+          _EventAction.bookmark,
+          widget.event.isBookmarked
+              ? Icons.bookmark_rounded
+              : Icons.bookmark_border_rounded,
+          widget.event.isBookmarked ? '북마크 해제' : '북마크',
+          enabled: !widget.bookmarkBusy,
+        ),
+        _item(
+          _EventAction.calendar,
+          Icons.event_available_outlined,
+          _calendarBusy ? '캘린더 확인 중…' : '캘린더에 추가',
+          enabled: !_calendarBusy,
+        ),
+      ],
+    );
+  }
 
-  PopupMenuItem<_EventAction> _item(
+  Future<void> _select(_EventAction action) async {
+    if (!mounted) return;
+    switch (action) {
+      case _EventAction.copy:
+        await _copyLink();
+      case _EventAction.share:
+        await _share();
+      case _EventAction.bookmark:
+        await widget.onBookmarkTap();
+      case _EventAction.calendar:
+        await _addToCalendar();
+    }
+  }
+
+  Widget _item(
     _EventAction action,
     IconData icon,
     String label, {
     bool enabled = true,
-  }) => PopupMenuItem(
-    value: action,
-    enabled: enabled,
-    child: Row(
-      children: [
-        Icon(icon, size: 20, color: enabled ? AppColors.g07 : AppColors.g04),
-        const SizedBox(width: 12),
-        Text(label),
-      ],
-    ),
+  }) => DuitGlassMenuItem(
+    label: label,
+    leadingIcon: Icon(icon, size: 20),
+    onPressed: enabled ? () => _select(action) : null,
   );
 
   Future<void> _copyLink() async {
