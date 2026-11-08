@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:duty_it/app/widgets/duo_layout.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -55,6 +56,37 @@ class _AdaptivePagedSliverState<PageKey, Item>
   (double, int, double, EdgeInsets)? _geometry;
   int _restoreGeneration = 0;
 
+  double _visibleTop(RenderBox fallback) {
+    var top = fallback.localToGlobal(Offset.zero).dy;
+    final render = context.findRenderObject();
+    final viewport = RenderAbstractViewport.maybeOf(render);
+    if (render != null &&
+        viewport is RenderViewportBase &&
+        viewport.axisDirection == AxisDirection.down) {
+      RenderObject sliver = render;
+      while (sliver.parent != null && sliver.parent != viewport) {
+        sliver = sliver.parent!;
+      }
+      if (sliver is RenderSliver && sliver.parent == viewport) {
+        // Include the painted floating app bar as well as the pinned filters.
+        // Cards hidden behind either control are not reading anchors.
+        for (
+          var header = viewport.firstChild;
+          header != null && header != sliver;
+          header = viewport.childAfter(header)
+        ) {
+          if (header.geometry?.visible != true) continue;
+          final bounds = MatrixUtils.transformRect(
+            header.getTransformTo(viewport),
+            header.paintBounds,
+          );
+          top = math.max(top, viewport.localToGlobal(bounds.bottomLeft).dy);
+        }
+      }
+    }
+    return top;
+  }
+
   /// During a same-column fold tween, keep one visible card at its original
   /// reading position. Stop correcting as soon as the user starts scrolling.
   VoidCallback? _captureMotionAnchor() {
@@ -63,7 +95,7 @@ class _AdaptivePagedSliverState<PageKey, Item>
     if (position.isScrollingNotifier.value) return null;
     final viewport = scrollable.context.findRenderObject() as RenderBox?;
     if (viewport == null || !viewport.hasSize) return null;
-    final top = viewport.localToGlobal(Offset.zero).dy;
+    final top = _visibleTop(viewport);
     final visible = _itemKeys.entries.where((entry) {
       final box = entry.value.currentContext?.findRenderObject() as RenderBox?;
       return box != null &&
@@ -113,7 +145,7 @@ class _AdaptivePagedSliverState<PageKey, Item>
     if (scrollable.position.isScrollingNotifier.value) return;
     final viewport = scrollable.context.findRenderObject() as RenderBox?;
     if (viewport == null || !viewport.hasSize) return;
-    final top = viewport.localToGlobal(Offset.zero).dy;
+    final top = _visibleTop(viewport);
     final visible = _itemKeys.entries.where((entry) {
       final box = entry.value.currentContext?.findRenderObject() as RenderBox?;
       return box != null &&

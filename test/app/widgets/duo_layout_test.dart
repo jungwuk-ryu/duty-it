@@ -297,6 +297,97 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final floating in [false, true]) {
+    testWidgets(
+      'resizing keeps the card visible below pinned filters (floating: $floating)',
+      (tester) async {
+        final scroll = ScrollController();
+        addTearDown(scroll.dispose);
+        final state = PagingState<int, int>(
+          pages: [List.generate(60, (i) => i)],
+          keys: [1],
+          hasNextPage: false,
+        );
+        Widget app(double width) => MaterialApp(
+          home: Center(
+            child: SizedBox(
+              width: width,
+              child: CustomScrollView(
+                controller: scroll,
+                slivers: [
+                  if (floating)
+                    const SliverAppBar(
+                      floating: true,
+                      snap: true,
+                      primary: false,
+                      title: Text('듀잇'),
+                    ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 120)),
+                  const SliverAppBar(
+                    pinned: true,
+                    primary: false,
+                    toolbarHeight: 180,
+                    title: Text('검색 및 필터'),
+                    flexibleSpace: SizedBox.expand(
+                      key: ValueKey('pinned-filters-body'),
+                    ),
+                  ),
+                  AdaptivePagedSliver<int, int>(
+                    eventTiles: true,
+                    state: state,
+                    fetchNextPage: () => fail('resizing must not fetch'),
+                    builderDelegate: PagedChildBuilderDelegate<int>(
+                      itemBuilder: (_, item, index) => LayoutBuilder(
+                        builder: (_, constraints) => SizedBox(
+                          key: ValueKey('pinned-row-$item'),
+                          height: constraints.maxWidth * .75 + 100,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+        await tester.pumpWidget(app(336));
+        await tester.pumpAndSettle();
+        scroll.jumpTo(floating ? 420 : 480);
+        await tester.pumpAndSettle();
+        if (floating) {
+          await tester.drag(find.byType(CustomScrollView), const Offset(0, 54));
+          await tester.pumpAndSettle();
+          // This row is hidden by the floating bar plus the pinned filters,
+          // although it extends past the pinned header's minimum extent alone.
+          final hidden = find.byKey(const ValueKey('pinned-row-0'));
+          expect(tester.getBottomLeft(hidden).dy, greaterThan(180));
+          expect(
+            tester.getBottomLeft(hidden).dy,
+            lessThanOrEqualTo(
+              tester
+                  .getBottomLeft(
+                    find.byKey(const ValueKey('pinned-filters-body')),
+                  )
+                  .dy,
+            ),
+          );
+        }
+        final visibleTop = tester
+            .getBottomLeft(find.byKey(const ValueKey('pinned-filters-body')))
+            .dy;
+        final anchor = find.byKey(const ValueKey('pinned-row-2'));
+        final before = tester.getTopLeft(anchor).dy;
+        expect(before, lessThan(visibleTop));
+        expect(tester.getBottomLeft(anchor).dy, greaterThan(visibleTop));
+        await tester.pumpWidget(app(674));
+        await tester.pumpAndSettle();
+        expect(tester.getTopLeft(anchor).dy, closeTo(before, 1));
+        expect(tester.getBottomLeft(anchor).dy, greaterThan(visibleTop));
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
   testWidgets(
     'existing children reflow without clipping variable height content',
     (tester) async {
