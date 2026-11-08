@@ -21,9 +21,9 @@ class EventHostCard extends StatelessWidget {
       onTap: onTap,
       excludeSemantics: true,
       child: Material(
-        color: AppColors.g01,
+        color: context.colors.subtleSurface,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: context.colors.border),
           borderRadius: BorderRadius.circular(14),
         ),
         clipBehavior: Clip.antiAlias,
@@ -38,7 +38,7 @@ class EventHostCard extends StatelessWidget {
                   height: 52,
                   decoration: BoxDecoration(
                     color: AppColors.white,
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: context.colors.border),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   clipBehavior: Clip.antiAlias,
@@ -65,9 +65,12 @@ class EventHostCard extends StatelessWidget {
                       ),
                       if (onTap != null) ...[
                         const SizedBox(height: 4),
-                        const Text(
+                        Text(
                           '주최의 행사 목록 보기',
-                          style: TextStyle(fontSize: 12, color: AppColors.g05),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: context.colors.muted,
+                          ),
                         ),
                       ],
                     ],
@@ -75,7 +78,10 @@ class EventHostCard extends StatelessWidget {
                 ),
                 if (onTap != null) ...[
                   const SizedBox(width: 8),
-                  const Icon(Icons.chevron_right_rounded, color: AppColors.g05),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: context.colors.muted,
+                  ),
                 ],
               ],
             ),

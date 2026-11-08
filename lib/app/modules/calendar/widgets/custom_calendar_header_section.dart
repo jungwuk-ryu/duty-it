@@ -29,7 +29,7 @@ class _HeaderText extends StatelessWidget {
         child: Text(
           text,
           style: TextStyle(
-            color: AppColors.g07,
+            color: context.colors.secondaryText,
             fontSize: 10,
             fontWeight: FontWeight.w400,
             height: 1.60,

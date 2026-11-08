@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -11,7 +12,11 @@ class DrawerAccountButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _onClick,
-      child: Image.asset(Assets.icons.backRight.path, width: 40, height: 40),
+      child: AppAssetIcon(
+        asset: Assets.icons.backRight.path,
+        width: 40,
+        height: 40,
+      ),
     );
   }
 

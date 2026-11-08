@@ -17,7 +17,7 @@ class JobDetailFooter extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      color: AppColors.g01,
+      color: context.colors.subtleSurface,
       padding: const EdgeInsets.fromLTRB(28, 11, 28, 22),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,10 +25,10 @@ class JobDetailFooter extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 '정보출처',
                 style: TextStyle(
-                  color: AppColors.black,
+                  color: context.colors.text,
                   fontSize: 9,
                   fontWeight: FontWeight.w400,
                   height: 1.60,
@@ -36,11 +36,21 @@ class JobDetailFooter extends StatelessWidget {
               ),
               const SizedBox(height: 7),
               if (isWork24)
-                Image.asset(
-                  Assets.icons.work24.path,
-                  width: 79,
-                  height: 22,
-                  fit: BoxFit.contain,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Image.asset(
+                    Assets.icons.work24.path,
+                    width: 79,
+                    height: 22,
+                    fit: BoxFit.contain,
+                  ),
                 )
               else
                 Container(
@@ -49,14 +59,14 @@ class JobDetailFooter extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.g03),
+                    border: Border.all(color: context.colors.border),
                   ),
                   child: Text(
                     sourceName,
-                    style: const TextStyle(
-                      color: AppColors.black,
+                    style: TextStyle(
+                      color: context.colors.text,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       height: 1.40,
@@ -73,7 +83,7 @@ class JobDetailFooter extends StatelessWidget {
                   ? RichText(
                       text: TextSpan(
                         style: TextStyle(
-                          color: AppColors.black,
+                          color: context.colors.text,
                           fontSize: 10,
                           fontWeight: FontWeight.w400,
                           height: 1.40,
@@ -82,7 +92,7 @@ class JobDetailFooter extends StatelessWidget {
                           TextSpan(text: '본 자료는 고용노동부 고용24'),
                           TextSpan(
                             text: '(www.work24.go.kr)\n',
-                            style: TextStyle(color: AppColors.linkBlue),
+                            style: TextStyle(color: context.colors.link),
                           ),
                           TextSpan(text: '에서 제공된 정보이며, 무단복제 및 배포를 금지합니다.'),
                         ],
@@ -90,8 +100,8 @@ class JobDetailFooter extends StatelessWidget {
                     )
                   : Text(
                       '$sourceName에서 제공된 채용 정보입니다.',
-                      style: const TextStyle(
-                        color: AppColors.black,
+                      style: TextStyle(
+                        color: context.colors.text,
                         fontSize: 10,
                         fontWeight: FontWeight.w400,
                         height: 1.40,

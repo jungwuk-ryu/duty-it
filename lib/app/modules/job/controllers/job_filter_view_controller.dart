@@ -3,6 +3,7 @@ import 'package:duty_it/app/core/enums/work_region.dart';
 import 'package:duty_it/app/modules/job/widgets/filter/job_region_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
 import 'package:duty_it/app/services/job_filter/models/job_filter.dart';
+import 'package:duty_it/app/widgets/duit_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -123,10 +124,8 @@ class JobFilterViewController extends GetxController {
   }
 
   void showRegionSelectionBottomModal() {
-    showModalBottomSheet(
+    showDuitBottomSheet(
       context: Get.context!,
-      isScrollControlled: true,
-      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),

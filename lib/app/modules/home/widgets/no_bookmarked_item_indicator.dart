@@ -18,7 +18,7 @@ class NoBookmarkedItemIndicator extends StatelessWidget {
         textAlign: TextAlign.center,
         maxLines: 2,
         style: TextStyle(
-          color: AppColors.g06,
+          color: context.colors.icon,
           fontSize: 14,
           fontWeight: FontWeight.w400,
           height: 1.60,

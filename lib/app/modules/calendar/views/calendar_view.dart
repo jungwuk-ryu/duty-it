@@ -15,10 +15,10 @@ class CalendarView extends GetView<CalendarViewController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
+        SizedBox(
           height: kToolbarHeight,
           child: ColoredBox(
-            color: AppColors.white,
+            color: context.colors.canvas,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: HomeAppBar(),
@@ -39,7 +39,7 @@ class CalendarView extends GetView<CalendarViewController> {
         Container(
           width: double.infinity,
           height: 1,
-          decoration: const BoxDecoration(color: AppColors.border),
+          decoration: BoxDecoration(color: context.colors.border),
         ),
         SizedBox(height: 16),
         Expanded(

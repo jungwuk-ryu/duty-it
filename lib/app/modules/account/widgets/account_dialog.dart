@@ -28,10 +28,13 @@ class AccountDialog extends StatelessWidget {
     );
     var contentWidget = Text(
       content,
-      style: TextStyle(fontSize: 14, color: AppColors.g07),
+      style: TextStyle(fontSize: 14, color: context.colors.secondaryText),
     );
     var cancelWidget = Text('취소');
-    var acceptWidget = Text(actionText, style: TextStyle(color: AppColors.red));
+    var acceptWidget = Text(
+      actionText,
+      style: TextStyle(color: Theme.of(context).colorScheme.error),
+    );
 
     if (!kIsWeb && Platform.isAndroid) {
       return AlertDialog(

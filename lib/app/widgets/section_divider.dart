@@ -8,7 +8,7 @@ class SectionDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: AppColors.g01,
+      color: context.colors.subtleSurface,
       child: SizedBox(height: 8, width: double.infinity),
     );
   }

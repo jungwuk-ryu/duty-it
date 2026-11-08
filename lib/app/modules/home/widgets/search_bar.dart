@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,8 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: AppColors.white,
-        border: Border.all(color: AppColors.border),
+        color: context.colors.surface,
+        border: Border.all(color: context.colors.border),
         borderRadius: BorderRadius.circular(11),
       ),
       child: Center(
@@ -31,11 +32,11 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: 16),
-            Image.asset(
-              Assets.icons.search.path,
+            AppAssetIcon(
+              asset: Assets.icons.search.path,
               height: 16,
               width: 16,
-              color: AppColors.g06,
+              color: context.colors.icon,
             ),
             SizedBox(width: 8),
             Expanded(
@@ -47,7 +48,7 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                   isCollapsed: true,
                   hintText: widget.hintText,
                   hintStyle: TextStyle(
-                    color: AppColors.g05,
+                    color: context.colors.muted,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
@@ -66,10 +67,10 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                       widget.controller.clear();
                     });
                   },
-                  child: Image.asset(
-                    Assets.icons.textdelete.path,
-                    width: 16,
-                    height: 16,
+                  child: Icon(
+                    Icons.cancel_rounded,
+                    color: context.colors.disabled,
+                    size: 16,
                   ),
                 ),
               ),

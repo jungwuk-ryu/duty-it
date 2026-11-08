@@ -50,12 +50,12 @@ class _JobDetailMediaPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: AppColors.g03,
+      color: context.colors.border,
       alignment: Alignment.center,
-      child: const Text(
+      child: Text(
         'IMG',
         style: TextStyle(
-          color: AppColors.black,
+          color: context.colors.text,
           fontSize: 20,
           fontWeight: FontWeight.w600,
           height: 1.20,

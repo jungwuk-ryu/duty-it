@@ -3,6 +3,7 @@ import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/account/widgets/account_bottom_modal.dart';
 import 'package:duty_it/app/modules/account/widgets/account_dialog.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
+import 'package:duty_it/app/widgets/duit_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,9 +27,8 @@ class AccountViewController extends GetxController {
   }
 
   void onUserNameEditButtonClicked() {
-    showModalBottomSheet(
+    showDuitBottomSheet(
       context: Get.context!,
-      isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -53,8 +53,9 @@ class AccountViewController extends GetxController {
   }
 
   Future<void> logout() async {
-    Get.dialog(
-      AccountDialog(
+    showDialog<void>(
+      context: Get.context!,
+      builder: (_) => AccountDialog(
         title: '로그아웃',
         content: '로그아웃 하시겠습니까?',
         actionText: '로그아웃',
@@ -67,8 +68,9 @@ class AccountViewController extends GetxController {
   }
 
   Future<void> withdraw() async {
-    Get.dialog(
-      AccountDialog(
+    showDialog<void>(
+      context: Get.context!,
+      builder: (_) => AccountDialog(
         title: '회원 탈퇴',
         content: '탈퇴 하시겠습니까?\n이 작업은 복구할 수 없습니다.',
         actionText: '탈퇴',

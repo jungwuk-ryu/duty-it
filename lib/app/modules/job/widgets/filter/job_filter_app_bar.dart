@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/job/controllers/job_filter_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -18,19 +19,19 @@ class JobFilterAppBar extends GetView<JobFilterViewController> {
             width: 48,
             height: 48,
             child: Center(
-              child: Image.asset(
-                Assets.icons.backLeft.path,
+              child: AppAssetIcon(
+                asset: Assets.icons.backLeft.path,
                 width: 40,
                 height: 40,
               ),
             ),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: Text(
             '채용 검색 필터',
             style: TextStyle(
-              color: AppColors.black,
+              color: context.colors.text,
               fontSize: 20,
               fontWeight: FontWeight.w600,
               height: 1.60,
@@ -42,14 +43,14 @@ class JobFilterAppBar extends GetView<JobFilterViewController> {
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: controller.onResetSettingsButtonClicked,
-            child: const SizedBox(
+            child: SizedBox(
               width: 48,
               height: 48,
               child: Center(
                 child: Text(
                   '초기화',
                   style: TextStyle(
-                    color: AppColors.g04,
+                    color: context.colors.disabled,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     height: 1.60,

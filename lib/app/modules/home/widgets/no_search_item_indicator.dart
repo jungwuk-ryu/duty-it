@@ -4,10 +4,7 @@ import 'package:flutter/widgets.dart';
 class NoSearchItemIndicator extends StatelessWidget {
   final String text;
 
-  const NoSearchItemIndicator({
-    super.key,
-    this.text = '검색 결과가 존재하지 않습니다.',
-  });
+  const NoSearchItemIndicator({super.key, this.text = '검색 결과가 존재하지 않습니다.'});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +14,7 @@ class NoSearchItemIndicator extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: AppColors.g06,
+          color: context.colors.icon,
           fontSize: 14,
           fontWeight: FontWeight.w400,
           height: 1.60,

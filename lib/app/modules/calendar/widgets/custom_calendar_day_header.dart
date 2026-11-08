@@ -34,7 +34,7 @@ class DayHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: isSelected
                   ? AppColors.main
-                  : (isToday ? AppColors.g03 : AppColors.transparent),
+                  : (isToday ? context.colors.border : AppColors.transparent),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -44,8 +44,8 @@ class DayHeader extends StatelessWidget {
                   color: isSelected
                       ? AppColors.white
                       : (date.month == calendarMonth
-                            ? AppColors.g07
-                            : AppColors.g03),
+                            ? context.colors.secondaryText
+                            : context.colors.disabled),
                   fontSize: 10,
                   fontFamily: 'Pretendard',
                   fontWeight: FontWeight.w400,

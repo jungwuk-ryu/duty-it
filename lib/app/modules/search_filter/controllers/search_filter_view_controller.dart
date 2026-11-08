@@ -3,6 +3,7 @@ import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/services/search_filter/models/search_filter.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/search_filter/search_filter_service.dart';
+import 'package:duty_it/app/widgets/duit_modal.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -63,9 +64,8 @@ class SearchFilterViewController extends GetxController {
   }
 
   void showHostSelectionBottomModal() {
-    showModalBottomSheet(
+    showDuitBottomSheet(
       context: Get.context!,
-      isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),

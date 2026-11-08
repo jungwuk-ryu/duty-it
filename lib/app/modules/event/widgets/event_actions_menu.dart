@@ -4,6 +4,9 @@ import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/utils/event_actions.dart';
 import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
+import 'package:duty_it/app/widgets/duit_glass_menu.dart';
+import 'package:duty_it/app/widgets/duit_detail_actions_menu.dart';
+import 'package:duty_it/app/widgets/duit_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -40,71 +43,64 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
         content: Text(text),
         action: action,
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.g07,
         duration: Duration(seconds: action == null ? 3 : 6),
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context) => PopupMenuButton<_EventAction>(
-    tooltip: '행사 더보기',
-    icon: const Icon(Icons.more_horiz_rounded, color: AppColors.black),
-    color: AppColors.white,
-    surfaceTintColor: AppColors.white,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-    onSelected: (action) async {
-      switch (action) {
-        case _EventAction.copy:
-          await _copyLink();
-        case _EventAction.share:
-          await _share();
-        case _EventAction.bookmark:
-          await widget.onBookmarkTap();
-        case _EventAction.calendar:
-          await _addToCalendar();
-      }
-    },
-    itemBuilder: (_) => [
-      _item(_EventAction.copy, Icons.link_rounded, '링크 복사'),
-      _item(
-        _EventAction.share,
-        Icons.ios_share_rounded,
-        '공유',
-        enabled: !_shareBusy,
-      ),
-      _item(
-        _EventAction.bookmark,
-        widget.event.isBookmarked
-            ? Icons.bookmark_rounded
-            : Icons.bookmark_border_rounded,
-        widget.event.isBookmarked ? '북마크 해제' : '북마크',
-        enabled: !widget.bookmarkBusy,
-      ),
-      _item(
-        _EventAction.calendar,
-        Icons.event_available_outlined,
-        _calendarBusy ? '캘린더 확인 중…' : '캘린더에 추가',
-        enabled: !_calendarBusy,
-      ),
-    ],
-  );
+  Widget build(BuildContext context) {
+    return DuitDetailActionsMenu(
+      tooltip: '행사 더보기',
+      items: [
+        _item(_EventAction.copy, Icons.link_rounded, '링크 복사'),
+        _item(
+          _EventAction.share,
+          Icons.ios_share_rounded,
+          '공유',
+          enabled: !_shareBusy,
+        ),
+        _item(
+          _EventAction.bookmark,
+          widget.event.isBookmarked
+              ? Icons.bookmark_rounded
+              : Icons.bookmark_border_rounded,
+          widget.event.isBookmarked ? '북마크 해제' : '북마크',
+          enabled: !widget.bookmarkBusy,
+        ),
+        _item(
+          _EventAction.calendar,
+          Icons.event_available_outlined,
+          _calendarBusy ? '캘린더 확인 중…' : '캘린더에 추가',
+          enabled: !_calendarBusy,
+        ),
+      ],
+    );
+  }
 
-  PopupMenuItem<_EventAction> _item(
+  Future<void> _select(_EventAction action) async {
+    if (!mounted) return;
+    switch (action) {
+      case _EventAction.copy:
+        await _copyLink();
+      case _EventAction.share:
+        await _share();
+      case _EventAction.bookmark:
+        await widget.onBookmarkTap();
+      case _EventAction.calendar:
+        await _addToCalendar();
+    }
+  }
+
+  Widget _item(
     _EventAction action,
     IconData icon,
     String label, {
     bool enabled = true,
-  }) => PopupMenuItem(
-    value: action,
-    enabled: enabled,
-    child: Row(
-      children: [
-        Icon(icon, size: 20, color: enabled ? AppColors.g07 : AppColors.g04),
-        const SizedBox(width: 12),
-        Text(label),
-      ],
-    ),
+  }) => DuitGlassMenuItem(
+    label: label,
+    leadingIcon: Icon(icon, size: 20),
+    onPressed: enabled ? () => _select(action) : null,
   );
 
   Future<void> _copyLink() async {
@@ -137,6 +133,16 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
     }
   }
 
+  BuildContext get _overlayContext =>
+      Navigator.of(context, rootNavigator: true).context;
+
+  Offset? get _modalAnchor {
+    final box = context.findRenderObject();
+    return box is RenderBox && box.hasSize
+        ? box.localToGlobal(box.size.center(Offset.zero))
+        : null;
+  }
+
   Future<void> _addToCalendar() async {
     if (_calendarBusy) return;
     final event = widget.event;
@@ -151,7 +157,8 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
       if (!await service.requestPermission()) {
         if (!mounted) return;
         final openSettings = await showDialog<bool>(
-          context: context,
+          context: _overlayContext,
+          anchorPoint: _modalAnchor,
           builder: (dialogContext) => AlertDialog(
             title: const Text('캘린더 접근을 허용해 주세요'),
             content: const Text('기기 캘린더에 행사를 저장하려면 캘린더 권한이 필요해요.'),
@@ -184,7 +191,8 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
       String? calendarId;
       if (calendars.isEmpty) {
         final create = await showDialog<bool>(
-          context: context,
+          context: _overlayContext,
+          anchorPoint: _modalAnchor,
           builder: (dialogContext) => AlertDialog(
             title: const Text('저장할 캘린더가 없어요'),
             content: const Text('이 기기에 ‘듀잇’ 캘린더를 만들고 행사를 추가할까요?'),
@@ -203,11 +211,10 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
         if (create != true || !mounted) return;
         calendarId = await service.createLocalCalendar();
       } else {
-        calendarId = await showModalBottomSheet<String>(
-          context: context,
-          useSafeArea: true,
-          isScrollControlled: true,
-          backgroundColor: AppColors.white,
+        calendarId = await showDuitBottomSheet<String>(
+          context: _overlayContext,
+          anchorPoint: _modalAnchor,
+          useRootNavigator: true,
           showDragHandle: true,
           builder: (_) => _CalendarPicker(calendars: calendars, draft: draft),
         );
@@ -301,7 +308,7 @@ class _CalendarPickerState extends State<_CalendarPicker> {
             const SizedBox(height: 6),
             Text(
               '${_date(widget.draft.start)} – ${_date(widget.draft.end)} (KST)',
-              style: const TextStyle(fontSize: 12, color: AppColors.g05),
+              style: TextStyle(fontSize: 12, color: context.colors.muted),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -317,7 +324,7 @@ class _CalendarPickerState extends State<_CalendarPicker> {
                       (calendar) => ListTile(
                         contentPadding: EdgeInsets.zero,
                         selected: _selected == calendar.id,
-                        selectedColor: AppColors.main,
+                        selectedColor: context.colors.accent,
                         leading: const Icon(Icons.calendar_month_outlined),
                         title: Text(calendar.name),
                         subtitle: _accountLabel(calendar) == null
@@ -339,6 +346,7 @@ class _CalendarPickerState extends State<_CalendarPicker> {
               style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
                 backgroundColor: AppColors.main,
+                foregroundColor: AppColors.white,
               ),
               onPressed: () => Navigator.pop(context, _selected),
               child: const Text('선택한 캘린더에 추가'),

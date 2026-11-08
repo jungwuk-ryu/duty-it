@@ -9,38 +9,101 @@ import 'package:duty_it/app/core/models/event_detail.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/services/event_content_service.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/modules/event/widgets/event_actions_menu.dart';
 import 'package:duty_it/app/modules/event/widgets/event_host_card.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/main/controllers/main_view_controller.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/modules/event/widgets/event_detail_layout.dart';
+import 'package:duty_it/app/modules/event/widgets/event_image_backdrop.dart';
 import 'package:duty_it/app/modules/event/views/event_poster_viewer.dart';
-import 'package:duty_it/app/widgets/duit_glass.dart';
+import 'package:duty_it/app/widgets/duit_detail_scaffold.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
+import 'package:duty_it/app/widgets/event_poster_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class EventDetailView extends StatefulWidget {
+class EventDetailView extends StatelessWidget {
   final Rx<Event> eventRx;
   final EventDetail? initialDetail;
   final Future<void> Function() onBookmarkTap;
+  final Object? posterHeroTag;
 
   const EventDetailView({
     super.key,
     required this.eventRx,
     this.initialDetail,
     required this.onBookmarkTap,
+    this.posterHeroTag,
   });
 
+  static Future<void>? open(
+    BuildContext context, {
+    required Rx<Event> eventRx,
+    required Future<void> Function() onBookmarkTap,
+    required Object posterHeroTag,
+  }) {
+    final duration = DuoMotion.durationOf(context);
+    return Get.to<void>(
+      () => EventDetailView(
+        eventRx: eventRx,
+        onBookmarkTap: onBookmarkTap,
+        posterHeroTag: posterHeroTag,
+      ),
+      routeName: '/events/${eventRx.value.id}',
+      transition: duration == Duration.zero
+          ? Transition.noTransition
+          : Transition.fadeIn,
+      duration: duration,
+      curve: Curves.easeOutCubic,
+      popGesture: Theme.of(context).platform == TargetPlatform.iOS,
+    );
+  }
+
   @override
-  State<EventDetailView> createState() => _EventDetailViewState();
+  Widget build(BuildContext context) => Obx(() {
+    final thumbnail = eventRx.value.thumbnail.trim();
+    return EventImageBackdrop(
+      image: AppUtils.isHttpUrl(thumbnail)
+          ? CachedNetworkImageProvider(thumbnail)
+          : null,
+      child: _EventDetailContent(
+        eventRx: eventRx,
+        initialDetail: initialDetail,
+        onBookmarkTap: onBookmarkTap,
+        posterHeroTag: posterHeroTag,
+      ),
+    );
+  });
 }
 
-class _EventDetailViewState extends State<EventDetailView> {
+class _EventDetailContent extends StatefulWidget {
+  const _EventDetailContent({
+    required this.eventRx,
+    required this.initialDetail,
+    required this.onBookmarkTap,
+    required this.posterHeroTag,
+  });
+
+  final Rx<Event> eventRx;
+  final EventDetail? initialDetail;
+  final Future<void> Function() onBookmarkTap;
+  final Object? posterHeroTag;
+
+  @override
+  State<_EventDetailContent> createState() => _EventDetailViewState();
+}
+
+class _EventDetailViewState extends State<_EventDetailContent> {
   final EventContentService _contentService = EventContentService();
+  // Preserve in-flight actions when folding moves the menu between toolbars.
+  final _actionsKey = GlobalKey();
+  final _fallbackPosterHeroTag = Object();
+  Object get _posterHeroTag => widget.posterHeroTag ?? _fallbackPosterHeroTag;
   bool _loading = true;
   bool _loadFailed = false;
   bool _bookmarkBusy = false;
@@ -159,6 +222,10 @@ class _EventDetailViewState extends State<EventDetailView> {
   }
 
   Future<void> _openOrganizer(String value) async {
+    if (!Get.find<AuthService>().isLoggined()) {
+      Get.toNamed(Routes.LOGIN);
+      return;
+    }
     final uri = Uri.tryParse(value);
     if (uri == null ||
         !uri.hasAuthority ||
@@ -171,65 +238,57 @@ class _EventDetailViewState extends State<EventDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.canvas,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        surfaceTintColor: AppColors.white,
-        elevation: 0,
-        leading: IconButton(
-          tooltip: '뒤로 가기',
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.black),
-          onPressed: Get.back,
-        ),
-        title: const Text(
-          '행사 상세',
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        actions: [
-          Obx(
-            () => EventActionsMenu(
-              event: widget.eventRx.value,
-              bookmarkBusy: _bookmarkBusy,
-              onBookmarkTap: _toggleBookmark,
-            ),
-          ),
-        ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: AppColors.border),
-        ),
+    final layout = DuoLayoutData.of(context);
+    final edge = layout.verticalBarEdge;
+    final media = MediaQuery.of(context);
+    final sideWidth = layout.sideBarWidth(media);
+    final contentInsets = EdgeInsets.only(
+      left: edge == 'left' ? sideWidth : media.padding.left,
+      right: edge == 'right' ? sideWidth : media.padding.right,
+    );
+    final menu = Obx(
+      () => EventActionsMenu(
+        key: _actionsKey,
+        event: widget.eventRx.value,
+        bookmarkBusy: _bookmarkBusy,
+        onBookmarkTap: _toggleBookmark,
       ),
-      body: SafeArea(
-        top: false,
-        bottom: false,
+    );
+    return DuitDetailScaffold(
+      title: const SizedBox.shrink(),
+      actions: menu,
+      onBack: Get.back,
+      body: MediaQuery.removePadding(
+        context: context,
+        removeLeft: true,
+        removeRight: true,
         child: Obx(() {
           final event = widget.eventRx.value;
           return Column(
             children: [
               if (_loading)
-                const LinearProgressIndicator(
+                LinearProgressIndicator(
                   minHeight: 2,
-                  color: AppColors.main,
+                  color: context.colors.accent,
                 ),
               if (_loadFailed)
-                MaterialBanner(
-                  content: const Text('최신 행사 정보를 불러오지 못했어요.'),
-                  backgroundColor: AppColors.g01,
-                  actions: [
-                    TextButton(
-                      onPressed: _loadDetail,
-                      child: const Text('다시 시도'),
-                    ),
-                  ],
+                Padding(
+                  padding: contentInsets,
+                  child: MaterialBanner(
+                    content: const Text('최신 행사 정보를 불러오지 못했어요.'),
+                    backgroundColor: context.colors.subtleSurface,
+                    actions: [
+                      TextButton(
+                        onPressed: _loadDetail,
+                        child: const Text('다시 시도'),
+                      ),
+                    ],
+                  ),
                 ),
               Expanded(
                 child: EventDetailLayout(
-                  safeLeft: MediaQuery.paddingOf(context).left,
+                  contentInsets: contentInsets,
+                  safeLeft: edge == 'left' ? sideWidth : media.padding.left,
                   poster: _poster(event),
                   actions: _bottomBar(event),
                   information: Column(
@@ -241,21 +300,21 @@ class _EventDetailViewState extends State<EventDetailView> {
                         children: [
                           _tag(
                             _category(event),
-                            AppColors.g02,
-                            AppColors.black,
+                            context.colors.mutedSurface,
+                            context.colors.text,
                           ),
                           _tag(
                             _statusLabel(event),
-                            AppColors.sub,
-                            AppColors.main,
+                            context.colors.accentSurface,
+                            context.colors.accent,
                           ),
                         ],
                       ),
                       const SizedBox(height: 15),
                       Text(
                         event.title,
-                        style: const TextStyle(
-                          color: AppColors.black,
+                        style: TextStyle(
+                          color: context.colors.text,
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                           height: 1.45,
@@ -264,13 +323,13 @@ class _EventDetailViewState extends State<EventDetailView> {
                       const SizedBox(height: 9),
                       Text(
                         event.host.name,
-                        style: const TextStyle(
-                          color: AppColors.g05,
+                        style: TextStyle(
+                          color: context.colors.muted,
                           fontSize: 14,
                         ),
                       ),
                       const SizedBox(height: 28),
-                      const Divider(height: 1, color: AppColors.border),
+                      Divider(height: 1, color: context.colors.border),
                       const SizedBox(height: 23),
                       _sectionHeading('일정 안내', trailing: '한국 시간 (KST)'),
                       const SizedBox(height: 20),
@@ -293,14 +352,14 @@ class _EventDetailViewState extends State<EventDetailView> {
                       if (_contentResult?.availability !=
                           EventContentAvailability.unavailable) ...[
                         const SizedBox(height: 28),
-                        const Divider(height: 1, color: AppColors.border),
+                        Divider(height: 1, color: context.colors.border),
                         const SizedBox(height: 23),
                         _sectionHeading('행사 내용'),
                         const SizedBox(height: 12),
                         _contentCard(event.id),
                       ],
                       const SizedBox(height: 28),
-                      const Divider(height: 1, color: AppColors.border),
+                      Divider(height: 1, color: context.colors.border),
                       const SizedBox(height: 23),
                       _sectionHeading('주최 안내'),
                       const SizedBox(height: 14),
@@ -309,16 +368,16 @@ class _EventDetailViewState extends State<EventDetailView> {
                         const SizedBox(height: 24),
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.visibility_outlined,
                               size: 16,
-                              color: AppColors.g05,
+                              color: context.colors.muted,
                             ),
                             const SizedBox(width: 7),
                             Text(
                               '조회 $_viewCount',
-                              style: const TextStyle(
-                                color: AppColors.g05,
+                              style: TextStyle(
+                                color: context.colors.muted,
                                 fontSize: 12,
                               ),
                             ),
@@ -330,13 +389,13 @@ class _EventDetailViewState extends State<EventDetailView> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: AppColors.g01,
+                          color: context.colors.subtleSurface,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text(
+                        child: Text(
                           '자세한 내용과 신청은 주최 페이지에서 확인해 주세요.',
                           style: TextStyle(
-                            color: AppColors.g05,
+                            color: context.colors.muted,
                             fontSize: 12,
                             height: 1.7,
                           ),
@@ -357,44 +416,20 @@ class _EventDetailViewState extends State<EventDetailView> {
     final hasImage = AppUtils.isHttpUrl(event.thumbnail);
     return AspectRatio(
       aspectRatio: 4 / 3,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Builder(
-          builder: (source) => Stack(
-            fit: StackFit.expand,
-            children: [
-              if (hasImage) ...[
-                GestureDetector(
-                  excludeFromSemantics: true,
-                  onTap: () => _showPoster(source, event),
-                  child: CachedNetworkImage(
-                    imageUrl: event.thumbnail,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                    placeholder: (_, _) =>
-                        const ColoredBox(color: AppColors.g01),
-                    errorWidget: (_, _, _) => const _PosterPlaceholder(),
-                  ),
-                ),
-                PositionedDirectional(
-                  end: 12,
-                  bottom: 12,
-                  child: DuitGlass(
-                    radius: 24,
-                    child: IconButton(
-                      tooltip: '포스터 전체 보기',
-                      onPressed: () => _showPoster(source, event),
-                      icon: const Icon(
-                        Icons.open_in_full_rounded,
-                        size: 20,
-                        color: AppColors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              ] else
-                const _PosterPlaceholder(),
-            ],
+      child: Builder(
+        builder: (source) => Semantics(
+          button: hasImage,
+          label: hasImage ? '${event.title} 포스터 전체 보기' : '행사 포스터 없음',
+          excludeSemantics: true,
+          onTap: hasImage ? () => _showPoster(source, event) : null,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            excludeFromSemantics: true,
+            onTap: hasImage ? () => _showPoster(source, event) : null,
+            child: EventPosterImage(
+              imageUrl: event.thumbnail,
+              heroTag: _posterHeroTag,
+            ),
           ),
         ),
       ),
@@ -407,8 +442,8 @@ class _EventDetailViewState extends State<EventDetailView> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.sub,
-        border: Border.all(color: AppColors.main.withAlpha(45)),
+        color: context.colors.accentSurface,
+        border: Border.all(color: context.colors.accent.withAlpha(45)),
         borderRadius: BorderRadius.circular(16),
       ),
       child: result == null
@@ -427,18 +462,18 @@ class _EventDetailViewState extends State<EventDetailView> {
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(
                       Icons.auto_awesome_rounded,
                       size: 16,
-                      color: AppColors.main,
+                      color: context.colors.accent,
                     ),
                     SizedBox(width: 6),
                     Text(
                       'AI로 정리했어요',
                       style: TextStyle(
-                        color: AppColors.main,
+                        color: context.colors.accent,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -448,17 +483,17 @@ class _EventDetailViewState extends State<EventDetailView> {
                 const SizedBox(height: 14),
                 SelectableText(
                   result.body!,
-                  style: const TextStyle(
-                    color: AppColors.black,
+                  style: TextStyle(
+                    color: context.colors.text,
                     fontSize: 14,
                     height: 1.75,
                   ),
                 ),
                 const SizedBox(height: 18),
-                const Text(
+                Text(
                   'AI가 행사 자료를 바탕으로 정리한 내용으로, 일부 정보가 정확하지 않을 수 있어요. 신청 전 주최 페이지에서 확인해 주세요.',
                   style: TextStyle(
-                    color: AppColors.g05,
+                    color: context.colors.muted,
                     fontSize: 12,
                     height: 1.6,
                   ),
@@ -497,54 +532,51 @@ class _EventDetailViewState extends State<EventDetailView> {
     image: CachedNetworkImageProvider(event.thumbnail),
     title: event.title,
     host: event.host.name,
+    heroTag: _posterHeroTag,
   );
 
   Widget _bottomBar(Event event) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            OutlinedButton(
-              onPressed: _bookmarkBusy ? null : _toggleBookmark,
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(50, 48),
-                padding: EdgeInsets.zero,
-                side: const BorderSide(color: AppColors.border),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Icon(
-                event.isBookmarked
-                    ? Icons.bookmark_rounded
-                    : Icons.bookmark_border_rounded,
-                color: event.isBookmarked ? AppColors.main : AppColors.g07,
-              ),
+    return Row(
+      children: [
+        OutlinedButton(
+          onPressed: _bookmarkBusy ? null : _toggleBookmark,
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(50, 48),
+            padding: EdgeInsets.zero,
+            side: BorderSide(color: context.colors.border),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: FilledButton.icon(
-                onPressed: () => _openOrganizer(event.uri),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.main,
-                  foregroundColor: AppColors.white,
-                  minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: const Icon(Icons.open_in_new_rounded, size: 18),
-                label: const Text(
-                  '주최 페이지에서 자세히 보기',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ),
-            ),
-          ],
+          ),
+          child: Icon(
+            event.isBookmarked
+                ? Icons.bookmark_rounded
+                : Icons.bookmark_border_rounded,
+            color: event.isBookmarked
+                ? context.colors.accent
+                : context.colors.secondaryText,
+          ),
         ),
-      ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: FilledButton.icon(
+            onPressed: () => _openOrganizer(event.uri),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.main,
+              foregroundColor: AppColors.white,
+              minimumSize: const Size.fromHeight(48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(Icons.open_in_new_rounded, size: 18),
+            label: const Text(
+              '주최 페이지에서 자세히 보기',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -569,8 +601,8 @@ class _EventDetailViewState extends State<EventDetailView> {
     children: [
       Text(
         title,
-        style: const TextStyle(
-          color: AppColors.black,
+        style: TextStyle(
+          color: context.colors.text,
           fontSize: 16,
           fontWeight: FontWeight.w700,
         ),
@@ -578,7 +610,7 @@ class _EventDetailViewState extends State<EventDetailView> {
       if (trailing != null)
         Text(
           trailing,
-          style: const TextStyle(color: AppColors.g05, fontSize: 11),
+          style: TextStyle(color: context.colors.muted, fontSize: 11),
         ),
     ],
   );
@@ -591,7 +623,7 @@ class _EventDetailViewState extends State<EventDetailView> {
   }) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Icon(icon, size: 21, color: AppColors.g05),
+      Icon(icon, size: 21, color: context.colors.muted),
       const SizedBox(width: 14),
       Expanded(
         child: Column(
@@ -599,13 +631,13 @@ class _EventDetailViewState extends State<EventDetailView> {
           children: [
             Text(
               label,
-              style: const TextStyle(color: AppColors.g05, fontSize: 12),
+              style: TextStyle(color: context.colors.muted, fontSize: 12),
             ),
             const SizedBox(height: 6),
             Text(
               value,
-              style: const TextStyle(
-                color: AppColors.black,
+              style: TextStyle(
+                color: context.colors.text,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 height: 1.6,
@@ -615,8 +647,8 @@ class _EventDetailViewState extends State<EventDetailView> {
               const SizedBox(height: 4),
               Text(
                 note,
-                style: const TextStyle(
-                  color: AppColors.g05,
+                style: TextStyle(
+                  color: context.colors.muted,
                   fontSize: 12,
                   height: 1.5,
                 ),
@@ -690,13 +722,4 @@ class _EventDetailViewState extends State<EventDetailView> {
     }
     return '${_dateTime(start)} – ${_dateTime(end)}';
   }
-}
-
-class _PosterPlaceholder extends StatelessWidget {
-  const _PosterPlaceholder();
-  @override
-  Widget build(BuildContext context) => const ColoredBox(
-    color: AppColors.g01,
-    child: Icon(Icons.event_note_rounded, size: 64, color: AppColors.g04),
-  );
 }

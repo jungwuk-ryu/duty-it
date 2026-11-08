@@ -29,7 +29,7 @@ class ToggleSettingItem extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                color: enabled ? AppColors.black : AppColors.cal1,
+                color: enabled ? context.colors.text : context.colors.disabled,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 height: 1.60,
@@ -40,7 +40,9 @@ class ToggleSettingItem extends StatelessWidget {
               child: Text(
                 subtitle ?? "",
                 style: TextStyle(
-                  color: enabled ? AppColors.g05 : AppColors.cal1,
+                  color: enabled
+                      ? context.colors.muted
+                      : context.colors.disabled,
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   height: 1.60,

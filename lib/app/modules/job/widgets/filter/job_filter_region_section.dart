@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/job/controllers/job_filter_view_controller.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -18,11 +19,11 @@ class JobFilterRegionSection extends GetView<JobFilterViewController> {
           children: [
             Expanded(
               child: Row(
-                children: const [
+                children: [
                   Text(
                     '지역별',
                     style: TextStyle(
-                      color: AppColors.black,
+                      color: context.colors.text,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       height: 1.60,
@@ -35,7 +36,7 @@ class JobFilterRegionSection extends GetView<JobFilterViewController> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: AppColors.g05,
+                        color: context.colors.muted,
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         height: 1.60,
@@ -54,8 +55,8 @@ class JobFilterRegionSection extends GetView<JobFilterViewController> {
                         textAlign: TextAlign.right,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.main,
+                        style: TextStyle(
+                          color: context.colors.accent,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           height: 1.60,
@@ -65,12 +66,7 @@ class JobFilterRegionSection extends GetView<JobFilterViewController> {
                   : const SizedBox.shrink(),
             ),
             const SizedBox(width: 12),
-            Image.asset(
-              Assets.icons.go.path,
-              width: 16,
-              height: 16,
-              fit: BoxFit.contain,
-            ),
+            AppAssetIcon(asset: Assets.icons.go.path, width: 16, height: 16),
           ],
         ),
       ),

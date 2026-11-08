@@ -14,7 +14,7 @@ class AccountViewItemTitle extends StatelessWidget {
         fontSize: 14,
         fontWeight: FontWeight.w600,
         height: 1.60,
-        color: AppColors.g05,
+        color: context.colors.muted,
       ),
     );
   }

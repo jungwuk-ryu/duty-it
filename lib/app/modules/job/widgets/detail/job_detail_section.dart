@@ -27,8 +27,8 @@ class JobDetailSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: AppColors.black,
+            style: TextStyle(
+              color: context.colors.text,
               fontSize: 14,
               fontWeight: FontWeight.w600,
               height: 1.60,

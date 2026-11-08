@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/sort_option.dart';
-import 'package:duty_it/app/widgets/duit_glass.dart';
+import 'package:duty_it/app/widgets/duit_glass_menu.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,7 +35,6 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
   @override
   Widget build(BuildContext context) {
     final layout = DuoLayoutData.of(context);
-    final highContrast = MediaQuery.highContrastOf(context);
     final bounds = layout.contentBounds;
     // FoldSafeHeader places these controls in the leading pane.
     final insets = MediaQuery.viewPaddingOf(context);
@@ -48,127 +47,66 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
       60 + MediaQuery.textScalerOf(context).scale(150),
     );
     final reduceMotion = DuoMotion.durationOf(context) == Duration.zero;
-    return MenuAnchor(
+    return DuitGlassMenu(
+      width: width,
       childFocusNode: _triggerFocus,
-      consumeOutsideTap: true,
-      crossAxisUnconstrained: false,
-      alignmentOffset: Offset(-width, 4),
-      style: MenuStyle(
-        alignment: AlignmentDirectional.bottomEnd,
-        padding: const WidgetStatePropertyAll(EdgeInsets.zero),
-        backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-        elevation: const WidgetStatePropertyAll(6),
-        shadowColor: const WidgetStatePropertyAll(Color(0x4D19212A)),
-        side: WidgetStatePropertyAll(
-          BorderSide(
-            color: highContrast ? AppColors.g06 : const Color(0x46757C84),
-            width: highContrast ? 1 : 0.75,
+      builder: (context, menu, _) => Semantics(
+        expanded: menu.isOpen,
+        child: TextButton(
+          focusNode: _triggerFocus,
+          onPressed: () {
+            if (menu.isOpen) {
+              menu.close();
+            } else {
+              final box = context.findRenderObject()! as RenderBox;
+              final x = box.localToGlobal(Offset.zero).dx;
+              final trailing = Directionality.of(context) == TextDirection.ltr
+                  ? x + box.size.width - width
+                  : x;
+              // A wrapped trigger can sit at the start of the fold pane.
+              final left = trailing.clamp(
+                paneLeft + 16,
+                math.max(paneLeft + 16, paneLeft + paneWidth - 16 - width),
+              );
+              menu.open(position: Offset(left - x, box.size.height + 4));
+            }
+          },
+          style: TextButton.styleFrom(
+            minimumSize: const Size(44, 44),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            foregroundColor: menu.isOpen
+                ? context.colors.text
+                : context.colors.icon,
+            backgroundColor: menu.isOpen
+                ? context.colors.mutedSurface
+                : Colors.transparent,
+            shape: const StadiumBorder(),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-        ),
-        shape: const WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.selected.shortName,
+                semanticsLabel: '정렬, ${widget.selected.displayName}',
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 5),
+              AnimatedRotation(
+                turns: menu.isOpen ? 0.5 : 0,
+                duration: reduceMotion
+                    ? Duration.zero
+                    : const Duration(milliseconds: 150),
+                child: const Icon(Icons.keyboard_arrow_down_rounded, size: 17),
+              ),
+            ],
           ),
         ),
       ),
-      builder: (context, menu, _) => PopScope(
-        canPop: !menu.isOpen,
-        onPopInvokedWithResult: (popped, _) {
-          if (!popped && menu.isOpen) menu.close();
-        },
-        child: Semantics(
-          expanded: menu.isOpen,
-          child: TextButton(
-            focusNode: _triggerFocus,
-            onPressed: () {
-              if (menu.isOpen) {
-                menu.close();
-              } else {
-                final box = context.findRenderObject()! as RenderBox;
-                final x = box.localToGlobal(Offset.zero).dx;
-                final trailing = Directionality.of(context) == TextDirection.ltr
-                    ? x + box.size.width - width
-                    : x;
-                // A wrapped trigger can sit at the start of the fold pane.
-                final left = trailing.clamp(
-                  paneLeft + 16,
-                  math.max(paneLeft + 16, paneLeft + paneWidth - 16 - width),
-                );
-                menu.open(position: Offset(left - x, box.size.height + 4));
-              }
-            },
-            style: TextButton.styleFrom(
-              minimumSize: const Size(44, 44),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              foregroundColor: menu.isOpen ? AppColors.black : AppColors.g06,
-              backgroundColor: menu.isOpen ? AppColors.g02 : Colors.transparent,
-              shape: const StadiumBorder(),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  widget.selected.shortName,
-                  semanticsLabel: '정렬, ${widget.selected.displayName}',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                AnimatedRotation(
-                  turns: menu.isOpen ? 0.5 : 0,
-                  duration: reduceMotion
-                      ? Duration.zero
-                      : const Duration(milliseconds: 150),
-                  child: const Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: 17,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      menuChildren: [
-        SizedBox(
-          width: width,
-          child: TweenAnimationBuilder<double>(
-            tween: Tween(begin: reduceMotion ? 1 : .94, end: 1),
-            duration: reduceMotion
-                ? Duration.zero
-                : const Duration(milliseconds: 160),
-            curve: Curves.easeOutCubic,
-            builder: (_, scale, child) => Transform.scale(
-              alignment: AlignmentDirectional.topEnd.resolve(
-                Directionality.of(context),
-              ),
-              scale: scale,
-              child: child,
-            ),
-            child: DuitGlass(
-              radius: 20,
-              showShadow: false,
-              child: Material(
-                type: MaterialType.transparency,
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (final option in widget.options) _option(option),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+      items: [for (final option in widget.options) _option(option)],
     );
   }
 
@@ -178,37 +116,23 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
       child: Semantics(
         checked: selected,
         inMutuallyExclusiveGroup: true,
-        child: MenuItemButton(
-          autofocus: selected,
+        child: DuitGlassMenuItem(
+          label: option.displayName,
+          selected: selected,
           onPressed: () {
             if (!mounted || selected) return;
             HapticFeedback.selectionClick();
             widget.onSelected(option);
           },
-          style: MenuItemButton.styleFrom(
-            minimumSize: const Size(0, 44),
-            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-            foregroundColor: AppColors.black,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
           leadingIcon: SizedBox(
             width: 18,
             child: selected
-                ? const Icon(
+                ? Icon(
                     Icons.check_rounded,
                     size: 17,
-                    color: AppColors.main,
+                    color: context.colors.accent,
                   )
                 : null,
-          ),
-          child: Text(
-            option.displayName,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-            ),
           ),
         ),
       ),

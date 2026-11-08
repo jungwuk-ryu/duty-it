@@ -14,7 +14,7 @@ class NotificationSettingsView extends GetView<NotificationSettingsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: context.colors.canvas,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,15 +120,15 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: AppColors.black,
+          style: TextStyle(
+            color: context.colors.text,
             fontSize: 15,
             fontWeight: FontWeight.w600,
             height: 1.60,
           ),
         ),
         const SizedBox(height: 8),
-        const Divider(height: 1, thickness: 1, color: AppColors.g02),
+        Divider(height: 1, thickness: 1, color: context.colors.mutedSurface),
       ],
     );
   }
@@ -160,7 +160,7 @@ class _SettingsToggleRow extends StatelessWidget {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: _NotificationStyles.primary,
+                style: _NotificationStyles.primary(context),
               ),
               if (subtitle != null) ...[
                 const SizedBox(height: 2),
@@ -168,7 +168,7 @@ class _SettingsToggleRow extends StatelessWidget {
                   subtitle!,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: _NotificationStyles.secondary,
+                  style: _NotificationStyles.secondary(context),
                 ),
               ],
             ],
@@ -196,13 +196,13 @@ class _UnsupportedToggleRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: _NotificationStyles.disabledPrimary),
+              Text(title, style: _NotificationStyles.disabledPrimary(context)),
               const SizedBox(height: 2),
               Text(
                 subtitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: _NotificationStyles.disabledSecondary,
+                style: _NotificationStyles.disabledSecondary(context),
               ),
             ],
           ),
@@ -229,7 +229,7 @@ class _ManageRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = enabled ? AppColors.black : AppColors.g03;
+    final color = enabled ? context.colors.text : context.colors.disabled;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -258,29 +258,29 @@ class _ManageRow extends StatelessWidget {
 }
 
 class _NotificationStyles {
-  static const primary = TextStyle(
-    color: AppColors.black,
+  static TextStyle primary(BuildContext context) => TextStyle(
+    color: context.colors.text,
     fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1.60,
   );
 
-  static const secondary = TextStyle(
-    color: AppColors.g05,
+  static TextStyle secondary(BuildContext context) => TextStyle(
+    color: context.colors.muted,
     fontSize: 10,
     fontWeight: FontWeight.w500,
     height: 1.60,
   );
 
-  static const disabledPrimary = TextStyle(
-    color: AppColors.g04,
+  static TextStyle disabledPrimary(BuildContext context) => TextStyle(
+    color: context.colors.disabled,
     fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1.60,
   );
 
-  static const disabledSecondary = TextStyle(
-    color: AppColors.g04,
+  static TextStyle disabledSecondary(BuildContext context) => TextStyle(
+    color: context.colors.disabled,
     fontSize: 10,
     fontWeight: FontWeight.w500,
     height: 1.60,

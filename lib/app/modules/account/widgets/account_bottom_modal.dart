@@ -2,7 +2,6 @@ import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/account/controllers/account_view_controller.dart';
 import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
-import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -56,7 +55,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
               height: 1.60,
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: AppColors.black,
+              color: context.colors.text,
             ),
           ),
           SizedBox(height: 16),
@@ -77,7 +76,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                   onSubmitted: (_) => onSubmitted(),
                   decoration: InputDecoration.collapsed(
                     hintText: "도라지 감자도리",
-                    hintStyle: TextStyle(color: AppColors.g05),
+                    hintStyle: TextStyle(color: context.colors.muted),
                   ).copyWith(counterText: ''),
                 ),
               ),
@@ -85,7 +84,7 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
               Text(
                 "$_txtLen/$_maxLen",
                 style: TextStyle(
-                  color: AppColors.g05,
+                  color: context.colors.muted,
                   fontSize: 13,
                   height: 1.20,
                 ),
@@ -98,10 +97,10 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
                     editingController.clear();
                   });
                 },
-                child: Image.asset(
-                  Assets.icons.textdelete.path,
-                  width: 16,
-                  height: 16,
+                child: Icon(
+                  Icons.cancel_rounded,
+                  color: context.colors.disabled,
+                  size: 16,
                 ),
               ),
             ],
@@ -109,14 +108,14 @@ class _AccountBottomModalState extends State<AccountBottomModal> {
           SizedBox(
             height: 1,
             width: double.infinity,
-            child: ColoredBox(color: AppColors.g05),
+            child: ColoredBox(color: context.colors.muted),
           ),
 
           SizedBox(height: 16),
           Text(
             "닉네임은 2~10자의 한글·영문·숫자만 가능하며, 변경 시 되돌릴 수 없습니다",
             style: TextStyle(
-              color: AppColors.g06,
+              color: context.colors.icon,
               fontSize: 13,
               fontWeight: FontWeight.w400,
               height: 1.20,

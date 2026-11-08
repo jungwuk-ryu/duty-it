@@ -10,7 +10,10 @@ import 'package:duty_it/app/modules/job/widgets/detail/job_detail_media.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_section.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_summary_card.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_tab_bar.dart';
-import 'package:duty_it/app/widgets/simple_app_bar.dart';
+import 'package:duty_it/app/widgets/duit_detail_scaffold.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
+import 'package:duty_it/app/modules/job/widgets/detail/job_actions_menu.dart';
+import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,6 +30,7 @@ class _JobDetailViewState extends State<JobDetailView> {
   final ScrollController _scrollController = ScrollController();
   final List<GlobalKey> _sectionKeys = List.generate(4, (_) => GlobalKey());
   int _selectedTabIndex = 0;
+  final _actionsKey = GlobalKey();
 
   @override
   void dispose() {
@@ -36,94 +40,89 @@ class _JobDetailViewState extends State<JobDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.white,
+    final layout = DuoLayoutData.of(context);
+    final sideWidth = layout.sideBarWidth(MediaQuery.of(context));
+    return DuitDetailScaffold(
+      title: Obx(() => Text(controller.job.title)),
+      actions: Obx(
+        () => JobActionsMenu(
+          key: _actionsKey,
+          job: controller.job,
+          onBookmarkTap: () => Get.find<JobViewController>()
+              .onBookmarkButtonClick(controller.jobRx),
+        ),
+      ),
+      onBack: Get.back,
       body: SafeArea(
+        top: false,
         bottom: false,
-        child: Column(
-          children: [
-            const SimpleAppBar(title: '채용', bottomMargin: 0),
-            Expanded(
-              child: Obx(() {
-                final job = controller.job;
+        minimum: EdgeInsets.only(
+          left: layout.verticalBarEdge == 'left' ? sideWidth : 0,
+          right: layout.verticalBarEdge == 'right' ? sideWidth : 0,
+        ),
+        child: Obx(() {
+          final job = controller.job;
 
-                return Stack(
-                  children: [
-                    NotificationListener<ScrollNotification>(
-                      onNotification: _handleScrollNotification,
-                      child: CustomScrollView(
-                        controller: _scrollController,
-                        slivers: [
-                          SliverToBoxAdapter(child: _HeaderContent(job: job)),
-                          SliverPersistentHeader(
-                            pinned: true,
-                            delegate: JobDetailTabHeaderDelegate(
-                              selectedIndex: _selectedTabIndex,
-                              onTap: _scrollToSection,
-                            ),
-                          ),
-                          SliverToBoxAdapter(
+          return Stack(
+            children: [
+              NotificationListener<ScrollNotification>(
+                onNotification: _handleScrollNotification,
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    SliverToBoxAdapter(child: _HeaderContent(job: job)),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: JobDetailTabHeaderDelegate(
+                        selectedIndex: _selectedTabIndex,
+                        onTap: _scrollToSection,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          JobDetailMedia(imageUrl: job.attachFileUrlText),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                JobDetailMedia(imageUrl: job.attachFileUrlText),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    24,
-                                    16,
-                                    0,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      _section(
-                                        0,
-                                        _buildRecruitmentSection(job),
-                                      ),
-                                      _section(
-                                        1,
-                                        _buildWorkConditionSection(job),
-                                      ),
-                                      _section(2, _buildPreferenceSection(job)),
-                                      _section(3, _buildWelfareSection(job)),
-                                      _buildEtcSection(job),
-                                    ],
-                                  ),
-                                ),
+                                _section(0, _buildRecruitmentSection(job)),
+                                _section(1, _buildWorkConditionSection(job)),
+                                _section(2, _buildPreferenceSection(job)),
+                                _section(3, _buildWelfareSection(job)),
+                                _buildEtcSection(job),
                               ],
-                            ),
-                          ),
-                          SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: JobDetailFooter(
-                                sourceType: job.sourceType,
-                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    if (controller.isLoading.value)
-                      const Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: LinearProgressIndicator(
-                          minHeight: 2,
-                          color: AppColors.main,
-                          backgroundColor: AppColors.g02,
-                        ),
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: JobDetailFooter(sourceType: job.sourceType),
                       ),
+                    ),
                   ],
-                );
-              }),
-            ),
-          ],
-        ),
+                ),
+              ),
+              if (controller.isLoading.value)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: LinearProgressIndicator(
+                    minHeight: 2,
+                    color: context.colors.accent,
+                    backgroundColor: context.colors.mutedSurface,
+                  ),
+                ),
+            ],
+          );
+        }),
       ),
       bottomNavigationBar: Obx(
         () => JobDetailBottomBar(
@@ -261,7 +260,7 @@ class _JobDetailViewState extends State<JobDetailView> {
         _row('그 밖의 희망사항', job.etcHopeText),
         _row('구인인증번호', job.wantedAuthNoText),
         _row('등록일', job.postedAtText),
-        _row('마감일', job.expiresAtText, valueColor: AppColors.main),
+        _row('마감일', job.expiresAtText, valueColor: context.colors.accent),
         _row('정보 출처', job.sourceText),
       ],
     );
@@ -306,8 +305,8 @@ class _JobDetailViewState extends State<JobDetailView> {
             width: 108,
             child: Text(
               label,
-              style: const TextStyle(
-                color: AppColors.g05,
+              style: TextStyle(
+                color: context.colors.muted,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 height: 1.60,
@@ -340,8 +339,8 @@ class _HeaderContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               companyName.isEmpty ? '-' : companyName,
-              style: const TextStyle(
-                color: AppColors.black,
+              style: TextStyle(
+                color: context.colors.text,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 height: 1.20,
@@ -353,8 +352,8 @@ class _HeaderContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               title.isEmpty ? '-' : title,
-              style: const TextStyle(
-                color: AppColors.black,
+              style: TextStyle(
+                color: context.colors.text,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 height: 1.20,
@@ -366,8 +365,8 @@ class _HeaderContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               job.closeLabel,
-              style: const TextStyle(
-                color: AppColors.main,
+              style: TextStyle(
+                color: context.colors.accent,
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 height: 1.60,

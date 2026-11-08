@@ -21,10 +21,10 @@ class JobDetailBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: context.colors.surface,
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withAlpha(32),
+            color: Colors.black.withAlpha(32),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -41,7 +41,9 @@ class JobDetailBottomBar extends StatelessWidget {
               Expanded(
                 child: AppNormalButton(
                   text: '채용정보 제공사이트로 이동',
-                  color: isApplyEnabled ? AppColors.main : AppColors.g03,
+                  color: isApplyEnabled
+                      ? AppColors.main
+                      : context.colors.border,
                   onTap: onApplyTap,
                 ),
               ),

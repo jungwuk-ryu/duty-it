@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/account/widgets/account_view_item_text.dart';
 import 'package:duty_it/app/modules/account/widgets/account_view_item_title.dart';
@@ -28,7 +29,7 @@ class _AccountViewState extends State<AccountView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.canvas,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -49,8 +50,8 @@ class _AccountViewState extends State<AccountView> {
                         ),
                         GestureDetector(
                           onTap: () => controller.onUserNameEditButtonClicked(),
-                          child: Image.asset(
-                            Assets.icons.pen.path,
+                          child: AppAssetIcon(
+                            asset: Assets.icons.pen.path,
                             width: 24,
                             height: 24,
                           ),
@@ -68,14 +69,20 @@ class _AccountViewState extends State<AccountView> {
                     GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () => controller.logout(),
-                      child: AccountViewItemText("로그아웃", color: AppColors.g05),
+                      child: AccountViewItemText(
+                        "로그아웃",
+                        color: context.colors.muted,
+                      ),
                     ),
 
                     SizedBox(height: 16),
                     GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () => controller.withdraw(),
-                      child: AccountViewItemText("회원 탈퇴", color: AppColors.g05),
+                      child: AccountViewItemText(
+                        "회원 탈퇴",
+                        color: context.colors.muted,
+                      ),
                     ),
                   ],
                 ),

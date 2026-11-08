@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/routes/app_pages.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class AppUtils {
@@ -58,10 +58,16 @@ class AppUtils {
   }
 
   static void showSnackBar(String content, {Widget? mainButton}) {
+    final context = Get.context;
+    final colors = context?.colors ?? AppPalette.light;
+    final dark =
+        context != null && Theme.of(context).brightness == Brightness.dark;
     Get.showSnackbar(
       GetSnackBar(
         duration: const Duration(seconds: 2),
-        backgroundColor: AppColors.g07.withAlpha(165),
+        backgroundColor: dark
+            ? colors.mutedSurface.withAlpha(240)
+            : AppColors.g07.withAlpha(210),
         barBlur: 2,
         borderRadius: 8,
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -71,7 +77,7 @@ class AppUtils {
           child: Text(
             content,
             style: TextStyle(
-              color: AppColors.white,
+              color: dark ? colors.text : AppColors.white,
               fontSize: 15,
               fontWeight: FontWeight.w700,
               height: 1.2,

@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/notifications/widgets/notification_item.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
@@ -23,12 +24,12 @@ class NotificationsView extends GetView<NotificationsViewController> {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: controller.openNotificationSettings,
-                  child: const SizedBox(
+                  child: SizedBox(
                     width: 40,
                     height: 40,
                     child: Icon(
                       Icons.settings_outlined,
-                      color: AppColors.black,
+                      color: context.colors.text,
                       size: 24,
                     ),
                   ),
@@ -176,13 +177,15 @@ class _NotificationTabChip extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 18),
         decoration: BoxDecoration(
-          color: selected ? AppColors.sub : AppColors.g02,
+          color: selected
+              ? context.colors.accentSurface
+              : context.colors.mutedSurface,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? AppColors.main : AppColors.g06,
+            color: selected ? context.colors.accent : context.colors.icon,
             fontSize: 13,
             fontWeight: FontWeight.w600,
             height: 1.20,
@@ -210,20 +213,20 @@ class _ConditionBanner extends StatelessWidget {
         height: 40,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: AppColors.g01,
+          color: context.colors.subtleSurface,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
-            Image.asset(Assets.icons.bell.path, width: 18, height: 18),
+            AppAssetIcon(asset: Assets.icons.bell.path, width: 18, height: 18),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 message,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppColors.g06,
+                style: TextStyle(
+                  color: context.colors.icon,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.20,
@@ -231,7 +234,11 @@ class _ConditionBanner extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            Image.asset(Assets.icons.filter.path, width: 18, height: 18),
+            AppAssetIcon(
+              asset: Assets.icons.filter.path,
+              width: 18,
+              height: 18,
+            ),
           ],
         ),
       ),
@@ -286,10 +293,13 @@ class _EmptyNotificationIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Text(
         '알림 목록이 비어 있습니다',
-        style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.g06),
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          color: context.colors.icon,
+        ),
       ),
     );
   }
@@ -342,18 +352,18 @@ class _RetryButton extends StatelessWidget {
           children: [
             Text(
               message,
-              style: const TextStyle(
-                color: AppColors.g06,
+              style: TextStyle(
+                color: context.colors.icon,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 height: 1.60,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               '다시 시도',
               style: TextStyle(
-                color: AppColors.main,
+                color: context.colors.accent,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 height: 1.60,

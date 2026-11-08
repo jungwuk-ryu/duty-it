@@ -15,10 +15,12 @@ class BookmarkEventCard extends GetView<BookmarkViewController> {
 
   @override
   Widget build(BuildContext context) {
+    final posterHeroTag = ('bookmark', ObjectKey(eventRx));
     return Obx(
       () => EventTile(
         event: event,
-        onTap: _onTap,
+        posterHeroTag: posterHeroTag,
+        onTap: () => _onTap(context, posterHeroTag),
         onBookmarkTap: () async {
           HapticFeedback.mediumImpact();
           await controller.unbookmarkEvent(eventRx);
@@ -27,12 +29,12 @@ class BookmarkEventCard extends GetView<BookmarkViewController> {
     );
   }
 
-  void _onTap() {
-    Get.to(
-      () => EventDetailView(
-        eventRx: eventRx,
-        onBookmarkTap: () => controller.unbookmarkEvent(eventRx),
-      ),
+  void _onTap(BuildContext context, Object posterHeroTag) {
+    EventDetailView.open(
+      context,
+      eventRx: eventRx,
+      posterHeroTag: posterHeroTag,
+      onBookmarkTap: () => controller.unbookmarkEvent(eventRx),
     );
   }
 }

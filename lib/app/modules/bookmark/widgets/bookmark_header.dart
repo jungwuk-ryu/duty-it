@@ -19,7 +19,7 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: AppColors.canvas,
+      color: context.colors.canvas,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -75,7 +75,7 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
                   name: '필터',
                   isSelected: filterApplied,
                   imageAsset: Assets.icons.filter.path,
-                  imageColor: filterApplied ? AppColors.white : null,
+
                   onTap: controller.openCurrentFilterPage,
                 ),
                 if (controller.isEventTab)

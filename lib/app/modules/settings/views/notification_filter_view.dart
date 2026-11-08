@@ -12,7 +12,7 @@ class NotificationFilterView extends GetView<NotificationFilterController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: context.colors.canvas,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,12 +24,12 @@ class NotificationFilterView extends GetView<NotificationFilterController> {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: controller.resetDrafts,
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.only(right: 16),
                     child: Text(
                       '초기화',
                       style: TextStyle(
-                        color: AppColors.g05,
+                        color: context.colors.muted,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                         height: 1.60,
@@ -125,8 +125,8 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
-        color: AppColors.black,
+      style: TextStyle(
+        color: context.colors.text,
         fontSize: 15,
         fontWeight: FontWeight.w700,
         height: 1.20,
@@ -145,7 +145,7 @@ class _KeywordInput extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
-        color: AppColors.g02,
+        color: context.colors.mutedSurface,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -156,15 +156,15 @@ class _KeywordInput extends StatelessWidget {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => controller.addKeyword(),
               onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
-              style: const TextStyle(
-                color: AppColors.black,
+              style: TextStyle(
+                color: context.colors.text,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
               ),
               decoration: InputDecoration(
                 hintText: controller.mode.keywordHint,
-                hintStyle: const TextStyle(
-                  color: AppColors.g05,
+                hintStyle: TextStyle(
+                  color: context.colors.muted,
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
                 ),
@@ -178,7 +178,7 @@ class _KeywordInput extends StatelessWidget {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: controller.addKeyword,
-            child: const Icon(Icons.add, color: AppColors.black, size: 24),
+            child: Icon(Icons.add, color: context.colors.text, size: 24),
           ),
         ],
       ),
@@ -197,21 +197,21 @@ class _TargetSearchField extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
       decoration: BoxDecoration(
-        color: AppColors.g02,
+        color: context.colors.mutedSurface,
         borderRadius: BorderRadius.circular(8),
       ),
       child: TextField(
         controller: controller,
         textInputAction: TextInputAction.search,
         onTapUpOutside: (_) => FocusScope.of(context).unfocus(),
-        style: const TextStyle(
-          color: AppColors.black,
+        style: TextStyle(
+          color: context.colors.text,
           fontSize: 15,
           fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(color: AppColors.g05, fontSize: 15),
+          hintStyle: TextStyle(color: context.colors.muted, fontSize: 15),
           isDense: true,
           isCollapsed: true,
           border: InputBorder.none,
@@ -234,10 +234,10 @@ class _HostSelectionField extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
-          color: AppColors.g02,
+          color: context.colors.mutedSurface,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Expanded(
               child: Text(
@@ -245,14 +245,14 @@ class _HostSelectionField extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.g05,
+                  color: context.colors.muted,
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
                   height: 1.20,
                 ),
               ),
             ),
-            Icon(Icons.chevron_right, color: AppColors.g05, size: 24),
+            Icon(Icons.chevron_right, color: context.colors.muted, size: 24),
           ],
         ),
       ),
@@ -276,8 +276,8 @@ class _SelectedDraftsWrap extends StatelessWidget {
     if (drafts.isEmpty) {
       return Text(
         emptyText,
-        style: const TextStyle(
-          color: AppColors.g05,
+        style: TextStyle(
+          color: context.colors.muted,
           fontSize: 12,
           fontWeight: FontWeight.w500,
           height: 1.60,
@@ -398,7 +398,7 @@ class _CheckRow extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: selected ? AppColors.main : AppColors.black,
+                  color: selected ? context.colors.accent : context.colors.text,
                   fontSize: 15,
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                   height: 1.60,
@@ -407,7 +407,7 @@ class _CheckRow extends StatelessWidget {
             ),
             Icon(
               Icons.check,
-              color: selected ? AppColors.main : AppColors.transparent,
+              color: selected ? context.colors.accent : AppColors.transparent,
               size: 22,
             ),
           ],
@@ -436,7 +436,9 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: ShapeDecoration(
-          color: selected ? AppColors.sub : AppColors.g02,
+          color: selected
+              ? context.colors.accentSurface
+              : context.colors.mutedSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -444,7 +446,9 @@ class _FilterChip extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? AppColors.main : AppColors.g07,
+            color: selected
+                ? context.colors.accent
+                : context.colors.secondaryText,
             fontSize: 14,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             height: 1.20,
@@ -467,8 +471,8 @@ class _EmptyText extends StatelessWidget {
       child: Center(
         child: Text(
           text,
-          style: const TextStyle(
-            color: AppColors.g05,
+          style: TextStyle(
+            color: context.colors.muted,
             fontSize: 14,
             fontWeight: FontWeight.w500,
             height: 1.60,

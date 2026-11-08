@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/widgets/section_divider.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -27,8 +28,8 @@ class SimpleAppBar extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () => Get.back(),
-              child: Image.asset(
-                Assets.icons.backLeft.path,
+              child: AppAssetIcon(
+                asset: Assets.icons.backLeft.path,
                 width: 40,
                 height: 40,
               ),
@@ -36,7 +37,7 @@ class SimpleAppBar extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                color: AppColors.black,
+                color: context.colors.text,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 height: 1.60,

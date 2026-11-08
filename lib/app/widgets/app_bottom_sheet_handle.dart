@@ -21,7 +21,7 @@ class AppBottomSheetHandle extends StatelessWidget {
           height: 4,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: AppColors.g04,
+              color: context.colors.disabled,
               borderRadius: BorderRadius.circular(999),
             ),
           ),

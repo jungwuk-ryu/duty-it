@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -23,11 +24,19 @@ class DuitTopAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = DuitAppBarActions(
-      showNotifications: showNotifications,
-      hasNewNotification: hasNewNotification,
-      onNotificationsTap: onNotificationsTap,
-      onMenuTap: onMenuTap,
       vertical: actionsOnly,
+      children: [
+        if (showNotifications)
+          _button(
+            '알림',
+            onNotificationsTap,
+            Assets.icons.bell.path,
+            14,
+            18,
+            showBadge: hasNewNotification,
+          ),
+        _button('메뉴', onMenuTap, Assets.icons.hamburger.path, 18, 14),
+      ],
     );
     if (actionsOnly) return actions;
     return Padding(
@@ -36,10 +45,10 @@ class DuitTopAppBar extends StatelessWidget {
         children: [
           Image.asset(Assets.icons.logo.path, width: 16, height: 16),
           const SizedBox(width: 7),
-          const Text(
+          Text(
             '듀잇',
             style: TextStyle(
-              color: AppColors.black,
+              color: context.colors.text,
               fontSize: 18,
               fontWeight: FontWeight.w700,
               height: 1.60,
@@ -51,58 +60,15 @@ class DuitTopAppBar extends StatelessWidget {
       ),
     );
   }
-}
-
-/// The original app bar assets and actions in either toolbar orientation.
-class DuitAppBarActions extends StatelessWidget {
-  const DuitAppBarActions({
-    super.key,
-    required this.showNotifications,
-    required this.hasNewNotification,
-    required this.onNotificationsTap,
-    required this.onMenuTap,
-    this.vertical = false,
-  });
-  final bool showNotifications;
-  final bool hasNewNotification;
-  final VoidCallback onNotificationsTap;
-  final VoidCallback onMenuTap;
-  final bool vertical;
-
-  @override
-  Widget build(BuildContext context) {
-    final buttons = [
-      if (showNotifications)
-        _button(
-          '알림',
-          onNotificationsTap,
-          hasNewNotification
-              ? Assets.icons.bellNew.path
-              : Assets.icons.bell.path,
-          14,
-          18,
-        ),
-      _button('메뉴', onMenuTap, Assets.icons.hamburger.path, 18, 14),
-    ];
-    return DuitGlass(
-      // Inline toolbar controls sit on an opaque header, so they need no shadow.
-      showShadow: vertical,
-      child: Padding(
-        padding: const EdgeInsets.all(2),
-        child: vertical
-            ? Column(mainAxisSize: MainAxisSize.min, children: buttons)
-            : Row(mainAxisSize: MainAxisSize.min, children: buttons),
-      ),
-    );
-  }
 
   Widget _button(
     String label,
     VoidCallback onTap,
     String asset,
     double width,
-    double height,
-  ) => Semantics(
+    double height, {
+    bool showBadge = false,
+  }) => Semantics(
     label: label,
     button: true,
     child: Tooltip(
@@ -113,10 +79,38 @@ class DuitAppBarActions extends StatelessWidget {
         child: SizedBox.square(
           dimension: 44,
           child: Center(
-            child: Image.asset(asset, width: width, height: height),
+            child: Badge(
+              isLabelVisible: showBadge,
+              smallSize: 5,
+              backgroundColor: AppColors.main,
+              child: AppAssetIcon(asset: asset, width: width, height: height),
+            ),
           ),
         ),
       ),
+    ),
+  );
+}
+
+/// Shared glass chrome for the home controls and route-specific actions.
+class DuitAppBarActions extends StatelessWidget {
+  const DuitAppBarActions({
+    super.key,
+    required this.children,
+    this.vertical = false,
+  });
+
+  final List<Widget> children;
+  final bool vertical;
+
+  @override
+  Widget build(BuildContext context) => DuitGlass(
+    showShadow: vertical,
+    child: Padding(
+      padding: const EdgeInsets.all(2),
+      child: vertical
+          ? Column(mainAxisSize: MainAxisSize.min, children: children)
+          : Row(mainAxisSize: MainAxisSize.min, children: children),
     ),
   );
 }

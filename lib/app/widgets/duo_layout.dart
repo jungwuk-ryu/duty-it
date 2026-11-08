@@ -15,6 +15,7 @@ class DuoLayoutData {
     this.obstructions = const [],
     this.reduceTransparency = false,
     this.contentBounds = Rect.zero,
+    this.layoutMargins = EdgeInsets.zero,
   });
 
   final bool isDuo;
@@ -23,6 +24,7 @@ class DuoLayoutData {
   final List<Rect> obstructions;
   final bool reduceTransparency;
   final Rect contentBounds;
+  final EdgeInsets layoutMargins;
 
   DuoLayoutData withContentBounds(Rect bounds) => DuoLayoutData(
     isDuo: isDuo,
@@ -31,7 +33,78 @@ class DuoLayoutData {
     obstructions: obstructions,
     reduceTransparency: reduceTransparency,
     contentBounds: bounds,
+    layoutMargins: layoutMargins,
   );
+
+  /// UIKit margins include safe areas and can differ on either side of Duo.
+  /// Existing pages already inset content by 16pt and top controls by 8pt;
+  /// reserve only the remainder so margins are never added twice.
+  EdgeInsets foregroundPadding(MediaQueryData media) {
+    if (!isDuo) return media.padding;
+    final freeEdgeMargin = math.max(
+      16.0,
+      verticalBarEdge == 'left'
+          ? layoutMargins.right - media.viewPadding.right
+          : layoutMargins.left - media.viewPadding.left,
+    );
+    return media.padding.copyWith(
+      left: math.max(
+        math.max(media.padding.left, layoutMargins.left - 16),
+        verticalBarEdge == 'left' ? sideBarWidth(media) : 0,
+      ),
+      right: math.max(
+        math.max(media.padding.right, layoutMargins.right - 16),
+        verticalBarEdge == 'right' ? sideBarWidth(media) : 0,
+      ),
+      // Match our top controls to the system margin on the unobstructed edge.
+      top: math.max(
+        media.padding.top,
+        math.max(layoutMargins.top, freeEdgeMargin - 8),
+      ),
+    );
+  }
+
+  /// Material routes already avoid display features. Supply UIKit's active
+  /// divisions too, so sheets and dialogs use the same panes as page content.
+  List<ui.DisplayFeature> displayFeatures(MediaQueryData media) {
+    if (!isDuo || divisions.isEmpty) return media.displayFeatures;
+    return [
+      ...media.displayFeatures,
+      for (final division in divisions)
+        if (!media.displayFeatures.any((feature) => feature.bounds == division))
+          ui.DisplayFeature(
+            bounds: division,
+            type: ui.DisplayFeatureType.hinge,
+            state: ui.DisplayFeatureState.postureHalfOpened,
+          ),
+    ];
+  }
+
+  double sideBarWidth(MediaQueryData media) => verticalBarEdge == null
+      ? 0
+      : math.max(
+          72.0,
+          verticalBarEdge == 'left'
+              ? media.viewPadding.left
+              : media.viewPadding.right,
+        );
+
+  /// Global y-coordinate below hardware and status UI along the side controls.
+  double sideControlsTop(MediaQueryData media) {
+    final width = sideBarWidth(media);
+    final rail = Rect.fromLTWH(
+      verticalBarEdge == 'left' ? 0 : media.size.width - width,
+      0,
+      width,
+      media.size.height,
+    );
+    return obstructions
+        .where((region) => region.overlaps(rail))
+        .fold(
+          media.padding.top,
+          (double top, region) => math.max(top, region.bottom),
+        );
+  }
 
   Rect? get verticalFold {
     for (final region in divisions) {
@@ -66,14 +139,18 @@ class DuoLayout extends StatefulWidget {
   State<DuoLayout> createState() => _DuoLayoutState();
 }
 
-class _DuoLayoutState extends State<DuoLayout> {
+class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
   StreamSubscription<dynamic>? _subscription;
   DuoLayoutData _data = const DuoLayoutData();
   bool _allowsRotation = false;
+  ui.FlutterView? _view;
+  bool _androidHasFold = false;
+  bool _androidAllowsRotation = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
       _subscription = const EventChannel('com.dutyit.app/layout')
           .receiveBroadcastStream()
@@ -96,6 +173,9 @@ class _DuoLayoutState extends State<DuoLayout> {
                         ),
                       )
                       .toList(growable: false);
+              final margins = event['layoutMargins'] as Map?;
+              double margin(String edge) =>
+                  (margins?[edge] as num?)?.toDouble() ?? 0;
               setState(() {
                 _data = DuoLayoutData(
                   isDuo: event['isDuo'] == true,
@@ -103,6 +183,12 @@ class _DuoLayoutState extends State<DuoLayout> {
                   divisions: regions('divisions'),
                   obstructions: regions('obstructions'),
                   reduceTransparency: event['reduceTransparency'] == true,
+                  layoutMargins: EdgeInsets.fromLTRB(
+                    margin('left'),
+                    margin('top'),
+                    margin('right'),
+                    margin('bottom'),
+                  ),
                 );
               });
             },
@@ -114,7 +200,46 @@ class _DuoLayoutState extends State<DuoLayout> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _view = View.maybeOf(context);
+    _androidHasFold = MediaQuery.displayFeaturesOf(context).any(
+      (feature) =>
+          feature.type == ui.DisplayFeatureType.fold ||
+          feature.type == ui.DisplayFeatureType.hinge,
+    );
+    _updateAndroidOrientation();
+  }
+
+  @override
+  void didChangeMetrics() => _updateAndroidOrientation();
+
+  void _updateAndroidOrientation() {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+    final display = _view?.display;
+    if (display == null) return;
+    // Use the whole display: a portrait-locked app can already be letterboxed.
+    // Window or keyboard resizing must not lock an unfolded device again.
+    final allowsRotation =
+        _androidHasFold ||
+        display.size.shortestSide / display.devicePixelRatio >= 600;
+    if (allowsRotation == _androidAllowsRotation) return;
+    _androidAllowsRotation = allowsRotation;
+    unawaited(
+      SystemChrome.setPreferredOrientations(
+        allowsRotation
+            ? const []
+            : const [
+                DeviceOrientation.portraitUp,
+                DeviceOrientation.portraitDown,
+              ],
+      ),
+    );
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
     super.dispose();
   }
@@ -135,7 +260,15 @@ class _DuoLayoutState extends State<DuoLayout> {
                 .map((f) => f.bounds)
                 .toList(growable: false),
           );
-    return DuoLayoutScope(data: data, child: widget.child);
+    return MediaQuery(
+      // Keep hardware viewPadding and the full-bleed canvas unchanged. Only
+      // foreground SafeArea consumers receive the additional layout spacing.
+      data: media.copyWith(
+        padding: data.foregroundPadding(media),
+        displayFeatures: data.displayFeatures(media),
+      ),
+      child: DuoLayoutScope(data: data, child: widget.child),
+    );
   }
 }
 

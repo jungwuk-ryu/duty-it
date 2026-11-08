@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/sort_direction.dart';
@@ -80,7 +81,7 @@ class _SearchFilterHostSelectionBottomModal
                   height: 1.60,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.black,
+                  color: context.colors.text,
                 ),
               ),
               SizedBox(height: 8),
@@ -88,14 +89,14 @@ class _SearchFilterHostSelectionBottomModal
                 width: 328,
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: AppColors.g02,
+                  color: context.colors.mutedSurface,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      Assets.icons.search.path,
+                    AppAssetIcon(
+                      asset: Assets.icons.search.path,
                       width: 12,
                       height: 12,
                     ),
@@ -116,8 +117,8 @@ class _SearchFilterHostSelectionBottomModal
                           ),
                           decoration: InputDecoration(
                             hintText: '찾으시는 주최기관을 검색해 보세요.',
-                            hintStyle: const TextStyle(
-                              color: AppColors.g05,
+                            hintStyle: TextStyle(
+                              color: context.colors.muted,
                               fontSize: 15,
                             ),
                             border: InputBorder.none,
@@ -137,10 +138,10 @@ class _SearchFilterHostSelectionBottomModal
                             editingController.clear();
                           });
                         },
-                        child: Image.asset(
-                          Assets.icons.textdelete.path,
-                          width: 16,
-                          height: 16,
+                        child: Icon(
+                          Icons.cancel_rounded,
+                          color: context.colors.disabled,
+                          size: 16,
                         ),
                       ),
                   ],
@@ -153,7 +154,7 @@ class _SearchFilterHostSelectionBottomModal
                 child: Text(
                   '검색 결과',
                   style: TextStyle(
-                    color: AppColors.black,
+                    color: context.colors.text,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     height: 1.20,
@@ -172,7 +173,7 @@ class _SearchFilterHostSelectionBottomModal
                         '검색 결과가 존재하지 않습니다.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: AppColors.g06,
+                          color: context.colors.icon,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           height: 1.60,
@@ -231,12 +232,12 @@ class _HostItem extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: ShapeDecoration(
-                color: const Color(0xFFF5F5F5),
+                color: context.colors.mutedSurface,
                 shape: OvalBorder(
                   side: BorderSide(
                     width: 1,
                     strokeAlign: BorderSide.strokeAlignOutside,
-                    color: const Color(0xFFD0D0D0),
+                    color: context.colors.border,
                   ),
                 ),
               ),
@@ -247,7 +248,7 @@ class _HostItem extends StatelessWidget {
                         imageUrl: thumbnail,
                         imageBuilder: (context, imageProvider) => Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xffD9D9D9),
+                            color: AppColors.white,
                             image: DecorationImage(
                               image: imageProvider,
                               fit: BoxFit.fitWidth,
@@ -269,7 +270,7 @@ class _HostItem extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.black,
+                  color: context.colors.text,
                   fontSize: 15,
                   fontWeight: FontWeight.w400,
                   height: 1.20,
@@ -277,7 +278,7 @@ class _HostItem extends StatelessWidget {
               ),
             ),
             if (selected)
-              const Icon(Icons.check, color: AppColors.main, size: 22),
+              Icon(Icons.check, color: context.colors.accent, size: 22),
           ],
         ),
       ),
@@ -291,7 +292,7 @@ class _HostThumbnailFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: Color(0xFFF5F5F5),
+      color: context.colors.mutedSurface,
       child: Center(
         child: Image.asset(
           Assets.icons.logo.path,

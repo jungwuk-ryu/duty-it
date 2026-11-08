@@ -31,9 +31,9 @@ class BookmarkView extends GetView<BookmarkViewController> {
       physics: const AlwaysScrollableScrollPhysics(),
       controller: controller.scrollController,
       slivers: [
-        const SliverAppBar(
-          backgroundColor: AppColors.white,
-          surfaceTintColor: AppColors.white,
+        SliverAppBar(
+          backgroundColor: context.colors.canvas,
+          surfaceTintColor: context.colors.canvas,
           elevation: 0,
           floating: true,
           snap: true,

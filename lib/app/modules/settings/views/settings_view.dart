@@ -16,7 +16,7 @@ class SettingsView extends GetView<SettingsViewController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.canvas,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,14 +57,14 @@ class SettingsView extends GetView<SettingsViewController> {
                 ),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.fromLTRB(20, 8, 20, 18),
               child: Center(
                 child: Text(
                   _registrationNumber,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColors.g04,
+                    color: context.colors.disabled,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     height: 1.35,
@@ -94,9 +94,9 @@ class _SettingsNavigationRow extends StatelessWidget {
         height: 32,
         child: Row(
           children: [
-            Text(title, style: _SettingsStyles.primary),
+            Text(title, style: _SettingsStyles.primary(context)),
             const Spacer(),
-            const Icon(Icons.chevron_right, color: AppColors.black, size: 30),
+            Icon(Icons.chevron_right, color: context.colors.text, size: 30),
           ],
         ),
       ),
@@ -130,14 +130,14 @@ class _SettingsToggleRow extends StatelessWidget {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: _SettingsStyles.primary,
+                style: _SettingsStyles.primary(context),
               ),
               const SizedBox(height: 2),
               Text(
                 subtitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: _SettingsStyles.secondary,
+                style: _SettingsStyles.secondary(context),
               ),
             ],
           ),
@@ -157,7 +157,7 @@ class _SettingsTextRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Text(title, style: _SettingsStyles.muted);
+    final text = Text(title, style: _SettingsStyles.muted(context));
     if (onTap == null) return text;
 
     return GestureDetector(
@@ -169,22 +169,22 @@ class _SettingsTextRow extends StatelessWidget {
 }
 
 class _SettingsStyles {
-  static const primary = TextStyle(
-    color: AppColors.black,
+  static TextStyle primary(BuildContext context) => TextStyle(
+    color: context.colors.text,
     fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1.60,
   );
 
-  static const secondary = TextStyle(
-    color: AppColors.g05,
+  static TextStyle secondary(BuildContext context) => TextStyle(
+    color: context.colors.muted,
     fontSize: 10,
     fontWeight: FontWeight.w500,
     height: 1.60,
   );
 
-  static const muted = TextStyle(
-    color: AppColors.g05,
+  static TextStyle muted(BuildContext context) => TextStyle(
+    color: context.colors.muted,
     fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1.60,

@@ -48,7 +48,9 @@ class NotificationItem extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(22, 13, 22, 12),
           decoration: BoxDecoration(
-            color: !noti.isRead ? AppColors.cal2 : AppColors.white,
+            color: !noti.isRead
+                ? context.colors.calendarPink
+                : context.colors.surface,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,8 +59,8 @@ class NotificationItem extends StatelessWidget {
                 _getTitle(noti),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppColors.black,
+                style: TextStyle(
+                  color: context.colors.text,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   height: 1.60,
@@ -69,8 +71,8 @@ class NotificationItem extends StatelessWidget {
                 _getContent(noti),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppColors.g06,
+                style: TextStyle(
+                  color: context.colors.icon,
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                   height: 1.50,
@@ -79,8 +81,8 @@ class NotificationItem extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 _formatDateTime(noti.createdAt),
-                style: const TextStyle(
-                  color: AppColors.g05,
+                style: TextStyle(
+                  color: context.colors.muted,
                   fontSize: 8,
                   fontWeight: FontWeight.w500,
                   height: 1.60,
