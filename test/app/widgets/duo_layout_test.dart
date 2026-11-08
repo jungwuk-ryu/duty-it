@@ -10,6 +10,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 void main() {
+  test('side toolbar geometry ignores obstructions on the opposite edge', () {
+    const media = MediaQueryData(
+      size: Size(1000, 700),
+      padding: EdgeInsets.only(top: 24),
+      viewPadding: EdgeInsets.only(right: 84),
+    );
+    const layout = DuoLayoutData(
+      isDuo: true,
+      verticalBarEdge: 'right',
+      obstructions: [
+        Rect.fromLTWH(920, 0, 80, 180),
+        Rect.fromLTWH(0, 0, 100, 260),
+      ],
+    );
+    expect(layout.sideBarWidth(media), 84);
+    expect(layout.sideControlsTop(media), 180);
+    const left = DuoLayoutData(
+      isDuo: true,
+      verticalBarEdge: 'left',
+      obstructions: [
+        Rect.fromLTWH(920, 0, 80, 180),
+        Rect.fromLTWH(0, 0, 100, 260),
+      ],
+    );
+    expect(left.sideBarWidth(media), 72);
+    expect(left.sideControlsTop(media), 260);
+  });
+
   group('Android foldable orientation', () {
     late List<List<dynamic>> orientations;
 

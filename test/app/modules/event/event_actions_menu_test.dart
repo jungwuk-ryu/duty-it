@@ -4,6 +4,7 @@ import 'package:duty_it/app/modules/event/widgets/event_actions_menu.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duit_glass_menu.dart';
+import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,7 +53,13 @@ void main() {
     EdgeInsets insets = EdgeInsets.zero,
     TextScaler textScaler = TextScaler.noScaling,
     TextDirection direction = TextDirection.ltr,
+    bool sideControls = false,
   }) async {
+    final menu = EventActionsMenu(
+      event: Event(id: 42, title: '간호 학술대회', startAt: DateTime(2026, 10, 1, 9)),
+      bookmarkBusy: bookmarkBusy,
+      onBookmarkTap: bookmark ?? () async {},
+    );
     await tester.pumpWidget(
       GetMaterialApp(
         builder: (context, child) => MediaQuery(
@@ -67,24 +74,25 @@ void main() {
           ),
         ),
         home: Scaffold(
-          appBar: AppBar(
-            actions: [
-              EventActionsMenu(
-                event: Event(
-                  id: 42,
-                  title: '간호 학술대회',
-                  startAt: DateTime(2026, 10, 1, 9),
+          appBar: AppBar(actions: [if (!sideControls) menu]),
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (sideControls)
+                Positioned(
+                  left: layout.verticalBarEdge == 'left' ? 8 : null,
+                  right: layout.verticalBarEdge == 'right' ? 8 : null,
+                  top: 160,
+                  width: 56,
+                  child: DuitAppBarActions(vertical: true, children: [menu]),
                 ),
-                bookmarkBusy: bookmarkBusy,
-                onBookmarkTap: bookmark ?? () async {},
+              Center(
+                child: TextButton(
+                  onPressed: outsideTap,
+                  child: const Text('다른 동작'),
+                ),
               ),
             ],
-          ),
-          body: Center(
-            child: TextButton(
-              onPressed: outsideTap,
-              child: const Text('다른 동작'),
-            ),
           ),
         ),
       ),
@@ -94,6 +102,47 @@ void main() {
   Future<void> openMenu(WidgetTester tester) async {
     await tester.tap(find.byTooltip('행사 더보기'));
     await tester.pumpAndSettle();
+  }
+
+  for (final edge in ['left', 'right']) {
+    for (final direction in TextDirection.values) {
+      testWidgets(
+        'Duo $edge menu stays beside its hardware rail in $direction',
+        (tester) async {
+          tester.view.physicalSize = const Size(1000, 700);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          const fold = Rect.fromLTWH(480, 0, 24, 700);
+          await mount(
+            tester,
+            sideControls: true,
+            layout: DuoLayoutData(
+              isDuo: true,
+              verticalBarEdge: edge,
+              divisions: const [fold],
+            ),
+            insets: EdgeInsets.only(
+              left: edge == 'left' ? 72 : 0,
+              right: edge == 'right' ? 72 : 0,
+            ),
+            direction: direction,
+            textScaler: const TextScaler.linear(1.5),
+          );
+          await openMenu(tester);
+          final menu = tester.getRect(find.byType(DuitGlass).last);
+          if (edge == 'left') {
+            expect(menu.left, greaterThanOrEqualTo(88));
+            expect(menu.right, lessThanOrEqualTo(fold.left - 16));
+          } else {
+            expect(menu.left, greaterThanOrEqualTo(fold.right + 16));
+            expect(menu.right, lessThanOrEqualTo(912));
+          }
+          expect(find.text('캘린더에 추가').hitTestable(), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
   }
 
   testWidgets(

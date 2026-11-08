@@ -33,6 +33,32 @@ class DuoLayoutData {
     contentBounds: bounds,
   );
 
+  double sideBarWidth(MediaQueryData media) => verticalBarEdge == null
+      ? 0
+      : math.max(
+          72.0,
+          verticalBarEdge == 'left'
+              ? media.viewPadding.left
+              : media.viewPadding.right,
+        );
+
+  /// Global y-coordinate below hardware and status UI along the side controls.
+  double sideControlsTop(MediaQueryData media) {
+    final width = sideBarWidth(media);
+    final rail = Rect.fromLTWH(
+      verticalBarEdge == 'left' ? 0 : media.size.width - width,
+      0,
+      width,
+      media.size.height,
+    );
+    return obstructions
+        .where((region) => region.overlaps(rail))
+        .fold(
+          media.padding.top,
+          (double top, region) => math.max(top, region.bottom),
+        );
+  }
+
   Rect? get verticalFold {
     for (final region in divisions) {
       if (region.height > region.width &&

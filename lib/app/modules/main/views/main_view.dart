@@ -21,21 +21,8 @@ class MainView extends GetView<MainViewController> {
     final edge = layout.verticalBarEdge;
     final hasSideBar = edge != null;
     final media = MediaQuery.of(context);
-    final sideWidth = hasSideBar
-        ? math.max(
-            72.0,
-            edge == 'left' ? media.viewPadding.left : media.viewPadding.right,
-          )
-        : 0.0;
-    final railBounds = Rect.fromLTWH(
-      edge == 'left' ? 0 : media.size.width - sideWidth,
-      0,
-      sideWidth,
-      media.size.height,
-    );
-    final controlsTop = layout.obstructions
-        .where((r) => r.overlaps(railBounds))
-        .fold(media.padding.top, (double top, r) => math.max(top, r.bottom));
+    final sideWidth = layout.sideBarWidth(media);
+    final controlsTop = layout.sideControlsTop(media);
     return Scaffold(
       key: controller.scaffoldKey,
       backgroundColor: context.colors.canvas,

@@ -67,16 +67,28 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
     final layout = DuoLayoutData.of(context);
     final rtl = Directionality.of(context) == TextDirection.rtl;
     final bounds = layout.contentBounds;
+    final fromLeft =
+        layout.verticalBarEdge == 'left' ||
+        (layout.verticalBarEdge == null && rtl);
     var left = math.max(insets.left, bounds.isEmpty ? 0.0 : bounds.left);
     var right = math.min(
       media.size.width - insets.right,
       bounds.isEmpty ? media.size.width : bounds.right,
     );
-    // AppBar actions live in the trailing pane, unlike the list's sort menu.
+    if (layout.verticalBarEdge == 'left') {
+      left = math.max(left, layout.sideBarWidth(media));
+    } else if (layout.verticalBarEdge == 'right') {
+      right = math.min(right, media.size.width - layout.sideBarWidth(media));
+    }
+    // The dropdown stays beside its toolbar, clear of the physical fold.
     for (final fold in layout.divisions) {
       if (fold.height <= fold.width) continue;
-      if (rtl && fold.left > left && fold.left < right) right = fold.left;
-      if (!rtl && fold.right > left && fold.right < right) left = fold.right;
+      if (fromLeft && fold.left > left && fold.left < right) {
+        right = fold.left;
+      }
+      if (!fromLeft && fold.right > left && fold.right < right) {
+        left = fold.right;
+      }
     }
     final width = math.min(
       math.max(0.0, right - left - 32),
@@ -92,6 +104,9 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
           tooltip: '행사 더보기',
           icon: Icon(Icons.more_horiz_rounded, color: context.colors.text),
           style: IconButton.styleFrom(
+            minimumSize: layout.verticalBarEdge == null
+                ? null
+                : const Size.square(44),
             backgroundColor: menu.isOpen
                 ? context.colors.mutedSurface
                 : Colors.transparent,
@@ -103,7 +118,7 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
             }
             final box = context.findRenderObject()! as RenderBox;
             final x = box.localToGlobal(Offset.zero).dx;
-            final trailing = rtl ? x : x + box.size.width - width;
+            final trailing = fromLeft ? x : x + box.size.width - width;
             final menuLeft = trailing.clamp(
               left + 16,
               math.max(left + 16, right - 16 - width),

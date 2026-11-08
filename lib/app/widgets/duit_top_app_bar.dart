@@ -24,11 +24,19 @@ class DuitTopAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = DuitAppBarActions(
-      showNotifications: showNotifications,
-      hasNewNotification: hasNewNotification,
-      onNotificationsTap: onNotificationsTap,
-      onMenuTap: onMenuTap,
       vertical: actionsOnly,
+      children: [
+        if (showNotifications)
+          _button(
+            '알림',
+            onNotificationsTap,
+            Assets.icons.bell.path,
+            14,
+            18,
+            showBadge: hasNewNotification,
+          ),
+        _button('메뉴', onMenuTap, Assets.icons.hamburger.path, 18, 14),
+      ],
     );
     if (actionsOnly) return actions;
     return Padding(
@@ -49,49 +57,6 @@ class DuitTopAppBar extends StatelessWidget {
           const Spacer(),
           if (DuoLayoutData.of(context).verticalBarEdge == null) actions,
         ],
-      ),
-    );
-  }
-}
-
-/// The original app bar assets and actions in either toolbar orientation.
-class DuitAppBarActions extends StatelessWidget {
-  const DuitAppBarActions({
-    super.key,
-    required this.showNotifications,
-    required this.hasNewNotification,
-    required this.onNotificationsTap,
-    required this.onMenuTap,
-    this.vertical = false,
-  });
-  final bool showNotifications;
-  final bool hasNewNotification;
-  final VoidCallback onNotificationsTap;
-  final VoidCallback onMenuTap;
-  final bool vertical;
-
-  @override
-  Widget build(BuildContext context) {
-    final buttons = [
-      if (showNotifications)
-        _button(
-          '알림',
-          onNotificationsTap,
-          Assets.icons.bell.path,
-          14,
-          18,
-          showBadge: hasNewNotification,
-        ),
-      _button('메뉴', onMenuTap, Assets.icons.hamburger.path, 18, 14),
-    ];
-    return DuitGlass(
-      // Inline toolbar controls sit on an opaque header, so they need no shadow.
-      showShadow: vertical,
-      child: Padding(
-        padding: const EdgeInsets.all(2),
-        child: vertical
-            ? Column(mainAxisSize: MainAxisSize.min, children: buttons)
-            : Row(mainAxisSize: MainAxisSize.min, children: buttons),
       ),
     );
   }
@@ -123,6 +88,29 @@ class DuitAppBarActions extends StatelessWidget {
           ),
         ),
       ),
+    ),
+  );
+}
+
+/// Shared glass chrome for the home controls and route-specific actions.
+class DuitAppBarActions extends StatelessWidget {
+  const DuitAppBarActions({
+    super.key,
+    required this.children,
+    this.vertical = false,
+  });
+
+  final List<Widget> children;
+  final bool vertical;
+
+  @override
+  Widget build(BuildContext context) => DuitGlass(
+    showShadow: vertical,
+    child: Padding(
+      padding: const EdgeInsets.all(2),
+      child: vertical
+          ? Column(mainAxisSize: MainAxisSize.min, children: children)
+          : Row(mainAxisSize: MainAxisSize.min, children: children),
     ),
   );
 }
