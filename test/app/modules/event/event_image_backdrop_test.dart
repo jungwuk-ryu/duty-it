@@ -24,6 +24,7 @@ void main() {
       'poster wash preserves readable text in ${dark ? 'dark' : 'light'} mode',
       (tester) async {
         late AppPalette local;
+        late ThemeData localTheme;
         await tester.pumpWidget(
           MaterialApp(
             theme: dark ? AppTheme.dark : AppTheme.light,
@@ -32,6 +33,7 @@ void main() {
               child: Builder(
                 builder: (context) {
                   local = context.colors;
+                  localTheme = Theme.of(context);
                   return const SizedBox.expand();
                 },
               ),
@@ -76,6 +78,16 @@ void main() {
           }
         }
         expect(local.canvas.a, 0);
+        expect(localTheme.brightness, Brightness.dark);
+        expect(local.text, AppPalette.dark.text);
+        expect(
+          localTheme.appBarTheme.systemOverlayStyle!.statusBarIconBrightness,
+          Brightness.light,
+        );
+        expect(
+          Theme.of(tester.element(find.byType(EventImageBackdrop))).brightness,
+          dark ? Brightness.dark : Brightness.light,
+        );
         expect(find.byType(ImageFiltered), findsOneWidget);
         expect(tester.layers.whereType<BackdropFilterLayer>(), isEmpty);
         final image = tester.widget<Image>(find.byType(Image));
@@ -170,7 +182,7 @@ void main() {
   );
 
   testWidgets(
-    'poster and transparency changes preserve content state and opaque fallback',
+    'light mode keeps its content state and returns to light fallback when effects are off',
     (tester) async {
       var highContrast = false;
       var reduceTransparency = false;
@@ -178,7 +190,7 @@ void main() {
       late StateSetter update;
       await tester.pumpWidget(
         MaterialApp(
-          theme: AppTheme.dark,
+          theme: AppTheme.light,
           home: StatefulBuilder(
             builder: (context, set) {
               update = set;
@@ -202,6 +214,10 @@ void main() {
       );
       await tester.enterText(find.byType(TextField), '유지할 메모');
       final inputState = tester.state(find.byType(TextField));
+      expect(
+        tester.element(find.byType(TextField)).colors.canvas,
+        AppPalette.light.canvas,
+      );
       update(() => image = poster);
       await tester.runAsync(
         () => precacheImage(
@@ -211,6 +227,10 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byType(ImageFiltered), findsOneWidget);
+      expect(
+        Theme.of(tester.element(find.byType(TextField))).brightness,
+        Brightness.dark,
+      );
       for (final setting in ['contrast', 'transparency']) {
         update(() {
           highContrast = setting == 'contrast';
@@ -221,7 +241,11 @@ void main() {
         expect(find.byType(ImageFiltered), findsNothing);
         expect(
           tester.element(find.byType(TextField)).colors.canvas,
-          AppPalette.dark.canvas,
+          AppPalette.light.canvas,
+        );
+        expect(
+          Theme.of(tester.element(find.byType(TextField))).brightness,
+          Brightness.light,
         );
         expect(tester.state(find.byType(TextField)), same(inputState));
         expect(find.text('유지할 메모'), findsOneWidget);
@@ -236,7 +260,7 @@ void main() {
       final broken = MemoryImage(Uint8List.fromList([0, 1, 2]));
       await tester.pumpWidget(
         MaterialApp(
-          theme: AppTheme.dark,
+          theme: AppTheme.light,
           home: EventImageBackdrop(
             image: broken,
             child: Center(
@@ -271,6 +295,13 @@ void main() {
           )
           .first;
       expect(canvas.color, AppPalette.dark.canvas);
+      expect(
+        _contrast(
+          tester.element(find.byType(TextButton)).colors.text,
+          canvas.color,
+        ),
+        greaterThanOrEqualTo(4.5),
+      );
       await tester.tap(find.text('더 보기'));
       expect(tapped, isTrue);
       expect(tester.takeException(), isNull);

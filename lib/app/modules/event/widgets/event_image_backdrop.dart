@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/core/theme/app_theme.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:flutter/material.dart';
 
@@ -19,22 +20,18 @@ class EventImageBackdrop extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = context.colors;
-    final dark = theme.brightness == Brightness.dark;
     final media = MediaQuery.of(context);
     final enabled =
         image != null &&
         !media.highContrast &&
         !media.accessibleNavigation &&
         !DuoLayoutData.of(context).reduceTransparency;
-    final wash = dark ? const Color(0xCC000000) : const Color(0xD9FFFFFF);
-    final ambient = colors.copyWith(
+    const posterColors = AppPalette.dark;
+    final ambient = posterColors.copyWith(
       canvas: Colors.transparent,
-      surface: colors.surface.withAlpha(190),
-      subtleSurface: colors.subtleSurface.withAlpha(190),
-      mutedSurface: colors.mutedSurface.withAlpha(210),
-      muted: dark ? colors.muted : const Color(0xFF5C5A58),
-      accent: dark ? colors.accent : const Color(0xFFA92E26),
-      link: dark ? colors.link : const Color(0xFF304ABD),
+      surface: posterColors.surface.withAlpha(190),
+      subtleSurface: posterColors.subtleSurface.withAlpha(190),
+      mutedSurface: posterColors.mutedSurface.withAlpha(210),
     );
 
     // Keep this tree stable when the poster loads or accessibility changes;
@@ -46,7 +43,8 @@ class EventImageBackdrop extends StatelessWidget {
           child: IgnorePointer(
             child: ExcludeSemantics(
               child: ColoredBox(
-                color: colors.canvas,
+                // Keep light text readable while loading and on image failure.
+                color: enabled ? posterColors.canvas : colors.canvas,
                 child: enabled
                     ? Image(
                         // The background needs color, not a second full-size decode.
@@ -72,7 +70,7 @@ class EventImageBackdrop extends StatelessWidget {
                                   ),
                                   child: child,
                                 ),
-                                ColoredBox(color: wash),
+                                const ColoredBox(color: Color(0xCC000000)),
                               ],
                             ),
                           );
@@ -86,7 +84,10 @@ class EventImageBackdrop extends StatelessWidget {
         ),
         Theme(
           data: enabled
-              ? theme.copyWith(
+              // The photo treatment has its own dark appearance in both modes.
+              // Dialogs and other routes continue to use the app's system theme.
+              ? AppTheme.dark.copyWith(
+                  platform: theme.platform,
                   extensions: [
                     ...theme.extensions.values.where(
                       (value) => value is! AppPalette,
