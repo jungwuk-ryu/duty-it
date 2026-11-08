@@ -213,6 +213,8 @@ class _EventDetailViewState extends State<_EventDetailContent> {
       right: edge == 'right' ? sideWidth : media.padding.right,
     );
     const toolbarHeight = 64.0;
+    const sideActionExtent = 48.0;
+    final sideActionInset = (sideWidth - sideActionExtent) / 2;
     final bodyTop = media.padding.top + toolbarHeight;
     final menu = Obx(
       () => EventActionsMenu(
@@ -431,10 +433,11 @@ class _EventDetailViewState extends State<_EventDetailContent> {
           ),
           if (edge != null)
             Positioned(
-              left: edge == 'left' ? 8 : null,
-              right: edge == 'right' ? 8 : null,
+              left: edge == 'left' ? sideActionInset : null,
+              right: edge == 'right' ? sideActionInset : null,
               top: math.max(0.0, layout.sideControlsTop(media) - bodyTop) + 8,
-              width: sideWidth - 16,
+              width: sideActionExtent,
+              height: sideActionExtent,
               child: DuitAppBarActions(vertical: true, children: [menu]),
             ),
         ],
