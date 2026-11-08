@@ -9,6 +9,7 @@ import 'package:duty_it/app/core/models/event_detail.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/services/event_content_service.dart';
+import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/modules/event/widgets/event_actions_menu.dart';
 import 'package:duty_it/app/modules/event/widgets/event_host_card.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
@@ -221,6 +222,10 @@ class _EventDetailViewState extends State<_EventDetailContent> {
   }
 
   Future<void> _openOrganizer(String value) async {
+    if (!Get.find<AuthService>().isLoggined()) {
+      Get.toNamed(Routes.LOGIN);
+      return;
+    }
     final uri = Uri.tryParse(value);
     if (uri == null ||
         !uri.hasAuthority ||
