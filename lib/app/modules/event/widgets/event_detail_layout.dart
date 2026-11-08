@@ -25,6 +25,9 @@ class EventDetailLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final layout = DuoLayoutData.of(context);
+    final verticalActionInset = layout.isDuo
+        ? math.max(12.0, MediaQuery.paddingOf(context).bottom)
+        : 12.0;
     return LayoutBuilder(
       builder: (context, constraints) {
         const inset = 20.0;
@@ -101,7 +104,18 @@ class EventDetailLayout extends StatelessWidget {
                 padding: contentInsets
                     .add(actionsPadding)
                     .add(const EdgeInsets.symmetric(horizontal: inset)),
-                child: actions,
+                child: SafeArea(
+                  top: false,
+                  // Preserve the system clearance symmetrically on Duo so the
+                  // row is centered within the entire visible footer.
+                  bottom: !layout.isDuo,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: verticalActionInset,
+                    ),
+                    child: actions,
+                  ),
+                ),
               ),
             ),
           ],

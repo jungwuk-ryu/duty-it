@@ -544,53 +544,47 @@ class _EventDetailViewState extends State<_EventDetailContent> {
   );
 
   Widget _bottomBar(Event event) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            OutlinedButton(
-              onPressed: _bookmarkBusy ? null : _toggleBookmark,
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(50, 48),
-                padding: EdgeInsets.zero,
-                side: BorderSide(color: context.colors.border),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Icon(
-                event.isBookmarked
-                    ? Icons.bookmark_rounded
-                    : Icons.bookmark_border_rounded,
-                color: event.isBookmarked
-                    ? context.colors.accent
-                    : context.colors.secondaryText,
-              ),
+    return Row(
+      children: [
+        OutlinedButton(
+          onPressed: _bookmarkBusy ? null : _toggleBookmark,
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(50, 48),
+            padding: EdgeInsets.zero,
+            side: BorderSide(color: context.colors.border),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: FilledButton.icon(
-                onPressed: () => _openOrganizer(event.uri),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.main,
-                  foregroundColor: AppColors.white,
-                  minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                icon: const Icon(Icons.open_in_new_rounded, size: 18),
-                label: const Text(
-                  '주최 페이지에서 자세히 보기',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-              ),
-            ),
-          ],
+          ),
+          child: Icon(
+            event.isBookmarked
+                ? Icons.bookmark_rounded
+                : Icons.bookmark_border_rounded,
+            color: event.isBookmarked
+                ? context.colors.accent
+                : context.colors.secondaryText,
+          ),
         ),
-      ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: FilledButton.icon(
+            onPressed: () => _openOrganizer(event.uri),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.main,
+              foregroundColor: AppColors.white,
+              minimumSize: const Size.fromHeight(48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(Icons.open_in_new_rounded, size: 18),
+            label: const Text(
+              '주최 페이지에서 자세히 보기',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

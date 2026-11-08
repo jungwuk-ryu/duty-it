@@ -66,6 +66,7 @@ void main() {
             ),
             child: DuoLayoutScope(
               data: DuoLayoutData(
+                isDuo: true,
                 verticalBarEdge: edge,
                 divisions: const [fold],
               ),
@@ -79,10 +80,7 @@ void main() {
                     information: information,
                     safeLeft: insets.left,
                     contentInsets: insets,
-                    actions: const SafeArea(
-                      top: false,
-                      child: SizedBox(key: actionsKey, height: 48),
-                    ),
+                    actions: const SizedBox(key: actionsKey, height: 48),
                   ),
                 ),
               ),
@@ -94,8 +92,10 @@ void main() {
       final footer = tester.getRect(find.byType(DecoratedBox));
       expect(footer.left, 0);
       expect(footer.right, 800);
-      expect(footer.height, 82);
+      expect(footer.height, 116);
       final actions = tester.getRect(find.byKey(actionsKey));
+      expect(actions.center.dy, closeTo(footer.center.dy, .01));
+      expect(footer.bottom - actions.bottom, greaterThanOrEqualTo(34));
       expect(actions.left, greaterThanOrEqualTo(fold.right));
       expect(actions.right, 800 - insets.right - 20);
       expect(tester.getRect(find.byKey(poster.key!)).left, insets.left + 20);
@@ -105,6 +105,53 @@ void main() {
       );
       expect(tester.takeException(), isNull);
     });
+  }
+
+  for (final duo in [false, true]) {
+    for (final bottom in [0.0, 34.0]) {
+      testWidgets('phone footer clearance (Duo $duo, bottom $bottom)', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(466, 678);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        const actionsKey = ValueKey('actions');
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+              data: MediaQueryData(
+                padding: EdgeInsets.only(bottom: bottom),
+                viewPadding: EdgeInsets.only(bottom: bottom),
+              ),
+              child: DuoLayoutScope(
+                data: DuoLayoutData(isDuo: duo),
+                child: const EventDetailLayout(
+                  poster: poster,
+                  information: information,
+                  safeLeft: 0,
+                  actions: SizedBox(key: actionsKey, height: 48),
+                ),
+              ),
+            ),
+          ),
+        );
+        final footer = tester.getRect(find.byType(DecoratedBox));
+        final actions = tester.getRect(find.byKey(actionsKey));
+        final above = actions.top - footer.top;
+        final below = footer.bottom - actions.bottom;
+        expect(below, greaterThanOrEqualTo(bottom));
+        if (duo) {
+          expect(above, closeTo(below, .01));
+        } else {
+          // Ordinary phones retain their 12pt spacing plus home clearance.
+          expect(above, 12);
+          expect(below, 12 + bottom);
+        }
+        expect(tester.takeException(), isNull);
+      });
+    }
   }
 
   testWidgets(
