@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/main/widgets/drawer/end_drawer.dart';
 import 'package:duty_it/app/modules/main/widgets/main_tab_bar.dart';
@@ -176,10 +177,8 @@ class MainView extends GetView<MainViewController> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Image.asset(
-                                            mainTabs[i].icon,
-                                            width: 20,
-                                            height: 20,
+                                          MainTabIcon(
+                                            index: i,
                                             color: selected
                                                 ? AppColors.main
                                                 : AppColors.g05,

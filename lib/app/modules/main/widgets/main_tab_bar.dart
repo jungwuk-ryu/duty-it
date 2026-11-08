@@ -13,6 +13,22 @@ final mainTabs = [
   (label: '캘린더', icon: Assets.icons.calendar.path),
 ];
 
+class MainTabIcon extends StatelessWidget {
+  const MainTabIcon({super.key, required this.index, required this.color});
+
+  final int index;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    // Tint after image sampling to avoid Android bitmap edge seams.
+    return ColorFiltered(
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+      child: Image.asset(mainTabs[index].icon, width: 20, height: 20),
+    );
+  }
+}
+
 class MainTabBar extends StatefulWidget {
   const MainTabBar({
     super.key,
@@ -190,12 +206,7 @@ class _MainTabBarState extends State<MainTabBar> {
                 AnimatedScale(
                   duration: feedback,
                   scale: lifted && feedback != Duration.zero ? 1.1 : 1,
-                  child: Image.asset(
-                    mainTabs[i].icon,
-                    width: 20,
-                    height: 20,
-                    color: color,
-                  ),
+                  child: MainTabIcon(index: i, color: color ?? AppColors.g07),
                 ),
                 const SizedBox(height: 3),
                 Text(
