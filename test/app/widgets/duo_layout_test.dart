@@ -1,12 +1,121 @@
+import 'dart:ui' as ui;
+
 import 'package:duty_it/app/widgets/adaptive_paged_sliver.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/widgets/adaptive_filter_row.dart';
 import 'package:duty_it/app/widgets/category_tag.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 void main() {
+  group('Android foldable orientation', () {
+    late List<List<dynamic>> orientations;
+
+    setUp(() {
+      orientations = [];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+            if (call.method == 'SystemChrome.setPreferredOrientations') {
+              orientations.add(List<dynamic>.from(call.arguments as List));
+            }
+            return null;
+          });
+    });
+
+    tearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+    });
+
+    testWidgets(
+      'unfolding unlocks a letterboxed app and folding restores portrait',
+      (tester) async {
+        tester.view.devicePixelRatio = 2;
+        tester.view.physicalSize = const Size(800, 1800);
+        tester.view.display.size = const Size(800, 1800);
+        addTearDown(tester.view.reset);
+        addTearDown(tester.view.display.reset);
+        await tester.pumpWidget(
+          const MaterialApp(home: DuoLayout(child: SizedBox())),
+        );
+        expect(orientations, isEmpty);
+
+        // The full display grows before Android removes the portrait letterbox.
+        tester.view.display.size = const Size(1800, 2200);
+        await tester.pump();
+        expect(orientations, [isEmpty]);
+
+        // A narrow split window and keyboard do not change the physical display.
+        tester.view.physicalSize = const Size(700, 1000);
+        await tester.pump();
+        expect(orientations, hasLength(1));
+        tester.view.display.size = const Size(2200, 1800);
+        await tester.pump();
+        expect(orientations, hasLength(1));
+
+        tester.view.display.size = const Size(800, 1800);
+        await tester.pump();
+        expect(orientations.last, [
+          'DeviceOrientation.portraitUp',
+          'DeviceOrientation.portraitDown',
+        ]);
+        await tester.pumpWidget(const SizedBox());
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.android),
+    );
+
+    testWidgets('a fold on a narrow display preserves search focus and text', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 2;
+      tester.view.display.size = const Size(1000, 1800);
+      addTearDown(tester.view.reset);
+      addTearDown(tester.view.display.reset);
+      final focus = FocusNode();
+      final text = TextEditingController(text: '간호 세미나');
+      addTearDown(focus.dispose);
+      addTearDown(text.dispose);
+      Widget app(List<ui.DisplayFeature> features) => MaterialApp(
+        home: MediaQuery(
+          data: MediaQueryData(displayFeatures: features),
+          child: DuoLayout(
+            child: Material(
+              child: TextField(controller: text, focusNode: focus),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(app([]));
+      focus.requestFocus();
+      text.selection = const TextSelection.collapsed(offset: 3);
+      await tester.pump();
+      await tester.pumpWidget(
+        app([
+          const ui.DisplayFeature(
+            bounds: Rect.fromLTWH(250, 0, 0, 900),
+            type: ui.DisplayFeatureType.fold,
+            state: ui.DisplayFeatureState.postureHalfOpened,
+          ),
+        ]),
+      );
+      await tester.pump();
+      expect(orientations, [isEmpty]);
+      expect(focus.hasFocus, isTrue);
+      expect(text.text, '간호 세미나');
+      expect(text.selection.baseOffset, 3);
+      await tester.pumpWidget(app([]));
+      await tester.pump();
+      expect(orientations.last, [
+        'DeviceOrientation.portraitUp',
+        'DeviceOrientation.portraitDown',
+      ]);
+      expect(focus.hasFocus, isTrue);
+      await tester.pumpWidget(const SizedBox());
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+  });
+
   testWidgets('deep two-to-one reflow finds the same variable-height item', (
     tester,
   ) async {

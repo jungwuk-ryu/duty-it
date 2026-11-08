@@ -66,14 +66,18 @@ class DuoLayout extends StatefulWidget {
   State<DuoLayout> createState() => _DuoLayoutState();
 }
 
-class _DuoLayoutState extends State<DuoLayout> {
+class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
   StreamSubscription<dynamic>? _subscription;
   DuoLayoutData _data = const DuoLayoutData();
   bool _allowsRotation = false;
+  ui.FlutterView? _view;
+  bool _androidHasFold = false;
+  bool _androidAllowsRotation = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
       _subscription = const EventChannel('com.dutyit.app/layout')
           .receiveBroadcastStream()
@@ -114,7 +118,46 @@ class _DuoLayoutState extends State<DuoLayout> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _view = View.maybeOf(context);
+    _androidHasFold = MediaQuery.displayFeaturesOf(context).any(
+      (feature) =>
+          feature.type == ui.DisplayFeatureType.fold ||
+          feature.type == ui.DisplayFeatureType.hinge,
+    );
+    _updateAndroidOrientation();
+  }
+
+  @override
+  void didChangeMetrics() => _updateAndroidOrientation();
+
+  void _updateAndroidOrientation() {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+    final display = _view?.display;
+    if (display == null) return;
+    // Use the whole display: a portrait-locked app can already be letterboxed.
+    // Window or keyboard resizing must not lock an unfolded device again.
+    final allowsRotation =
+        _androidHasFold ||
+        display.size.shortestSide / display.devicePixelRatio >= 600;
+    if (allowsRotation == _androidAllowsRotation) return;
+    _androidAllowsRotation = allowsRotation;
+    unawaited(
+      SystemChrome.setPreferredOrientations(
+        allowsRotation
+            ? const []
+            : const [
+                DeviceOrientation.portraitUp,
+                DeviceOrientation.portraitDown,
+              ],
+      ),
+    );
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _subscription?.cancel();
     super.dispose();
   }
