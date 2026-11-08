@@ -49,7 +49,6 @@ class _MainTabBarState extends State<MainTabBar> {
     final position =
         _dragPosition ?? (_pressed ?? widget.selectedIndex).toDouble();
     final touching = _dragPosition != null || _pressed != null;
-    final highContrast = MediaQuery.highContrastOf(context);
     final duration = DuoMotion.durationOf(context);
     final feedbackDuration = duration == Duration.zero
         ? Duration.zero
@@ -97,7 +96,6 @@ class _MainTabBarState extends State<MainTabBar> {
                         child: _selectionLens(
                           position: position,
                           touching: touching,
-                          highContrast: highContrast,
                           travel: _dragPosition == null
                               ? duration
                               : Duration.zero,
@@ -135,7 +133,6 @@ class _MainTabBarState extends State<MainTabBar> {
   Widget _selectionLens({
     required double position,
     required bool touching,
-    required bool highContrast,
     required Duration travel,
     required Duration feedback,
   }) => AnimatedAlign(
@@ -151,24 +148,10 @@ class _MainTabBarState extends State<MainTabBar> {
       child: AnimatedScale(
         scale: touching && feedback != Duration.zero ? 1.035 : 1,
         duration: feedback,
-        child: AnimatedContainer(
-          duration: feedback,
-          decoration: ShapeDecoration(
-            shape: StadiumBorder(
-              side: BorderSide(
-                color: highContrast ? AppColors.g06 : const Color(0x99FFFFFF),
-              ),
-            ),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: highContrast
-                  ? const [AppColors.g01, AppColors.g01]
-                  : touching
-                  ? const [Color(0xF0F5F5F6), Color(0xB0CFD1D4)]
-                  : const [Color(0xCFE9E9EB), Color(0xA8D5D5D8)],
-            ),
-          ),
+        child: const DuitGlass(
+          style: DuitGlassStyle.selection,
+          showShadow: false,
+          child: SizedBox.expand(),
         ),
       ),
     ),
@@ -184,9 +167,8 @@ class _MainTabBarState extends State<MainTabBar> {
     child: Semantics(
       role: SemanticsRole.tab,
       selected: i == widget.selectedIndex,
-      hint: MaterialLocalizations.of(
-        context,
-      ).tabLabel(tabIndex: i + 1, tabCount: mainTabs.length),
+      hint: MaterialLocalizations.of(context)
+          .tabLabel(tabIndex: i + 1, tabCount: mainTabs.length),
       child: InkWell(
         customBorder: const StadiumBorder(),
         splashFactory: NoSplash.splashFactory,
