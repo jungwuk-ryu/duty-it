@@ -212,7 +212,8 @@ class _EventDetailViewState extends State<_EventDetailContent> {
       left: edge == 'left' ? sideWidth : media.padding.left,
       right: edge == 'right' ? sideWidth : media.padding.right,
     );
-    final bodyTop = media.padding.top + kToolbarHeight + 1;
+    const toolbarHeight = 64.0;
+    final bodyTop = media.padding.top + toolbarHeight;
     final menu = Obx(
       () => EventActionsMenu(
         key: _actionsKey,
@@ -225,26 +226,54 @@ class _EventDetailViewState extends State<_EventDetailContent> {
       backgroundColor: context.colors.canvas,
       appBar: AppBar(
         backgroundColor: context.colors.canvas,
-        surfaceTintColor: context.colors.canvas,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          tooltip: '뒤로 가기',
-          icon: Icon(Icons.arrow_back_rounded, color: context.colors.text),
-          onPressed: Get.back,
-        ),
-        title: Text(
-          '행사 상세',
-          style: TextStyle(
-            color: context.colors.text,
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
+        scrolledUnderElevation: 0,
+        toolbarHeight: toolbarHeight,
+        leadingWidth: 80,
+        centerTitle: true,
+        titleSpacing: 0,
+        leading: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: DuitAppBarActions(
+            children: [
+              IconButton(
+                tooltip: '뒤로 가기',
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: context.colors.text,
+                  size: 22,
+                ),
+                style: IconButton.styleFrom(
+                  minimumSize: const Size.square(44),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: Get.back,
+              ),
+            ],
           ),
         ),
-        actions: [if (edge == null) menu],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(height: 1, color: context.colors.border),
+        title: Obx(
+          () => Text(
+            widget.eventRx.value.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: context.colors.text,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
+        actions: [
+          if (edge == null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: DuitAppBarActions(children: [menu]),
+            )
+          else
+            const SizedBox(width: 80),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,

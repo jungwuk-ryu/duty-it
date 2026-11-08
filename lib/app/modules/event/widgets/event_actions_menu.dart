@@ -104,9 +104,8 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
           tooltip: '행사 더보기',
           icon: Icon(Icons.more_horiz_rounded, color: context.colors.text),
           style: IconButton.styleFrom(
-            minimumSize: layout.verticalBarEdge == null
-                ? null
-                : const Size.square(44),
+            minimumSize: const Size.square(44),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             backgroundColor: menu.isOpen
                 ? context.colors.mutedSurface
                 : Colors.transparent,
