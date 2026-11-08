@@ -250,7 +250,7 @@ class _WeekEventRow extends StatelessWidget {
               ),
               width: widgetWidth,
               decoration: BoxDecoration(
-                color: event.color,
+                color: context.colors.calendarColor(event.color),
                 borderRadius: BorderRadius.horizontal(
                   left: Radius.circular(isStart ? 4 : 0),
                   right: Radius.circular(isEnd ? 4 : 0),
@@ -261,7 +261,7 @@ class _WeekEventRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                  color: AppColors.black,
+                  color: context.colors.text,
                   fontSize: 8,
                   fontWeight: FontWeight.w500,
                   height: 1.60,
@@ -319,7 +319,7 @@ class _WeekEventLastRow extends StatelessWidget {
                   child: Text(
                     "+ $eventCount개",
                     style: TextStyle(
-                      color: AppColors.g06,
+                      color: context.colors.icon,
                       fontSize: 8,
                       fontWeight: FontWeight.w500,
                       height: 1.60,

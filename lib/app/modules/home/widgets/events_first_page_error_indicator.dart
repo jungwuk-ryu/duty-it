@@ -31,7 +31,7 @@ class EventsFirstPageErrorIndicator extends StatelessWidget {
           SizedBox(height: 10),
           AppNormalButton(
             text: '서비스 상태 확인',
-            color: AppColors.g05,
+            color: context.colors.muted,
             onTap: () {
               launchUrlString("https://status.dutyit.net");
             },

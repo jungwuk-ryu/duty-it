@@ -31,7 +31,7 @@ class AppRadioButtom extends StatelessWidget {
             height: visualSize,
             decoration: ShapeDecoration(
               shape: OvalBorder(
-                side: BorderSide(width: 1, color: AppColors.g05),
+                side: BorderSide(width: 1, color: context.colors.muted),
               ),
             ),
             child: Center(
@@ -41,7 +41,7 @@ class AppRadioButtom extends StatelessWidget {
                   width: selectedSize,
                   height: selectedSize,
                   decoration: ShapeDecoration(
-                    color: AppColors.main,
+                    color: context.colors.accent,
                     shape: OvalBorder(),
                   ),
                 ),

@@ -185,8 +185,8 @@ class _CalendarEventSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.white,
-        border: Border(top: BorderSide(color: AppColors.g02)),
+        color: context.colors.surface,
+        border: Border(top: BorderSide(color: context.colors.mutedSurface)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x146F6F6F),
@@ -208,8 +208,8 @@ class _CalendarEventSheet extends StatelessWidget {
                 final selectedDate = controller.currentDateTime;
                 return Text(
                   _formatSelectedDate(selectedDate),
-                  style: const TextStyle(
-                    color: AppColors.black,
+                  style: TextStyle(
+                    color: context.colors.text,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     height: 1.60,

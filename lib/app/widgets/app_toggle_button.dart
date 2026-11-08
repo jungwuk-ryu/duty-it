@@ -49,8 +49,8 @@ class _AppToggleButtonState extends State<AppToggleButton> {
         padding: EdgeInsets.symmetric(horizontal: 1),
         decoration: ShapeDecoration(
           color: widget.enabled
-              ? (widget.checked ? AppColors.main : AppColors.g05)
-              : AppColors.g02,
+              ? (widget.checked ? AppColors.main : context.colors.muted)
+              : context.colors.mutedSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14.50),
           ),
@@ -71,7 +71,7 @@ class _AppToggleButtonState extends State<AppToggleButton> {
               child: Center(
                 child: Visibility(
                   visible: loading,
-                  child: CupertinoActivityIndicator(),
+                  child: CupertinoActivityIndicator(color: AppColors.g06),
                 ),
               ),
             ),

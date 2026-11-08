@@ -51,7 +51,6 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
         content: Text(text),
         action: action,
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.g07,
         duration: Duration(seconds: action == null ? 3 : 6),
       ),
     );
@@ -91,9 +90,11 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
         child: IconButton(
           focusNode: _triggerFocus,
           tooltip: '행사 더보기',
-          icon: const Icon(Icons.more_horiz_rounded, color: AppColors.black),
+          icon: Icon(Icons.more_horiz_rounded, color: context.colors.text),
           style: IconButton.styleFrom(
-            backgroundColor: menu.isOpen ? AppColors.g02 : Colors.transparent,
+            backgroundColor: menu.isOpen
+                ? context.colors.mutedSurface
+                : Colors.transparent,
           ),
           onPressed: () {
             if (menu.isOpen) {
@@ -262,7 +263,7 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
           context: context,
           useSafeArea: true,
           isScrollControlled: true,
-          backgroundColor: AppColors.white,
+          backgroundColor: context.colors.surface,
           showDragHandle: true,
           builder: (_) => _CalendarPicker(calendars: calendars, draft: draft),
         );
@@ -356,7 +357,7 @@ class _CalendarPickerState extends State<_CalendarPicker> {
             const SizedBox(height: 6),
             Text(
               '${_date(widget.draft.start)} – ${_date(widget.draft.end)} (KST)',
-              style: const TextStyle(fontSize: 12, color: AppColors.g05),
+              style: TextStyle(fontSize: 12, color: context.colors.muted),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -372,7 +373,7 @@ class _CalendarPickerState extends State<_CalendarPicker> {
                       (calendar) => ListTile(
                         contentPadding: EdgeInsets.zero,
                         selected: _selected == calendar.id,
-                        selectedColor: AppColors.main,
+                        selectedColor: context.colors.accent,
                         leading: const Icon(Icons.calendar_month_outlined),
                         title: Text(calendar.name),
                         subtitle: _accountLabel(calendar) == null
@@ -394,6 +395,7 @@ class _CalendarPickerState extends State<_CalendarPicker> {
               style: FilledButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
                 backgroundColor: AppColors.main,
+                foregroundColor: AppColors.white,
               ),
               onPressed: () => Navigator.pop(context, _selected),
               child: const Text('선택한 캘린더에 추가'),

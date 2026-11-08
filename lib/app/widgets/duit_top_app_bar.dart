@@ -1,4 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -36,10 +37,10 @@ class DuitTopAppBar extends StatelessWidget {
         children: [
           Image.asset(Assets.icons.logo.path, width: 16, height: 16),
           const SizedBox(width: 7),
-          const Text(
+          Text(
             '듀잇',
             style: TextStyle(
-              color: AppColors.black,
+              color: context.colors.text,
               fontSize: 18,
               fontWeight: FontWeight.w700,
               height: 1.60,
@@ -76,11 +77,10 @@ class DuitAppBarActions extends StatelessWidget {
         _button(
           '알림',
           onNotificationsTap,
-          hasNewNotification
-              ? Assets.icons.bellNew.path
-              : Assets.icons.bell.path,
+          Assets.icons.bell.path,
           14,
           18,
+          showBadge: hasNewNotification,
         ),
       _button('메뉴', onMenuTap, Assets.icons.hamburger.path, 18, 14),
     ];
@@ -101,8 +101,9 @@ class DuitAppBarActions extends StatelessWidget {
     VoidCallback onTap,
     String asset,
     double width,
-    double height,
-  ) => Semantics(
+    double height, {
+    bool showBadge = false,
+  }) => Semantics(
     label: label,
     button: true,
     child: Tooltip(
@@ -113,7 +114,12 @@ class DuitAppBarActions extends StatelessWidget {
         child: SizedBox.square(
           dimension: 44,
           child: Center(
-            child: Image.asset(asset, width: width, height: height),
+            child: Badge(
+              isLabelVisible: showBadge,
+              smallSize: 5,
+              backgroundColor: AppColors.main,
+              child: AppAssetIcon(asset: asset, width: width, height: height),
+            ),
           ),
         ),
       ),

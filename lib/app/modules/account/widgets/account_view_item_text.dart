@@ -15,7 +15,7 @@ class AccountViewItemText extends StatelessWidget {
         fontSize: 15,
         fontWeight: FontWeight.w600,
         height: 1.60,
-        color: color ?? AppColors.black,
+        color: color ?? context.colors.text,
       ),
     );
   }

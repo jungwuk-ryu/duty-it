@@ -18,7 +18,7 @@ class JobRegionSelectionBottomModal extends GetView<JobFilterViewController> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                const Center(
+                Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 84),
                     child: Text(
@@ -26,7 +26,7 @@ class JobRegionSelectionBottomModal extends GetView<JobFilterViewController> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: AppColors.black,
+                        color: context.colors.text,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         height: 1.60,
@@ -41,14 +41,14 @@ class JobRegionSelectionBottomModal extends GetView<JobFilterViewController> {
                     onTap: controller.selectAllRegions,
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 76),
-                      child: const Padding(
+                      child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 4),
                         child: Text(
                           '지역 초기화',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: AppColors.g04,
+                            color: context.colors.disabled,
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             height: 1.60,
@@ -104,7 +104,7 @@ class _JobRegionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected ? AppColors.main : AppColors.black;
+    final color = isSelected ? context.colors.accent : context.colors.text;
     final fontWeight = isSelected || highlight
         ? FontWeight.w700
         : FontWeight.w400;
@@ -129,7 +129,7 @@ class _JobRegionItem extends StatelessWidget {
               ),
               const Spacer(),
               if (isSelected)
-                const Icon(Icons.check, color: AppColors.main, size: 24),
+                Icon(Icons.check, color: context.colors.accent, size: 24),
             ],
           ),
         ),

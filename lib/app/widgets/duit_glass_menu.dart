@@ -36,7 +36,7 @@ class DuitGlassMenu extends StatelessWidget {
         shadowColor: const WidgetStatePropertyAll(Color(0x4D19212A)),
         side: WidgetStatePropertyAll(
           BorderSide(
-            color: highContrast ? AppColors.g06 : const Color(0x46757C84),
+            color: highContrast ? context.colors.icon : const Color(0x46757C84),
             width: highContrast ? 1 : .75,
           ),
         ),
@@ -112,8 +112,8 @@ class DuitGlassMenuItem extends StatelessWidget {
     style: MenuItemButton.styleFrom(
       minimumSize: const Size(0, 44),
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
-      foregroundColor: AppColors.black,
-      disabledForegroundColor: AppColors.g04,
+      foregroundColor: context.colors.text,
+      disabledForegroundColor: context.colors.disabled,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
     leadingIcon: leadingIcon,

@@ -9,10 +9,10 @@ class JobDetailChipWrap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (chips.isEmpty) {
-      return const Text(
+      return Text(
         '-',
         style: TextStyle(
-          color: AppColors.black,
+          color: context.colors.text,
           fontSize: 14,
           fontWeight: FontWeight.w300,
           height: 1.60,
@@ -28,14 +28,14 @@ class JobDetailChipWrap extends StatelessWidget {
             (chip) => Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.g03),
+                border: Border.all(color: context.colors.border),
               ),
               child: Text(
                 chip,
-                style: const TextStyle(
-                  color: AppColors.g06,
+                style: TextStyle(
+                  color: context.colors.icon,
                   fontSize: 11,
                   fontWeight: FontWeight.w400,
                   height: 1.35,

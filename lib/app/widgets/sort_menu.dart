@@ -74,8 +74,12 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
           style: TextButton.styleFrom(
             minimumSize: const Size(44, 44),
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            foregroundColor: menu.isOpen ? AppColors.black : AppColors.g06,
-            backgroundColor: menu.isOpen ? AppColors.g02 : Colors.transparent,
+            foregroundColor: menu.isOpen
+                ? context.colors.text
+                : context.colors.icon,
+            backgroundColor: menu.isOpen
+                ? context.colors.mutedSurface
+                : Colors.transparent,
             shape: const StadiumBorder(),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
@@ -123,10 +127,10 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
           leadingIcon: SizedBox(
             width: 18,
             child: selected
-                ? const Icon(
+                ? Icon(
                     Icons.check_rounded,
                     size: 17,
-                    color: AppColors.main,
+                    color: context.colors.accent,
                   )
                 : null,
           ),

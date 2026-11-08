@@ -22,7 +22,7 @@ class SearchFilterAppBar extends StatelessWidget {
             '초기화',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: AppColors.g04,
+              color: context.colors.disabled,
               fontSize: 16,
               fontWeight: FontWeight.w500,
               height: 1.60,

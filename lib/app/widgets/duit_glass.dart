@@ -1,3 +1,4 @@
+import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
@@ -22,6 +23,7 @@ class DuitGlass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
     final opaque =
         DuoLayoutData.of(context).reduceTransparency ||
         media.highContrast ||
@@ -29,9 +31,9 @@ class DuitGlass extends StatelessWidget {
         media.accessibleNavigation;
     final selected = style == DuitGlassStyle.selection;
     final shadows = showShadow
-        ? const [
+        ? [
             BoxShadow(
-              color: Color(0x16000000),
+              color: dark ? const Color(0x52000000) : const Color(0x16000000),
               blurRadius: 16,
               offset: Offset(0, 4),
             ),
@@ -40,9 +42,13 @@ class DuitGlass extends StatelessWidget {
     if (opaque) {
       return DecoratedBox(
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFE4E5E8) : Colors.white,
+          color: selected
+              ? (dark ? context.colors.mutedSurface : const Color(0xFFE4E5E8))
+              : context.colors.surface,
           borderRadius: BorderRadius.circular(radius),
-          border: Border.all(color: const Color(0xFFD9D9D9)),
+          border: Border.all(
+            color: dark ? context.colors.border : const Color(0xFFD9D9D9),
+          ),
           boxShadow: shadows,
         ),
         child: ClipRRect(
@@ -52,7 +58,6 @@ class DuitGlass extends StatelessWidget {
       );
     }
 
-    // The app currently uses a light theme, even when the OS uses dark mode.
     final brightness = Theme.of(context).brightness;
     final settings = LiquidGlassSettings.ios27Regular(
       brightness: brightness,
@@ -60,7 +65,9 @@ class DuitGlass extends StatelessWidget {
     );
     final appearance = LiquidGlassAppearance.ios27Regular(
       brightness: brightness,
-      tint: selected ? const Color(0x2470747C) : const Color(0x10FFFFFF),
+      tint: dark
+          ? (selected ? const Color(0x705A606B) : const Color(0xA8282A30))
+          : (selected ? const Color(0x2470747C) : const Color(0x10FFFFFF)),
     );
     final shape = LiquidRoundedSuperellipse(borderRadius: radius);
 
@@ -70,7 +77,9 @@ class DuitGlass extends StatelessWidget {
       return FakeGlass(
         shape: shape,
         settings: const LiquidGlassSettings(frost: 0),
-        appearance: const LiquidGlassAppearance(tint: Color(0xE8FFFFFF)),
+        appearance: LiquidGlassAppearance(
+          tint: dark ? const Color(0xE8212329) : const Color(0xE8FFFFFF),
+        ),
         shadows: shadows,
         child: child,
       );

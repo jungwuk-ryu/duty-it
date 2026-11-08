@@ -23,7 +23,7 @@ class JobDetailInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isInteractive = row.onTap != null;
-    final valueColor = row.valueColor ?? AppColors.black;
+    final valueColor = row.valueColor ?? context.colors.text;
     final content = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -31,8 +31,8 @@ class JobDetailInfoRow extends StatelessWidget {
           width: 108,
           child: Text(
             row.label,
-            style: const TextStyle(
-              color: AppColors.g05,
+            style: TextStyle(
+              color: context.colors.muted,
               fontSize: 14,
               fontWeight: FontWeight.w400,
               height: 1.60,
@@ -43,12 +43,12 @@ class JobDetailInfoRow extends StatelessWidget {
           child: Text(
             row.value,
             style: TextStyle(
-              color: isInteractive ? AppColors.main : valueColor,
+              color: isInteractive ? context.colors.accent : valueColor,
               fontSize: 14,
               fontWeight: FontWeight.w300,
               height: 1.60,
               decoration: isInteractive ? TextDecoration.underline : null,
-              decorationColor: AppColors.main,
+              decorationColor: context.colors.accent,
             ),
           ),
         ),

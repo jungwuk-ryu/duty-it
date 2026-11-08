@@ -20,8 +20,8 @@ class ListPageIntro extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: AppColors.black,
+            style: TextStyle(
+              color: context.colors.text,
               fontSize: 24,
               fontWeight: FontWeight.w700,
               height: 1.35,
@@ -30,8 +30,8 @@ class ListPageIntro extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             description,
-            style: const TextStyle(
-              color: AppColors.g05,
+            style: TextStyle(
+              color: context.colors.muted,
               fontSize: 13,
               height: 1.5,
             ),

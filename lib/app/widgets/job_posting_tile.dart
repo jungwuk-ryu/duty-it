@@ -30,9 +30,9 @@ class JobPostingTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: AppColors.white,
+        color: context.colors.surface,
         shape: RoundedRectangleBorder(
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: context.colors.border),
           borderRadius: BorderRadius.circular(11),
         ),
         child: InkWell(
@@ -54,8 +54,8 @@ class JobPostingTile extends StatelessWidget {
                             deadline,
                             style: TextStyle(
                               color: deadline.startsWith('D-')
-                                  ? AppColors.main
-                                  : AppColors.g05,
+                                  ? context.colors.accent
+                                  : context.colors.muted,
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                             ),
@@ -65,8 +65,8 @@ class JobPostingTile extends StatelessWidget {
                             job.companyName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColors.g05,
+                            style: TextStyle(
+                              color: context.colors.muted,
                               fontSize: 13,
                             ),
                           ),
@@ -82,8 +82,8 @@ class JobPostingTile extends StatelessWidget {
                             : Icons.bookmark_border_rounded,
                         size: 21,
                         color: job.isBookmarked
-                            ? AppColors.main
-                            : AppColors.g05,
+                            ? context.colors.accent
+                            : context.colors.muted,
                       ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(
@@ -98,8 +98,8 @@ class JobPostingTile extends StatelessWidget {
                   job.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.black,
+                  style: TextStyle(
+                    color: context.colors.text,
                     fontSize: 17,
                     height: 1.45,
                     fontWeight: FontWeight.w700,
@@ -111,8 +111,8 @@ class JobPostingTile extends StatelessWidget {
                     facts.join('  ·  '),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.g05,
+                    style: TextStyle(
+                      color: context.colors.muted,
                       fontSize: 12,
                       height: 1.55,
                     ),

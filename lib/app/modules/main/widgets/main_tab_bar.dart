@@ -1,6 +1,7 @@
 import 'dart:ui' show SemanticsRole;
 
 import 'package:duty_it/app/core/constants/app_colors.dart';
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/gen/assets.gen.dart';
@@ -21,11 +22,7 @@ class MainTabIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Tint after image sampling to avoid Android bitmap edge seams.
-    return ColorFiltered(
-      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-      child: Image.asset(mainTabs[index].icon, width: 20, height: 20),
-    );
+    return AppAssetIcon(asset: mainTabs[index].icon, color: color);
   }
 }
 
@@ -230,7 +227,11 @@ class _MainTabBarState extends State<MainTabBar> {
           child: TweenAnimationBuilder<Color?>(
             duration: feedback,
             tween: ColorTween(
-              end: active ? const Color(0xFFA63129) : AppColors.g07,
+              end: active
+                  ? (Theme.of(context).brightness == Brightness.dark
+                        ? context.colors.accent
+                        : const Color(0xFFA63129))
+                  : context.colors.secondaryText,
             ),
             builder: (context, color, _) => Column(
               mainAxisSize: MainAxisSize.min,
@@ -239,7 +240,10 @@ class _MainTabBarState extends State<MainTabBar> {
                 AnimatedScale(
                   duration: feedback,
                   scale: lifted && feedback != Duration.zero ? 1.1 : 1,
-                  child: MainTabIcon(index: i, color: color ?? AppColors.g07),
+                  child: MainTabIcon(
+                    index: i,
+                    color: color ?? context.colors.secondaryText,
+                  ),
                 ),
                 const SizedBox(height: 3),
                 Text(

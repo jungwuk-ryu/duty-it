@@ -17,10 +17,10 @@ class JobDetailTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.white,
+      color: context.colors.surface,
       child: DecoratedBox(
-        decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppColors.g03)),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: context.colors.border)),
         ),
         child: Row(
           children: List.generate(tabs.length, (index) {
@@ -39,7 +39,9 @@ class JobDetailTabBar extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: isSelected ? AppColors.black : AppColors.g06,
+                          color: isSelected
+                              ? context.colors.text
+                              : context.colors.icon,
                           fontSize: 14,
                           fontWeight: isSelected
                               ? FontWeight.w600
@@ -55,7 +57,7 @@ class JobDetailTabBar extends StatelessWidget {
                           duration: const Duration(milliseconds: 160),
                           height: 4,
                           color: isSelected
-                              ? AppColors.main
+                              ? context.colors.accent
                               : AppColors.transparent,
                         ),
                       ),

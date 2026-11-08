@@ -13,7 +13,7 @@ class SearchFilterSectionSubtitle extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          color: AppColors.g05,
+          color: context.colors.muted,
           fontSize: 12,
           fontWeight: FontWeight.w400,
           height: 1.60,

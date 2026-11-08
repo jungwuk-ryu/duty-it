@@ -51,8 +51,8 @@ class EventTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: AppColors.g02,
-                        border: Border.all(color: AppColors.border),
+                        color: context.colors.mutedSurface,
+                        border: Border.all(color: context.colors.border),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: AppUtils.isHttpUrl(event.thumbnail)
@@ -112,8 +112,8 @@ class EventTile extends StatelessWidget {
                     category,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.black,
+                    style: TextStyle(
+                      color: context.colors.text,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
@@ -123,12 +123,12 @@ class EventTile extends StatelessWidget {
                     daysUntilStart >= 0 &&
                     !ended) ...[
                   const SizedBox(width: 7),
-                  Container(width: 1, height: 12, color: AppColors.border),
+                  Container(width: 1, height: 12, color: context.colors.border),
                   const SizedBox(width: 7),
                   Text(
                     daysUntilStart == 0 ? 'D-day' : 'D-$daysUntilStart',
-                    style: const TextStyle(
-                      color: AppColors.main,
+                    style: TextStyle(
+                      color: context.colors.accent,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
@@ -141,8 +141,8 @@ class EventTile extends StatelessWidget {
               event.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.black,
+              style: TextStyle(
+                color: context.colors.text,
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 height: 1.45,
@@ -153,7 +153,7 @@ class EventTile extends StatelessWidget {
               event.host.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColors.g05, fontSize: 12),
+              style: TextStyle(color: context.colors.muted, fontSize: 12),
             ),
           ],
         ),
@@ -185,7 +185,9 @@ class EventTile extends StatelessWidget {
             event.isBookmarked
                 ? Icons.bookmark_rounded
                 : Icons.bookmark_border_rounded,
-            color: event.isBookmarked ? AppColors.main : AppColors.g07,
+            color: event.isBookmarked
+                ? context.colors.accent
+                : context.colors.secondaryText,
             size: 18,
           ),
         ),

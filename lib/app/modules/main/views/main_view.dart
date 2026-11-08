@@ -38,7 +38,7 @@ class MainView extends GetView<MainViewController> {
         .fold(media.padding.top, (double top, r) => math.max(top, r.bottom));
     return Scaffold(
       key: controller.scaffoldKey,
-      backgroundColor: AppColors.canvas,
+      backgroundColor: context.colors.canvas,
       extendBody: true,
       body: LayoutBuilder(
         builder: (context, constraints) {

@@ -37,8 +37,8 @@ class HomeView extends GetView<HomeViewController> {
       controller: controller.scrollController,
       slivers: [
         SliverAppBar(
-          backgroundColor: AppColors.white,
-          surfaceTintColor: AppColors.white,
+          backgroundColor: context.colors.canvas,
+          surfaceTintColor: context.colors.canvas,
           elevation: 0,
           floating: true,
           snap: true,

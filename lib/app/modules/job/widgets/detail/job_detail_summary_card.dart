@@ -39,9 +39,9 @@ class JobDetailSummaryCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.g03),
+        border: Border.all(color: context.colors.border),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Column(
@@ -91,8 +91,8 @@ class _SummarySectionWidget extends StatelessWidget {
       children: [
         Text(
           section.title,
-          style: const TextStyle(
-            color: AppColors.black,
+          style: TextStyle(
+            color: context.colors.text,
             fontSize: 14,
             fontWeight: FontWeight.w600,
             height: 1.60,
@@ -115,8 +115,8 @@ class _SummarySectionWidget extends StatelessWidget {
                     width: _labelWidth(row.label),
                     child: Text(
                       row.label,
-                      style: const TextStyle(
-                        color: AppColors.g05,
+                      style: TextStyle(
+                        color: context.colors.muted,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         height: 1.60,
@@ -126,8 +126,8 @@ class _SummarySectionWidget extends StatelessWidget {
                   Expanded(
                     child: Text(
                       row.value,
-                      style: const TextStyle(
-                        color: AppColors.black,
+                      style: TextStyle(
+                        color: context.colors.text,
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
                         height: 1.60,

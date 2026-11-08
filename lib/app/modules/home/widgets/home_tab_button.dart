@@ -25,13 +25,13 @@ class HomeTabButton extends StatelessWidget {
         height: 38,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.main : AppColors.g02,
+          color: isSelected ? AppColors.main : context.colors.mutedSurface,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           title,
           style: TextStyle(
-            color: isSelected ? AppColors.white : AppColors.g07,
+            color: isSelected ? AppColors.white : context.colors.secondaryText,
             fontSize: 14,
             fontWeight: FontWeight.w700,
           ),

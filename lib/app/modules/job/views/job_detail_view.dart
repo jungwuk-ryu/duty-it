@@ -37,7 +37,7 @@ class _JobDetailViewState extends State<JobDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: context.colors.canvas,
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -108,14 +108,14 @@ class _JobDetailViewState extends State<JobDetailView> {
                       ),
                     ),
                     if (controller.isLoading.value)
-                      const Positioned(
+                      Positioned(
                         top: 0,
                         left: 0,
                         right: 0,
                         child: LinearProgressIndicator(
                           minHeight: 2,
-                          color: AppColors.main,
-                          backgroundColor: AppColors.g02,
+                          color: context.colors.accent,
+                          backgroundColor: context.colors.mutedSurface,
                         ),
                       ),
                   ],
@@ -261,7 +261,7 @@ class _JobDetailViewState extends State<JobDetailView> {
         _row('그 밖의 희망사항', job.etcHopeText),
         _row('구인인증번호', job.wantedAuthNoText),
         _row('등록일', job.postedAtText),
-        _row('마감일', job.expiresAtText, valueColor: AppColors.main),
+        _row('마감일', job.expiresAtText, valueColor: context.colors.accent),
         _row('정보 출처', job.sourceText),
       ],
     );
@@ -306,8 +306,8 @@ class _JobDetailViewState extends State<JobDetailView> {
             width: 108,
             child: Text(
               label,
-              style: const TextStyle(
-                color: AppColors.g05,
+              style: TextStyle(
+                color: context.colors.muted,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 height: 1.60,
@@ -340,8 +340,8 @@ class _HeaderContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               companyName.isEmpty ? '-' : companyName,
-              style: const TextStyle(
-                color: AppColors.black,
+              style: TextStyle(
+                color: context.colors.text,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 height: 1.20,
@@ -353,8 +353,8 @@ class _HeaderContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               title.isEmpty ? '-' : title,
-              style: const TextStyle(
-                color: AppColors.black,
+              style: TextStyle(
+                color: context.colors.text,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 height: 1.20,
@@ -366,8 +366,8 @@ class _HeaderContent extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               job.closeLabel,
-              style: const TextStyle(
-                color: AppColors.main,
+              style: TextStyle(
+                color: context.colors.accent,
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 height: 1.60,

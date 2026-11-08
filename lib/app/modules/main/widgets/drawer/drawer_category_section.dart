@@ -19,7 +19,7 @@ class DrawerCategorySection extends StatelessWidget {
         Text(
           "설정",
           style: TextStyle(
-            color: AppColors.g05,
+            color: context.colors.muted,
             fontSize: 14,
             fontWeight: FontWeight.w600,
             height: 1.60,
@@ -66,7 +66,7 @@ class _PageItemButton extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          color: AppColors.black,
+          color: context.colors.text,
           fontSize: 15,
           fontWeight: FontWeight.w400,
           height: 1.60,

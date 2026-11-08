@@ -1,3 +1,5 @@
+import 'package:duty_it/app/core/theme/app_theme.dart';
+
 import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -165,15 +167,25 @@ class _EventPosterViewerState extends State<EventPosterViewer>
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+      value: AppTheme.overlayStyle(Theme.of(context).brightness),
       child: Material(
-        color: AppColors.g01,
+        color: context.colors.subtleSurface,
         child: DecoratedBox(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFF8F8F7), Color(0xFFEFEEEC), Color(0xFFFAFAF9)],
+              colors: Theme.of(context).brightness == Brightness.dark
+                  ? const [
+                      Color(0xFF111318),
+                      Color(0xFF1B1E24),
+                      Color(0xFF15181D),
+                    ]
+                  : const [
+                      Color(0xFFF8F8F7),
+                      Color(0xFFEFEEEC),
+                      Color(0xFFFAFAF9),
+                    ],
             ),
           ),
           child: SafeArea(
@@ -189,10 +201,10 @@ class _EventPosterViewerState extends State<EventPosterViewer>
                       child: IconButton(
                         tooltip: '닫기',
                         onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.close_rounded,
                           size: 22,
-                          color: AppColors.black,
+                          color: context.colors.text,
                         ),
                       ),
                     ),
@@ -303,21 +315,21 @@ class _EventPosterViewerState extends State<EventPosterViewer>
                     widget.host,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.g06,
+                      color: context.colors.icon,
                     ),
                   ),
                 Text(
                   widget.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     height: 1.3,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.black,
+                    color: context.colors.text,
                   ),
                 ),
               ],
@@ -339,7 +351,7 @@ class _EventPosterViewerState extends State<EventPosterViewer>
               icon: Icon(
                 _zoomed ? Icons.zoom_out_rounded : Icons.zoom_in_rounded,
                 size: 24,
-                color: AppColors.black,
+                color: context.colors.text,
               ),
             ),
           ),

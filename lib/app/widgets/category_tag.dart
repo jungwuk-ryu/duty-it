@@ -1,5 +1,5 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:flutter/material.dart';
 
 class CategoryTag extends StatelessWidget {
@@ -25,9 +25,12 @@ class CategoryTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color effectiveBackgroundColor =
-        backgroundColor ?? (isSelected ? AppColors.sub : AppColors.g02);
+        backgroundColor ??
+        (isSelected
+            ? context.colors.accentSurface
+            : context.colors.mutedSurface);
     final Color effectiveTextColor =
-        textColor ?? (isSelected ? AppColors.main : AppColors.black);
+        textColor ?? (isSelected ? context.colors.accent : context.colors.text);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -45,21 +48,19 @@ class CategoryTag extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Visibility(
-                  visible: imageAsset != null,
-                  child: Row(
+                if (imageAsset != null)
+                  Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        imageAsset ?? "",
+                      AppAssetIcon(
+                        asset: imageAsset!,
                         width: 16,
                         height: 16,
-                        color: imageColor,
+                        color: imageColor ?? effectiveTextColor,
                       ),
                       SizedBox(width: 4),
                     ],
                   ),
-                ),
                 Text(
                   name,
                   style: TextStyle(

@@ -19,7 +19,9 @@ class CustomCalendarEventCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 7),
       decoration: BoxDecoration(
-        color: event?.color ?? AppColors.g01,
+        color: event == null
+            ? context.colors.subtleSurface
+            : context.colors.calendarColor(event!.color),
         borderRadius: BorderRadius.circular(4),
       ),
       child: event != null ? _EventMetadataColumn(event!) : _NoEventText(),
@@ -32,8 +34,9 @@ class CustomCalendarEventCard extends StatelessWidget {
           if (event != null) {
             String url = event!.url;
             if (url.startsWith(CalendarViewController.deviceEventScheme)) {
-              Get.find<CalendarService>()
-                  .showEventModal(url.replaceFirst(CalendarViewController.deviceEventScheme, ""));
+              Get.find<CalendarService>().showEventModal(
+                url.replaceFirst(CalendarViewController.deviceEventScheme, ""),
+              );
             } else {
               launchUrlString(AppUtils.setDuitUtmSourceString(url));
             }
@@ -74,7 +77,7 @@ class _NoEventText extends StatelessWidget {
       child: Text(
         '일정 없음',
         style: TextStyle(
-          color: AppColors.black,
+          color: context.colors.text,
           fontSize: 12,
           fontWeight: FontWeight.w400,
           height: 1.60,
@@ -98,7 +101,7 @@ class _EventMetadataColumn extends StatelessWidget {
         Text(
           event.title,
           style: TextStyle(
-            color: AppColors.black,
+            color: context.colors.text,
             fontSize: 11,
             fontWeight: FontWeight.w600,
             height: 1.60,
@@ -107,7 +110,7 @@ class _EventMetadataColumn extends StatelessWidget {
         Text(
           '${_formatDateTime(event.startDate)} ~ ${_formatDateTime(event.endDate)}',
           style: TextStyle(
-            color: AppColors.g06,
+            color: context.colors.icon,
             fontSize: 10,
             fontWeight: FontWeight.w400,
             height: 1.60,

@@ -85,9 +85,9 @@ class EventDetailLayout extends StatelessWidget {
               ),
             ),
             DecoratedBox(
-              decoration: const BoxDecoration(
-                color: AppColors.white,
-                border: Border(top: BorderSide(color: AppColors.border)),
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                border: Border(top: BorderSide(color: context.colors.border)),
               ),
               child: Padding(
                 padding: actionsPadding.add(

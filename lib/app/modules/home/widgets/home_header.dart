@@ -20,7 +20,7 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: AppColors.canvas,
+      color: context.colors.canvas,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

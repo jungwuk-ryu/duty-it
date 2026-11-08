@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:duty_it/app/widgets/app_asset_icon.dart';
+
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/calendar/controllers/date_selection_modal_controller.dart';
 import 'package:duty_it/app/widgets/app_bottom_sheet_handle.dart';
@@ -55,7 +57,7 @@ class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.black,
+                    color: context.colors.text,
                   ),
                 ),
               ),
@@ -64,9 +66,9 @@ class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () => Get.back(),
-                  child: Image.asset(
-                    Assets.icons.close.path,
-                    color: AppColors.g05,
+                  child: AppAssetIcon(
+                    asset: Assets.icons.close.path,
+                    color: context.colors.muted,
                     width: 40,
                     height: 40,
                   ),
@@ -109,8 +111,8 @@ class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
                                   return AnimatedDefaultTextStyle(
                                     style: TextStyle(
                                       color: selected
-                                          ? AppColors.black
-                                          : AppColors.g05,
+                                          ? context.colors.text
+                                          : context.colors.muted,
                                       fontSize: selected ? 16 : 14,
                                       fontWeight: FontWeight.w600,
                                       height: 1.60,
@@ -151,8 +153,8 @@ class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
                                   return AnimatedDefaultTextStyle(
                                     style: TextStyle(
                                       color: selected
-                                          ? AppColors.black
-                                          : AppColors.g05,
+                                          ? context.colors.text
+                                          : context.colors.muted,
                                       fontSize: selected ? 16 : 14,
                                       fontWeight: FontWeight.w600,
                                       height: 1.60,
@@ -178,7 +180,7 @@ class _DateSelectionBottomModalState extends State<DateSelectionBottomModal> {
                   child: IgnorePointer(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.g07.withAlpha(37),
+                        color: context.colors.secondaryText.withAlpha(37),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       width: double.infinity,
