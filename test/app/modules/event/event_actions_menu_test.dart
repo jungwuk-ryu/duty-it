@@ -16,6 +16,7 @@ import 'package:get/get.dart';
 
 class FakeCalendarService extends CalendarService {
   bool permission = true;
+  bool hasCalendars = true;
   int saves = 0;
   String? selectedCalendar;
 
@@ -24,10 +25,12 @@ class FakeCalendarService extends CalendarService {
   @override
   Future<String?> findRegisteredEventId(String id) async => null;
   @override
-  Future<List<device.Calendar>> getWritableCalendars() async => const [
-    device.Calendar(id: 'personal', name: '개인', readOnly: false),
-    device.Calendar(id: 'work', name: '업무', readOnly: false),
-  ];
+  Future<List<device.Calendar>> getWritableCalendars() async => hasCalendars
+      ? const [
+          device.Calendar(id: 'personal', name: '개인', readOnly: false),
+          device.Calendar(id: 'work', name: '업무', readOnly: false),
+        ]
+      : const [];
   @override
   Future<CalendarSaveResult> addEvent({
     required String calendarId,
@@ -72,7 +75,10 @@ void main() {
             textScaler: textScaler,
           );
           return MediaQuery(
-            data: media.copyWith(padding: layout.foregroundPadding(media)),
+            data: media.copyWith(
+              padding: layout.foregroundPadding(media),
+              displayFeatures: layout.displayFeatures(media),
+            ),
             child: Directionality(
               textDirection: direction,
               child: DuoLayoutScope(data: layout, child: child!),
@@ -109,6 +115,56 @@ void main() {
   Future<void> openMenu(WidgetTester tester) async {
     await tester.tap(find.byTooltip('행사 더보기'));
     await tester.pumpAndSettle();
+  }
+
+  for (final edge in ['left', 'right']) {
+    for (final flow in ['picker', 'permission', 'empty']) {
+      testWidgets('calendar $flow stays in the $edge trigger pane', (
+        tester,
+      ) async {
+        tester.view.physicalSize = const Size(1000, 700);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final calendar = FakeCalendarService()
+          ..permission = flow != 'permission'
+          ..hasCalendars = flow != 'empty';
+        Get.put<CalendarService>(calendar);
+        await mount(
+          tester,
+          sideControls: true,
+          layout: DuoLayoutData(
+            isDuo: true,
+            verticalBarEdge: edge,
+            divisions: const [Rect.fromLTWH(480, 0, 24, 700)],
+          ),
+          insets: EdgeInsets.only(
+            left: edge == 'left' ? 84 : 0,
+            right: edge == 'right' ? 84 : 0,
+          ),
+        );
+        await openMenu(tester);
+        await tester.tap(find.text('캘린더에 추가'));
+        await tester.pumpAndSettle();
+        final surface = tester.getRect(
+          find.byType(flow == 'picker' ? BottomSheet : AlertDialog),
+        );
+        if (edge == 'left') {
+          expect(surface.left, greaterThanOrEqualTo(84));
+          expect(surface.right, lessThanOrEqualTo(480));
+        } else {
+          expect(surface.left, greaterThanOrEqualTo(504));
+          expect(surface.right, lessThanOrEqualTo(916));
+        }
+        if (flow == 'picker') {
+          expect(surface.left, edge == 'left' ? 84 : 504);
+          expect(surface.right, edge == 'left' ? 480 : 916);
+        }
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(calendar.saves, 0);
+        expect(tester.takeException(), isNull);
+      });
+    }
   }
 
   for (final edge in ['left', 'right']) {

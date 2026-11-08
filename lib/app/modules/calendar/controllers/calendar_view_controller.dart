@@ -12,6 +12,7 @@ import 'package:duty_it/app/services/app_settings_service.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:duty_it/app/widgets/duit_modal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -226,9 +227,8 @@ class CalendarViewController extends GetxController {
   }
 
   void showDateSelectionBottomModal() {
-    showModalBottomSheet(
+    showDuitBottomSheet(
       context: Get.context!,
-      isScrollControlled: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),

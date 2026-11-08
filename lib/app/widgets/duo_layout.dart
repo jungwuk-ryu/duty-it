@@ -48,14 +48,36 @@ class DuoLayoutData {
           : layoutMargins.left - media.viewPadding.left,
     );
     return media.padding.copyWith(
-      left: math.max(media.padding.left, layoutMargins.left - 16),
-      right: math.max(media.padding.right, layoutMargins.right - 16),
+      left: math.max(
+        math.max(media.padding.left, layoutMargins.left - 16),
+        verticalBarEdge == 'left' ? sideBarWidth(media) : 0,
+      ),
+      right: math.max(
+        math.max(media.padding.right, layoutMargins.right - 16),
+        verticalBarEdge == 'right' ? sideBarWidth(media) : 0,
+      ),
       // Match our top controls to the system margin on the unobstructed edge.
       top: math.max(
         media.padding.top,
         math.max(layoutMargins.top, freeEdgeMargin - 8),
       ),
     );
+  }
+
+  /// Material routes already avoid display features. Supply UIKit's active
+  /// divisions too, so sheets and dialogs use the same panes as page content.
+  List<ui.DisplayFeature> displayFeatures(MediaQueryData media) {
+    if (!isDuo || divisions.isEmpty) return media.displayFeatures;
+    return [
+      ...media.displayFeatures,
+      for (final division in divisions)
+        if (!media.displayFeatures.any((feature) => feature.bounds == division))
+          ui.DisplayFeature(
+            bounds: division,
+            type: ui.DisplayFeatureType.hinge,
+            state: ui.DisplayFeatureState.postureHalfOpened,
+          ),
+    ];
   }
 
   double sideBarWidth(MediaQueryData media) => verticalBarEdge == null
@@ -241,7 +263,10 @@ class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
     return MediaQuery(
       // Keep hardware viewPadding and the full-bleed canvas unchanged. Only
       // foreground SafeArea consumers receive the additional layout spacing.
-      data: media.copyWith(padding: data.foregroundPadding(media)),
+      data: media.copyWith(
+        padding: data.foregroundPadding(media),
+        displayFeatures: data.displayFeatures(media),
+      ),
       child: DuoLayoutScope(data: data, child: widget.child),
     );
   }

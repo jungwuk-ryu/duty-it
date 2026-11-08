@@ -5,6 +5,7 @@ import 'package:duty_it/app/core/models/host.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/host_selection_bottom_modal.dart';
 import 'package:duty_it/app/modules/settings/models/notification_subscription.dart';
+import 'package:duty_it/app/widgets/duit_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -153,9 +154,8 @@ class NotificationFilterController extends GetxController {
   }
 
   void showHostSelectionBottomModal() {
-    showModalBottomSheet(
+    showDuitBottomSheet(
       context: Get.context!,
-      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),

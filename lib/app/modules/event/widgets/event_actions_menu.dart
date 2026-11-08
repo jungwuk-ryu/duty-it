@@ -6,6 +6,7 @@ import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:duty_it/app/widgets/duit_glass_menu.dart';
 import 'package:duty_it/app/widgets/duit_detail_actions_menu.dart';
+import 'package:duty_it/app/widgets/duit_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -135,6 +136,13 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
   BuildContext get _overlayContext =>
       Navigator.of(context, rootNavigator: true).context;
 
+  Offset? get _modalAnchor {
+    final box = context.findRenderObject();
+    return box is RenderBox && box.hasSize
+        ? box.localToGlobal(box.size.center(Offset.zero))
+        : null;
+  }
+
   Future<void> _addToCalendar() async {
     if (_calendarBusy) return;
     final event = widget.event;
@@ -150,6 +158,7 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
         if (!mounted) return;
         final openSettings = await showDialog<bool>(
           context: _overlayContext,
+          anchorPoint: _modalAnchor,
           builder: (dialogContext) => AlertDialog(
             title: const Text('캘린더 접근을 허용해 주세요'),
             content: const Text('기기 캘린더에 행사를 저장하려면 캘린더 권한이 필요해요.'),
@@ -183,6 +192,7 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
       if (calendars.isEmpty) {
         final create = await showDialog<bool>(
           context: _overlayContext,
+          anchorPoint: _modalAnchor,
           builder: (dialogContext) => AlertDialog(
             title: const Text('저장할 캘린더가 없어요'),
             content: const Text('이 기기에 ‘듀잇’ 캘린더를 만들고 행사를 추가할까요?'),
@@ -201,10 +211,9 @@ class _EventActionsMenuState extends State<EventActionsMenu> {
         if (create != true || !mounted) return;
         calendarId = await service.createLocalCalendar();
       } else {
-        calendarId = await showModalBottomSheet<String>(
+        calendarId = await showDuitBottomSheet<String>(
           context: _overlayContext,
-          useSafeArea: true,
-          isScrollControlled: true,
+          anchorPoint: _modalAnchor,
           useRootNavigator: true,
           showDragHandle: true,
           builder: (_) => _CalendarPicker(calendars: calendars, draft: draft),

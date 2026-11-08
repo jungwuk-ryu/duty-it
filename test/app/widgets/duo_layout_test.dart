@@ -10,7 +10,37 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 void main() {
+  test('native divisions augment platform features without duplicates', () {
+    const hinge = ui.DisplayFeature(
+      bounds: Rect.fromLTWH(480, 0, 24, 700),
+      type: ui.DisplayFeatureType.hinge,
+      state: ui.DisplayFeatureState.postureHalfOpened,
+    );
+    const cutout = ui.DisplayFeature(
+      bounds: Rect.fromLTWH(930, 0, 60, 60),
+      type: ui.DisplayFeatureType.cutout,
+      state: ui.DisplayFeatureState.unknown,
+    );
+    const media = MediaQueryData(displayFeatures: [cutout]);
+    final layout = DuoLayoutData(isDuo: true, divisions: [hinge.bounds]);
+    expect(layout.displayFeatures(media).map((f) => f.bounds), [
+      cutout.bounds,
+      hinge.bounds,
+    ]);
+    const both = MediaQueryData(displayFeatures: [cutout, hinge]);
+    expect(layout.displayFeatures(both), [cutout, hinge]);
+    expect(const DuoLayoutData(isDuo: true).displayFeatures(media), [cutout]);
+    expect(const DuoLayoutData().displayFeatures(both), [cutout, hinge]);
+  });
+
   for (final edge in ['left', 'right']) {
+    test('the $edge rail stays reserved before native viewPadding arrives', () {
+      final padding = DuoLayoutData(
+        isDuo: true,
+        verticalBarEdge: edge,
+      ).foregroundPadding(const MediaQueryData());
+      expect(edge == 'left' ? padding.left : padding.right, 72);
+    });
     test(
       'UIKit margins preserve the $edge rail and existing bottom safe area',
       () {
