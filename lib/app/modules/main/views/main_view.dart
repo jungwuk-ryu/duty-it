@@ -52,13 +52,16 @@ class MainView extends GetView<MainViewController> {
           return SafeArea(
             left: edge != 'left',
             right: edge != 'right',
-            bottom: hasSideBar,
+            // Feeds apply their bottom inset after the last item, so the
+            // viewport can scroll to the edge behind the system gesture area.
+            bottom: false,
             child: Row(
               children: [
                 if (edge == 'left')
                   _sideNavigation(
                     sideWidth,
                     math.max(0, controlsTop - media.padding.top),
+                    media.padding.bottom,
                   ),
                 Expanded(
                   key: const ValueKey('main-content'),
@@ -87,8 +90,7 @@ class MainView extends GetView<MainViewController> {
                           child: Padding(
                             key: ValueKey(controller.pageIndex.value),
                             padding: EdgeInsets.only(
-                              bottom:
-                                  !hasSideBar && controller.pageIndex.value == 3
+                              bottom: controller.pageIndex.value == 3
                                   ? MediaQuery.paddingOf(context).bottom
                                   : 0,
                             ),
@@ -103,6 +105,7 @@ class MainView extends GetView<MainViewController> {
                   _sideNavigation(
                     sideWidth,
                     math.max(0, controlsTop - media.padding.top),
+                    media.padding.bottom,
                   ),
               ],
             ),
@@ -127,11 +130,11 @@ class MainView extends GetView<MainViewController> {
     );
   }
 
-  Widget _sideNavigation(double width, double top) {
+  Widget _sideNavigation(double width, double top, double bottom) {
     return SizedBox(
       width: width,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(8, top + 8, 8, 8),
+        padding: EdgeInsets.fromLTRB(8, top + 8, 8, 8 + bottom),
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Scroll if the keyboard or Split View leaves too little vertical room.
