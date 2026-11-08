@@ -249,7 +249,7 @@ class _EventDetailViewState extends State<_EventDetailContent> {
       ),
     );
     return DuitDetailScaffold(
-      title: Obx(() => Text(widget.eventRx.value.title)),
+      title: const SizedBox.shrink(),
       actions: menu,
       onBack: Get.back,
       body: MediaQuery.removePadding(
