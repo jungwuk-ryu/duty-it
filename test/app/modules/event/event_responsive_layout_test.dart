@@ -47,6 +47,66 @@ void main() {
     },
   );
 
+  for (final edge in ['left', 'right']) {
+    testWidgets('detail footer spans the $edge side control inset', (
+      tester,
+    ) async {
+      const actionsKey = ValueKey('actions');
+      final insets = EdgeInsets.only(
+        left: edge == 'left' ? 84 : 0,
+        right: edge == 'right' ? 84 : 0,
+      );
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: MediaQuery(
+            data: MediaQueryData(
+              padding: insets.copyWith(bottom: 34),
+              viewPadding: insets.copyWith(bottom: 34),
+            ),
+            child: DuoLayoutScope(
+              data: DuoLayoutData(
+                verticalBarEdge: edge,
+                divisions: const [fold],
+              ),
+              child: Builder(
+                builder: (context) => MediaQuery.removePadding(
+                  context: context,
+                  removeLeft: true,
+                  removeRight: true,
+                  child: EventDetailLayout(
+                    poster: poster,
+                    information: information,
+                    safeLeft: insets.left,
+                    contentInsets: insets,
+                    actions: const SafeArea(
+                      top: false,
+                      child: SizedBox(key: actionsKey, height: 48),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final footer = tester.getRect(find.byType(DecoratedBox));
+      expect(footer.left, 0);
+      expect(footer.right, 800);
+      expect(footer.height, 82);
+      final actions = tester.getRect(find.byKey(actionsKey));
+      expect(actions.left, greaterThanOrEqualTo(fold.right));
+      expect(actions.right, 800 - insets.right - 20);
+      expect(tester.getRect(find.byKey(poster.key!)).left, insets.left + 20);
+      expect(
+        tester.getRect(find.byKey(poster.key!)).right,
+        lessThanOrEqualTo(fold.left),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets(
     'event tiles keep two phone columns and clear an off-center hinge',
     (tester) async {

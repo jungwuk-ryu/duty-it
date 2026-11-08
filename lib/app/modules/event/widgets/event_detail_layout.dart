@@ -12,11 +12,15 @@ class EventDetailLayout extends StatelessWidget {
     required this.information,
     required this.safeLeft,
     required this.actions,
+    this.contentInsets = EdgeInsets.zero,
   });
   final Widget poster;
   final Widget information;
   final double safeLeft;
   final Widget actions;
+
+  /// Reserve space for side controls without cutting the footer's background.
+  final EdgeInsets contentInsets;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,8 @@ class EventDetailLayout extends StatelessWidget {
       builder: (context, constraints) {
         const inset = 20.0;
         const gutter = 24.0;
-        final width = constraints.maxWidth - 2 * inset;
+        final width =
+            constraints.maxWidth - contentInsets.horizontal - 2 * inset;
         final bounds = Rect.fromLTWH(
           safeLeft + inset,
           0,
@@ -79,9 +84,12 @@ class EventDetailLayout extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(inset, inset, inset, 32),
-                child: content,
+              child: Padding(
+                padding: contentInsets,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(inset, inset, inset, 32),
+                  child: content,
+                ),
               ),
             ),
             DecoratedBox(
@@ -90,9 +98,9 @@ class EventDetailLayout extends StatelessWidget {
                 border: Border(top: BorderSide(color: context.colors.border)),
               ),
               child: Padding(
-                padding: actionsPadding.add(
-                  const EdgeInsets.symmetric(horizontal: inset),
-                ),
+                padding: contentInsets
+                    .add(actionsPadding)
+                    .add(const EdgeInsets.symmetric(horizontal: inset)),
                 child: actions,
               ),
             ),
