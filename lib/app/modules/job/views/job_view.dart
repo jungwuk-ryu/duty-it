@@ -1,3 +1,5 @@
+import 'package:duty_it/app/widgets/adaptive_paged_sliver.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:flutter/cupertino.dart';
@@ -55,9 +57,11 @@ class JobView extends GetView<JobViewController> {
         const SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ListPageIntro(
-              title: '간호 채용 공고',
-              description: '간호 분야의 새로운 일자리를 한눈에 확인해보세요.',
+            child: FoldSafeHeader(
+              child: ListPageIntro(
+                title: '간호 채용 공고',
+                description: '간호 분야의 새로운 일자리를 한눈에 확인해보세요.',
+              ),
             ),
           ),
         ),
@@ -65,7 +69,7 @@ class JobView extends GetView<JobViewController> {
           pinned: true,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: JobHeader(controller: controller),
+            child: FoldSafeHeader(child: JobHeader(controller: controller)),
           ),
         ),
         if (useCupertinoRefreshControl)
@@ -112,7 +116,7 @@ class JobView extends GetView<JobViewController> {
           sliver: Obx(() {
             final isPullToRefreshing = controller.isPullToRefreshing;
 
-            return PagedSliverList<String?, Rx<JobPosting>>(
+            return AdaptivePagedSliver<String?, Rx<JobPosting>>(
               state: controller.pagingState,
               fetchNextPage: controller.fetchNextPage,
               builderDelegate: PagedChildBuilderDelegate<Rx<JobPosting>>(
@@ -190,6 +194,9 @@ class JobView extends GetView<JobViewController> {
               ),
             );
           }),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
         ),
       ],
     );

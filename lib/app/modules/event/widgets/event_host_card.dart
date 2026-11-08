@@ -21,7 +21,7 @@ class EventHostCard extends StatelessWidget {
       onTap: onTap,
       excludeSemantics: true,
       child: Material(
-        color: AppColors.canvas,
+        color: AppColors.g01,
         shape: RoundedRectangleBorder(
           side: const BorderSide(color: AppColors.border),
           borderRadius: BorderRadius.circular(14),

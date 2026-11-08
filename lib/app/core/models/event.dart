@@ -8,6 +8,7 @@ import 'dart:convert';
 
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/models/host.dart';
+import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'event.freezed.dart';
@@ -22,10 +23,10 @@ abstract class Event with _$Event {
   const factory Event({
     required int id,
     @Default("?") String title,
-    DateTime? startAt,
-    DateTime? endAt,
-    DateTime? recruitmentStartAt,
-    DateTime? recruitmentEndAt,
+    @JsonKey(fromJson: parseEventTimestamp) DateTime? startAt,
+    @JsonKey(fromJson: parseEventTimestamp) DateTime? endAt,
+    @JsonKey(fromJson: parseEventTimestamp) DateTime? recruitmentStartAt,
+    @JsonKey(fromJson: parseEventTimestamp) DateTime? recruitmentEndAt,
     @Default("") String uri,
     @Default("") String thumbnail,
     @JsonKey(unknownEnumValue: EventType.ETC)

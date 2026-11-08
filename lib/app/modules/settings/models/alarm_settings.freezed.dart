@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'alarm_settings.dart';
@@ -9,6 +9,7 @@ part of 'alarm_settings.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $AlarmSettingsCopyWith<AlarmSettings> get copyWith => _$AlarmSettingsCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AlarmSettings&&(identical(other.push, push) || other.push == push)&&(identical(other.bookmark, bookmark) || other.bookmark == bookmark)&&(identical(other.calendar, calendar) || other.calendar == calendar)&&(identical(other.marketing, marketing) || other.marketing == marketing));
+  final _this = this as AlarmSettings;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AlarmSettings&&(identical(other.push, _this.push) || other.push == _this.push)&&(identical(other.bookmark, _this.bookmark) || other.bookmark == _this.bookmark)&&(identical(other.calendar, _this.calendar) || other.calendar == _this.calendar)&&(identical(other.marketing, _this.marketing) || other.marketing == _this.marketing));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,push,bookmark,calendar,marketing);
+int get hashCode {
+  final _this = this as AlarmSettings;
+  return Object.hash(runtimeType,_this.push,_this.bookmark,_this.calendar,_this.marketing);
+}
 
 @override
 String toString() {
-  return 'AlarmSettings(push: $push, bookmark: $bookmark, calendar: $calendar, marketing: $marketing)';
+  final _this = this as AlarmSettings;
+  return 'AlarmSettings(push: ${_this.push}, bookmark: ${_this.bookmark}, calendar: ${_this.calendar}, marketing: ${_this.marketing})';
 }
 
 
@@ -66,7 +72,7 @@ class _$AlarmSettingsCopyWithImpl<$Res>
 /// Create a copy of AlarmSettings
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? push = null,Object? bookmark = null,Object? calendar = null,Object? marketing = null,}) {
-  return _then(_self.copyWith(
+  return _then(AlarmSettings(
 push: null == push ? _self.push : push // ignore: cast_nullable_to_non_nullable
 as bool,bookmark: null == bookmark ? _self.bookmark : bookmark // ignore: cast_nullable_to_non_nullable
 as bool,calendar: null == calendar ? _self.calendar : calendar // ignore: cast_nullable_to_non_nullable
@@ -233,16 +239,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AlarmSettings&&(identical(other.push, push) || other.push == push)&&(identical(other.bookmark, bookmark) || other.bookmark == bookmark)&&(identical(other.calendar, calendar) || other.calendar == calendar)&&(identical(other.marketing, marketing) || other.marketing == marketing));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AlarmSettings&&(identical(other.push, push) || other.push == push)&&(identical(other.bookmark, bookmark) || other.bookmark == bookmark)&&(identical(other.calendar, calendar) || other.calendar == calendar)&&(identical(other.marketing, marketing) || other.marketing == marketing));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,push,bookmark,calendar,marketing);
+int get hashCode {
+    return Object.hash(runtimeType,push,bookmark,calendar,marketing);
+}
 
 @override
 String toString() {
-  return 'AlarmSettings(push: $push, bookmark: $bookmark, calendar: $calendar, marketing: $marketing)';
+    return 'AlarmSettings(push: $push, bookmark: $bookmark, calendar: $calendar, marketing: $marketing)';
 }
 
 

@@ -1,3 +1,5 @@
+import 'package:duty_it/app/widgets/adaptive_paged_sliver.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:duty_it/app/modules/home/controllers/home_view_controller.dart';
 import 'package:duty_it/app/modules/home/widgets/event_card.dart';
@@ -54,9 +56,11 @@ class HomeView extends GetView<HomeViewController> {
         const SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: ListPageIntro(
-              title: '행사 목록',
-              description: '관심 분야와 일정에 맞는 행사를 찾아보세요.',
+            child: FoldSafeHeader(
+              child: ListPageIntro(
+                title: '행사 목록',
+                description: '관심 분야와 일정에 맞는 행사를 찾아보세요.',
+              ),
             ),
           ),
         ),
@@ -65,7 +69,7 @@ class HomeView extends GetView<HomeViewController> {
           pinned: true,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: HomeHeader(controller: controller),
+            child: FoldSafeHeader(child: HomeHeader(controller: controller)),
           ),
         ),
 
@@ -115,15 +119,10 @@ class HomeView extends GetView<HomeViewController> {
           sliver: Obx(() {
             final isPullToRefreshing = controller.isPullToRefreshing;
 
-            return PagedSliverGrid<String?, EventCard>(
+            return AdaptivePagedSliver<String?, EventCard>(
               state: controller.pagingState,
               fetchNextPage: controller.fetchNextPage,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 220,
-                mainAxisExtent: 255,
-                mainAxisSpacing: 24,
-                crossAxisSpacing: 16,
-              ),
+              eventTiles: true,
               builderDelegate: PagedChildBuilderDelegate<EventCard>(
                 animateTransitions: true,
                 transitionDuration: Duration(milliseconds: 100),
@@ -172,6 +171,9 @@ class HomeView extends GetView<HomeViewController> {
               ),
             );
           }),
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom),
         ),
       ],
     );

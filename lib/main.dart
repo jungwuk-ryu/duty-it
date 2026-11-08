@@ -11,7 +11,9 @@ import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event_deep_link_service.dart';
 import 'package:duty_it/firebase_options.dart';
 import 'package:duty_it/gen/fonts.gen.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -51,6 +53,10 @@ void main() async {
   /* Firebase init end */
   await Future.wait([dotenvFuture]);
 
+  await GetStorage.init(AuthService.storageBoxName);
+  final auth = Get.put(AuthService(), permanent: true);
+  await auth.syncAnalyticsUserId();
+
   if (kIsWeb == false) {
     BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
     initPlatformState();
@@ -80,7 +86,11 @@ void main() async {
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       builder: (context, child) {
-        return Overlay(initialEntries: [OverlayEntry(builder: (_) => child!)]);
+        return DuoLayout(
+          child: Overlay(
+            initialEntries: [OverlayEntry(builder: (_) => child!)],
+          ),
+        );
       },
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
@@ -213,16 +223,30 @@ Future<void> _backgroundJob() async {
     _initFirebase(),
   ]);
 
-  Get.lazyPut(() => AuthService());
+  if (!Get.isRegistered<AuthService>()) Get.lazyPut(() => AuthService());
 
-  var cache = HomeViewCache();
-  String? cacheUrl = cache.getEventsUrl();
-  if (cacheUrl == null) return;
-
-  var client = ApiClient(background: true);
-  RequestResult<EventsResponse> result = await client.getEventsByUrl(cacheUrl);
-  if (result is RequestFail) return;
-
-  EventsResponse rep = (result as RequestSuccess).data;
-  await cache.saveEvents(rep);
+  final auth = FirebaseAuth.instance;
+  final uid = (await auth.authStateChanges().first)?.uid;
+  var sessionChanged = false;
+  final subscription = auth.authStateChanges().listen((user) {
+    if (user?.uid != uid) sessionChanged = true;
+  });
+  ApiClient? headlessClient;
+  try {
+    await HomeViewCache().refresh(
+      uid: uid,
+      isCurrent: () => !sessionChanged && uid == auth.currentUser?.uid,
+      load: (path) async {
+        final client = Get.isRegistered<ApiClient>()
+            ? Get.find<ApiClient>()
+            : (headlessClient = ApiClient(background: true)..onStart());
+        final result = await client.getEventsByUrl(path);
+        return result is RequestSuccess<EventsResponse> ? result.data : null;
+      },
+    );
+  } finally {
+    await subscription.cancel();
+    headlessClient?.onDelete();
+    headlessClient?.dispose();
+  }
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'job_postings_response.dart';
@@ -9,6 +9,7 @@ part of 'job_postings_response.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $JobPostingsResponseCopyWith<JobPostingsResponse> get copyWith => _$JobPostingsR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobPostingsResponse&&const DeepCollectionEquality().equals(other.jobs, jobs)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo));
+  final _this = this as JobPostingsResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is JobPostingsResponse&&const DeepCollectionEquality().equals(other.jobs, _this.jobs)&&(identical(other.pageInfo, _this.pageInfo) || other.pageInfo == _this.pageInfo));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(jobs),pageInfo);
+int get hashCode {
+  final _this = this as JobPostingsResponse;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.jobs),_this.pageInfo);
+}
 
 @override
 String toString() {
-  return 'JobPostingsResponse(jobs: $jobs, pageInfo: $pageInfo)';
+  final _this = this as JobPostingsResponse;
+  return 'JobPostingsResponse(jobs: ${_this.jobs}, pageInfo: ${_this.pageInfo})';
 }
 
 
@@ -66,7 +72,7 @@ class _$JobPostingsResponseCopyWithImpl<$Res>
 /// Create a copy of JobPostingsResponse
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? jobs = null,Object? pageInfo = null,}) {
-  return _then(_self.copyWith(
+  return _then(JobPostingsResponse(
 jobs: null == jobs ? _self.jobs : jobs // ignore: cast_nullable_to_non_nullable
 as List<JobPosting>,pageInfo: null == pageInfo ? _self.pageInfo : pageInfo // ignore: cast_nullable_to_non_nullable
 as CursorPageInfo,
@@ -219,7 +225,7 @@ return $default(_that.jobs,_that.pageInfo);case _:
 @JsonSerializable()
 
 class _JobPostingsResponse implements JobPostingsResponse {
-  const _JobPostingsResponse({@JsonKey(name: 'content') required final  List<JobPosting> jobs, required this.pageInfo}): _jobs = jobs;
+  const _JobPostingsResponse({@JsonKey(name: 'content') required  List<JobPosting> jobs, required this.pageInfo}): _jobs = jobs;
   factory _JobPostingsResponse.fromJson(Map<String, dynamic> json) => _$JobPostingsResponseFromJson(json);
 
  final  List<JobPosting> _jobs;
@@ -244,16 +250,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobPostingsResponse&&const DeepCollectionEquality().equals(other._jobs, _jobs)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _JobPostingsResponse&&const DeepCollectionEquality().equals(other.jobs, _jobs)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_jobs),pageInfo);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_jobs),pageInfo);
+}
 
 @override
 String toString() {
-  return 'JobPostingsResponse(jobs: $jobs, pageInfo: $pageInfo)';
+    return 'JobPostingsResponse(jobs: $jobs, pageInfo: $pageInfo)';
 }
 
 

@@ -25,7 +25,7 @@ class CustomCalendarWeekCell extends StatelessWidget {
 
   DateTime getStartOfWeekSunday(DateTime date) {
     int offset = date.weekday % 7;
-    return AppUtils.dateTime2Date(date.subtract(Duration(days: offset)));
+    return AppUtils.calendarDay(date).subtract(Duration(days: offset));
   }
 
   @override
@@ -169,8 +169,8 @@ class _ExpandedWeekContent extends StatelessWidget {
         final row = rows[i];
         final hasOverlap = row.any(
           (e) =>
-              !(event.endDate.isBefore(e.startDate) ||
-                  event.startDate.isAfter(e.endDate)),
+              !event.endDay.isBefore(e.startDay) &&
+              !event.startDay.isAfter(e.endDay),
         );
 
         if (!hasOverlap) {
@@ -213,11 +213,7 @@ class _WeekEventRow extends StatelessWidget {
           while (eventIdx < events.length) {
             var event = events[eventIdx];
 
-            if (AppUtils.isDateWithin(
-              currentDate,
-              event.startDate,
-              event.endDate,
-            )) {
+            if (event.includesDay(currentDate)) {
               foundEvent = true;
               break;
             }
@@ -233,14 +229,13 @@ class _WeekEventRow extends StatelessWidget {
 
           var event = events[eventIdx++];
           int diffDays = min(
-            event.endDate.difference(currentDate).inDays,
+            event.endDay.difference(currentDate).inDays,
             endOfWeek.difference(currentDate).inDays,
           );
           final rowEndDate = currentDate.add(Duration(days: diffDays));
-          final normalizedEventEndDate = AppUtils.dateTime2Date(event.endDate);
 
           bool isStart = AppUtils.isSameDay(event.startDate, currentDate);
-          bool isEnd = !rowEndDate.isBefore(normalizedEventEndDate);
+          bool isEnd = !rowEndDate.isBefore(event.endDay);
 
           double widgetWidth = width * (diffDays + 1);
           if (isStart) widgetWidth -= 2;
@@ -309,11 +304,7 @@ class _WeekEventLastRow extends StatelessWidget {
           int eventCount = 0;
           for (int eventIdx = 0; eventIdx < events.length; eventIdx++) {
             var event = events[eventIdx];
-            if (AppUtils.isDateWithin(
-              currentDate,
-              event.startDate,
-              event.endDate,
-            )) {
+            if (event.includesDay(currentDate)) {
               eventCount++;
             }
           }

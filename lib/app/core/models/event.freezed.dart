@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'event.dart';
@@ -9,13 +9,14 @@ part of 'event.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$Event {
 
- int get id; String get title; DateTime? get startAt; DateTime? get endAt; DateTime? get recruitmentStartAt; DateTime? get recruitmentEndAt; String get uri; String get thumbnail;@JsonKey(unknownEnumValue: EventType.ETC) EventType get eventType; Host get host; bool get isBookmarked;
+ int get id; String get title;@JsonKey(fromJson: parseEventTimestamp) DateTime? get startAt;@JsonKey(fromJson: parseEventTimestamp) DateTime? get endAt;@JsonKey(fromJson: parseEventTimestamp) DateTime? get recruitmentStartAt;@JsonKey(fromJson: parseEventTimestamp) DateTime? get recruitmentEndAt; String get uri; String get thumbnail;@JsonKey(unknownEnumValue: EventType.ETC) EventType get eventType; Host get host; bool get isBookmarked;
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +29,21 @@ $EventCopyWith<Event> get copyWith => _$EventCopyWithImpl<Event>(this as Event, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Event&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.startAt, startAt) || other.startAt == startAt)&&(identical(other.endAt, endAt) || other.endAt == endAt)&&(identical(other.recruitmentStartAt, recruitmentStartAt) || other.recruitmentStartAt == recruitmentStartAt)&&(identical(other.recruitmentEndAt, recruitmentEndAt) || other.recruitmentEndAt == recruitmentEndAt)&&(identical(other.uri, uri) || other.uri == uri)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.host, host) || other.host == host)&&(identical(other.isBookmarked, isBookmarked) || other.isBookmarked == isBookmarked));
+  final _this = this as Event;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Event&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.startAt, _this.startAt) || other.startAt == _this.startAt)&&(identical(other.endAt, _this.endAt) || other.endAt == _this.endAt)&&(identical(other.recruitmentStartAt, _this.recruitmentStartAt) || other.recruitmentStartAt == _this.recruitmentStartAt)&&(identical(other.recruitmentEndAt, _this.recruitmentEndAt) || other.recruitmentEndAt == _this.recruitmentEndAt)&&(identical(other.uri, _this.uri) || other.uri == _this.uri)&&(identical(other.thumbnail, _this.thumbnail) || other.thumbnail == _this.thumbnail)&&(identical(other.eventType, _this.eventType) || other.eventType == _this.eventType)&&(identical(other.host, _this.host) || other.host == _this.host)&&(identical(other.isBookmarked, _this.isBookmarked) || other.isBookmarked == _this.isBookmarked));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,startAt,endAt,recruitmentStartAt,recruitmentEndAt,uri,thumbnail,eventType,host,isBookmarked);
+int get hashCode {
+  final _this = this as Event;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.startAt,_this.endAt,_this.recruitmentStartAt,_this.recruitmentEndAt,_this.uri,_this.thumbnail,_this.eventType,_this.host,_this.isBookmarked);
+}
 
 @override
 String toString() {
-  return 'Event(id: $id, title: $title, startAt: $startAt, endAt: $endAt, recruitmentStartAt: $recruitmentStartAt, recruitmentEndAt: $recruitmentEndAt, uri: $uri, thumbnail: $thumbnail, eventType: $eventType, host: $host, isBookmarked: $isBookmarked)';
+  final _this = this as Event;
+  return 'Event(id: ${_this.id}, title: ${_this.title}, startAt: ${_this.startAt}, endAt: ${_this.endAt}, recruitmentStartAt: ${_this.recruitmentStartAt}, recruitmentEndAt: ${_this.recruitmentEndAt}, uri: ${_this.uri}, thumbnail: ${_this.thumbnail}, eventType: ${_this.eventType}, host: ${_this.host}, isBookmarked: ${_this.isBookmarked})';
 }
 
 
@@ -48,7 +54,7 @@ abstract mixin class $EventCopyWith<$Res>  {
   factory $EventCopyWith(Event value, $Res Function(Event) _then) = _$EventCopyWithImpl;
 @useResult
 $Res call({
- int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail,@JsonKey(unknownEnumValue: EventType.ETC) EventType eventType, Host host, bool isBookmarked
+ int id, String title,@JsonKey(fromJson: parseEventTimestamp) DateTime? startAt,@JsonKey(fromJson: parseEventTimestamp) DateTime? endAt,@JsonKey(fromJson: parseEventTimestamp) DateTime? recruitmentStartAt,@JsonKey(fromJson: parseEventTimestamp) DateTime? recruitmentEndAt, String uri, String thumbnail,@JsonKey(unknownEnumValue: EventType.ETC) EventType eventType, Host host, bool isBookmarked
 });
 
 
@@ -66,7 +72,7 @@ class _$EventCopyWithImpl<$Res>
 /// Create a copy of Event
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? startAt = freezed,Object? endAt = freezed,Object? recruitmentStartAt = freezed,Object? recruitmentEndAt = freezed,Object? uri = null,Object? thumbnail = null,Object? eventType = null,Object? host = null,Object? isBookmarked = null,}) {
-  return _then(_self.copyWith(
+  return _then(Event(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,startAt: freezed == startAt ? _self.startAt : startAt // ignore: cast_nullable_to_non_nullable
@@ -172,7 +178,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title, @JsonKey(fromJson: parseEventTimestamp)  DateTime? startAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? endAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? recruitmentStartAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Event() when $default != null:
 return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
@@ -193,7 +199,7 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title, @JsonKey(fromJson: parseEventTimestamp)  DateTime? startAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? endAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? recruitmentStartAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)  $default,) {final _that = this;
 switch (_that) {
 case _Event():
 return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
@@ -213,7 +219,7 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  DateTime? startAt,  DateTime? endAt,  DateTime? recruitmentStartAt,  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title, @JsonKey(fromJson: parseEventTimestamp)  DateTime? startAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? endAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? recruitmentStartAt, @JsonKey(fromJson: parseEventTimestamp)  DateTime? recruitmentEndAt,  String uri,  String thumbnail, @JsonKey(unknownEnumValue: EventType.ETC)  EventType eventType,  Host host,  bool isBookmarked)?  $default,) {final _that = this;
 switch (_that) {
 case _Event() when $default != null:
 return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitmentStartAt,_that.recruitmentEndAt,_that.uri,_that.thumbnail,_that.eventType,_that.host,_that.isBookmarked);case _:
@@ -228,15 +234,15 @@ return $default(_that.id,_that.title,_that.startAt,_that.endAt,_that.recruitment
 @JsonSerializable()
 
 class _Event implements Event {
-  const _Event({required this.id, this.title = "?", this.startAt, this.endAt, this.recruitmentStartAt, this.recruitmentEndAt, this.uri = "", this.thumbnail = "", @JsonKey(unknownEnumValue: EventType.ETC) this.eventType = EventType.ETC, this.host = const Host(id: 0), this.isBookmarked = false});
+  const _Event({required this.id, this.title = "?", @JsonKey(fromJson: parseEventTimestamp) this.startAt, @JsonKey(fromJson: parseEventTimestamp) this.endAt, @JsonKey(fromJson: parseEventTimestamp) this.recruitmentStartAt, @JsonKey(fromJson: parseEventTimestamp) this.recruitmentEndAt, this.uri = "", this.thumbnail = "", @JsonKey(unknownEnumValue: EventType.ETC) this.eventType = EventType.ETC, this.host = const Host(id: 0), this.isBookmarked = false});
   factory _Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
 @override final  int id;
 @override@JsonKey() final  String title;
-@override final  DateTime? startAt;
-@override final  DateTime? endAt;
-@override final  DateTime? recruitmentStartAt;
-@override final  DateTime? recruitmentEndAt;
+@override@JsonKey(fromJson: parseEventTimestamp) final  DateTime? startAt;
+@override@JsonKey(fromJson: parseEventTimestamp) final  DateTime? endAt;
+@override@JsonKey(fromJson: parseEventTimestamp) final  DateTime? recruitmentStartAt;
+@override@JsonKey(fromJson: parseEventTimestamp) final  DateTime? recruitmentEndAt;
 @override@JsonKey() final  String uri;
 @override@JsonKey() final  String thumbnail;
 @override@JsonKey(unknownEnumValue: EventType.ETC) final  EventType eventType;
@@ -256,16 +262,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Event&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.startAt, startAt) || other.startAt == startAt)&&(identical(other.endAt, endAt) || other.endAt == endAt)&&(identical(other.recruitmentStartAt, recruitmentStartAt) || other.recruitmentStartAt == recruitmentStartAt)&&(identical(other.recruitmentEndAt, recruitmentEndAt) || other.recruitmentEndAt == recruitmentEndAt)&&(identical(other.uri, uri) || other.uri == uri)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.host, host) || other.host == host)&&(identical(other.isBookmarked, isBookmarked) || other.isBookmarked == isBookmarked));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Event&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.startAt, startAt) || other.startAt == startAt)&&(identical(other.endAt, endAt) || other.endAt == endAt)&&(identical(other.recruitmentStartAt, recruitmentStartAt) || other.recruitmentStartAt == recruitmentStartAt)&&(identical(other.recruitmentEndAt, recruitmentEndAt) || other.recruitmentEndAt == recruitmentEndAt)&&(identical(other.uri, uri) || other.uri == uri)&&(identical(other.thumbnail, thumbnail) || other.thumbnail == thumbnail)&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.host, host) || other.host == host)&&(identical(other.isBookmarked, isBookmarked) || other.isBookmarked == isBookmarked));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,startAt,endAt,recruitmentStartAt,recruitmentEndAt,uri,thumbnail,eventType,host,isBookmarked);
+int get hashCode {
+    return Object.hash(runtimeType,id,title,startAt,endAt,recruitmentStartAt,recruitmentEndAt,uri,thumbnail,eventType,host,isBookmarked);
+}
 
 @override
 String toString() {
-  return 'Event(id: $id, title: $title, startAt: $startAt, endAt: $endAt, recruitmentStartAt: $recruitmentStartAt, recruitmentEndAt: $recruitmentEndAt, uri: $uri, thumbnail: $thumbnail, eventType: $eventType, host: $host, isBookmarked: $isBookmarked)';
+    return 'Event(id: $id, title: $title, startAt: $startAt, endAt: $endAt, recruitmentStartAt: $recruitmentStartAt, recruitmentEndAt: $recruitmentEndAt, uri: $uri, thumbnail: $thumbnail, eventType: $eventType, host: $host, isBookmarked: $isBookmarked)';
 }
 
 
@@ -276,7 +284,7 @@ abstract mixin class _$EventCopyWith<$Res> implements $EventCopyWith<$Res> {
   factory _$EventCopyWith(_Event value, $Res Function(_Event) _then) = __$EventCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String title, DateTime? startAt, DateTime? endAt, DateTime? recruitmentStartAt, DateTime? recruitmentEndAt, String uri, String thumbnail,@JsonKey(unknownEnumValue: EventType.ETC) EventType eventType, Host host, bool isBookmarked
+ int id, String title,@JsonKey(fromJson: parseEventTimestamp) DateTime? startAt,@JsonKey(fromJson: parseEventTimestamp) DateTime? endAt,@JsonKey(fromJson: parseEventTimestamp) DateTime? recruitmentStartAt,@JsonKey(fromJson: parseEventTimestamp) DateTime? recruitmentEndAt, String uri, String thumbnail,@JsonKey(unknownEnumValue: EventType.ETC) EventType eventType, Host host, bool isBookmarked
 });
 
 

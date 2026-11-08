@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'events_page_info.dart';
@@ -9,6 +9,7 @@ part of 'events_page_info.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $EventsPageInfoCopyWith<EventsPageInfo> get copyWith => _$EventsPageInfoCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsPageInfo&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext)&&(identical(other.nextCursor, nextCursor) || other.nextCursor == nextCursor)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize));
+  final _this = this as EventsPageInfo;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsPageInfo&&(identical(other.hasNext, _this.hasNext) || other.hasNext == _this.hasNext)&&(identical(other.nextCursor, _this.nextCursor) || other.nextCursor == _this.nextCursor)&&(identical(other.pageSize, _this.pageSize) || other.pageSize == _this.pageSize));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,hasNext,nextCursor,pageSize);
+int get hashCode {
+  final _this = this as EventsPageInfo;
+  return Object.hash(runtimeType,_this.hasNext,_this.nextCursor,_this.pageSize);
+}
 
 @override
 String toString() {
-  return 'EventsPageInfo(hasNext: $hasNext, nextCursor: $nextCursor, pageSize: $pageSize)';
+  final _this = this as EventsPageInfo;
+  return 'EventsPageInfo(hasNext: ${_this.hasNext}, nextCursor: ${_this.nextCursor}, pageSize: ${_this.pageSize})';
 }
 
 
@@ -66,7 +72,7 @@ class _$EventsPageInfoCopyWithImpl<$Res>
 /// Create a copy of EventsPageInfo
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? hasNext = null,Object? nextCursor = freezed,Object? pageSize = null,}) {
-  return _then(_self.copyWith(
+  return _then(EventsPageInfo(
 hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
 as bool,nextCursor: freezed == nextCursor ? _self.nextCursor : nextCursor // ignore: cast_nullable_to_non_nullable
 as String?,pageSize: null == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsPageInfo&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext)&&(identical(other.nextCursor, nextCursor) || other.nextCursor == nextCursor)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsPageInfo&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext)&&(identical(other.nextCursor, nextCursor) || other.nextCursor == nextCursor)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,hasNext,nextCursor,pageSize);
+int get hashCode {
+    return Object.hash(runtimeType,hasNext,nextCursor,pageSize);
+}
 
 @override
 String toString() {
-  return 'EventsPageInfo(hasNext: $hasNext, nextCursor: $nextCursor, pageSize: $pageSize)';
+    return 'EventsPageInfo(hasNext: $hasNext, nextCursor: $nextCursor, pageSize: $pageSize)';
 }
 
 

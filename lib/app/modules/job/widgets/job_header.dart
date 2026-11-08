@@ -1,3 +1,6 @@
+import 'package:duty_it/app/core/enums/job_sorting_type.dart';
+import 'package:duty_it/app/widgets/sort_menu.dart';
+import 'package:duty_it/app/widgets/adaptive_filter_row.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
@@ -30,7 +33,7 @@ class JobHeader extends StatelessWidget {
             final filterService = Get.find<JobFilterService>();
             final filterApplied = filterService.hasFilterChanges();
 
-            return Row(
+            return AdaptiveFilterRow(
               children: [
                 CategoryTag(
                   name: '전체',
@@ -49,16 +52,10 @@ class JobHeader extends StatelessWidget {
                     Get.toNamed(Routes.JOB_FILTER);
                   },
                 ),
-                const Spacer(),
-                Obx(
-                  () => CategoryTag(
-                    name: controller.sortingType.shortName,
-                    isSelected: false,
-                    imageAsset: Assets.icons.filterSort.path,
-                    backgroundColor: AppColors.transparent,
-                    textColor: AppColors.g05,
-                    onTap: controller.showSortingBottomModal,
-                  ),
+                SortMenu(
+                  selected: controller.sortingType,
+                  options: JobSortingType.values,
+                  onSelected: (type) => controller.sortingType = type,
                 ),
               ],
             );

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'events_response.dart';
@@ -9,6 +9,7 @@ part of 'events_response.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $EventsResponseCopyWith<EventsResponse> get copyWith => _$EventsResponseCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsResponse&&const DeepCollectionEquality().equals(other.events, events)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo)&&(identical(other.reqUrl, reqUrl) || other.reqUrl == reqUrl));
+  final _this = this as EventsResponse;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventsResponse&&const DeepCollectionEquality().equals(other.events, _this.events)&&(identical(other.pageInfo, _this.pageInfo) || other.pageInfo == _this.pageInfo)&&(identical(other.reqUrl, _this.reqUrl) || other.reqUrl == _this.reqUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(events),pageInfo,reqUrl);
+int get hashCode {
+  final _this = this as EventsResponse;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.events),_this.pageInfo,_this.reqUrl);
+}
 
 @override
 String toString() {
-  return 'EventsResponse(events: $events, pageInfo: $pageInfo, reqUrl: $reqUrl)';
+  final _this = this as EventsResponse;
+  return 'EventsResponse(events: ${_this.events}, pageInfo: ${_this.pageInfo}, reqUrl: ${_this.reqUrl})';
 }
 
 
@@ -66,7 +72,7 @@ class _$EventsResponseCopyWithImpl<$Res>
 /// Create a copy of EventsResponse
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? events = null,Object? pageInfo = null,Object? reqUrl = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(EventsResponse(
 events: null == events ? _self.events : events // ignore: cast_nullable_to_non_nullable
 as List<Event>,pageInfo: null == pageInfo ? _self.pageInfo : pageInfo // ignore: cast_nullable_to_non_nullable
 as EventsPageInfo,reqUrl: freezed == reqUrl ? _self.reqUrl : reqUrl // ignore: cast_nullable_to_non_nullable
@@ -220,7 +226,7 @@ return $default(_that.events,_that.pageInfo,_that.reqUrl);case _:
 @JsonSerializable()
 
 class _EventsResponse implements EventsResponse {
-  const _EventsResponse({@JsonKey(name: 'content') required final  List<Event> events, required this.pageInfo, @JsonKey(includeFromJson: false, includeToJson: false) this.reqUrl}): _events = events;
+  const _EventsResponse({@JsonKey(name: 'content') required  List<Event> events, required this.pageInfo, @JsonKey(includeFromJson: false, includeToJson: false) this.reqUrl}): _events = events;
   factory _EventsResponse.fromJson(Map<String, dynamic> json) => _$EventsResponseFromJson(json);
 
  final  List<Event> _events;
@@ -246,16 +252,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsResponse&&const DeepCollectionEquality().equals(other._events, _events)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo)&&(identical(other.reqUrl, reqUrl) || other.reqUrl == reqUrl));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventsResponse&&const DeepCollectionEquality().equals(other.events, _events)&&(identical(other.pageInfo, pageInfo) || other.pageInfo == pageInfo)&&(identical(other.reqUrl, reqUrl) || other.reqUrl == reqUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_events),pageInfo,reqUrl);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_events),pageInfo,reqUrl);
+}
 
 @override
 String toString() {
-  return 'EventsResponse(events: $events, pageInfo: $pageInfo, reqUrl: $reqUrl)';
+    return 'EventsResponse(events: $events, pageInfo: $pageInfo, reqUrl: $reqUrl)';
 }
 
 

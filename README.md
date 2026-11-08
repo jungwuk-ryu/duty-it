@@ -73,6 +73,10 @@
 |[jungwuk-ryu](https://github.com/jungwuk-ryu)|[klaus9267](https://github.com/klaus9267/duit_server)|🤫|🤫|
 
 ## 개발 (Development)
+
+### Analytics 사용자 연결
+앱과 웹은 `duty-it` Firebase 프로젝트에서 서버 회원 번호의 문자열(예: `42`)을 동일한 `user_id`로 사용합니다. `AuthService`가 로그인 복원과 회원 정보 변경 시 ID를 설정하고, 로그아웃·회원 탈퇴 시 `null`로 지웁니다. 로그인 성공 이벤트와 첫 화면 이동 전에 ID 설정을 기다리며, Analytics 오류는 로그인을 중단시키지 않습니다. 이메일·닉네임·Firebase UID를 ID로 쓰지 않습니다. 이 변경이 포함된 앱 버전을 설치한 뒤부터 웹의 로그인 활동과 연결됩니다.
+
 ### 기술 스택
 ![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-%2300B4AB.svg?style=for-the-badge&logo=Dart&logoColor=white)
@@ -83,6 +87,18 @@
 - beta: 이 브랜치의 변경사항은 베타 버전으로 배포됩니다.
 - develop: 개발 단계의 브랜치로, 일반적인 수정사항은 이 브랜치에 커밋해야합니다.
 - feat/*: 큰 규모의 기능 개발일 경우, 브랜치를 만들어 작업합니다.
+
+### 배포 후보 검증
+
+Android와 iOS는 [같은 Flutter 버전](.flutter-version)과 커밋된 의존성 잠금 파일로 빌드합니다. Android는 Google Play에 올리기 전, iOS는 Xcode Cloud 아카이브 전에 정적 분석과 전체 테스트를 실행합니다.
+
+Android의 `beta`(내부 테스트)와 `release`(프로덕션)는 [같은 배포 대기열](.github/workflows/deploy_android.yml)을 사용합니다. 저장소 변수 `BUILD_NUMBER`는 마지막으로 예약한 Play 버전 코드입니다. 실패한 배포의 번호도 재사용하지 않습니다. 기존 워크플로에서 처음 전환할 때는 진행 중인 배포가 끝난 뒤 두 브랜치에 순차 반영하세요. 한쪽에 이전 워크플로가 남아 있는 동안에는 두 배포를 동시에 시작하지 마세요.
+
+스토어 배포 전에는 같은 후보를 TestFlight와 Play 내부 테스트에서 설치해 다음을 확인합니다.
+
+- 테스트 계정으로 Google·Apple 로그인, 계정 전환과 탈퇴를 확인합니다. 두 번째 계정의 첫 화면부터 이전 계정의 프로필·북마크가 보이지 않아야 합니다.
+- iOS 신규 설치에서 알림을 허용하고 로그인한 뒤 테스트 알림을 수신합니다. 토큰 갱신 후에도 현재 계정으로 수신하고, 로그아웃한 계정의 알림은 오지 않아야 합니다.
+- 공유한 행사 링크가 해당 행사 상세로 열리는지, 캘린더 권한 거부 후 다시 허용하면 일정이 한 번만 저장되는지 확인합니다.
 
 ### 행사 내용 조회
 

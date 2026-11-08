@@ -2,6 +2,7 @@ import 'package:device_calendar_plus/device_calendar_plus.dart' as device;
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/utils/event_actions.dart';
+import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -270,7 +271,7 @@ class _CalendarPickerState extends State<_CalendarPicker> {
   }
 
   String _date(DateTime utc) {
-    final kst = utc.add(const Duration(hours: 9));
+    final kst = utc.seoulWallTime;
     return '${kst.year}.${kst.month}.${kst.day} ${kst.hour.toString().padLeft(2, '0')}:${kst.minute.toString().padLeft(2, '0')}';
   }
 

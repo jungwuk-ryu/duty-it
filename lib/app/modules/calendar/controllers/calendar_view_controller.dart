@@ -1,13 +1,16 @@
+import 'dart:async';
+
 import 'package:device_calendar_plus/device_calendar_plus.dart' as dcp;
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/modules/calendar/widgets/date_selection_bottom_modal.dart';
 import 'package:duty_it/app/services/app_settings_service.dart';
-import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,16 +23,30 @@ class CalendarViewController extends GetxController {
   static const String deviceEventScheme = "device_event://";
   static const String _cacheStorageName = "calendarCache";
 
+  CalendarViewController({FirebaseAuth? auth, DateTime? initialDate})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _initialDate = initialDate ?? DateTime.now();
+
+  final FirebaseAuth _auth;
+  final RxInt _sessionRevision = 0.obs;
+  Stream<int> get sessionChanges => _sessionRevision.stream;
+  StreamSubscription<User?>? _authSubscription;
+
   static const int initPage = 2000;
-  final Rx<DateTime> _currentDate = DateTime.now().obs;
-  PageController pageController = PageController(initialPage: initPage);
+  final DateTime _initialDate;
+  late final Rx<DateTime> _currentDate = _initialDate.obs;
+  final PageController pageController = PageController(initialPage: initPage);
 
   late Future<GetStorage> _cacheStorageFuture;
   DateTime get currentDate => _currentDate.value;
 
-  set currentDate(value) => _currentDate.value = value;
+  set currentDate(DateTime value) => _currentDate.value = value;
+
+  DateTime monthForPage(int page) =>
+      DateUtils.addMonthsToMonthDate(_initialDate, page - initPage);
 
   Future<void> clearCache() async {
+    _sessionRevision.value++;
     var box = await _cacheStorageFuture;
     await box.erase();
   }
@@ -65,19 +82,19 @@ class CalendarViewController extends GetxController {
 
     return events.map((event) {
       final color = colorMap[event.eventType] ?? colors[0];
-      final fallbackDate = DateTime.now();
       final startDate =
-          event.startAt ??
+          (event.startAt ??
+                  event.endAt ??
+                  event.recruitmentStartAt ??
+                  event.recruitmentEndAt ??
+                  DateTime.now().toUtc())
+              .seoulWallTime;
+      final end =
           event.endAt ??
-          event.recruitmentStartAt ??
-          event.recruitmentEndAt ??
-          fallbackDate;
-      var endDate =
-          event.endAt ??
           event.startAt ??
           event.recruitmentEndAt ??
-          event.recruitmentStartAt ??
-          startDate;
+          event.recruitmentStartAt;
+      var endDate = end?.seoulWallTime ?? startDate;
       if (endDate.isBefore(startDate)) {
         endDate = startDate;
       }
@@ -93,26 +110,37 @@ class CalendarViewController extends GetxController {
   }
 
   Stream<List<CalendarEvent>> getCalendarEvents(DateTime date) async* {
+    final uid = _auth.currentUser?.uid;
+    final revision = _sessionRevision.value;
+    bool isCurrentSession() =>
+        !isClosed &&
+        _auth.currentUser?.uid == uid &&
+        _sessionRevision.value == revision;
     List<dcp.Event> deviceEvents = [];
 
     final calService = Get.find<CalendarService>();
     final calPermission = await calService.checkPermission();
+    if (!isCurrentSession()) return;
     if (calPermission &&
         Get.find<AppSettingsService>().includeDeviceEvents.value) {
       deviceEvents = await calService.retrieveEvents(
         AppUtils.startOfMonth(date),
-        AppUtils.endOfMonth(date),
+        DateUtils.addMonthsToMonthDate(date, 1),
       );
     }
 
-    if (!Get.find<AuthService>().isLoggined()) {
+    if (!isCurrentSession()) return;
+    if (uid == null) {
       yield mergeDuitEventsAndDeviceEvents([], deviceEvents);
       return;
     }
 
+    final cacheKey =
+        'uid:${Uri.encodeComponent(uid)}:${date.year}-${date.month}';
     try {
       var storage = await _cacheStorageFuture;
-      var cache = storage.read(_dateTimeToCacheKey(date)) ?? [];
+      if (!isCurrentSession()) return;
+      var cache = storage.read(cacheKey) ?? [];
       var events = List<Event>.generate(
         cache.length,
         (i) => Event.fromJson(cache[i]),
@@ -123,11 +151,13 @@ class CalendarViewController extends GetxController {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
 
+    if (!isCurrentSession()) return;
     var apiClient = Get.find<ApiClient>();
     RequestResult<List<Event>> reqResult = await apiClient.getEventsForCalendar(
       year: date.year,
       month: date.month,
     );
+    if (!isCurrentSession()) return;
     if (reqResult is RequestFail) {
       if (kDebugMode) {
         AppUtils.showSnackBar(
@@ -140,12 +170,18 @@ class CalendarViewController extends GetxController {
     var reqSuccess = reqResult as RequestSuccess<List<Event>>;
     List<Event> events = reqSuccess.data;
 
-    var storage = await _cacheStorageFuture;
-    storage.write(
-      _dateTimeToCacheKey(date),
-      List.generate(events.length, (i) => events[i].toJson()),
-    );
+    try {
+      final storage = await _cacheStorageFuture;
+      if (!isCurrentSession()) return;
+      await storage.write(
+        cacheKey,
+        events.map((event) => event.toJson()).toList(),
+      );
+    } catch (e, st) {
+      FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+    }
 
+    if (!isCurrentSession()) return;
     yield mergeDuitEventsAndDeviceEvents(events, deviceEvents);
   }
 
@@ -174,6 +210,19 @@ class CalendarViewController extends GetxController {
   void onInit() {
     super.onInit();
     _cacheStorageFuture = _initStorage();
+    var lastUid = _auth.currentUser?.uid;
+    _authSubscription = _auth.authStateChanges().listen((user) {
+      if (user?.uid == lastUid) return;
+      lastUid = user?.uid;
+      _sessionRevision.value++;
+    });
+  }
+
+  @override
+  void onClose() {
+    _authSubscription?.cancel();
+    pageController.dispose();
+    super.onClose();
   }
 
   void showDateSelectionBottomModal() {
@@ -183,16 +232,27 @@ class CalendarViewController extends GetxController {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (_) => DateSelectionBottomModal(),
+      builder: (_) => SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          primary: false,
+          child: const DateSelectionBottomModal(),
+        ),
+      ),
     );
-  }
-
-  String _dateTimeToCacheKey(DateTime dt) {
-    return "${dt.year}-${dt.month}";
   }
 
   Future<GetStorage> _initStorage() async {
     await GetStorage.init(_cacheStorageName);
-    return GetStorage(_cacheStorageName);
+    final storage = GetStorage(_cacheStorageName);
+    // Month-only entries from previous versions have no trustworthy owner.
+    final legacyKeys = storage
+        .getKeys<Iterable<String>>()
+        .where((key) => !key.startsWith('uid:'))
+        .toList();
+    for (final key in legacyKeys) {
+      await storage.remove(key);
+    }
+    return storage;
   }
 }

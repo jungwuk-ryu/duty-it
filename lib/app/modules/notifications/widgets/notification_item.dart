@@ -1,6 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/models/job_posting.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
+import 'package:duty_it/app/core/utils/event_time.dart';
 import 'package:duty_it/app/modules/notifications/controllers/notifications_view_controller.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/core/models/event.dart';
@@ -124,11 +125,11 @@ class NotificationItem extends StatelessWidget {
     Event? event = noti.event;
     switch (type) {
       case "EVENT_START":
-        return "[${event?.title ?? '행사공고'}]가 내일 ${event?.startAt?.hour ?? ''}시에 시작됩니다.";
+        return "[${event?.title ?? '행사공고'}]가 내일 ${event?.startAt?.seoulWallTime.hour ?? ''}시에 시작됩니다.";
       case "RECRUITMENT_START":
-        return "[${event?.title ?? '행사공고'}]의 모집이 내일 ${event?.recruitmentStartAt?.hour ?? ''}시부터 시작됩니다.";
+        return "[${event?.title ?? '행사공고'}]의 모집이 내일 ${event?.recruitmentStartAt?.seoulWallTime.hour ?? ''}시부터 시작됩니다.";
       case "RECRUITMENT_END":
-        return "[${event?.title ?? '행사공고'}]의 모집이 내일 ${event?.recruitmentEndAt?.hour ?? ''}시에 마감됩니다.";
+        return "[${event?.title ?? '행사공고'}]의 모집이 내일 ${event?.recruitmentEndAt?.seoulWallTime.hour ?? ''}시에 마감됩니다.";
       case "EVENT_SUBSCRIPTION_KEYWORD":
       case "EVENT_SUBSCRIPTION_HOST":
       case "EVENT_SUBSCRIPTION_TYPE":

@@ -9,7 +9,9 @@ import 'package:duty_it/app/services/auth/models/social_login_result.dart';
 import 'package:duty_it/app/services/auth/strategies/apple_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/google_login_strategy.dart';
 import 'package:duty_it/app/services/auth/strategies/social_login_strategy.dart';
+import 'package:duty_it/app/services/push_token_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -39,30 +41,75 @@ class AuthService extends GetxService {
   static const String _lastUsedProviderKey = 'last_used_provider';
 
   AuthService({
-    Future<RequestResult<AppUser>> Function()? currentUserLoader,
-    bool Function()? loggedInChecker,
+    this._currentUserLoader,
+    this._firebaseAuth,
     GetStorage Function(String boxName)? storageFactory,
-  }) : _currentUserLoader = currentUserLoader,
-       _loggedInChecker = loggedInChecker,
-       _storageFactory = storageFactory ?? GetStorage.new;
+    Future<void> Function(String? userId)? analyticsUserIdSetter,
+  }) : _storageFactory = storageFactory ?? GetStorage.new,
+       _analyticsUserIdSetter = analyticsUserIdSetter ?? _setAnalyticsUserId;
 
   final Map<SocialProvider, SocialLoginStrategy> _strategies = {};
   final Rxn<AppUser> _appUser = Rxn();
   late final GetStorage _box;
   Future<AppUser?>? _appUserLoadFuture;
   final Future<RequestResult<AppUser>> Function()? _currentUserLoader;
-  final bool Function()? _loggedInChecker;
+  final FirebaseAuth? _firebaseAuth;
+  FirebaseAuth get _auth => _firebaseAuth ?? FirebaseAuth.instance;
+  StreamSubscription<User?>? _authSubscription;
+  String? _profileUid;
   final GetStorage Function(String boxName) _storageFactory;
+  final Future<void> Function(String? userId) _analyticsUserIdSetter;
+  Future<void> _analyticsUpdate = Future.value();
+  String? _analyticsUserId;
+  bool _analyticsIdentityInitialized = false;
+  int _userRevision = 0;
 
-  AppUser? get appUser => _appUser.value;
+  AppUser? get appUser {
+    final profile = _appUser.value;
+    return profile != null && !isClosed && _profileUid == _auth.currentUser?.uid
+        ? profile
+        : null;
+  }
+
   set appUser(AppUser? user) {
-    _appUser.value = user;
+    if (isClosed) return;
+    final uid = _auth.currentUser?.uid;
+    _selectProfile(uid);
+    _userRevision++;
+    _appUser.value = uid == null ? null : user;
 
-    if (user != null) {
-      _box.write(_appUserKey, user.toJson());
+    if (user != null && uid != null) {
+      _box.write(_appUserKey, {'uid': uid, 'profile': user.toJson()});
     } else {
       _box.remove(_appUserKey);
     }
+    unawaited(syncAnalyticsUserId());
+  }
+
+  static Future<void> _setAnalyticsUserId(String? userId) {
+    return FirebaseAnalytics.instance.setUserId(id: userId);
+  }
+
+  Future<void> syncAnalyticsUserId() {
+    // Match the web's backend member ID, rather than email or Firebase UID.
+    final uid = _auth.currentUser?.uid;
+    final userId = appUser?.id.toString();
+    if (_analyticsIdentityInitialized && userId == _analyticsUserId) {
+      return _analyticsUpdate;
+    }
+    _analyticsIdentityInitialized = true;
+    _analyticsUserId = userId;
+    // Serialize native SDK calls so a slow previous account cannot win later.
+    _analyticsUpdate = _analyticsUpdate.then((_) async {
+      if (isClosed || (userId != null && _auth.currentUser?.uid != uid)) return;
+      try {
+        await _analyticsUserIdSetter(userId);
+      } catch (e, st) {
+        if (_analyticsUserId == userId) _analyticsIdentityInitialized = false;
+        log('Failed to update Analytics user ID', error: e, stackTrace: st);
+      }
+    });
+    return _analyticsUpdate;
   }
 
   SocialLoginStrategy? _currentStrategy;
@@ -73,15 +120,53 @@ class AuthService extends GetxService {
     _initStrategies();
 
     _box = _storageFactory(storageBoxName);
-    _loadCachedAppUser();
+    _profileUid = _auth.currentUser?.uid;
+    _loadCachedAppUser(_profileUid);
+    unawaited(syncAnalyticsUserId());
+    _authSubscription = _auth.authStateChanges().listen((user) {
+      // A delayed signal must not select a user who has already signed out.
+      if (user?.uid == _auth.currentUser?.uid) _selectProfile(user?.uid);
+    });
   }
 
-  void _loadCachedAppUser() {
-    Map<String, dynamic>? jsonObj = _box.read(_appUserKey);
-    if (jsonObj == null) return;
+  @override
+  void onClose() {
+    _authSubscription?.cancel();
+    super.onClose();
+  }
+
+  void _selectProfile(String? uid) {
+    if (_profileUid == uid) return;
+    _profileUid = uid;
+    _userRevision++;
+    _appUserLoadFuture = null;
+    _appUser.value = null;
+    if (uid == null) {
+      _box.remove(_appUserKey);
+    } else {
+      _loadCachedAppUser(uid);
+    }
+    unawaited(syncAnalyticsUserId());
+  }
+
+  void _loadCachedAppUser(String? uid) {
+    final cached = _box.read(_appUserKey);
+    if (cached == null) return;
+    if (cached is! Map ||
+        cached['uid'] is! String ||
+        cached['profile'] is! Map<String, dynamic>) {
+      // Older versions stored a bare profile whose owner cannot be verified.
+      _box.remove(_appUserKey);
+      return;
+    }
+    if (uid == null) return;
+    if (cached['uid'] != uid) {
+      _box.remove(_appUserKey);
+      return;
+    }
 
     try {
-      _appUser.value = AppUser.fromJson(jsonObj);
+      _appUser.value = AppUser.fromJson(cached['profile']);
     } catch (e, st) {
       if (kDebugMode) {
         log('Failed to load app user!', error: e, stackTrace: st);
@@ -123,17 +208,25 @@ class AuthService extends GetxService {
 
   Future<void> logout() async {
     await _unregisterDeviceSafely();
+    if (Get.isRegistered<ApiClient>()) {
+      Get.find<ApiClient>().invalidateSession();
+    }
 
     // Firebase
-    var logoutWaiter = _awaitFirebaseLogout();
-    await FirebaseAuth.instance.signOut();
-    await logoutWaiter;
+    try {
+      await _auth.signOut();
+      await _awaitFirebaseLogout();
+    } catch (_) {
+      _resumePushSync();
+      rethrow;
+    }
 
     // Social
-    await _currentStrategy?.logout();
-
-    // finalizing
-    await _doPostLogoutJob();
+    try {
+      await _currentStrategy?.logout();
+    } finally {
+      await _doPostLogoutJob();
+    }
   }
 
   Future<bool> withdraw() async {
@@ -142,9 +235,17 @@ class AuthService extends GetxService {
       return false;
     }
 
-    // Server
-    var reqResult = await Get.find<ApiClient>().withdrawUser();
+    final api = Get.find<ApiClient>();
+    await _unregisterDeviceSafely();
+    final RequestResult<void> reqResult;
+    try {
+      reqResult = await api.withdrawUser();
+    } catch (_) {
+      _resumePushSync();
+      rethrow;
+    }
     if (reqResult is RequestFail) {
+      _resumePushSync();
       AppUtils.showSnackBar('회원탈퇴 중 오류가 발생했어요.');
       if (reqResult.serverFail != null) {
         AppUtils.showSnackBar(reqResult.serverFail!.message);
@@ -152,37 +253,50 @@ class AuthService extends GetxService {
       return false;
     }
 
-    // Firebase
+    api.invalidateSession();
     await _deleteFirebaseUserSafely();
 
     // Social
-    await _currentStrategy?.logout();
-
-    // finalizing
-    await _doPostLogoutJob();
+    try {
+      await _currentStrategy?.logout();
+    } finally {
+      await _doPostLogoutJob();
+    }
 
     return true;
   }
 
   Future<AppUser?> ensureAppUserLoaded() {
-    final currentUser = appUser;
-    if (currentUser != null) return Future.value(currentUser);
-    if (!isLoggined()) return Future.value(null);
+    final uid = _auth.currentUser?.uid;
+    _selectProfile(uid);
+    AppUser? profileForCaller() =>
+        _auth.currentUser?.uid == uid ? appUser : null;
+    if (uid == null || appUser != null) {
+      return syncAnalyticsUserId().then((_) => profileForCaller());
+    }
     if (_appUserLoadFuture != null) return _appUserLoadFuture!;
 
-    final future = (() async {
-      try {
-        final RequestResult<AppUser> reqResult = await _loadCurrentUser();
-        if (reqResult is RequestSuccess<AppUser>) {
-          appUser = reqResult.data;
-          return reqResult.data;
-        }
-      } catch (e, st) {
-        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-      }
-
-      return appUser;
-    })().whenComplete(() => _appUserLoadFuture = null);
+    final revision = _userRevision;
+    late final Future<AppUser?> future;
+    future =
+        (() async {
+          try {
+            final result = await _loadCurrentUser();
+            if (isClosed) return null;
+            _selectProfile(_auth.currentUser?.uid);
+            if (_profileUid == uid &&
+                revision == _userRevision &&
+                result is RequestSuccess<AppUser>) {
+              appUser = result.data;
+            }
+            await syncAnalyticsUserId();
+          } catch (e, st) {
+            FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
+          }
+          return profileForCaller();
+        })().whenComplete(() {
+          if (identical(_appUserLoadFuture, future)) _appUserLoadFuture = null;
+        });
 
     _appUserLoadFuture = future;
     return future;
@@ -191,47 +305,45 @@ class AuthService extends GetxService {
   Future<void> _doPostLogoutJob() async {
     appUser = null;
     _currentStrategy = null;
+    _appUserLoadFuture = null;
+    await syncAnalyticsUserId();
 
     if (Get.isRegistered<CalendarViewController>()) {
-      Get.find<CalendarViewController>().clearCache().catchError((e, st) {
+      await Get.find<CalendarViewController>().clearCache().catchError((e, st) {
         FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
       });
     }
   }
 
+  void _resumePushSync() {
+    if (Get.isRegistered<PushTokenService>()) {
+      Get.find<PushTokenService>().resumeAfterFailedLogout();
+    }
+  }
+
   Future<void> _unregisterDeviceSafely() async {
-    if (!isLoggined() || !Get.isRegistered<ApiClient>()) return;
+    if (!isLoggined() || !Get.isRegistered<PushTokenService>()) return;
 
     try {
-      final result = await Get.find<ApiClient>().unregisterDevice().timeout(
-        const Duration(seconds: 3),
-      );
-      if (result is RequestFail) {
+      if (!await Get.find<PushTokenService>().unregisterForLogout()) {
         FirebaseCrashlytics.instance.recordError(
-          result.serverFail ?? 'Failed to unregister device token',
+          'Failed to unregister device token',
           null,
           fatal: false,
           reason: '디바이스 토큰 삭제 실패',
         );
       }
-    } on TimeoutException catch (e, st) {
-      FirebaseCrashlytics.instance.recordError(
-        e,
-        st,
-        fatal: false,
-        reason: '디바이스 토큰 삭제 시간 초과',
-      );
     } catch (e, st) {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
   }
 
   Future<void> _awaitFirebaseLogout() async {
-    await FirebaseAuth.instance.authStateChanges().firstWhere((u) => u == null);
+    await _auth.authStateChanges().firstWhere((u) => u == null);
   }
 
   Future<void> _deleteFirebaseUserSafely() async {
-    final User? currentUser = FirebaseAuth.instance.currentUser;
+    final User? currentUser = _auth.currentUser;
 
     if (currentUser == null) {
       await _safeFirebaseSignOut();
@@ -249,18 +361,13 @@ class AuthService extends GetxService {
 
   Future<void> _safeFirebaseSignOut() async {
     try {
-      await FirebaseAuth.instance.signOut();
+      await _auth.signOut();
     } catch (e, st) {
       FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
     }
   }
 
-  bool isLoggined() {
-    if (_loggedInChecker != null) return _loggedInChecker();
-
-    User? user = FirebaseAuth.instance.currentUser;
-    return user != null;
-  }
+  bool isLoggined() => _auth.currentUser != null;
 
   Future<RequestResult<AppUser>> _loadCurrentUser() {
     if (_currentUserLoader != null) return _currentUserLoader();

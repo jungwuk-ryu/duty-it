@@ -1,57 +1,43 @@
-#!/bin/sh
-set -euxo pipefail
+#!/bin/bash
+set -euo pipefail
 
-# 0) Move to repo root
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-cd "$REPO_ROOT"
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
 
-# 1) Install Flutter
-FLUTTER_VERSION="${FLUTTER_VERSION:-stable}"
-if [ ! -d "$REPO_ROOT/.flutter" ]; then
-  git clone -b "$FLUTTER_VERSION" https://github.com/flutter/flutter.git --depth 1 "$REPO_ROOT/.flutter"
-fi
-export FLUTTER_ROOT="$REPO_ROOT/.flutter"
+flutter_version=$(cat .flutter-version)
+export FLUTTER_ROOT="${FLUTTER_ROOT:-$HOME/flutter-$flutter_version}"
 export PATH="$FLUTTER_ROOT/bin:$PATH"
-
-# 2) Prepare Flutter
-flutter --version
-flutter config --no-analytics
-flutter precache --ios
-
-# 3) Fetch Dart/Flutter dependencies
-flutter pub get
-
-# 4) Install Ruby gems locally (no sudo)
-export GEM_HOME="${HOME}/.gem"
-export PATH="${GEM_HOME}/bin:${PATH}"
-export GEM_PATH="${GEM_HOME}:${GEM_PATH:-}"
-
-gem install --no-document rexml -v 3.3.6
-gem install --no-document xcodeproj -v 1.24.0
-gem install --no-document ffi -v 1.17.0 || true
-
-# 5) CocoaPods
-cd "$REPO_ROOT/ios"
-rm -f Podfile.lock
-pod repo update
-
-# (선택) Xcode Cloud 환경변수로 Firebase iOS SDK 버전 고정 (예: FIREBASE_SDK_VERSION=10.2.0)
-if [ -n "${FIREBASE_SDK_VERSION:-}" ]; then
-  /usr/bin/ruby <<'RUBY'
-path = 'Podfile'
-pin  = ENV['FIREBASE_SDK_VERSION']
-txt  = File.read(path)
-
-if txt.match?(/\$FirebaseSDKVersion/)
-  # 기존 선언 교체
-  txt.gsub!(/\$FirebaseSDKVersion\s*=\s*'.*?'/, "$FirebaseSDKVersion = '#{pin}'")
-else
-  # 맨 위에 추가
-  txt = "$FirebaseSDKVersion = '#{pin}'\n" + txt
-end
-
-File.write(path, txt)
-RUBY
+if [[ ! -d "$FLUTTER_ROOT/.git" ]]; then
+  git clone --depth 1 --branch "$flutter_version" https://github.com/flutter/flutter.git "$FLUTTER_ROOT"
+fi
+if [[ "$(git -C "$FLUTTER_ROOT" describe --tags --exact-match HEAD)" != "$flutter_version" ]]; then
+  echo "Expected Flutter $flutter_version at $FLUTTER_ROOT" >&2
+  exit 1
 fi
 
-pod install --repo-update
+# Restore generated configuration before analyzing the app or running tests.
+printf '%s' "${GOOGLESERVICE_INFO_PLIST_B64:?}" | base64 -D > ios/Runner/GoogleService-Info.plist
+printf '%s' "${FIREBASE_OPTIONS_B64:?}" | base64 -D > lib/firebase_options.dart
+printf '%s' "${FIREBASE_JSON_B64:?}" | base64 -D > firebase.json
+printf 'server=%s\n' "${SERVER_ADDRESS:?}" > .env
+
+flutter precache --ios
+flutter pub get --enforce-lockfile
+flutter analyze --no-pub
+flutter test --no-pub
+
+# Match the CocoaPods version that wrote the committed lockfile. Some Xcode
+# Cloud images have only system Ruby, so use Homebrew Ruby if installation is needed.
+pods_version=$(awk '$1 == "COCOAPODS:" { print $2 }' ios/Podfile.lock)
+if [[ "$(pod --version 2>/dev/null || true)" != "$pods_version" ]]; then
+  brew install ruby@3.3
+  export GEM_HOME="$HOME/.ci-cocoapods"
+  ruby_bin=$(brew --prefix ruby@3.3)/bin
+  export PATH="$GEM_HOME/bin:$ruby_bin:$PATH"
+  gem install --no-document cocoapods --version "$pods_version"
+fi
+pod install --project-directory=ios --deployment
+
+dart pub global activate flutterfire_cli 1.3.1
+flutter build ios --release --no-pub --config-only --no-codesign
+git diff --exit-code -- ios/Podfile.lock pubspec.lock

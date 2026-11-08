@@ -1,6 +1,9 @@
+import 'package:duty_it/app/core/enums/event_sorting_type.dart';
+import 'package:duty_it/app/core/enums/job_sorting_type.dart';
+import 'package:duty_it/app/widgets/sort_menu.dart';
+import 'package:duty_it/app/widgets/adaptive_filter_row.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/bookmark/controllers/bookmark_view_controller.dart';
-import 'package:duty_it/app/modules/bookmark/widgets/bookmark_sorting_bottom_modal.dart';
 import 'package:duty_it/app/modules/home/widgets/home_tab_button.dart';
 import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:duty_it/app/services/job_filter/job_filter_service.dart';
@@ -47,7 +50,8 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
                 child: Obx(
                   () => HomeTabButton(
                     isSelected: controller.isJobTab,
-                    onTap: () => controller.selectedTab = BookmarkContentTab.job,
+                    onTap: () =>
+                        controller.selectedTab = BookmarkContentTab.job,
                     title: '채용',
                   ),
                 ),
@@ -59,11 +63,7 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
             final filterApplied = controller.isEventTab
                 ? Get.find<SearchFilterService>().hasFilterChanges()
                 : Get.find<JobFilterService>().hasFilterChanges();
-            final sortingName = controller.isEventTab
-                ? controller.eventSortingType.shortName
-                : controller.jobSortingType.shortName;
-
-            return Row(
+            return AdaptiveFilterRow(
               children: [
                 CategoryTag(
                   name: '전체',
@@ -78,27 +78,18 @@ class BookmarkHeader extends GetView<BookmarkViewController> {
                   imageColor: filterApplied ? AppColors.white : null,
                   onTap: controller.openCurrentFilterPage,
                 ),
-                const Spacer(),
-                CategoryTag(
-                  name: sortingName,
-                  isSelected: false,
-                  imageAsset: Assets.icons.filterSort.path,
-                  backgroundColor: AppColors.transparent,
-                  textColor: AppColors.g05,
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                      ),
-                      builder: (_) => const BookmarkSortingBottomModal(),
-                    );
-                  },
-                ),
+                if (controller.isEventTab)
+                  SortMenu(
+                    selected: controller.eventSortingType,
+                    options: EventSortingType.values,
+                    onSelected: (type) => controller.eventSortingType = type,
+                  )
+                else
+                  SortMenu(
+                    selected: controller.jobSortingType,
+                    options: JobSortingType.values,
+                    onSelected: (type) => controller.jobSortingType = type,
+                  ),
               ],
             );
           }),

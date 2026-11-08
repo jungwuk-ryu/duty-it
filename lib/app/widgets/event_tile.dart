@@ -1,11 +1,10 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/event_type.dart';
 import 'package:duty_it/app/core/models/event.dart';
 import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/gen/assets.gen.dart';
+import 'package:duty_it/app/widgets/duit_glass.dart';
 import 'package:flutter/material.dart';
 
 /// The same compact event presentation used by the web's mobile list.
@@ -163,8 +162,6 @@ class EventTile extends StatelessWidget {
   }
 
   Widget _bookmarkButton(BuildContext context) {
-    final highContrast = MediaQuery.highContrastOf(context);
-
     return IconButton(
       tooltip: event.isBookmarked ? '북마크 해제' : '북마크 저장',
       onPressed: onBookmarkTap,
@@ -178,52 +175,18 @@ class EventTile extends StatelessWidget {
         visualDensity: VisualDensity.standard,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      icon: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(22),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipOval(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: highContrast ? 0 : 10,
-              sigmaY: highContrast ? 0 : 10,
-            ),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: highContrast
-                      ? [Colors.white, Colors.white]
-                      : [
-                          Colors.white.withAlpha(170),
-                          Colors.white.withAlpha(68),
-                          Colors.white.withAlpha(115),
-                        ],
-                ),
-                border: Border.all(
-                  color: Colors.white.withAlpha(200),
-                  width: 0.8,
-                ),
-              ),
-              child: Icon(
-                event.isBookmarked
-                    ? Icons.bookmark_rounded
-                    : Icons.bookmark_border_rounded,
-                color: event.isBookmarked ? AppColors.main : AppColors.g07,
-                size: 18,
-              ),
-            ),
+      icon: DuitGlass(
+        radius: 16,
+        style: DuitGlassStyle.compact,
+        showShadow: false,
+        child: SizedBox.square(
+          dimension: 32,
+          child: Icon(
+            event.isBookmarked
+                ? Icons.bookmark_rounded
+                : Icons.bookmark_border_rounded,
+            color: event.isBookmarked ? AppColors.main : AppColors.g07,
+            size: 18,
           ),
         ),
       ),

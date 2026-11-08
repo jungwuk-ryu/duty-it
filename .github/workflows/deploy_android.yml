@@ -1,0 +1,95 @@
+name: Android Deploy
+
+on:
+  push:
+    branches: [beta, release]
+
+# Both Play tracks share the same version-code namespace. Hold the queue
+# through upload so a later release cannot overtake an earlier allocation.
+concurrency:
+  group: android-play-deploy
+  queue: max
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read Flutter version
+        id: sdk
+        run: echo "version=$(cat .flutter-version)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ steps.sdk.outputs.version }}
+
+      - name: Restore app configuration
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          FIREBASE_OPTIONS_DART: ${{ secrets.FIREBASE_OPTIONS_DART }}
+          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+          DOT_ENV: ${{ secrets.DOT_ENV }}
+        run: |
+          printf '%s\n' "$GOOGLE_SERVICES_JSON" > android/app/google-services.json
+          printf '%s\n' "$FIREBASE_OPTIONS_DART" > lib/firebase_options.dart
+          printf '%s\n' "$FIREBASE_JSON" > firebase.json
+          printf '%s\n' "$DOT_ENV" > .env
+
+      - run: flutter pub get --enforce-lockfile
+      - run: flutter analyze --no-pub
+      - run: flutter test --no-pub
+
+      - name: Restore Android signing key
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=keystore.jks\n' \
+            "$STORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > android/key.properties
+
+      - name: Reserve the next Play version code
+        id: build_number
+        env:
+          GH_TOKEN: ${{ secrets.ACTION_GH_TOKEN }}
+        run: |
+          current=$(gh variable get BUILD_NUMBER --repo "$GITHUB_REPOSITORY" --json value --jq .value)
+          if ! [[ "$current" =~ ^(0|[1-9][0-9]{0,9})$ ]] || (( current >= 2100000000 )); then
+            echo "::error::BUILD_NUMBER is invalid or exhausted"
+            exit 1
+          fi
+          next=$((current + 1))
+          gh variable set BUILD_NUMBER --body "$next" --repo "$GITHUB_REPOSITORY"
+          echo "number=$next" >> "$GITHUB_OUTPUT"
+
+      - name: Build AppBundle
+        env:
+          BUILD_NUMBER: ${{ steps.build_number.outputs.number }}
+        run: flutter build appbundle --release --no-pub --build-number="$BUILD_NUMBER"
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          working-directory: android
+          bundler-cache: true
+
+      - name: Upload to Google Play
+        working-directory: android
+        env:
+          FASTLANE_JSON_KEY_FILE: ${{ secrets.FASTLANE_JSON_KEY_FILE }}
+        run: |
+          printf '%s\n' "$FASTLANE_JSON_KEY_FILE" > fastlane/json_key_file.json
+          case "$GITHUB_REF_NAME" in
+            beta) bundle exec fastlane beta ;;
+            release) bundle exec fastlane deploy ;;
+            *) exit 1 ;;
+          esac

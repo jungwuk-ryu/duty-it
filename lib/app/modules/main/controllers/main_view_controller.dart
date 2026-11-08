@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/modules/bookmark/controllers/bookmark_view_controller.dart';
 import 'package:duty_it/app/modules/bookmark/views/bookmark_view.dart';
 import 'package:duty_it/app/modules/calendar/views/calendar_view.dart';
@@ -12,7 +9,6 @@ import 'package:duty_it/app/routes/app_pages.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event_deep_link_service.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +19,6 @@ class MainViewController extends GetxController {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   get scaffoldKey => _scaffoldKey;
-  StreamSubscription? _authListener;
 
   MainViewController() {
     pages = [
@@ -35,31 +30,9 @@ class MainViewController extends GetxController {
   }
 
   @override
-  void onInit() {
-    super.onInit();
-
-    var api = Get.find<ApiClient>();
-
-    var authService = Get.find<AuthService>();
-    if (authService.isLoggined()) {
-      api.registerDevice().catchError((e, st) {
-        FirebaseCrashlytics.instance.recordError(e, st, fatal: false);
-
-        return RequestFail(null);
-      });
-    }
-  }
-
-  @override
   void onReady() {
     super.onReady();
     EventDeepLinkService.ensureRegistered().markNavigationReady();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _authListener?.cancel();
   }
 
   void openEndDrawer() {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:duty_it/app/api_client.dart';
 import 'package:duty_it/app/modules/notifications/models/app_notification.dart';
 import 'package:duty_it/app/modules/settings/controllers/notification_filter_controller.dart';
@@ -11,12 +13,14 @@ enum NotificationTab { all, event, job }
 class NotificationsViewController extends GetxController {
   ApiClient get _apiClient => Get.find<ApiClient>();
   bool _didMarkAllAsRead = false;
+  bool _isMarkingAllAsRead = false;
+  int _listGeneration = 0;
+  int _subscriptionsGeneration = 0;
   static const int _pageSize = 20;
 
   final Rx<NotificationTab> selectedTab = NotificationTab.all.obs;
   final RxList<NotificationSubscription> subscriptions =
       <NotificationSubscription>[].obs;
-  final RxBool isResolvingFilteredTab = false.obs;
 
   final Rx<PagingState<int, AppNotification>> _pagingState =
       PagingState<int, AppNotification>().obs;
@@ -28,41 +32,21 @@ class NotificationsViewController extends GetxController {
   void onInit() {
     super.onInit();
 
-    bool isMarkingAllAsRead = false;
-    _pagingState.listen((state) async {
-      if (_didMarkAllAsRead) return;
-      if ((state.pages?.isNotEmpty ?? false) && !isMarkingAllAsRead) {
-        isMarkingAllAsRead = true;
-
-        try {
-          _didMarkAllAsRead = await markAllAsRead();
-        } finally {
-          isMarkingAllAsRead = false;
-        }
-      }
-    });
-
     fetchNotificationList();
     fetchSubscriptions();
   }
 
-  List<AppNotification> get notifications =>
-      (pagingState.pages ?? const <List<AppNotification>>[])
-          .expand((page) => page)
-          .toList(growable: false);
-
-  List<AppNotification> get filteredNotifications {
-    final tab = selectedTab.value;
-    return notifications
-        .where((notification) {
-          return switch (tab) {
-            NotificationTab.all => true,
-            NotificationTab.event => _isEventNotification(notification),
-            NotificationTab.job => _isJobNotification(notification),
-          };
-        })
-        .toList(growable: false);
+  Iterable<AppNotification> _visibleItems(List<List<AppNotification>>? pages) {
+    final items = (pages ?? const <List<AppNotification>>[]).expand((p) => p);
+    return switch (selectedTab.value) {
+      NotificationTab.all => items,
+      NotificationTab.event => items.where(_isEventNotification),
+      NotificationTab.job => items.where(_isJobNotification),
+    };
   }
+
+  List<AppNotification> get filteredNotifications =>
+      _visibleItems(pagingState.pages).toList(growable: false);
 
   bool get isInitialLoading =>
       pagingState.isLoading && (pagingState.pages?.isEmpty ?? true);
@@ -71,10 +55,6 @@ class NotificationsViewController extends GetxController {
       pagingState.isLoading && (pagingState.pages?.isNotEmpty ?? false);
 
   Object? get pageError => pagingState.error;
-
-  bool get hasFirstPageError => pageError != null && notifications.isEmpty;
-
-  bool get hasNextPageError => pageError != null && notifications.isNotEmpty;
 
   bool get hasEventCondition =>
       subscriptions.any((subscription) => subscription.type.isEvent);
@@ -94,52 +74,78 @@ class NotificationsViewController extends GetxController {
 
   void selectTab(NotificationTab tab) {
     selectedTab.value = tab;
-    _ensureSelectedTabHasVisibleItems();
+    if (tab != NotificationTab.all &&
+        _visibleItems(pagingState.pages).isEmpty) {
+      fetchNotificationList();
+    }
   }
 
   Future<void> refreshNotificationList() async {
-    await fetchNotificationList(clearPage: true);
-    await fetchSubscriptions();
-    await _ensureSelectedTabHasVisibleItems();
+    await Future.wait([_fetchPages(refresh: true), fetchSubscriptions()]);
   }
 
-  Future<void> fetchNotificationList({bool clearPage = false}) async {
-    if (!clearPage && (pagingState.isLoading || !pagingState.hasNextPage)) {
+  Future<void> fetchNotificationList() => _fetchPages();
+
+  Future<void> retryNotificationList() =>
+      pageError == null ? Future.value() : _fetchPages(retry: true);
+
+  Future<void> _fetchPages({bool refresh = false, bool retry = false}) async {
+    if (isClosed) return;
+    if (!refresh &&
+        (pagingState.isLoading ||
+            !hasNextPage ||
+            (pageError != null && !retry))) {
       return;
     }
 
-    final PagingState<int, AppNotification> baseState = clearPage
-        ? PagingState<int, AppNotification>()
-        : pagingState;
-    pagingState = baseState.copyWith(isLoading: true, error: null);
+    final generation = ++_listGeneration;
+    pagingState = refresh
+        ? PagingState<int, AppNotification>(isLoading: true)
+        : pagingState.copyWith(isLoading: true, error: null);
 
-    final int nextKey = (baseState.keys?.last ?? -1) + 1;
-    RequestResult reqResult = await _apiClient.getNotificationList(
-      nextKey,
-      size: _pageSize,
-    );
-    if (reqResult is RequestFail) {
+    while (true) {
+      final nextKey = (pagingState.keys?.lastOrNull ?? -1) + 1;
+      final RequestResult<List<AppNotification>> result;
+      try {
+        result = await _apiClient.getNotificationList(nextKey, size: _pageSize);
+      } catch (error) {
+        if (!isClosed && generation == _listGeneration) {
+          pagingState = pagingState.copyWith(isLoading: false, error: error);
+        }
+        return;
+      }
+      if (isClosed || generation != _listGeneration) return;
+
+      if (result is RequestFail) {
+        pagingState = pagingState.copyWith(isLoading: false, error: result);
+        return;
+      }
+
+      final items = (result as RequestSuccess<List<AppNotification>>).data;
+      final pages = [...?pagingState.pages, items];
+      final hasNext = items.isNotEmpty;
+      final needsMore =
+          hasNext &&
+          selectedTab.value != NotificationTab.all &&
+          _visibleItems(pages).isEmpty;
       pagingState = pagingState.copyWith(
-        isLoading: false,
-        error: reqResult.serverFail,
+        isLoading: needsMore,
+        pages: pages,
+        keys: [...?pagingState.keys, nextKey],
+        hasNextPage: hasNext,
       );
-
-      return;
+      unawaited(_markAllAsReadOnce());
+      if (!needsMore) return;
     }
-
-    List<AppNotification> notiList =
-        (reqResult as RequestSuccess<List<AppNotification>>).data;
-    pagingState = pagingState.copyWith(
-      isLoading: false,
-      pages: [...baseState.pages ?? [], notiList],
-      keys: [...baseState.keys ?? [], nextKey],
-      hasNextPage: notiList.isNotEmpty,
-    );
   }
 
   Future<void> fetchSubscriptions() async {
+    if (isClosed) return;
+    final generation = ++_subscriptionsGeneration;
     final result = await _apiClient.getSubscriptions();
-    if (result is RequestSuccess<List<NotificationSubscription>>) {
+    if (!isClosed &&
+        generation == _subscriptionsGeneration &&
+        result is RequestSuccess<List<NotificationSubscription>>) {
       subscriptions.assignAll(result.data);
     }
   }
@@ -147,11 +153,6 @@ class NotificationsViewController extends GetxController {
   Future<void> openNotificationSettings() async {
     await Get.toNamed(Routes.NOTIFICATION_SETTINGS);
     await fetchSubscriptions();
-  }
-
-  Future<void> retryNotificationList() async {
-    await fetchNotificationList(clearPage: notifications.isEmpty);
-    await _ensureSelectedTabHasVisibleItems();
   }
 
   Future<void> openSelectedConditionSettings() async {
@@ -175,19 +176,22 @@ class NotificationsViewController extends GetxController {
     }
   }
 
-  Future<bool> markAllAsRead() async {
-    RequestResult rst = await _apiClient.readAllNotification();
-    bool success =
-        !(rst is RequestFail || (rst is RequestSuccess && rst.data == false));
-
-    return success;
+  Future<void> _markAllAsReadOnce() async {
+    if (_didMarkAllAsRead || _isMarkingAllAsRead) return;
+    _isMarkingAllAsRead = true;
+    try {
+      final result = await _apiClient.readAllNotification();
+      _didMarkAllAsRead = result is RequestSuccess<bool> && result.data;
+    } finally {
+      _isMarkingAllAsRead = false;
+    }
   }
 
   Future<bool> deleteNotification(int id) async {
     RequestResult rst = await _apiClient.deleteNotification(id);
     bool success =
         !(rst is RequestFail || (rst is RequestSuccess && rst.data == false));
-    if (!success) return false;
+    if (!success || isClosed) return false;
 
     final currentPages = pagingState.pages ?? <List<AppNotification>>[];
     final currentKeys = pagingState.keys ?? <int>[];
@@ -209,26 +213,6 @@ class NotificationsViewController extends GetxController {
     pagingState = pagingState.copyWith(pages: updatedPages, keys: updatedKeys);
 
     return success;
-  }
-
-  Future<void> _ensureSelectedTabHasVisibleItems() async {
-    if (selectedTab.value == NotificationTab.all) return;
-    if (isResolvingFilteredTab.value) return;
-
-    isResolvingFilteredTab.value = true;
-    try {
-      while (pagingState.isLoading) {
-        await Future<void>.delayed(const Duration(milliseconds: 80));
-      }
-
-      while (filteredNotifications.isEmpty &&
-          hasNextPage &&
-          pageError == null) {
-        await fetchNotificationList();
-      }
-    } finally {
-      isResolvingFilteredTab.value = false;
-    }
   }
 
   bool _isEventNotification(AppNotification notification) {

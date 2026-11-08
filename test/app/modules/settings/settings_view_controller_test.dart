@@ -10,6 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import '../../../helpers/fake_firebase_auth.dart';
+
 class FakeApiClient extends ApiClient {
   FakeApiClient({required this.onUpdateUserSettings});
 
@@ -70,10 +72,12 @@ void main() {
     'toggleBookmarkNoti hydrates missing user before updating settings',
     () async {
       AlarmSettings? capturedAlarmSettings;
+      final auth = FakeFirebaseAuth()..signInAs('A');
+      addTearDown(auth.changes.close);
 
       Get.put(
         AuthService(
-          loggedInChecker: () => true,
+          firebaseAuth: auth,
           currentUserLoader: () async => RequestSuccess(
             const AppUser(
               id: 3,
