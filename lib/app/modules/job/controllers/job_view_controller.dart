@@ -62,6 +62,7 @@ class JobViewController extends GetxController {
 
   final RxString searchQuery = ''.obs;
   final Lock _pageFetchLock = Lock();
+  final Set<int> _bookmarkRequests = {};
   final RxBool _hasNewNotification = false.obs;
   bool get hasNewNotification => _hasNewNotification.value;
   final Rx<RefreshIndicatorStatus?> _refreshIndicatorStatus =
@@ -352,30 +353,37 @@ class JobViewController extends GetxController {
   }
 
   Future<void> onBookmarkButtonClick(Rx<JobPosting> jobRx) async {
-    if (!Get.find<AuthService>().isLoggined()) {
-      Get.toNamed(Routes.LOGIN);
-      return;
-    }
-
-    final initialUser = await _ensureAppUserLoaded();
-    if (initialUser == null) return;
-
-    final job = jobRx.value;
-    jobRx.value = job.copyWith(isBookmarked: !job.isBookmarked);
-
-    final result = await Get.find<ApiClient>().toggleJobBookmark(job.id);
-    if (result is RequestSuccess<bool>) {
-      jobRx.value = job.copyWith(isBookmarked: result.data);
-      if (selectedTab == JobTab.bookmark && !result.data) {
-        await fetchNextPage(clearPage: true);
+    final id = jobRx.value.id;
+    // The list, detail menu, and bottom bar can all toggle the same posting.
+    if (!_bookmarkRequests.add(id)) return;
+    try {
+      if (!Get.find<AuthService>().isLoggined()) {
+        Get.toNamed(Routes.LOGIN);
+        return;
       }
-      return;
-    }
 
-    jobRx.value = job;
-    AppUtils.showSnackBar(
-      (result as RequestFail).serverFail?.message ?? '북마크를 수정하지 못했습니다.',
-    );
+      final initialUser = await _ensureAppUserLoaded();
+      if (initialUser == null) return;
+
+      final job = jobRx.value;
+      jobRx.value = job.copyWith(isBookmarked: !job.isBookmarked);
+
+      final result = await Get.find<ApiClient>().toggleJobBookmark(job.id);
+      if (result is RequestSuccess<bool>) {
+        jobRx.value = job.copyWith(isBookmarked: result.data);
+        if (selectedTab == JobTab.bookmark && !result.data) {
+          await fetchNextPage(clearPage: true);
+        }
+        return;
+      }
+
+      jobRx.value = job;
+      AppUtils.showSnackBar(
+        (result as RequestFail).serverFail?.message ?? '북마크를 수정하지 못했습니다.',
+      );
+    } finally {
+      _bookmarkRequests.remove(id);
+    }
   }
 
   Future<AppUser?> _ensureAppUserLoaded() async {
