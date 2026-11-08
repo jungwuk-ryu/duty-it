@@ -25,9 +25,6 @@ class EventDetailLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final layout = DuoLayoutData.of(context);
-    final verticalActionInset = layout.isDuo
-        ? math.max(12.0, MediaQuery.paddingOf(context).bottom)
-        : 12.0;
     return LayoutBuilder(
       builder: (context, constraints) {
         const inset = 20.0;
@@ -95,25 +92,24 @@ class EventDetailLayout extends StatelessWidget {
                 ),
               ),
             ),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                border: Border(top: BorderSide(color: context.colors.border)),
-              ),
-              child: Padding(
-                padding: contentInsets
-                    .add(actionsPadding)
-                    .add(const EdgeInsets.symmetric(horizontal: inset)),
-                child: SafeArea(
-                  top: false,
-                  // Preserve the system clearance symmetrically on Duo so the
-                  // row is centered within the entire visible footer.
-                  bottom: !layout.isDuo,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: verticalActionInset,
+            _footer(
+              layout.isDuo,
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  border: Border(top: BorderSide(color: context.colors.border)),
+                ),
+                child: Padding(
+                  padding: contentInsets
+                      .add(actionsPadding)
+                      .add(const EdgeInsets.symmetric(horizontal: inset)),
+                  child: SafeArea(
+                    top: false,
+                    bottom: !layout.isDuo,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: actions,
                     ),
-                    child: actions,
                   ),
                 ),
               ),
@@ -123,4 +119,9 @@ class EventDetailLayout extends StatelessWidget {
       },
     );
   }
+
+  Widget _footer(bool isDuo, Widget toolbar) => isDuo
+      // Keep system clearance outside Duo's compact toolbar.
+      ? SafeArea(top: false, left: false, right: false, child: toolbar)
+      : toolbar;
 }

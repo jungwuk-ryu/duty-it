@@ -92,10 +92,12 @@ void main() {
       final footer = tester.getRect(find.byType(DecoratedBox));
       expect(footer.left, 0);
       expect(footer.right, 800);
-      expect(footer.height, 116);
+      expect(footer.height, 72);
       final actions = tester.getRect(find.byKey(actionsKey));
       expect(actions.center.dy, closeTo(footer.center.dy, .01));
-      expect(footer.bottom - actions.bottom, greaterThanOrEqualTo(34));
+      final viewport = tester.getRect(find.byType(EventDetailLayout));
+      expect(viewport.bottom - footer.bottom, 34);
+      expect(viewport.bottom - actions.bottom, greaterThanOrEqualTo(34));
       expect(actions.left, greaterThanOrEqualTo(fold.right));
       expect(actions.right, 800 - insets.right - 20);
       expect(tester.getRect(find.byKey(poster.key!)).left, insets.left + 20);
@@ -141,9 +143,12 @@ void main() {
         final actions = tester.getRect(find.byKey(actionsKey));
         final above = actions.top - footer.top;
         final below = footer.bottom - actions.bottom;
-        expect(below, greaterThanOrEqualTo(bottom));
+        final viewport = tester.getRect(find.byType(EventDetailLayout));
+        expect(viewport.bottom - actions.bottom, greaterThanOrEqualTo(bottom));
         if (duo) {
           expect(above, closeTo(below, .01));
+          expect(footer.height, 72);
+          expect(viewport.bottom - footer.bottom, bottom);
         } else {
           // Ordinary phones retain their 12pt spacing plus home clearance.
           expect(above, 12);
