@@ -3,7 +3,6 @@ import 'package:duty_it/app/core/utils/app_utils.dart';
 import 'package:duty_it/app/modules/calendar/controllers/calendar_view_controller.dart';
 import 'package:duty_it/app/modules/calendar/models/calendar_event.dart';
 import 'package:duty_it/app/services/calendar_service.dart';
-import 'package:duty_it/app/widgets/adaptive_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -44,25 +43,7 @@ class CustomCalendarEventCard extends StatelessWidget {
         },
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: 48),
-          child: AdaptiveLayout(
-            phone: container,
-            tablet: Row(
-              // SliverList가 width를 최대 크기로 고정하기 때문에 Row 필수입니다.
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: FractionallySizedBox(
-                      widthFactor: 0.5,
-                      child: container,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          child: container,
         ),
       ),
     );
