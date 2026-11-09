@@ -51,6 +51,9 @@ class _Auth extends GetxService implements AuthService {
       throw UnimplementedError('${invocation.memberName}');
 }
 
+bool scaffoldHasBottomBar(WidgetTester tester) =>
+    tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar != null;
+
 void main() {
   setUp(() {
     Get.testMode = true;
@@ -60,16 +63,56 @@ void main() {
   });
   tearDown(Get.reset);
 
-  for (final edge in ['left', 'right', null]) {
+  testWidgets(
+    'resizing switches navigation without resetting the selected page',
+    (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(1000, 700);
+      addTearDown(tester.view.reset);
+      final controller = Get.put<MainViewController>(_Main());
+      await tester.pumpWidget(const MaterialApp(home: MainView()));
+      controller.changeTab(1);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<MainTabBar>(find.byType(MainTabBar)).axis,
+        Axis.vertical,
+      );
+      tester.view.physicalSize = const Size(392, 800);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<MainTabBar>(find.byType(MainTabBar)).axis,
+        Axis.horizontal,
+      );
+      expect(controller.pageIndex.value, 1);
+      expect(find.byKey(const ValueKey('page-1')), findsOneWidget);
+      tester.view.physicalSize = const Size(1000, 700);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<MainTabBar>(find.byType(MainTabBar)).axis,
+        Axis.vertical,
+      );
+      expect(controller.pageIndex.value, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  for (final (edge, width) in <(String?, double)>[
+    ('left', 1000),
+    ('right', 1000),
+    (null, 1000),
+    (null, 392),
+  ]) {
     for (final keyboard in [false, true]) {
       testWidgets(
-        'feeds reach the viewport edge with rail $edge and keyboard $keyboard',
+        'feeds reach the viewport edge with rail $edge, width $width and keyboard $keyboard',
         (tester) async {
-          tester.view.physicalSize = const Size(1000, 700);
+          tester.view.physicalSize = Size(width, 700);
           tester.view.devicePixelRatio = 1;
           addTearDown(tester.view.resetPhysicalSize);
           addTearDown(tester.view.resetDevicePixelRatio);
           final controller = Get.put<MainViewController>(_Main());
+          final effectiveEdge = edge ?? (width >= 600 ? 'left' : null);
+          final railWidth = edge == null ? 80.0 : 72.0;
           final safe = EdgeInsets.fromLTRB(
             edge == 'left' ? 72 : 0,
             24,
@@ -80,7 +123,7 @@ void main() {
             MaterialApp(
               home: MediaQuery(
                 data: MediaQueryData(
-                  size: const Size(1000, 700),
+                  size: Size(width, 700),
                   padding: keyboard ? safe.copyWith(bottom: 0) : safe,
                   viewPadding: safe,
                   viewInsets: EdgeInsets.only(bottom: keyboard ? 280 : 0),
@@ -103,20 +146,23 @@ void main() {
             final feed = tester.getRect(find.byKey(ValueKey('page-$index')));
             expect(feed.bottom, bottom);
             expect(feed.top, 24);
-            expect(feed.left, edge == 'left' ? 72 : 0);
-            expect(feed.right, edge == 'right' ? 928 : 1000);
-            // Moving the feed must not move the glass controls into the inset.
+            expect(feed.left, effectiveEdge == 'left' ? railWidth : 0);
             expect(
-              tester.getBottomLeft(find.byType(MainTabBar)).dy,
-              (edge == null ? 700 : bottom) - (keyboard ? 0 : 34) - 8,
+              feed.right,
+              effectiveEdge == 'right' ? width - railWidth : width,
             );
+            expect(
+              tester.widget<MainTabBar>(find.byType(MainTabBar)).axis,
+              effectiveEdge == null ? Axis.horizontal : Axis.vertical,
+            );
+            expect(scaffoldHasBottomBar(tester), effectiveEdge == null);
           }
           controller.pageIndex.value = 3;
           await tester.pumpAndSettle();
           final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
           // A phone calendar also avoids the full floating bottom bar. During
           // keyboard display only the body resizes; the bottom bar stays put.
-          final calendarBottom = edge == null && !keyboard
+          final calendarBottom = effectiveEdge == null && !keyboard
               ? tester
                     .getTopLeft(find.byWidget(scaffold.bottomNavigationBar!))
                     .dy

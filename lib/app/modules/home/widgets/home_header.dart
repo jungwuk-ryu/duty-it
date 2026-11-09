@@ -24,43 +24,44 @@ class HomeHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
-          HomeSearchBar(controller: controller.searchTextEditingController),
-          SizedBox(height: 18),
+          AdaptiveSearchHeader(
+            search: HomeSearchBar(
+              controller: controller.searchTextEditingController,
+            ),
+            filters: Obx(() {
+              var service = Get.find<SearchFilterService>();
+              bool filterApplied = service.hasFilterChanges();
 
-          Obx(() {
-            var service = Get.find<SearchFilterService>();
-            bool filterApplied = service.hasFilterChanges();
-
-            return AdaptiveFilterRow(
-              children: [
-                CategoryTag(
-                  name: '전체',
-                  isSelected: !filterApplied,
-                  onTap: () {
-                    Get.find<SearchFilterService>().resetFilter(false);
-                  },
-                ),
-                SizedBox(width: 8),
-                CategoryTag(
-                  name: '필터',
-                  isSelected: filterApplied,
-                  imageAsset: Assets.icons.filter.path,
-                  imageColor: filterApplied ? AppColors.white : null,
-                  backgroundColor: filterApplied ? AppColors.main : null,
-                  textColor: filterApplied ? AppColors.white : null,
-                  onTap: () {
-                    Get.toNamed(Routes.SEARCH_FILTER);
-                  },
-                ),
-                SortMenu(
-                  selected: controller.sortingType,
-                  options: EventSortingType.values,
-                  onSelected: (type) => controller.sortingType = type,
-                ),
-              ],
-            );
-          }),
+              return AdaptiveFilterRow(
+                children: [
+                  CategoryTag(
+                    name: '전체',
+                    isSelected: !filterApplied,
+                    onTap: () {
+                      Get.find<SearchFilterService>().resetFilter(false);
+                    },
+                  ),
+                  SizedBox(width: 8),
+                  CategoryTag(
+                    name: '필터',
+                    isSelected: filterApplied,
+                    imageAsset: Assets.icons.filter.path,
+                    imageColor: filterApplied ? AppColors.white : null,
+                    backgroundColor: filterApplied ? AppColors.main : null,
+                    textColor: filterApplied ? AppColors.white : null,
+                    onTap: () {
+                      Get.toNamed(Routes.SEARCH_FILTER);
+                    },
+                  ),
+                  SortMenu(
+                    selected: controller.sortingType,
+                    options: EventSortingType.values,
+                    onSelected: (type) => controller.sortingType = type,
+                  ),
+                ],
+              );
+            }),
+          ),
 
           Obx(() {
             final service = Get.find<SearchFilterService>();
@@ -81,8 +82,6 @@ class HomeHeader extends StatelessWidget {
               ),
             );
           }),
-
-          SizedBox(height: 16),
         ],
       ),
     );

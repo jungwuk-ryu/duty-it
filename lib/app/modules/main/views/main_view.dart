@@ -7,6 +7,7 @@ import 'package:duty_it/app/modules/home/widgets/home_app_bar.dart';
 import 'package:duty_it/app/modules/job/widgets/job_app_bar.dart';
 import 'package:duty_it/app/modules/bookmark/widgets/bookmark_app_bar.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
+import 'package:duty_it/app/widgets/adaptive_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,10 +19,14 @@ class MainView extends GetView<MainViewController> {
   @override
   Widget build(BuildContext context) {
     final layout = DuoLayoutData.of(context);
-    final edge = layout.verticalBarEdge;
-    final hasSideBar = edge != null;
     final media = MediaQuery.of(context);
-    final sideWidth = layout.sideBarWidth(media);
+    final edge =
+        layout.verticalBarEdge ??
+        (AdaptiveLayout.useNavigationRail(media.size) ? 'left' : null);
+    final hasSideBar = edge != null;
+    final sideWidth = layout.verticalBarEdge != null
+        ? layout.sideBarWidth(media)
+        : 80.0;
     final controlsTop = layout.sideControlsTop(media);
     return Scaffold(
       key: controller.scaffoldKey,
@@ -49,6 +54,7 @@ class MainView extends GetView<MainViewController> {
                     sideWidth,
                     math.max(0, controlsTop - media.padding.top),
                     media.padding.bottom,
+                    showActions: layout.verticalBarEdge != null,
                   ),
                 Expanded(
                   key: const ValueKey('main-content'),
@@ -93,6 +99,7 @@ class MainView extends GetView<MainViewController> {
                     sideWidth,
                     math.max(0, controlsTop - media.padding.top),
                     media.padding.bottom,
+                    showActions: layout.verticalBarEdge != null,
                   ),
               ],
             ),
@@ -117,7 +124,12 @@ class MainView extends GetView<MainViewController> {
     );
   }
 
-  Widget _sideNavigation(double width, double top, double bottom) {
+  Widget _sideNavigation(
+    double width,
+    double top,
+    double bottom, {
+    required bool showActions,
+  }) {
     return SizedBox(
       width: width,
       child: Padding(
@@ -131,14 +143,15 @@ class MainView extends GetView<MainViewController> {
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      Obx(
-                        () => switch (controller.pageIndex.value) {
-                          0 => const HomeAppBar(actionsOnly: true),
-                          1 => const JobAppBar(actionsOnly: true),
-                          2 => const BookmarkAppBar(actionsOnly: true),
-                          _ => const HomeAppBar(actionsOnly: true),
-                        },
-                      ),
+                      if (showActions)
+                        Obx(
+                          () => switch (controller.pageIndex.value) {
+                            0 => const HomeAppBar(actionsOnly: true),
+                            1 => const JobAppBar(actionsOnly: true),
+                            2 => const BookmarkAppBar(actionsOnly: true),
+                            _ => const HomeAppBar(actionsOnly: true),
+                          },
+                        ),
                       const SizedBox(height: 16),
                       const Spacer(),
                       Obx(
@@ -148,6 +161,7 @@ class MainView extends GetView<MainViewController> {
                           onSelected: controller.changeTab,
                         ),
                       ),
+                      if (!showActions) const Spacer(),
                     ],
                   ),
                 ),

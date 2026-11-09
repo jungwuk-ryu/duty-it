@@ -11,6 +11,7 @@ import 'package:duty_it/app/modules/job/widgets/detail/job_detail_section.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_summary_card.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_detail_tab_bar.dart';
 import 'package:duty_it/app/widgets/duit_detail_scaffold.dart';
+import 'package:duty_it/app/widgets/adaptive_layout.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/modules/job/widgets/detail/job_actions_menu.dart';
 import 'package:duty_it/app/modules/job/controllers/job_view_controller.dart';
@@ -41,7 +42,11 @@ class _JobDetailViewState extends State<JobDetailView> {
   @override
   Widget build(BuildContext context) {
     final layout = DuoLayoutData.of(context);
-    final sideWidth = layout.sideBarWidth(MediaQuery.of(context));
+    final media = MediaQuery.of(context);
+    final sideWidth = layout.sideBarWidth(media);
+    final contentLeft = layout.verticalBarEdge == 'left'
+        ? (sideWidth > media.padding.left ? sideWidth : media.padding.left)
+        : media.padding.left;
     return DuitDetailScaffold(
       title: Obx(() => Text(controller.job.title)),
       actions: Obx(
@@ -60,69 +65,72 @@ class _JobDetailViewState extends State<JobDetailView> {
           left: layout.verticalBarEdge == 'left' ? sideWidth : 0,
           right: layout.verticalBarEdge == 'right' ? sideWidth : 0,
         ),
-        child: Obx(() {
-          final job = controller.job;
+        child: AdaptiveContent(
+          screenLeft: contentLeft,
+          child: Obx(() {
+            final job = controller.job;
 
-          return Stack(
-            children: [
-              NotificationListener<ScrollNotification>(
-                onNotification: _handleScrollNotification,
-                child: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    SliverToBoxAdapter(child: _HeaderContent(job: job)),
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: JobDetailTabHeaderDelegate(
-                        selectedIndex: _selectedTabIndex,
-                        onTap: _scrollToSection,
+            return Stack(
+              children: [
+                NotificationListener<ScrollNotification>(
+                  onNotification: _handleScrollNotification,
+                  child: CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverToBoxAdapter(child: _HeaderContent(job: job)),
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: JobDetailTabHeaderDelegate(
+                          selectedIndex: _selectedTabIndex,
+                          onTap: _scrollToSection,
+                        ),
                       ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          JobDetailMedia(imageUrl: job.attachFileUrlText),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _section(0, _buildRecruitmentSection(job)),
-                                _section(1, _buildWorkConditionSection(job)),
-                                _section(2, _buildPreferenceSection(job)),
-                                _section(3, _buildWelfareSection(job)),
-                                _buildEtcSection(job),
-                              ],
+                      SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            JobDetailMedia(imageUrl: job.attachFileUrlText),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _section(0, _buildRecruitmentSection(job)),
+                                  _section(1, _buildWorkConditionSection(job)),
+                                  _section(2, _buildPreferenceSection(job)),
+                                  _section(3, _buildWelfareSection(job)),
+                                  _buildEtcSection(job),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: JobDetailFooter(sourceType: job.sourceType),
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: JobDetailFooter(sourceType: job.sourceType),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              if (controller.isLoading.value)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: LinearProgressIndicator(
-                    minHeight: 2,
-                    color: context.colors.accent,
-                    backgroundColor: context.colors.mutedSurface,
+                    ],
                   ),
                 ),
-            ],
-          );
-        }),
+                if (controller.isLoading.value)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: LinearProgressIndicator(
+                      minHeight: 2,
+                      color: context.colors.accent,
+                      backgroundColor: context.colors.mutedSurface,
+                    ),
+                  ),
+              ],
+            );
+          }),
+        ),
       ),
       bottomNavigationBar: Obx(
         () => JobDetailBottomBar(

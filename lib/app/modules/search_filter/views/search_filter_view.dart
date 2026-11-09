@@ -1,9 +1,8 @@
-import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/search_filter_app_bar.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_category_section.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_ended_event_section.dart';
 import 'package:duty_it/app/modules/search_filter/widgets/sections/search_filter_host_section.dart';
-import 'package:duty_it/app/widgets/app_normal_button.dart';
+import 'package:duty_it/app/widgets/filter_page_scaffold.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -14,36 +13,14 @@ class SearchFilterView extends GetView<SearchFilterViewController> {
   const SearchFilterView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.colors.canvas,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SearchFilterAppBar(),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  spacing: 24,
-                  children: [
-                    SearchFilterCategorySection(),
-                    SearchFilterHostSection(),
-                    SearchFilterEndedEventSection(),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: AppNormalButton(
-                text: '필터 적용',
-                onTap: controller.onApplyButtonClicked,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return FilterPageScaffold(
+      header: const SearchFilterAppBar(),
+      sections: const [
+        SearchFilterCategorySection(),
+        SearchFilterHostSection(),
+        SearchFilterEndedEventSection(),
+      ],
+      onApply: controller.onApplyButtonClicked,
     );
   }
 }
