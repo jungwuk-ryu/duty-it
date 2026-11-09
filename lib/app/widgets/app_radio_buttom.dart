@@ -12,7 +12,7 @@ class AppRadioButtom extends StatelessWidget {
     super.key,
     required this.checked,
     required this.onTap,
-    this.tapSize = 44,
+    this.tapSize = 48,
     this.visualSize = 18,
     this.selectedSize = 8,
   });

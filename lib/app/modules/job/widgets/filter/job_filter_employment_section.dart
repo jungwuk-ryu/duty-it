@@ -33,25 +33,27 @@ class JobFilterEmploymentSection extends GetView<JobFilterViewController> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: selectType,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
         child: Row(
           children: [
             Obx(
               () => AppRadioButtom(
                 checked: controller.isEmploymentTypeSelected(type),
                 onTap: selectType,
-                tapSize: 18,
+                tapSize: 48,
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              title ?? type!.filterDisplayName,
-              style: TextStyle(
-                color: context.colors.muted,
-                fontSize: 13,
-                fontWeight: FontWeight.w300,
-                height: 1.60,
+            Expanded(
+              child: Text(
+                title ?? type!.filterDisplayName,
+                style: TextStyle(
+                  color: context.colors.muted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w300,
+                  height: 1.60,
+                ),
               ),
             ),
           ],

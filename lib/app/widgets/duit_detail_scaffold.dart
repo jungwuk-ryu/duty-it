@@ -27,8 +27,8 @@ class DuitDetailScaffold extends StatelessWidget {
     final layout = DuoLayoutData.of(context);
     final edge = layout.verticalBarEdge;
     final media = MediaQuery.of(context);
-    const toolbarHeight = 64.0;
-    const actionExtent = 48.0;
+    const actionExtent = DuitAppBarActions.extent;
+    const toolbarHeight = actionExtent + 16;
     final sideInset = (layout.sideBarWidth(media) - actionExtent) / 2;
     final bodyTop = media.padding.top + toolbarHeight;
     return Scaffold(
@@ -39,7 +39,7 @@ class DuitDetailScaffold extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         toolbarHeight: toolbarHeight,
-        leadingWidth: 80,
+        leadingWidth: actionExtent + 32,
         centerTitle: true,
         titleSpacing: 0,
         leading: Padding(
@@ -54,7 +54,9 @@ class DuitDetailScaffold extends StatelessWidget {
                   size: 22,
                 ),
                 style: IconButton.styleFrom(
-                  minimumSize: const Size.square(44),
+                  minimumSize: const Size.square(
+                    DuitAppBarActions.buttonExtent,
+                  ),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 onPressed: onBack,
@@ -79,7 +81,7 @@ class DuitDetailScaffold extends StatelessWidget {
               child: DuitAppBarActions(children: [actions]),
             )
           else
-            const SizedBox(width: 80),
+            const SizedBox(width: actionExtent + 32),
         ],
       ),
       body: Stack(

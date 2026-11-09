@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
 import 'package:duty_it/app/widgets/adaptive_paged_sliver.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,6 +38,7 @@ class HomeView extends GetView<HomeViewController> {
       controller: controller.scrollController,
       slivers: [
         SliverAppBar(
+          toolbarHeight: DuitTopAppBar.height,
           backgroundColor: context.colors.canvas,
           surfaceTintColor: context.colors.canvas,
           elevation: 0,

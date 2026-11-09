@@ -102,7 +102,8 @@ void main() {
           of: trigger,
           matching: find.byType(DuitAppBarActions),
         );
-        expect(tester.getSize(chrome), const Size.square(48));
+        expect(tester.getSize(chrome), const Size.square(52));
+        expect(tester.getSize(trigger), const Size.square(48));
         expect(find.byTooltip('뒤로 가기'), findsOneWidget);
         if (duo) {
           expect(tester.getRect(trigger).top, greaterThanOrEqualTo(152));

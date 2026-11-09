@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
 import 'package:duty_it/app/widgets/adaptive_paged_sliver.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
@@ -39,6 +40,7 @@ class JobView extends GetView<JobViewController> {
       controller: controller.scrollController,
       slivers: [
         SliverAppBar(
+          toolbarHeight: DuitTopAppBar.height,
           backgroundColor: context.colors.canvas,
           surfaceTintColor: context.colors.canvas,
           elevation: 0,

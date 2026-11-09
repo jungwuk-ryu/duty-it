@@ -95,8 +95,8 @@ void main() {
                   left: layout.verticalBarEdge == 'left' ? 12 : null,
                   right: layout.verticalBarEdge == 'right' ? 12 : null,
                   top: 160,
-                  width: 48,
-                  height: 48,
+                  width: 52,
+                  height: 52,
                   child: DuitAppBarActions(vertical: true, children: [menu]),
                 ),
               Center(

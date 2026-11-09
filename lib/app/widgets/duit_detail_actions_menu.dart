@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/widgets/duit_glass_menu.dart';
 import 'package:duty_it/app/widgets/duo_layout.dart';
+import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
 import 'package:flutter/material.dart';
 
 /// Detail dropdown anchored below a toolbar or inward beside Duo's rail.
@@ -77,7 +78,7 @@ class _DuitDetailActionsMenuState extends State<DuitDetailActionsMenu> {
           tooltip: widget.tooltip,
           icon: Icon(Icons.more_horiz_rounded, color: context.colors.text),
           style: IconButton.styleFrom(
-            minimumSize: const Size.square(44),
+            minimumSize: const Size.square(DuitAppBarActions.buttonExtent),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             backgroundColor: menu.isOpen
                 ? context.colors.mutedSurface

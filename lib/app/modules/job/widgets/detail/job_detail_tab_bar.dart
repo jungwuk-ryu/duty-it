@@ -12,7 +12,7 @@ class JobDetailTabBar extends StatelessWidget {
   });
 
   static const tabs = ['모집요강', '근무조건', '우대사항', '복리후생'];
-  static const double _height = 40;
+  static const double _height = 48;
 
   @override
   Widget build(BuildContext context) {
@@ -26,42 +26,46 @@ class JobDetailTabBar extends StatelessWidget {
           children: List.generate(tabs.length, (index) {
             final isSelected = selectedIndex == index;
             return Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => onTap(index),
-                child: SizedBox(
-                  height: _height,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Text(
-                        tabs[index],
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: isSelected
-                              ? context.colors.text
-                              : context.colors.icon,
-                          fontSize: 14,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w500,
-                          height: 1.20,
+              child: Semantics(
+                button: true,
+                selected: isSelected,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => onTap(index),
+                  child: SizedBox(
+                    height: _height,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Text(
+                          tabs[index],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: isSelected
+                                ? context.colors.text
+                                : context.colors.icon,
+                            fontSize: 14,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                            height: 1.20,
+                          ),
                         ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 160),
-                          height: 4,
-                          color: isSelected
-                              ? context.colors.accent
-                              : AppColors.transparent,
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 160),
+                            height: 4,
+                            color: isSelected
+                                ? context.colors.accent
+                                : AppColors.transparent,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

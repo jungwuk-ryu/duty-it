@@ -17,20 +17,31 @@ class JobBookmarkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () async {
-        HapticFeedback.mediumImpact();
-        await _controller.onBookmarkButtonClick(jobRx);
-      },
-      child: Obx(
-        () => AppAssetIcon(
-          asset: job.isBookmarked
-              ? Assets.icons.bookmarkRed.path
-              : Assets.icons.bookmark.path,
-          color: job.isBookmarked ? context.colors.accent : context.colors.icon,
-          width: 40,
-          height: 40,
+    return Obx(
+      () => Semantics(
+        label: job.isBookmarked ? '북마크 해제' : '북마크 저장',
+        button: true,
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () async {
+            HapticFeedback.mediumImpact();
+            await _controller.onBookmarkButtonClick(jobRx);
+          },
+          child: SizedBox.square(
+            dimension: 48,
+            child: Center(
+              child: AppAssetIcon(
+                asset: job.isBookmarked
+                    ? Assets.icons.bookmarkRed.path
+                    : Assets.icons.bookmark.path,
+                color: job.isBookmarked
+                    ? context.colors.accent
+                    : context.colors.icon,
+                width: 40,
+                height: 40,
+              ),
+            ),
+          ),
         ),
       ),
     );
