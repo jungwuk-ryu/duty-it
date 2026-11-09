@@ -110,7 +110,7 @@ class DuitGlassMenuItem extends StatelessWidget {
     autofocus: selected,
     onPressed: onPressed,
     style: MenuItemButton.styleFrom(
-      minimumSize: const Size(0, 44),
+      minimumSize: const Size(0, 48),
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
       foregroundColor: context.colors.text,
       disabledForegroundColor: context.colors.disabled,

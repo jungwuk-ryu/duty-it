@@ -1,7 +1,7 @@
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/search_filter/controllers/search_filter_view_controller.dart';
 import 'package:duty_it/app/widgets/simple_app_bar.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
@@ -16,18 +16,13 @@ class SearchFilterAppBar extends StatelessWidget {
     return SimpleAppBar(
       title: '검색 필터',
       endChildren: [
-        GestureDetector(
-          onTap: controller.onResetSettingsButtonClicked,
-          child: Text(
-            '초기화',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: context.colors.disabled,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              height: 1.60,
-            ),
+        TextButton(
+          onPressed: controller.onResetSettingsButtonClicked,
+          style: TextButton.styleFrom(
+            minimumSize: const Size(64, 48),
+            foregroundColor: context.colors.secondaryText,
           ),
+          child: const Text('초기화', style: TextStyle(fontSize: 16)),
         ),
         SizedBox(width: 14),
       ],

@@ -8,6 +8,10 @@ import 'package:duty_it/app/modules/calendar/widgets/custom_calendar_day_header.
 import 'package:flutter/widgets.dart';
 
 class CustomCalendarWeekCell extends StatelessWidget {
+  static double heightFor(
+    BuildContext context, {
+    required bool showInlineEvents,
+  }) => DayHeader.heightFor(context) + (showInlineEvents ? 54 : 0);
   final CustomCalendarController controller;
   final int calendarMonth;
   final DateTime date;
@@ -34,48 +38,48 @@ class CustomCalendarWeekCell extends StatelessWidget {
     final DateTime startOfWeek = getStartOfWeekSunday(date);
     final DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
 
-    final GlobalKey key = GlobalKey();
-
-    return GestureDetector(
-      key: key,
-      behavior: HitTestBehavior.translucent,
-      onTapDown: (details) {
-        final RenderBox box =
-            key.currentContext!.findRenderObject() as RenderBox;
-        final Size size = box.size;
-
-        controller.currentDateTime = startOfWeek.add(
-          Duration(days: (details.localPosition.dx / (size.width / 7)).toInt()),
-        );
-      },
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 200),
-        alignment: Alignment.topCenter,
-        child: showInlineEvents
-            ? _ExpandedWeekContent(
-                now: now,
-                startOfWeek: startOfWeek,
-                endOfWeek: endOfWeek,
-                calendarMonth: calendarMonth,
-                controller: controller,
-                events: events,
-              )
-            : SizedBox(
-                height: 32,
-                child: Row(
-                  children: List.generate(7, (i) {
-                    final currentDate = startOfWeek.add(Duration(days: i));
-                    return Expanded(
-                      child: DayHeader(
-                        today: now,
-                        date: currentDate,
-                        calendarMonth: calendarMonth,
-                        controller: controller,
-                      ),
-                    );
-                  }),
+    return LayoutBuilder(
+      builder: (context, constraints) => GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        excludeFromSemantics: true,
+        onTapUp: (details) {
+          controller.currentDateTime = startOfWeek.add(
+            Duration(
+              days: (details.localPosition.dx / (constraints.maxWidth / 7))
+                  .floor()
+                  .clamp(0, 6),
+            ),
+          );
+        },
+        child: AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          alignment: Alignment.topCenter,
+          child: showInlineEvents
+              ? _ExpandedWeekContent(
+                  now: now,
+                  startOfWeek: startOfWeek,
+                  endOfWeek: endOfWeek,
+                  calendarMonth: calendarMonth,
+                  controller: controller,
+                  events: events,
+                )
+              : SizedBox(
+                  height: DayHeader.heightFor(context),
+                  child: Row(
+                    children: List.generate(7, (i) {
+                      final currentDate = startOfWeek.add(Duration(days: i));
+                      return Expanded(
+                        child: DayHeader(
+                          today: now,
+                          date: currentDate,
+                          calendarMonth: calendarMonth,
+                          controller: controller,
+                        ),
+                      );
+                    }),
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

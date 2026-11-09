@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('tab header uses the Figma visual height', () {
+  test('tab header reserves a 48dp touch target', () {
     final delegate = JobDetailTabHeaderDelegate(
       selectedIndex: 0,
       onTap: (_) {},
     );
 
-    expect(delegate.minExtent, 40);
-    expect(delegate.maxExtent, 40);
+    expect(delegate.minExtent, 48);
+    expect(delegate.maxExtent, 48);
   });
 
   testWidgets('media image fills the detail page width on a 392px viewport', (

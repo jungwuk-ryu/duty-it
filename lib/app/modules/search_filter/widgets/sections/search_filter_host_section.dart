@@ -16,24 +16,25 @@ class SearchFilterHostSection extends SearchFilterSection {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SearchFilterSectionTitle("주최"),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.only(top: 11, bottom: 11, left: 16, right: 8),
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: context.colors.disabled),
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              if (controller.selectedHost == null) {
-                controller.showHostSelectionBottomModal();
-                return;
-              }
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            if (controller.selectedHost == null) {
+              controller.showHostSelectionBottomModal();
+            } else {
               controller.clearSelectedHost();
-            },
+            }
+          },
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 48),
+            width: double.infinity,
+            padding: EdgeInsets.only(top: 11, bottom: 11, left: 16, right: 8),
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1, color: context.colors.disabled),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

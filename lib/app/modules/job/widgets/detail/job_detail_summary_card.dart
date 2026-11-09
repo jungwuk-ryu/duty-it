@@ -44,17 +44,24 @@ class JobDetailSummaryCard extends StatelessWidget {
         border: Border.all(color: context.colors.border),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List<Widget>.generate(sections.length, (index) {
-          final section = sections[index];
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: index == sections.length - 1 ? 0 : 20,
-            ),
-            child: _SummarySectionWidget(section: section),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+          final columns = constraints.maxWidth >= 600 * (scale > 1 ? scale : 1)
+              ? 2
+              : 1;
+          return Wrap(
+            spacing: 24,
+            runSpacing: 20,
+            children: [
+              for (final section in sections)
+                SizedBox(
+                  width: (constraints.maxWidth - 24 * (columns - 1)) / columns,
+                  child: _SummarySectionWidget(section: section),
+                ),
+            ],
           );
-        }),
+        },
       ),
     );
   }

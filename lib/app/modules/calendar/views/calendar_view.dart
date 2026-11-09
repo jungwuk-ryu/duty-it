@@ -1,3 +1,4 @@
+import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/calendar/widgets/calendar_view_title_section.dart';
 import 'package:duty_it/app/modules/calendar/widgets/custom_calendar.dart';
@@ -16,7 +17,7 @@ class CalendarView extends GetView<CalendarViewController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: kToolbarHeight,
+          height: DuitTopAppBar.height,
           child: ColoredBox(
             color: context.colors.canvas,
             child: Padding(

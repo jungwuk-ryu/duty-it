@@ -72,7 +72,7 @@ class _SortMenuState<T extends SortOption> extends State<SortMenu<T>> {
             }
           },
           style: TextButton.styleFrom(
-            minimumSize: const Size(44, 44),
+            minimumSize: const Size(48, 48),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             foregroundColor: menu.isOpen
                 ? context.colors.text

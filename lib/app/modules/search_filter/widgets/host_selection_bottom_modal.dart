@@ -1,4 +1,4 @@
-import 'package:duty_it/app/widgets/app_asset_icon.dart';
+import 'package:duty_it/app/modules/home/widgets/search_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/core/enums/sort_direction.dart';
@@ -85,66 +85,12 @@ class _SearchFilterHostSelectionBottomModal
                 ),
               ),
               SizedBox(height: 8),
-              Container(
-                width: 328,
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: context.colors.mutedSurface,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    AppAssetIcon(
-                      asset: Assets.icons.search.path,
-                      width: 12,
-                      height: 12,
-                    ),
-
-                    SizedBox(width: 8),
-
-                    Expanded(
-                      child: Center(
-                        child: TextField(
-                          controller: editingController,
-                          onTapUpOutside: (_) =>
-                              FocusScope.of(context).unfocus(),
-                          textInputAction: TextInputAction.done,
-                          textAlignVertical: TextAlignVertical.top,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: '찾으시는 주최기관을 검색해 보세요.',
-                            hintStyle: TextStyle(
-                              color: context.colors.muted,
-                              fontSize: 15,
-                            ),
-                            border: InputBorder.none,
-                            isCollapsed: true,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    if (editingController.text.isNotEmpty)
-                      GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          setState(() {
-                            editingController.clear();
-                          });
-                        },
-                        child: Icon(
-                          Icons.cancel_rounded,
-                          color: context.colors.disabled,
-                          size: 16,
-                        ),
-                      ),
-                  ],
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: HomeSearchBar(
+                  controller: editingController,
+                  filled: true,
+                  hintText: '찾으시는 주최기관을 검색해 보세요.',
                 ),
               ),
 

@@ -6,6 +6,7 @@ import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 class DuitTopAppBar extends StatelessWidget {
+  static const height = DuitAppBarActions.extent + 8;
   final bool showNotifications;
   final bool hasNewNotification;
   final VoidCallback onNotificationsTap;
@@ -77,7 +78,7 @@ class DuitTopAppBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         onTap: onTap,
         child: SizedBox.square(
-          dimension: 44,
+          dimension: DuitAppBarActions.buttonExtent,
           child: Center(
             child: Badge(
               isLabelVisible: showBadge,
@@ -94,6 +95,8 @@ class DuitTopAppBar extends StatelessWidget {
 
 /// Shared glass chrome for the home controls and route-specific actions.
 class DuitAppBarActions extends StatelessWidget {
+  static const buttonExtent = 48.0;
+  static const extent = buttonExtent + 4;
   const DuitAppBarActions({
     super.key,
     required this.children,

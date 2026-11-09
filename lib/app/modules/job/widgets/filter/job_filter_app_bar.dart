@@ -1,7 +1,6 @@
-import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/job/controllers/job_filter_view_controller.dart';
-import 'package:duty_it/gen/assets.gen.dart';
+import 'package:duty_it/app/widgets/simple_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,58 +8,18 @@ class JobFilterAppBar extends GetView<JobFilterViewController> {
   const JobFilterAppBar({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: Get.back,
-          child: SizedBox(
-            width: 48,
-            height: 48,
-            child: Center(
-              child: AppAssetIcon(
-                asset: Assets.icons.backLeft.path,
-                width: 40,
-                height: 40,
-              ),
-            ),
-          ),
+  Widget build(BuildContext context) => SimpleAppBar(
+    title: '채용 검색 필터',
+    endChildren: [
+      TextButton(
+        onPressed: controller.onResetSettingsButtonClicked,
+        style: TextButton.styleFrom(
+          minimumSize: const Size(64, 48),
+          foregroundColor: context.colors.secondaryText,
         ),
-        Expanded(
-          child: Text(
-            '채용 검색 필터',
-            style: TextStyle(
-              color: context.colors.text,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              height: 1.60,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 13),
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: controller.onResetSettingsButtonClicked,
-            child: SizedBox(
-              width: 48,
-              height: 48,
-              child: Center(
-                child: Text(
-                  '초기화',
-                  style: TextStyle(
-                    color: context.colors.disabled,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    height: 1.60,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+        child: const Text('초기화', style: TextStyle(fontSize: 16)),
+      ),
+      const SizedBox(width: 14),
+    ],
+  );
 }

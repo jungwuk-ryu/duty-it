@@ -32,6 +32,7 @@ class _AppNormalButtonState extends State<AppNormalButton> {
       child: GestureDetector(
         onTap: tap,
         child: Container(
+          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
           width: widget.width,
           padding: EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(

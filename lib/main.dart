@@ -7,6 +7,7 @@ import 'package:duty_it/app/core/theme/app_theme.dart';
 import 'package:duty_it/app/core/theme/app_system_ui.dart';
 import 'package:duty_it/app/core/models/events_response.dart';
 import 'package:duty_it/app/core/utils/event_deep_link.dart';
+import 'package:duty_it/app/core/utils/app_orientation.dart';
 import 'package:duty_it/app/modules/home/cache/home_view_cache.dart';
 import 'package:duty_it/app/services/auth/auth_service.dart';
 import 'package:duty_it/app/services/event_deep_link_service.dart';
@@ -19,7 +20,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -29,10 +29,7 @@ import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  await AppOrientation.configureStartup();
   var dotenvFuture = dotenv.load(fileName: ".env");
 
   /* Firebase init start */

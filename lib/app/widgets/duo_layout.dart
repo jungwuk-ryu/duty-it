@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:duty_it/app/core/utils/app_orientation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -145,7 +146,7 @@ class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
   bool _allowsRotation = false;
   ui.FlutterView? _view;
   bool _androidHasFold = false;
-  bool _androidAllowsRotation = false;
+  bool? _androidAllowsRotation;
 
   @override
   void initState() {
@@ -216,23 +217,17 @@ class _DuoLayoutState extends State<DuoLayout> with WidgetsBindingObserver {
 
   void _updateAndroidOrientation() {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
-    final display = _view?.display;
-    if (display == null) return;
-    // Use the whole display: a portrait-locked app can already be letterboxed.
-    // Window or keyboard resizing must not lock an unfolded device again.
-    final allowsRotation =
-        _androidHasFold ||
-        display.size.shortestSide / display.devicePixelRatio >= 600;
+    final view = _view;
+    if (view == null) return;
+    final allowsRotation = AppOrientation.allowsAndroidRotation(
+      view,
+      hasFold: _androidHasFold,
+    );
     if (allowsRotation == _androidAllowsRotation) return;
     _androidAllowsRotation = allowsRotation;
     unawaited(
       SystemChrome.setPreferredOrientations(
-        allowsRotation
-            ? const []
-            : const [
-                DeviceOrientation.portraitUp,
-                DeviceOrientation.portraitDown,
-              ],
+        allowsRotation ? const [] : AppOrientation.portrait,
       ),
     );
   }

@@ -151,7 +151,10 @@ void main() {
         await tester.pumpWidget(
           const MaterialApp(home: DuoLayout(child: SizedBox())),
         );
-        expect(orientations, isEmpty);
+        expect(orientations, [
+          ['DeviceOrientation.portraitUp', 'DeviceOrientation.portraitDown'],
+        ]);
+        orientations.clear();
 
         // The full display grows before Android removes the portrait letterbox.
         tester.view.display.size = const Size(1800, 2200);
@@ -199,6 +202,10 @@ void main() {
         ),
       );
       await tester.pumpWidget(app([]));
+      expect(orientations, [
+        ['DeviceOrientation.portraitUp', 'DeviceOrientation.portraitDown'],
+      ]);
+      orientations.clear();
       focus.requestFocus();
       text.selection = const TextSelection.collapsed(offset: 3);
       await tester.pump();

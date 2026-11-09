@@ -23,44 +23,43 @@ class JobHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
-          HomeSearchBar(
-            controller: controller.searchTextEditingController,
-            hintText: '원하는 채용공고를 찾아보세요!',
-          ),
-          const SizedBox(height: 18),
-          Obx(() {
-            final filterService = Get.find<JobFilterService>();
-            final filterApplied = filterService.hasFilterChanges();
+          AdaptiveSearchHeader(
+            search: HomeSearchBar(
+              controller: controller.searchTextEditingController,
+              hintText: '원하는 채용공고를 찾아보세요!',
+            ),
+            filters: Obx(() {
+              final filterService = Get.find<JobFilterService>();
+              final filterApplied = filterService.hasFilterChanges();
 
-            return AdaptiveFilterRow(
-              children: [
-                CategoryTag(
-                  name: '전체',
-                  isSelected: !filterApplied,
-                  onTap: filterService.resetFilter,
-                ),
-                const SizedBox(width: 8),
-                CategoryTag(
-                  name: '필터',
-                  isSelected: filterApplied,
-                  imageAsset: Assets.icons.filter.path,
-                  imageColor: filterApplied ? AppColors.white : null,
-                  backgroundColor: filterApplied ? AppColors.main : null,
-                  textColor: filterApplied ? AppColors.white : null,
-                  onTap: () {
-                    Get.toNamed(Routes.JOB_FILTER);
-                  },
-                ),
-                SortMenu(
-                  selected: controller.sortingType,
-                  options: JobSortingType.values,
-                  onSelected: (type) => controller.sortingType = type,
-                ),
-              ],
-            );
-          }),
-          const SizedBox(height: 16),
+              return AdaptiveFilterRow(
+                children: [
+                  CategoryTag(
+                    name: '전체',
+                    isSelected: !filterApplied,
+                    onTap: filterService.resetFilter,
+                  ),
+                  const SizedBox(width: 8),
+                  CategoryTag(
+                    name: '필터',
+                    isSelected: filterApplied,
+                    imageAsset: Assets.icons.filter.path,
+                    imageColor: filterApplied ? AppColors.white : null,
+                    backgroundColor: filterApplied ? AppColors.main : null,
+                    textColor: filterApplied ? AppColors.white : null,
+                    onTap: () {
+                      Get.toNamed(Routes.JOB_FILTER);
+                    },
+                  ),
+                  SortMenu(
+                    selected: controller.sortingType,
+                    options: JobSortingType.values,
+                    onSelected: (type) => controller.sortingType = type,
+                  ),
+                ],
+              );
+            }),
+          ),
         ],
       ),
     );
