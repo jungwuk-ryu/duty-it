@@ -27,6 +27,7 @@ class _Analytics extends Fake implements FirebaseAnalytics {
   Future<void> logEvent({
     required String name,
     Map<String, Object>? parameters,
+    List<AnalyticsEventItem>? items,
     AnalyticsCallOptions? callOptions,
   }) async {}
 }
