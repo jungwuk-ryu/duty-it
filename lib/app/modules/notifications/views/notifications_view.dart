@@ -1,7 +1,9 @@
 import 'package:duty_it/app/widgets/app_asset_icon.dart';
 import 'package:duty_it/app/core/constants/app_colors.dart';
 import 'package:duty_it/app/modules/notifications/widgets/notification_item.dart';
-import 'package:duty_it/app/widgets/simple_app_bar.dart';
+import 'package:duty_it/app/widgets/duit_detail_scaffold.dart';
+import 'package:duty_it/app/widgets/duit_top_app_bar.dart';
+import 'package:duty_it/app/widgets/duo_layout.dart';
 import 'package:duty_it/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,113 +14,105 @@ class NotificationsView extends GetView<NotificationsViewController> {
   const NotificationsView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final layout = DuoLayoutData.of(context);
+    final sideWidth = layout.sideBarWidth(MediaQuery.of(context));
+    return DuitDetailScaffold(
+      title: const Text('알림'),
+      onBack: Get.back,
+      actions: IconButton(
+        tooltip: '알림 설정',
+        onPressed: controller.openNotificationSettings,
+        icon: Icon(
+          Icons.settings_outlined,
+          color: context.colors.text,
+          size: 24,
+        ),
+        style: IconButton.styleFrom(
+          minimumSize: const Size.square(DuitAppBarActions.buttonExtent),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SimpleAppBar(
-              title: '알림',
-              bottomMargin: 0,
-              endChildren: [
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: controller.openNotificationSettings,
-                  child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: Icon(
-                      Icons.settings_outlined,
-                      color: context.colors.text,
-                      size: 24,
+        top: false,
+        minimum: EdgeInsets.only(
+          left: layout.verticalBarEdge == 'left' ? sideWidth : 0,
+          right: layout.verticalBarEdge == 'right' ? sideWidth : 0,
+        ),
+        child: RefreshIndicator.adaptive(
+          child: Obx(() {
+            final items = controller.filteredNotifications;
+            return NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (controller.hasNextPage &&
+                    items.isNotEmpty &&
+                    notification.metrics.extentAfter < 240) {
+                  controller.fetchNotificationList();
+                }
+                return false;
+              },
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  const SliverToBoxAdapter(child: SizedBox(height: 18)),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 22),
+                      child: _NotificationTabs(controller: controller),
                     ),
                   ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: RefreshIndicator.adaptive(
-                child: Obx(() {
-                  final items = controller.filteredNotifications;
-                  return NotificationListener<ScrollNotification>(
-                    onNotification: (notification) {
-                      if (controller.hasNextPage &&
-                          items.isNotEmpty &&
-                          notification.metrics.extentAfter < 240) {
-                        controller.fetchNotificationList();
-                      }
-                      return false;
-                    },
-                    child: CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      slivers: [
-                        const SliverToBoxAdapter(child: SizedBox(height: 18)),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 22),
-                            child: _NotificationTabs(controller: controller),
-                          ),
-                        ),
-                        const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                        if (controller.conditionMessage != null) ...[
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 22,
-                              ),
-                              child: _ConditionBanner(controller: controller),
-                            ),
-                          ),
-                          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-                        ],
-                        if (controller.isInitialLoading)
-                          const SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: _InitialLoadingIndicator(),
-                          )
-                        else if (items.isEmpty && controller.pageError != null)
-                          SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: _ErrorIndicator(
-                              onRetry: controller.retryNotificationList,
-                            ),
-                          )
-                        else if (items.isEmpty && controller.isLoadingMore)
-                          const SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: _ResolvingFilteredTabIndicator(),
-                          )
-                        else if (items.isEmpty)
-                          const SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: _EmptyNotificationIndicator(),
-                          )
-                        else
-                          SliverList.builder(
-                            itemCount: items.length,
-                            itemBuilder: (_, index) =>
-                                NotificationItem(items[index]),
-                          ),
-                        if (items.isNotEmpty && controller.isLoadingMore)
-                          const SliverToBoxAdapter(
-                            child: _NextPageLoadingIndicator(),
-                          ),
-                        if (items.isNotEmpty && controller.pageError != null)
-                          SliverToBoxAdapter(
-                            child: _NextPageErrorIndicator(
-                              onRetry: controller.retryNotificationList,
-                            ),
-                          ),
-                        const SliverToBoxAdapter(child: SizedBox(height: 32)),
-                      ],
+                  const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                  if (controller.conditionMessage != null) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 22),
+                        child: _ConditionBanner(controller: controller),
+                      ),
                     ),
-                  );
-                }),
-                onRefresh: () async =>
-                    await controller.refreshNotificationList(),
+                    const SliverToBoxAdapter(child: SizedBox(height: 12)),
+                  ],
+                  if (controller.isInitialLoading)
+                    const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _InitialLoadingIndicator(),
+                    )
+                  else if (items.isEmpty && controller.pageError != null)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _ErrorIndicator(
+                        onRetry: controller.retryNotificationList,
+                      ),
+                    )
+                  else if (items.isEmpty && controller.isLoadingMore)
+                    const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _ResolvingFilteredTabIndicator(),
+                    )
+                  else if (items.isEmpty)
+                    const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _EmptyNotificationIndicator(),
+                    )
+                  else
+                    SliverList.builder(
+                      itemCount: items.length,
+                      itemBuilder: (_, index) => NotificationItem(items[index]),
+                    ),
+                  if (items.isNotEmpty && controller.isLoadingMore)
+                    const SliverToBoxAdapter(
+                      child: _NextPageLoadingIndicator(),
+                    ),
+                  if (items.isNotEmpty && controller.pageError != null)
+                    SliverToBoxAdapter(
+                      child: _NextPageErrorIndicator(
+                        onRetry: controller.retryNotificationList,
+                      ),
+                    ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                ],
               ),
-            ),
-          ],
+            );
+          }),
+          onRefresh: () async => await controller.refreshNotificationList(),
         ),
       ),
     );
